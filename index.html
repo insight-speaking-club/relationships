@@ -274,24 +274,18 @@
   /* ---------- garden scene : enchanted, magical meadow ---------- */
   #screen-garden{
     justify-content:flex-start; padding:40px 0 0; overflow-y:auto; -webkit-overflow-scrolling:touch;
-    background:
-      radial-gradient(120% 60% at 20% -5%, rgba(255,190,240,.16) 0%, transparent 55%),
-      radial-gradient(110% 55% at 85% 5%, rgba(160,210,255,.14) 0%, transparent 55%),
-      linear-gradient(190deg, #1c0f3d 0%, #3a1657 30%, #6a2372 58%, #a83e82 82%, #d1637a 100%);
+    background: linear-gradient(180deg, #150b30 0%, #271350 40%, #45205a 72%, #672f57 100%);
   }
   #screen-garden::before{
     content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
     background-image:
-      radial-gradient(1.6px 1.6px at 12% 15%, rgba(255,255,255,.75), transparent),
-      radial-gradient(1.2px 1.2px at 42% 8%, rgba(255,230,255,.6), transparent),
-      radial-gradient(1.8px 1.8px at 68% 22%, rgba(255,255,255,.7), transparent),
-      radial-gradient(1.2px 1.2px at 88% 12%, rgba(255,220,255,.55), transparent),
-      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,.5), transparent),
-      radial-gradient(1.3px 1.3px at 92% 34%, rgba(255,255,255,.5), transparent);
-    background-repeat:repeat; background-size:320px 320px; opacity:.8;
-    animation:twinkle-sky 5s ease-in-out infinite;
+      radial-gradient(1.4px 1.4px at 15% 12%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1.2px 1.2px at 45% 6%, rgba(255,255,255,.45), transparent),
+      radial-gradient(1.5px 1.5px at 72% 18%, rgba(255,255,255,.55), transparent),
+      radial-gradient(1.1px 1.1px at 90% 10%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1.3px 1.3px at 28% 34%, rgba(255,255,255,.35), transparent);
+    background-repeat:repeat; background-size:320px 320px; opacity:.6;
   }
-  @keyframes twinkle-sky{0%,100%{opacity:.55;}50%{opacity:.9;}}
   #screen-garden .eyebrow, #screen-garden h1, #screen-garden .sub{padding:0 26px;}
   #screen-garden h1.display{
     background:linear-gradient(120deg, var(--gold), #ffd1f0 45%, #ff8fd0);
@@ -301,41 +295,28 @@
   .garden-bed{
     position:relative; overflow:hidden; border-radius:30px;
     background:
-      radial-gradient(160% 55% at 25% 2%, rgba(255,180,235,.20) 0%, transparent 55%),
-      radial-gradient(140% 50% at 80% 30%, rgba(140,210,255,.16) 0%, transparent 60%),
-      radial-gradient(120% 60% at 50% 100%, rgba(255,214,140,.14) 0%, transparent 62%),
-      linear-gradient(180deg, #2a1348 0%, #3c1a52 35%, #341455 65%, #240f3f 100%);
+      radial-gradient(120% 45% at 50% 0%, rgba(255,205,235,.14) 0%, transparent 60%),
+      linear-gradient(180deg, #241046 0%, #2f1650 40%, #2a1348 72%, #1c0d33 100%);
     box-shadow:
       0 24px 70px rgba(0,0,0,.5),
-      inset 0 0 0 1px rgba(255,220,250,.14),
-      inset 0 40px 60px -30px rgba(255,190,235,.18);
-  }
-  .garden-bed::after{
-    content:''; position:absolute; inset:0; pointer-events:none; opacity:.6; mix-blend-mode:screen;
-    background-image:
-      radial-gradient(1.8px 10px at 8px 6px, rgba(255,200,240,.3), transparent 72%),
-      radial-gradient(1.8px 8px at 24px 20px, rgba(160,220,255,.24), transparent 72%),
-      radial-gradient(1.8px 11px at 34px 34px, rgba(255,225,150,.24), transparent 72%);
-    background-repeat:repeat; background-size:46px 46px;
+      inset 0 0 0 1px rgba(255,220,250,.12);
   }
   .garden-vignette{position:absolute; inset:0; pointer-events:none; z-index:5; border-radius:30px;
-    box-shadow:inset 0 40px 50px -20px rgba(20,8,36,.85), inset 0 -60px 70px -30px rgba(20,8,36,.8);
+    box-shadow:inset 0 34px 40px -20px rgba(18,8,32,.7), inset 0 -50px 60px -30px rgba(18,8,32,.65);
   }
   .garden-fade-top{position:absolute; top:0; left:0; right:0; height:70px; z-index:4; pointer-events:none;
-    background:linear-gradient(180deg, #2a1348, rgba(42,19,72,0));
+    background:linear-gradient(180deg, #241046, rgba(36,16,70,0));
   }
-  .moonglow{position:absolute; top:-50px; left:50%; transform:translateX(-50%); width:280px; height:280px; border-radius:50%;
-    background:radial-gradient(circle, rgba(255,225,190,.28), rgba(255,190,235,.14) 45%, rgba(244,233,255,0) 72%);
-    pointer-events:none; z-index:1; animation:moon-breathe 6s ease-in-out infinite;}
-  @keyframes moon-breathe{0%,100%{opacity:.85; transform:translateX(-50%) scale(1);} 50%{opacity:1; transform:translateX(-50%) scale(1.06);}}
+  .moonglow{position:absolute; top:-50px; left:50%; transform:translateX(-50%); width:260px; height:260px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,225,190,.24), rgba(255,190,235,.1) 45%, rgba(244,233,255,0) 72%);
+    pointer-events:none; z-index:1;}
   .hill{
     position:absolute; left:-15%; right:-15%; bottom:-20px; height:150px;
     background-image:
-      radial-gradient(42% 80% at 12% 100%, #4a2166 0%, rgba(74,33,102,0) 74%),
-      radial-gradient(48% 90% at 40% 100%, #632a63 0%, rgba(99,42,99,0) 76%),
-      radial-gradient(45% 85% at 68% 100%, #3d1f5c 0%, rgba(61,31,92,0) 74%),
-      radial-gradient(40% 75% at 94% 100%, #7a3060 0%, rgba(122,48,96,0) 72%),
-      radial-gradient(70% 34% at 50% 94%, rgba(255,200,240,.22) 0%, rgba(255,200,240,0) 76%);
+      radial-gradient(45% 85% at 20% 100%, #402060 0%, rgba(64,32,96,0) 76%),
+      radial-gradient(50% 90% at 55% 100%, #341955 0%, rgba(52,25,85,0) 78%),
+      radial-gradient(45% 85% at 88% 100%, #402060 0%, rgba(64,32,96,0) 76%),
+      radial-gradient(70% 30% at 50% 96%, rgba(255,200,240,.14) 0%, rgba(255,200,240,0) 78%);
     filter:blur(2px);
   }
   .firefly{
@@ -368,19 +349,16 @@
     100%{transform:translate(0,0) rotate(0deg);}
   }
 
-  /* drifting atmospheric mist across the meadow — soft rainbow haze */
+  /* drifting atmospheric mist across the meadow — soft, subtle haze */
   .garden-mist{position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
-  .garden-mist::before, .garden-mist::after{
-    content:''; position:absolute; width:160%; height:220px; left:-30%; top:14%;
-    background:radial-gradient(ellipse at center, rgba(255,210,245,.14), transparent 70%);
+  .garden-mist::before{
+    content:''; position:absolute; width:160%; height:220px; left:-30%; top:30%;
+    background:radial-gradient(ellipse at center, rgba(255,210,245,.08), transparent 70%);
     filter:blur(16px);
-    animation:mist-drift 28s ease-in-out infinite;
-  }
-  .garden-mist::after{
-    top:58%; animation-duration:36s; animation-direction:reverse;
-    background:radial-gradient(ellipse at center, rgba(190,220,255,.12), transparent 70%);
+    animation:mist-drift 30s ease-in-out infinite;
   }
   @keyframes mist-drift{0%,100%{transform:translateX(0);} 50%{transform:translateX(10%);}}
+
 
   /* bloom-burst particles: pollen motes rising from a freshly opened flower */
   .pollen{
@@ -408,7 +386,7 @@
   }
   .flower-plant{
     position:absolute; bottom:96px; display:flex; flex-direction:column; align-items:center;
-    cursor:pointer; z-index:2; transform:scale(var(--fscale,1)); transition:transform .3s ease;
+    cursor:pointer; z-index:2; transform:translateX(-50%) scale(var(--fscale,1)); transition:transform .3s ease;
   }
   .stem{width:2.5px; border-radius:2px; background:linear-gradient(180deg, rgba(140,220,170,0), #3c8f5f 40%, #235838); order:2;}
   .leaf{
@@ -524,7 +502,7 @@
   @keyframes bud-sway{0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);}}
   .flower-plant.bloomed .flower-head{ animation:bloom-sway 6s ease-in-out infinite; }
   @keyframes bloom-sway{0%,100%{transform:rotate(-1.5deg);}50%{transform:rotate(1.5deg);}}
-  .flower-plant:active{ transform:scale(var(--fscale,1)) translateY(2px); }
+  .flower-plant:active{ transform:translateX(-50%) scale(var(--fscale,1)) translateY(2px); }
   .flower-plant::after{
     content:''; position:absolute; bottom:-4px; left:50%;
     width:76px; height:24px; border-radius:50%;
@@ -619,6 +597,54 @@
     background:rgba(0,0,0,.5); color:var(--gold); padding:6px 14px; border-radius:999px;
     border:1px solid rgba(242,193,78,.3);
   }
+
+  /* ---------- back button (shown on section screens) ---------- */
+  .back-btn{
+    position:absolute; top:16px; left:16px; z-index:20;
+    display:flex; align-items:center; justify-content:center;
+    width:36px; height:36px; border-radius:50%; padding:0;
+    font-family:'Jost',sans-serif; font-size:18px; font-weight:500; line-height:1; color:var(--mist);
+    background:rgba(18,8,33,.5); border:1px solid rgba(244,233,255,.25); cursor:pointer;
+    backdrop-filter:blur(4px); transition:background .2s ease, transform .2s ease;
+  }
+  .back-btn:active{transform:scale(.9);}
+  .back-btn:hover{background:rgba(18,8,33,.75);}
+
+  /* ---------- hub (home base): sections + tonight's participants ---------- */
+  #screen-hub{justify-content:flex-start; padding:56px 26px 40px; overflow-y:auto;}
+  .hub-match-strip{
+    margin-top:6px; padding:10px 18px; border-radius:999px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(244,233,255,.2);
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:var(--mist);
+  }
+  .hub-sections{
+    width:100%; max-width:420px; margin:26px auto 6px;
+    display:grid; grid-template-columns:1fr 1fr; gap:12px;
+  }
+  .hub-card{
+    grid-column:span 2;
+    display:flex; align-items:center; gap:14px; text-align:left;
+    padding:16px 18px; border-radius:18px; cursor:pointer;
+    background:rgba(255,255,255,.06); border:1px solid rgba(244,233,255,.18);
+    transition:transform .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .hub-card:active{transform:scale(.97);}
+  .hub-card:hover{background:rgba(255,255,255,.1); border-color:rgba(242,193,78,.4);}
+  .hub-card-icon{
+    width:44px; height:44px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+    background:conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
+  }
+  .hub-card-title{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px; color:var(--mist);}
+  .hub-card-sub{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; text-transform:uppercase;}
+  .hub-section-label{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--dim); margin:30px 0 14px; text-align:center; width:100%;
+  }
+  .hub-roster{
+    width:100%; max-width:420px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
+    padding:4px;
+  }
 </style>
 </head>
 <body>
@@ -681,6 +707,7 @@
 
 <!-- DIGITAL LOUNGE -->
 <div class="screen" id="screen-lounge">
+  <button class="back-btn" id="btnBackFromLounge" aria-label="Back" style="display:none;">‹</button>
   <div class="lounge-content">
     <div class="eyebrow">The Digital Lounge</div>
     <div class="lounge-count" id="loungeCount">0</div>
@@ -718,11 +745,13 @@
   </div>
   <p class="sub" style="margin-top:18px;">Find your matching glow across the room.</p>
   <button class="btn" id="btnToGarden">Start Answering Questions →</button>
+  <button class="btn ghost" id="btnRevealToHub" style="margin-top:10px;">See All Sections</button>
 </div>
 
 
 <!-- GARDEN -->
 <div class="screen" id="screen-garden">
+  <button class="back-btn" id="btnBackFromGarden" aria-label="Back">‹</button>
   <div class="eyebrow">✦ The Enchanted Garden ✦</div>
   <h1 class="display" style="font-size:28px; margin-bottom:2px;">Tap a Blossom to Bloom</h1>
   <div class="sub">wander the moonlit meadow — every bloom opens a new question</div>
@@ -740,7 +769,8 @@
 
 <!-- AITA VOTE -->
 <div class="screen" id="screen-aita">
-  <div class="eyebrow">Reddit Roulette</div>
+  <button class="back-btn" id="btnBackFromAita" aria-label="Back">‹</button>
+  <div class="eyebrow">The Relationships Committee™</div>
   <h1 class="display" style="font-size:28px;">Cast Your Verdict</h1>
   <p class="sub">Listen to the story, then tap your call.</p>
   <div class="aita-buttons">
@@ -754,6 +784,29 @@
   <button class="btn ghost" id="btnChangeVote" style="border-color:rgba(255,255,255,.5); color:#fff;">change my vote</button>
 </div>
 
+<!-- HUB: home base with every section + tonight's participants -->
+<div class="screen" id="screen-hub">
+  <div class="eyebrow">✦ Speaking Club ✦</div>
+  <h1 class="display" style="font-size:32px;">Where to next?</h1>
+  <div class="hub-match-strip" id="hubMatchStrip" style="display:none;"></div>
+  <div class="hub-sections">
+    <div class="hub-card" id="hubCardGarden">
+      <div class="hub-card-icon">🌸</div>
+      <div><div class="hub-card-title">The Enchanted Garden</div><div class="hub-card-sub">bloom a question</div></div>
+    </div>
+    <div class="hub-card" id="hubCardAita">
+      <div class="hub-card-icon">⚖️</div>
+      <div><div class="hub-card-title">Relationships Committee™</div><div class="hub-card-sub">cast tonight's verdict</div></div>
+    </div>
+    <div class="hub-card" id="hubCardLounge">
+      <div class="hub-card-icon">🐰</div>
+      <div><div class="hub-card-title">Digital Lounge</div><div class="hub-card-sub">roster &amp; mini-game</div></div>
+    </div>
+  </div>
+  <div class="hub-section-label">Tonight's Roster</div>
+  <div class="hub-roster" id="hubRosterGrid"></div>
+</div>
+
 <!-- HOST DASHBOARD -->
 <div class="screen" id="screen-host">
   <div class="eyebrow">Host Console</div>
@@ -762,15 +815,15 @@
   <button class="btn" id="btnMatch" style="align-self:center;">Match Pairs</button>
   <button class="btn ghost" id="btnResetEvent" style="align-self:center;">Reset Event</button>
 
-  <div class="host-section-label">AITA Voting</div>
+  <div class="host-section-label">Relationships Committee™</div>
   <div class="aita-toggle-row">
-    <span>Enable AITA voting for this event</span>
+    <span>Enable Relationships Committee™ voting for this event</span>
     <label class="switch">
       <input type="checkbox" id="toggleAitaEnabled" checked>
       <span class="switch-slider"></span>
     </label>
   </div>
-  <button class="btn" id="btnStartAita" style="align-self:center;">Start AITA Vote</button>
+  <button class="btn" id="btnStartAita" style="align-self:center;">Convene the Committee</button>
   <div class="aita-tally" id="aitaTally">
     <div class="aita-tally-bar">
       <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
@@ -965,6 +1018,7 @@ document.getElementById('btnJoin').addEventListener('click', ()=>{
 /* ---------- lounge ---------- */
 function enterLounge(){
   show('screen-lounge');
+  document.getElementById('btnBackFromLounge').style.display = 'none';
   listenRoster();
   listenPhase();
   startBunnyGame();
@@ -974,14 +1028,20 @@ function listenRoster(){
     const data = snap.val() || {};
     const guests = Object.values(data);
     document.getElementById('loungeCount').textContent = guests.length;
-    const grid = document.getElementById('rosterGrid');
-    grid.innerHTML='';
-    guests.sort((a,b)=>a.joinedAt-b.joinedAt).forEach(g=>{
-      const card = document.createElement('div');
-      card.className='guest-card';
-      card.innerHTML = `<div class="guest-avatar">${g.avatar}</div><div class="guest-name">${escapeHtml(g.name)}</div>`;
-      grid.appendChild(card);
-    });
+    const sorted = guests.sort((a,b)=>a.joinedAt-b.joinedAt);
+    const renderInto = (gridId)=>{
+      const grid = document.getElementById(gridId);
+      if(!grid) return;
+      grid.innerHTML='';
+      sorted.forEach(g=>{
+        const card = document.createElement('div');
+        card.className='guest-card';
+        card.innerHTML = `<div class="guest-avatar">${g.avatar}</div><div class="guest-name">${escapeHtml(g.name)}</div>`;
+        grid.appendChild(card);
+      });
+    };
+    renderInto('rosterGrid');
+    renderInto('hubRosterGrid');
     if(isHost) renderHostList(guests);
   });
 }
@@ -1066,6 +1126,51 @@ document.getElementById('btnToGarden').addEventListener('click', ()=>{
   stopBunnyGame();
   show('screen-garden');
   buildGarden();
+});
+
+/* ---------- hub: home base with every section + tonight's participants ---------- */
+function showHub(){
+  stopBunnyGame();
+  const strip = document.getElementById('hubMatchStrip');
+  const partnerName = document.getElementById('partnerName').textContent;
+  if(partnerName && partnerName !== '—'){
+    strip.textContent = `paired tonight with ${partnerName}`;
+    strip.style.display = 'block';
+  } else {
+    strip.style.display = 'none';
+  }
+  show('screen-hub');
+}
+document.getElementById('btnBackFromGarden').addEventListener('click', showHub);
+document.getElementById('btnBackFromAita').addEventListener('click', showHub);
+document.getElementById('btnBackFromLounge').addEventListener('click', showHub);
+document.getElementById('btnRevealToHub').addEventListener('click', showHub);
+
+document.getElementById('hubCardGarden').addEventListener('click', ()=>{
+  stopBunnyGame();
+  show('screen-garden');
+  buildGarden();
+});
+document.getElementById('hubCardAita').addEventListener('click', ()=>{
+  ref(`events/${EVENT_ID}/aita/enabled`).once('value').then(enabledSnap=>{
+    if(enabledSnap.val() === false){
+      alert('The Relationships Committee™ is not in session tonight — ask your host to enable it.');
+      return;
+    }
+    ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
+      const round = snap.val();
+      if(!round){
+        alert('No vote is live right now — check back once your host starts one!');
+        return;
+      }
+      enterAitaRound(round);
+    });
+  });
+});
+document.getElementById('hubCardLounge').addEventListener('click', ()=>{
+  show('screen-lounge');
+  document.getElementById('btnBackFromLounge').style.display = 'flex';
+  startBunnyGame();
 });
 
 /* ---------- bunny-hop mini game ---------- */
@@ -1235,9 +1340,9 @@ function buildGarden(){
   QUESTIONS.forEach((q, i) => {
     const col = i % cols;
     const row = Math.floor(i / cols);
-    const jitterL = (seeded(i * 2.3) - 0.5) * 20;
+    const jitterL = (seeded(i * 2.3) - 0.5) * 14;
     const jitterB = (seeded(i * 4.1) - 0.5) * 44;
-    const left = Math.min(90, Math.max(6, (col + 0.5) * (100 / cols) + jitterL));
+    const left = Math.min(87, Math.max(13, (col + 0.5) * (100 / cols) + jitterL));
     const bottom = 56 + row * rowH + jitterB;
     const stemH = 62 + seeded(i * 6.7) * 48;
     const scale = (0.8 + seeded(i * 8.3) * 0.34).toFixed(2);
@@ -1449,7 +1554,7 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
 
 /* ---------- AITA voting (host) ---------- */
 document.getElementById('btnStartAita').addEventListener('click', ()=>{
-  if(!document.getElementById('toggleAitaEnabled').checked){ alert('Turn on AITA voting above first.'); return; }
+  if(!document.getElementById('toggleAitaEnabled').checked){ alert('Turn on the Relationships Committee™ above first.'); return; }
   const round = String(Date.now());
   ref(`events/${EVENT_ID}/aita/round`).set(round);
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
