@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Relationships | Speaking Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#120821;
+    --twilight:#341251;
+    --magenta:#7c2f6e;
+    --rose:#d94f8c;
+    --gold:#f2c14e;
+    --mist:#f4e9ff;
+    --dim:#b9a3d1;
+    --vh:100vh;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;background:var(--ink);overflow:hidden;}
+  body{
+    font-family:'Jost',sans-serif;
+    color:var(--mist);
+    position:relative;
+    width:100vw;height:var(--vh);
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  .eyebrow{
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    color:var(--gold);
+    opacity:.85;
+  }
+
+  .sky{
+    position:fixed; inset:0;
+    background:
+      radial-gradient(120% 90% at 50% -10%, #4a1a63 0%, transparent 55%),
+      linear-gradient(200deg, #2a0e3f 0%, #401450 35%, #7c2f6e 68%, #b8447e 100%);
+    overflow:hidden;
+    z-index:0;
+  }
+  .stars{position:absolute; inset:0; background-image:
+      radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,.8), transparent),
+      radial-gradient(1.5px 1.5px at 70% 20%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1.5px 1.5px at 85% 60%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1.5px 1.5px at 10% 80%, rgba(255,255,255,.5), transparent);
+    background-repeat:repeat; background-size:280px 280px;
+    opacity:.8;
+  }
+  .lantern{
+    position:absolute; bottom:-40px;
+    width:26px; height:34px; border-radius:50% 50% 42% 42%;
+    background:radial-gradient(circle at 50% 35%, #ffe6a8, var(--gold) 60%, rgba(242,193,78,0) 75%);
+    box-shadow:0 0 18px 6px rgba(242,193,78,.55);
+    opacity:0; animation:float-up linear infinite;
+  }
+  .lantern::after{content:'';position:absolute; top:-8px; left:50%; transform:translateX(-50%); width:2px; height:8px; background:rgba(255,230,168,.6);}
+  @keyframes float-up{
+    0%{opacity:0; transform:translateY(0) translateX(0);}
+    8%{opacity:.85;}
+    92%{opacity:.6;}
+    100%{opacity:0; transform:translateY(-115vh) translateX(18px);}
+  }
+
+  .screen{
+    position:fixed; inset:0; z-index:2;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:32px 26px; text-align:center;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .7s ease;
+  }
+  .screen.active{opacity:1; visibility:visible; pointer-events:auto;}
+
+  /* ---------- CLOUDS (real cloud silhouettes via SVG) ---------- */
+  #screen-clouds{z-index:5; background:var(--ink); overflow:hidden; padding:0;}
+  #cloudsSvg{position:absolute; inset:0; width:100%; height:100%;}
+  .cloud-g{
+    transform-box:fill-box; transform-origin:center;
+    animation:cloud-drift 10s ease-in-out infinite;
+    transition:transform 2.6s cubic-bezier(.4,0,.2,1), opacity 2.2s ease .1s, filter 2.6s ease;
+  }
+  .cloud-g-back{ fill:#d9c9f0; filter:blur(9px); opacity:.9; animation-duration:12s; }
+  .cloud-g-front{ fill:#fbf6ff; filter:blur(2.5px); animation-duration:8s; animation-direction:reverse; }
+  @keyframes cloud-drift{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-1.2%,0.8%) scale(1.015);}
+  }
+  .cloud-g.dissolve{ animation:none; }
+  .cloud-g-back.dissolve{ transform:scale(1.6) translateY(-8%); opacity:0; filter:blur(55px); }
+  .cloud-g-front.dissolve{ transform:scale(1.4) translateY(-6%); opacity:0; filter:blur(40px); transition-delay:.22s,.3s,.22s; }
+  .cloud-label{
+    position:absolute; left:0; right:0; bottom:14vh; z-index:6; color:var(--twilight);
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px;
+    letter-spacing:.05em; text-align:center;
+    animation:pulse-fade 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse-fade{0%,100%{opacity:.55;}50%{opacity:1;}}
+
+  /* ---------- shared UI atoms ---------- */
+  .display{font-family:'Cormorant Garamond',serif; font-weight:500; line-height:1.05;}
+  h1.display{font-size:44px; margin:14px 0 6px;}
+  .sub{color:var(--dim); font-size:15px; max-width:320px; margin:0 auto; line-height:1.5;}
+
+  .host-frame{
+    width:132px; height:132px; border-radius:50%;
+    margin:0 auto 18px;
+    background:conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
+    padding:3px;
+    box-shadow:0 0 40px rgba(217,79,140,.45);
+  }
+  .host-frame-inner{
+    width:100%; height:100%; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #5a2360, #2a0e3f 75%);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:52px; color:var(--mist);
+  }
+
+  /* ---------- title splash (first visit only) ---------- */
+  #screen-title{cursor:pointer;}
+  .title-kicker{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.32em; text-transform:uppercase;
+    color:var(--dim); opacity:0; animation:title-fade-in .9s ease forwards .15s;
+  }
+  .title-main{
+    font-size:15vw; max-font-size:64px; line-height:.98; margin:14px 0 10px;
+    letter-spacing:.02em;
+    background:linear-gradient(120deg, var(--gold), #ffdf94 45%, var(--rose));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    opacity:0; transform:translateY(10px); animation:title-fade-in 1s ease forwards .45s;
+  }
+  .title-sub{
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.4em; text-transform:uppercase;
+    color:var(--mist); opacity:0; animation:title-fade-in .9s ease forwards .85s;
+  }
+  .title-tap{
+    margin-top:38px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px;
+    color:var(--dim); opacity:0; animation:title-fade-in 1s ease forwards 1.6s, pulse-fade 1.8s ease-in-out infinite 1.6s;
+  }
+  @keyframes title-fade-in{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- Sasha's greeting bubble ---------- */
+  .greeting-bubble{
+    position:relative; margin-top:16px; padding:20px 22px; max-width:320px;
+    background:rgba(255,255,255,.07); border:1px solid rgba(244,233,255,.2);
+    border-radius:20px 20px 20px 6px; text-align:left;
+  }
+  .greeting-bubble p{
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px; line-height:1.55;
+    color:var(--mist); margin:0 0 10px;
+  }
+  .greeting-bubble p:last-child{margin-bottom:0;}
+  .greeting-sign{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.15em; text-transform:uppercase;
+    color:var(--gold); margin-top:2px;
+  }
+
+  .btn{
+    font-family:'Jost',sans-serif; font-weight:500; font-size:14.5px; letter-spacing:.03em;
+    color:var(--ink); background:linear-gradient(120deg,var(--gold),#ffdf94);
+    border:none; border-radius:999px; padding:15px 34px;
+    cursor:pointer; box-shadow:0 6px 24px rgba(242,193,78,.35);
+    transition:transform .25s ease, box-shadow .25s ease;
+    margin-top:22px;
+  }
+  .btn:active{transform:scale(.96);}
+  .btn.ghost{
+    background:transparent; color:var(--mist); border:1px solid rgba(244,233,255,.35);
+    box-shadow:none;
+  }
+
+  .field{
+    width:100%; max-width:320px; text-align:left; margin-top:16px;
+  }
+  .field label{display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-bottom:6px; font-family:'Space Mono',monospace;}
+  .field input, .field select{
+    width:100%; padding:13px 15px; border-radius:12px; border:1px solid rgba(244,233,255,.25);
+    background:rgba(255,255,255,.06); color:var(--mist); font-family:'Jost',sans-serif; font-size:15px;
+    outline:none; transition:border-color .2s ease, background .2s ease;
+  }
+  .field input:focus, .field select:focus{border-color:var(--gold); background:rgba(255,255,255,.1);}
+  .field input::placeholder{color:rgba(244,233,255,.4);}
+  .field select option{background:#2a0e3f; color:var(--mist);}
+
+  .avatar-grid{display:flex; gap:12px; margin-top:8px; justify-content:center; flex-wrap:wrap; max-width:320px;}
+  .avatar-choice{
+    width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:22px; background:rgba(255,255,255,.06); border:1.5px solid rgba(244,233,255,.2);
+    cursor:pointer; transition:all .2s ease;
+  }
+  .avatar-choice.picked{border-color:var(--gold); background:rgba(242,193,78,.18); box-shadow:0 0 16px rgba(242,193,78,.4); transform:scale(1.08);}
+
+  /* ---------- lounge ---------- */
+  #screen-lounge{justify-content:flex-start; padding-top:64px; overflow:hidden;}
+  .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:200px;}
+  .lounge-count{font-family:'Cormorant Garamond',serif; font-size:56px; font-style:italic; margin:2px 0;}
+  .roster{
+    width:100%; max-width:420px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
+    margin-top:28px; overflow-y:auto; max-height:40vh; padding:4px;
+  }
+  .guest-card{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    animation:pop-in .5s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes pop-in{from{opacity:0; transform:scale(.5) translateY(10px);} to{opacity:1; transform:scale(1) translateY(0);}}
+  .guest-avatar{
+    width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:20px; background:rgba(255,255,255,.07); border:1px solid rgba(244,233,255,.25);
+  }
+  .guest-name{font-size:11px; color:var(--dim); max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .waiting-note{margin-top:26px; font-size:13px; color:var(--dim); font-style:italic; font-family:'Cormorant Garamond',serif; font-size:17px;}
+
+  /* ---------- lounge ground: simple, uncluttered strip ---------- */
+  .lounge-ground{
+    position:absolute; left:0; right:0; bottom:0; height:190px; z-index:0;
+    pointer-events:none; overflow:hidden;
+  }
+  .ground-sky-fade{
+    position:absolute; inset:0; bottom:auto; height:50px;
+    background:linear-gradient(180deg, rgba(18,8,33,0), rgba(15,10,25,.3));
+  }
+  .ground-grass{
+    position:absolute; left:0; right:0; bottom:0; height:120px;
+    background:linear-gradient(180deg, #2d5f3c 0%, #20492c 55%, #163420 100%);
+  }
+  .ground-grass::after{
+    content:''; position:absolute; inset:0; top:auto; height:16px;
+    background-image:repeating-linear-gradient(100deg, rgba(90,180,110,.4) 0 2px, transparent 2px 8px);
+    opacity:.5;
+  }
+
+  /* ---------- bunny-hop mini game ---------- */
+  .lounge-game{
+    position:absolute; left:0; right:0; bottom:0; height:190px; z-index:1;
+  }
+  .game-instructions{
+    position:absolute; top:6px; left:16px; z-index:3; max-width:60%;
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.06em;
+    color:var(--dim); pointer-events:none;
+  }
+  .game-score{
+    position:absolute; top:8px; right:16px; z-index:3;
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.08em;
+    color:var(--gold); background:rgba(0,0,0,.35); padding:4px 10px; border-radius:999px;
+    pointer-events:none;
+  }
+  .game-track{
+    position:absolute; inset:0; cursor:pointer; -webkit-tap-highlight-color:transparent;
+  }
+  .game-bunny{
+    position:absolute; left:34px; bottom:56px; width:36px; height:36px; z-index:2;
+    display:flex; align-items:center; justify-content:center;
+    transform:translateY(0); will-change:transform;
+    filter:drop-shadow(0 6px 6px rgba(0,0,0,.4));
+  }
+  .game-bunny img{width:100%; height:100%; object-fit:contain; display:block;}
+  .game-bunny-fallback{font-size:30px; display:none;}
+  .obstacle{
+    position:absolute; bottom:52px; font-size:22px; z-index:2;
+    filter:drop-shadow(0 4px 5px rgba(0,0,0,.4));
+  }
+  .game-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:12px; text-align:center; z-index:4; padding:0 24px;
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; color:var(--mist);
+    background:rgba(8,4,16,.4);
+    transition:opacity .3s ease;
+  }
+  .game-overlay.hidden{opacity:0; pointer-events:none;}
+  .game-overlay .btn{margin-top:0; padding:10px 28px; font-size:13px;}
+  .game-overlay-note{
+    font-family:'Space Mono',monospace; font-style:normal; font-size:10.5px; letter-spacing:.06em; color:var(--gold);
+  }
+
+  /* ---------- reveal ---------- */
+  .glow-ring{
+    position:fixed; inset:0; pointer-events:none; z-index:1;
+    box-shadow: inset 0 0 0 0 transparent;
+    transition:box-shadow 1s ease;
+  }
+  .partner-card{
+    margin-top:26px; padding:22px 30px; border-radius:20px;
+    background:rgba(255,255,255,.06); border:2px solid rgba(244,233,255,.2);
+    transition:border-color .4s ease;
+  }
+  .partner-name{font-family:'Cormorant Garamond',serif; font-size:32px; font-style:italic;}
+  .color-chip{width:14px; height:14px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle;}
+
+  /* ---------- garden scene ---------- */
+  #screen-garden{
+    justify-content:flex-start; padding:40px 0 0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    background:
+      radial-gradient(130% 55% at 50% 0%, rgba(120,255,190,.12) 0%, transparent 55%),
+      linear-gradient(180deg, #081410 0%, #0b1f16 35%, #0f2a1c 70%, #0a1712 100%);
+  }
+  #screen-garden::before{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      radial-gradient(1.3px 1.3px at 12% 15%, rgba(255,255,255,.55), transparent),
+      radial-gradient(1px 1px at 42% 8%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1.4px 1.4px at 68% 22%, rgba(255,255,255,.45), transparent),
+      radial-gradient(1px 1px at 88% 12%, rgba(255,255,255,.35), transparent),
+      radial-gradient(1.2px 1.2px at 25% 40%, rgba(255,255,255,.3), transparent);
+    background-repeat:repeat; background-size:320px 320px; opacity:.55;
+  }
+  #screen-garden .eyebrow, #screen-garden h1, #screen-garden .sub{padding:0 26px;}
+  .garden-scene{position:relative; width:calc(100% - 28px); margin:20px auto 0; z-index:1;}
+  .garden-bed{
+    position:relative; overflow:hidden; border-radius:30px;
+    background:
+      radial-gradient(160% 55% at 30% 4%, rgba(120,255,190,.14) 0%, transparent 55%),
+      radial-gradient(130% 50% at 78% 40%, rgba(217,79,140,.10) 0%, transparent 60%),
+      linear-gradient(180deg, #0d2417 0%, #0a1a12 45%, #06110c 80%, #040b08 100%);
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.5),
+      inset 0 0 0 1px rgba(180,255,210,.1),
+      inset 0 40px 60px -30px rgba(120,255,190,.15);
+  }
+  .garden-bed::after{
+    content:''; position:absolute; inset:0; pointer-events:none; opacity:.55; mix-blend-mode:screen;
+    background-image:
+      radial-gradient(1.6px 10px at 8px 6px, rgba(90,220,150,.32), transparent 72%),
+      radial-gradient(1.6px 8px at 24px 20px, rgba(90,220,150,.22), transparent 72%),
+      radial-gradient(1.6px 11px at 34px 34px, rgba(90,220,150,.26), transparent 72%);
+    background-repeat:repeat; background-size:46px 46px;
+  }
+  .garden-vignette{position:absolute; inset:0; pointer-events:none; z-index:5; border-radius:30px;
+    box-shadow:inset 0 40px 50px -20px rgba(4,10,8,.9), inset 0 -60px 70px -30px rgba(4,10,8,.85);
+  }
+  .garden-fade-top{position:absolute; top:0; left:0; right:0; height:70px; z-index:4; pointer-events:none;
+    background:linear-gradient(180deg, #0d2417, rgba(13,36,23,0));
+  }
+  .moonglow{position:absolute; top:-40px; left:50%; transform:translateX(-50%); width:240px; height:240px; border-radius:50%;
+    background:radial-gradient(circle, rgba(244,233,255,.16), rgba(244,233,255,0) 70%); pointer-events:none; z-index:1;}
+  .hill{
+    position:absolute; left:-15%; right:-15%; bottom:-20px; height:150px;
+    background-image:
+      radial-gradient(42% 80% at 12% 100%, #1c4a30 0%, rgba(28,74,48,0) 74%),
+      radial-gradient(48% 90% at 40% 100%, #245736 0%, rgba(36,87,54,0) 76%),
+      radial-gradient(45% 85% at 68% 100%, #1c4a30 0%, rgba(28,74,48,0) 74%),
+      radial-gradient(40% 75% at 94% 100%, #245736 0%, rgba(36,87,54,0) 72%),
+      radial-gradient(70% 34% at 50% 94%, rgba(120,255,190,.18) 0%, rgba(120,255,190,0) 76%);
+    filter:blur(2px);
+  }
+  .firefly{
+    position:absolute; width:4px; height:4px; border-radius:50%;
+    background:#eaffb0; box-shadow:0 0 8px 3px rgba(234,255,176,.85);
+    animation:firefly-float ease-in-out infinite;
+  }
+  @keyframes firefly-float{
+    0%,100%{transform:translate(0,0); opacity:.3;}
+    50%{transform:translate(8px,-14px); opacity:1;}
+  }
+
+  /* drifting atmospheric mist across the meadow */
+  .garden-mist{position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
+  .garden-mist::before, .garden-mist::after{
+    content:''; position:absolute; width:160%; height:220px; left:-30%; top:14%;
+    background:radial-gradient(ellipse at center, rgba(200,255,230,.11), transparent 70%);
+    filter:blur(16px);
+    animation:mist-drift 28s ease-in-out infinite;
+  }
+  .garden-mist::after{
+    top:58%; animation-duration:36s; animation-direction:reverse;
+    background:radial-gradient(ellipse at center, rgba(180,220,255,.09), transparent 70%);
+  }
+  @keyframes mist-drift{0%,100%{transform:translateX(0);} 50%{transform:translateX(10%);}}
+
+  /* bloom-burst particles: pollen motes rising from a freshly opened flower */
+  .pollen{
+    position:absolute; top:8px; left:50%; width:5px; height:5px; border-radius:50%;
+    background:currentColor; box-shadow:0 0 10px 3px currentColor;
+    opacity:0; pointer-events:none; z-index:3;
+    animation:pollen-rise 1.5s ease-out forwards;
+  }
+  @keyframes pollen-rise{
+    0%{opacity:0; transform:translate(-50%,0) scale(.4);}
+    18%{opacity:1;}
+    100%{opacity:0; transform:translate(calc(-50% + var(--dx,0px)), -68px) scale(1);}
+  }
+  /* sparks: nearby fireflies drawn toward a freshly opened flower */
+  .spark{
+    position:absolute; width:5px; height:5px; border-radius:50%;
+    background:currentColor; box-shadow:0 0 14px 5px currentColor;
+    opacity:0; pointer-events:none; z-index:3;
+    animation:spark-drift 2.6s ease-out forwards;
+  }
+  @keyframes spark-drift{
+    0%{opacity:0; transform:translate(0,0) scale(.5);}
+    14%{opacity:.95;}
+    100%{opacity:0; transform:translate(var(--sx,10px), calc(-1 * var(--sy,60px))) scale(.8);}
+  }
+  .flower-plant{
+    position:absolute; bottom:96px; display:flex; flex-direction:column; align-items:center;
+    cursor:pointer; z-index:2; transform:scale(var(--fscale,1)); transition:transform .3s ease;
+  }
+  .stem{width:2.5px; border-radius:2px; background:linear-gradient(180deg, rgba(90,200,140,0), #2f6b4a 40%, #1e4a30); order:2;}
+  .leaf{
+    position:absolute; width:15px; height:7px; background:#2f6b4a; border-radius:0 100% 0 100%;
+    opacity:.8; z-index:1;
+  }
+  .flower-head{position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center; order:1;}
+  .bud{
+    width:16px; height:26px; border-radius:50% 50% 48% 48% / 62% 62% 38% 38%;
+    background-color:currentColor; opacity:.9;
+    box-shadow:0 0 14px currentColor;
+    transition:transform .5s ease, opacity .4s ease;
+  }
+  .flower-plant.bloomed .bud{ transform:scale(0.1) translateY(8px); opacity:0; }
+  .bloom{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    opacity:0; transform:scale(.25) rotate(-20deg);
+    transition:transform .65s cubic-bezier(.22,1.6,.4,1), opacity .35s ease;
+    pointer-events:none;
+  }
+  .flower-plant.bloomed .bloom{ opacity:1; transform:scale(1) rotate(0deg); }
+  .petal{
+    position:absolute; width:14px; height:26px; top:6px; left:50%; margin-left:-7px;
+    border-radius:50% 50% 50% 50% / 72% 72% 28% 28%;
+    background-color:currentColor; opacity:.92;
+    transform-origin:50% 100%;
+    box-shadow:0 0 10px currentColor;
+  }
+  .petal:nth-child(1){transform:rotate(0deg);}
+  .petal:nth-child(2){transform:rotate(60deg);}
+  .petal:nth-child(3){transform:rotate(120deg);}
+  .petal:nth-child(4){transform:rotate(180deg);}
+  .petal:nth-child(5){transform:rotate(240deg);}
+  .petal:nth-child(6){transform:rotate(300deg);}
+  .bloom-center{
+    position:absolute; width:13px; height:13px; border-radius:50%; z-index:2;
+    background:radial-gradient(circle at 35% 30%,#fffef2,#f2c14e 70%);
+    box-shadow:0 0 14px 5px rgba(255,240,180,.75);
+  }
+  .flower-plant.bloomed .petal, .flower-plant.bloomed .petal-star, .flower-plant.bloomed .bell{
+    animation:petal-breathe 3.4s ease-in-out infinite;
+  }
+  @keyframes petal-breathe{0%,100%{opacity:.82; filter:brightness(1);} 50%{opacity:1; filter:brightness(1.18);}}
+
+  /* species: star bloom — narrow pointed petals */
+  .petal-star{
+    position:absolute; width:9px; height:30px; top:2px; left:50%; margin-left:-4.5px;
+    background-color:currentColor; opacity:.92;
+    clip-path:polygon(50% 0%, 100% 55%, 62% 100%, 38% 100%, 0% 55%);
+    transform-origin:50% 100%;
+    box-shadow:0 0 10px currentColor;
+  }
+  .petal-star:nth-child(1){transform:rotate(0deg);}
+  .petal-star:nth-child(2){transform:rotate(72deg);}
+  .petal-star:nth-child(3){transform:rotate(144deg);}
+  .petal-star:nth-child(4){transform:rotate(216deg);}
+  .petal-star:nth-child(5){transform:rotate(288deg);}
+
+  /* species: bell cluster — three drooping bioluminescent bells */
+  .bloom-bell{ align-items:flex-start; }
+  .bell{
+    position:absolute; width:13px; height:19px; border-radius:0 0 50% 50% / 0 0 65% 65%;
+    background:linear-gradient(180deg, currentColor, rgba(255,255,255,.35));
+    opacity:.92; box-shadow:0 4px 12px -2px currentColor;
+  }
+  .bell::after{
+    content:''; position:absolute; left:50%; bottom:2px; width:4px; height:4px; margin-left:-2px;
+    border-radius:50%; background:#fffef2; box-shadow:0 0 6px 2px rgba(255,255,255,.8);
+  }
+  .bell:nth-child(1){ top:2px; left:6px; transform:rotate(-14deg) scale(.92); }
+  .bell:nth-child(2){ top:-4px; left:24px; transform:rotate(4deg) scale(1.08); }
+  .bell:nth-child(3){ top:4px; left:40px; transform:rotate(16deg) scale(.86); }
+
+  .flower-plant:not(.bloomed) .flower-head{ animation:bud-sway 4.5s ease-in-out infinite; }
+  @keyframes bud-sway{0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);}}
+  .flower-plant.bloomed .flower-head{ animation:bloom-sway 6s ease-in-out infinite; }
+  @keyframes bloom-sway{0%,100%{transform:rotate(-1.5deg);}50%{transform:rotate(1.5deg);}}
+  .flower-plant:active{ transform:scale(var(--fscale,1)) translateY(2px); }
+  .flower-plant::after{
+    content:''; position:absolute; bottom:-4px; left:50%;
+    width:76px; height:24px; border-radius:50%;
+    background:radial-gradient(ellipse at center, currentColor, transparent 72%);
+    opacity:0; filter:blur(7px); z-index:-1; pointer-events:none;
+    transform:translate(-50%,50%) scale(.3);
+    transition:transform .7s cubic-bezier(.22,1.6,.4,1), opacity .6s ease;
+  }
+  .flower-plant.bloomed::after{ opacity:.5; transform:translate(-50%,50%) scale(1); }
+
+  .question-panel{
+    position:sticky; bottom:0; left:0; right:0; z-index:8;
+    background:linear-gradient(180deg, rgba(18,8,33,0) 0%, rgba(18,8,33,.9) 30%, rgba(18,8,33,.98) 100%);
+    padding:30px 26px 24px; text-align:center;
+  }
+  .question-eyebrow{font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; color:var(--gold); text-transform:uppercase;}
+  .question-text{
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:21px; line-height:1.42;
+    margin-top:8px; min-height:58px; opacity:1; transition:opacity .25s ease;
+  }
+  .question-text.swap{opacity:0;}
+
+  /* ---------- host dashboard ---------- */
+  #screen-host{align-items:stretch; text-align:left; padding:26px 22px; overflow-y:auto;}
+  .host-list{width:100%; max-width:440px; margin:0 auto; }
+  .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
+  .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
+  .host-meta{font-size:12px; color:var(--dim);}
+  .pair-tag{margin-left:auto; font-family:'Space Mono',monospace; font-size:10px; padding:4px 8px; border-radius:999px;}
+
+  /* ---------- AITA voting (guest) ---------- */
+  #screen-aita{padding:40px 26px;}
+  .aita-buttons{
+    display:flex; flex-direction:column; gap:16px; width:100%; max-width:340px; margin-top:34px;
+  }
+  .aita-btn{
+    border:none; border-radius:22px; padding:34px 18px; cursor:pointer;
+    font-family:'Jost',sans-serif; font-weight:600; font-size:19px; letter-spacing:.04em; color:#fff;
+    transition:transform .2s ease, box-shadow .2s ease;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  .aita-btn:active{transform:scale(.97);}
+  .aita-btn-red{background:linear-gradient(135deg,#ff4d5e,#c81f3a);}
+  .aita-btn-green{background:linear-gradient(135deg,#3ddc84,#1a9e57);}
+  .aita-btn-label{display:block; line-height:1.3;}
+
+  .aita-verdict-card{
+    position:fixed; inset:0; z-index:60; display:none;
+    flex-direction:column; align-items:center; justify-content:center; gap:26px;
+  }
+  .aita-verdict-card.aita-red{background:linear-gradient(160deg,#ff4d5e,#8f1229);}
+  .aita-verdict-card.aita-green{background:linear-gradient(160deg,#3ddc84,#0f6b38);}
+  .aita-verdict-text{
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
+    font-size:14vw; line-height:1.1; color:#fff; text-align:center; white-space:pre-line;
+    text-shadow:0 8px 30px rgba(0,0,0,.35);
+  }
+
+  /* ---------- host: AITA panel ---------- */
+  .host-section-label{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--dim); margin:30px 0 12px; text-align:center;
+  }
+  .aita-tally{display:none; flex-direction:column; gap:10px; align-items:center; width:100%; max-width:380px; margin:14px auto 0;}
+  .aita-tally-bar{width:100%; height:14px; border-radius:999px; overflow:hidden; display:flex; background:rgba(255,255,255,.08);}
+  .aita-tally-fill{height:100%; transition:width .3s ease; width:0;}
+  .aita-tally-red{background:#ff4d5e;}
+  .aita-tally-green{background:#3ddc84;}
+  .aita-tally-counts{display:flex; justify-content:space-between; width:100%; font-family:'Space Mono',monospace; font-size:11px; color:var(--dim);}
+  .aita-picked{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:18px; text-align:center; margin-top:8px; min-height:24px; color:var(--gold);}
+
+  .offline-badge{
+    position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:50;
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.05em;
+    background:rgba(0,0,0,.5); color:var(--gold); padding:6px 14px; border-radius:999px;
+    border:1px solid rgba(242,193,78,.3);
+  }
+</style>
+</head>
+<body>
+
+<div class="sky" id="sky">
+  <div class="stars"></div>
+</div>
+<div class="glow-ring" id="glowRing"></div>
+<div id="offlineBadge" class="offline-badge" style="display:none;">preview mode · connect firebase for live sync</div>
+
+<!-- CLOUD REVEAL -->
+<div class="screen active" id="screen-clouds" style="z-index:5;">
+  <svg id="cloudsSvg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <symbol id="cloudShape" viewBox="0 0 200 110">
+        <ellipse cx="100" cy="86" rx="96" ry="20"/>
+        <circle cx="42" cy="64" r="36"/>
+        <circle cx="88" cy="42" r="46"/>
+        <circle cx="144" cy="58" r="38"/>
+        <circle cx="114" cy="74" r="28"/>
+      </symbol>
+    </defs>
+    <g id="cloudBackG" class="cloud-g cloud-g-back">
+      <use href="#cloudShape" x="-50" y="70" width="270" height="145"/>
+      <use href="#cloudShape" x="160" y="20" width="310" height="165"/>
+      <use href="#cloudShape" x="40" y="370" width="290" height="155"/>
+      <use href="#cloudShape" x="190" y="510" width="270" height="145"/>
+      <use href="#cloudShape" x="-40" y="610" width="250" height="135"/>
+    </g>
+    <g id="cloudFrontG" class="cloud-g cloud-g-front">
+      <use href="#cloudShape" x="0" y="140" width="230" height="125"/>
+      <use href="#cloudShape" x="195" y="190" width="250" height="135"/>
+      <use href="#cloudShape" x="65" y="290" width="210" height="115"/>
+      <use href="#cloudShape" x="10" y="450" width="240" height="130"/>
+      <use href="#cloudShape" x="205" y="490" width="220" height="120"/>
+      <use href="#cloudShape" x="85" y="590" width="230" height="125"/>
+    </g>
+  </svg>
+  <div class="cloud-label" id="cloudLabel">gathering the night&hellip;</div>
+</div>
+
+<!-- TITLE SPLASH (first visit only) -->
+<div class="screen" id="screen-title">
+  <div class="title-kicker">You're invited to</div>
+  <h1 class="display title-main">RELATIONSHIPS</h1>
+  <div class="title-sub">• Speaking Club •</div>
+  <div class="title-tap">tap anywhere to continue</div>
+</div>
+
+<!-- WELCOME / SASHA'S GREETING -->
+<div class="screen" id="screen-welcome">
+  <div class="eyebrow">RELΛTIONSHIPS · Speaking Club</div>
+  <div class="host-frame"><div class="host-frame-inner">S</div></div>
+  <h1 class="display" id="welcomeHeadline" style="font-size:32px;">Hi, I'm Sasha</h1>
+  <div class="greeting-bubble">
+    <p id="welcomeSub">So glad you found your way in tonight. I'll be hosting — pop your name on the roster and I'll pair you up with someone lovely to talk to.</p>
+    <div class="greeting-sign">— Sasha, your host</div>
+  </div>
+  <button class="btn" id="btnToCheckin">Enter the Roster</button>
+  <button class="btn ghost" id="btnPreviewGarden" style="margin-top:10px;">Preview the Garden →</button>
+</div>
+
+<!-- CHECK-IN -->
+<div class="screen" id="screen-checkin">
+  <div class="eyebrow">VIP Check-In</div>
+  <h1 class="display" style="font-size:32px;">Add Yourself<br>to the Roster</h1>
+  <div class="field">
+    <label>Name</label>
+    <input type="text" id="inputName" placeholder="What should we call you?" maxlength="24">
+  </div>
+  <div class="field">
+    <label>Preferred pronouns</label>
+    <input type="text" id="inputPronouns" placeholder="she/her, they/them, he/him…" maxlength="20">
+  </div>
+  <div class="field">
+    <label>English level (optional)</label>
+    <select id="inputLevel">
+      <option value="">Prefer not to say</option>
+      <option value="Beginner">Beginner</option>
+      <option value="Intermediate">Intermediate</option>
+      <option value="Advanced">Advanced</option>
+      <option value="Fluent">Fluent</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Choose your avatar</label>
+    <div class="avatar-grid" id="avatarGrid"></div>
+  </div>
+  <button class="btn" id="btnJoin">Join the Lounge</button>
+</div>
+
+<!-- DIGITAL LOUNGE -->
+<div class="screen" id="screen-lounge">
+  <div class="lounge-content">
+    <div class="eyebrow">The Digital Lounge</div>
+    <div class="lounge-count" id="loungeCount">0</div>
+    <div class="sub">souls in the room right now</div>
+    <div class="roster" id="rosterGrid"></div>
+    <div class="waiting-note">The Host is gathering everyone before the pairing begins&hellip;</div>
+  </div>
+  <div class="lounge-ground" aria-hidden="true" id="loungeGround">
+    <div class="ground-sky-fade"></div>
+    <div class="ground-grass"></div>
+  </div>
+  <div class="lounge-game" id="loungeGame">
+    <div class="game-instructions">tap to hop over obstacles</div>
+    <div class="game-score" id="gameScore">0</div>
+    <div class="game-track" id="gameTrack">
+      <div class="game-bunny" id="gameBunny">
+        <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <span class="game-bunny-fallback">🐰</span>
+      </div>
+      <div class="game-overlay" id="gameOverlay">
+        <div>While you wait, help Sasha hop over the mushrooms &amp; rocks!</div>
+        <button class="btn" id="gameStartBtn">Start</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PARTNER REVEAL -->
+<div class="screen" id="screen-reveal">
+  <div class="eyebrow">The Pairing</div>
+  <h1 class="display" style="font-size:30px;" id="partnerHeadline">Your partner is</h1>
+  <div class="partner-card" id="partnerCard">
+    <div class="partner-name" id="partnerName">—</div>
+    <div class="host-meta" style="margin-top:8px;"><span class="color-chip" id="partnerChip"></span><span id="partnerColorLabel">your color</span></div>
+  </div>
+  <p class="sub" style="margin-top:18px;">Find your matching glow across the room.</p>
+  <button class="btn" id="btnToGarden">Enter the Garden</button>
+</div>
+
+
+<!-- GARDEN -->
+<div class="screen" id="screen-garden">
+  <div class="eyebrow">The Bioluminescent Garden</div>
+  <h1 class="display" style="font-size:28px; margin-bottom:2px;">Tap a Flower to Bloom</h1>
+  <div class="sub">wander the meadow — every bloom opens a new question</div>
+  <div class="garden-scene">
+    <div class="moonglow"></div>
+    <div class="garden-bed" id="gardenBed"></div>
+    <div class="garden-fade-top"></div>
+    <div class="garden-vignette"></div>
+  </div>
+  <div class="question-panel" id="questionPanel">
+    <div class="question-eyebrow" id="questionCounter">the meadow awaits</div>
+    <div class="question-text" id="questionText">Tap any glowing bud below to bloom your first question&hellip;</div>
+  </div>
+</div>
+
+<!-- AITA VOTE -->
+<div class="screen" id="screen-aita">
+  <div class="eyebrow">Reddit Roulette</div>
+  <h1 class="display" style="font-size:28px;">Cast Your Verdict</h1>
+  <p class="sub">Listen to the story, then tap your call.</p>
+  <div class="aita-buttons">
+    <button class="aita-btn aita-btn-red" id="btnVoteYTA"><span class="aita-btn-label">ASSHOLE</span></button>
+    <button class="aita-btn aita-btn-green" id="btnVoteNTA"><span class="aita-btn-label">NOT THE ASSHOLE</span></button>
+  </div>
+</div>
+<div class="aita-verdict-card" id="aitaVerdictCard">
+  <div class="aita-verdict-text" id="aitaVerdictText">ASSHOLE</div>
+  <p class="sub" style="color:rgba(255,255,255,.85);">hold your phone up so everyone can see</p>
+  <button class="btn ghost" id="btnChangeVote" style="border-color:rgba(255,255,255,.5); color:#fff;">change my vote</button>
+</div>
+
+<!-- HOST DASHBOARD -->
+<div class="screen" id="screen-host">
+  <div class="eyebrow">Host Console</div>
+  <h1 class="display" style="font-size:28px;">Tonight's Roster</h1>
+  <div class="host-list" id="hostList"></div>
+  <button class="btn" id="btnMatch" style="align-self:center;">Match Pairs</button>
+  <button class="btn ghost" id="btnResetEvent" style="align-self:center;">Reset Event</button>
+
+  <div class="host-section-label">AITA Voting</div>
+  <button class="btn" id="btnStartAita" style="align-self:center;">Start AITA Vote</button>
+  <div class="aita-tally" id="aitaTally">
+    <div class="aita-tally-bar">
+      <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
+      <div class="aita-tally-fill aita-tally-green" id="aitaTallyGreen"></div>
+    </div>
+    <div class="aita-tally-counts">
+      <span id="aitaCountYTA">0 asshole</span>
+      <span id="aitaCountNTA">0 not the asshole</span>
+    </div>
+    <button class="btn ghost" id="btnPickElaborate" style="align-self:center;">🎲 Pick someone to elaborate</button>
+    <div class="aita-picked" id="aitaPicked"></div>
+  </div>
+</div>
+
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script>
+/* =========================================================
+   SETUP — drop your Firebase Realtime Database config here.
+   Create a free project at https://console.firebase.google.com,
+   enable "Realtime Database" in test mode, and paste the config
+   object from Project Settings > Your apps > SDK setup.
+   Until you do, the site runs in local preview mode (synced
+   only across tabs in this same browser, not across devices).
+   ========================================================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyDv47HEwF9APQLLoLdJgHwdLHzoYfTawyQ",
+  authDomain: "relationships-d8119.firebaseapp.com",
+  databaseURL: "https://relationships-d8119-default-rtdb.firebaseio.com",
+  projectId: "relationships-d8119",
+  storageBucket: "relationships-d8119.firebasestorage.app",
+  messagingSenderId: "852389788989",
+  appId: "1:852389788989:web:6c79282e08c665b54dd954"
+};
+const EVENT_ID = "default";
+
+let db = null;
+let usingFirebase = false;
+try{
+  if(firebaseConfig.apiKey !== "YOUR_API_KEY"){
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    usingFirebase = true;
+  }
+}catch(e){ console.warn("Firebase init failed, falling back to preview mode.", e); }
+
+/* ---------- tiny local-preview backend (fallback) ----------
+   Mimics the same ref().on()/.set() surface using localStorage,
+   synced across tabs via the 'storage' event. Good enough to
+   test the whole flow solo before wiring real Firebase. */
+function localRef(path){
+  const key = "fsc:"+path;
+  return {
+    set(val){ localStorage.setItem(key, JSON.stringify(val)); window.dispatchEvent(new StorageEvent('storage',{key})); },
+    update(val){ const cur = JSON.parse(localStorage.getItem(key)||'{}'); this.set({...cur, ...val}); },
+    on(evt, cb){
+      const read = ()=>{ const raw = localStorage.getItem(key); cb({val:()=> raw?JSON.parse(raw):null}); };
+      read();
+      window.addEventListener('storage', (e)=>{ if(e.key===key) read(); });
+    },
+    once(evt){ const raw = localStorage.getItem(key); return Promise.resolve({val:()=> raw?JSON.parse(raw):null}); }
+  };
+}
+function ref(path){ return usingFirebase ? db.ref(path) : localRef(path); }
+
+if(!usingFirebase){ document.getElementById('offlineBadge').style.display='block'; }
+
+/* ---------- state & data ---------- */
+const AVATARS = ['✦','🏮','🌸','🌙','✧','🪻'];
+const PAIR_COLORS = ['#00f0ff','#39ff8f','#ffb347','#ff4fd8','#faff00','#7dff3f','#ff5f6d','#8f6bff'];
+const QUESTIONS = [
+  "What does feeling truly heard by someone look like for you?",
+  "Describe a moment when a small gesture meant more than any words could.",
+  "What's a boundary you've learned to set with more ease over time?",
+  "Tell your partner about a relationship — romantic or not — that shaped how you love.",
+  "What does trust get built from, in your experience?",
+  "Share a way you like to be comforted when you're struggling.",
+  "What's a disagreement that ended up teaching you something about yourself?",
+  "If love had a language only you spoke, what would one word in it mean?",
+  "Describe what \"showing up\" for someone looks like to you.",
+  "What's something you wish people asked before assuming?",
+  "Tell your partner about a compliment that changed how you saw yourself.",
+  "What helps you feel safe enough to be vulnerable with someone?",
+  "Describe the difference between being alone and being lonely, for you.",
+  "What's one thing you're still learning about connection?",
+  "If tonight's conversation could plant one seed, what would you want it to be?"
+];
+
+const CLUSTERS = [
+  ['#3ef5c4','#5ec8ff'],   /* cool teal-blue */
+  ['#ff4fd8','#f2c14e'],   /* magenta-gold */
+  ['#c78bff','#39d0ff'],   /* violet-cyan */
+  ['#ff8a5c','#7dff3f']    /* ember-lime */
+];
+function seeded(n){ const x = Math.sin(n*12.9898)*43758.5453; return x - Math.floor(x); }
+
+let me = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
+const isHost = new URLSearchParams(location.search).get('host') === '1';
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ---------- ambient lanterns ---------- */
+function spawnLanterns(){
+  const sky = document.getElementById('sky');
+  setInterval(()=>{
+    const l = document.createElement('div');
+    l.className='lantern';
+    l.style.left = (Math.random()*90+3)+'%';
+    l.style.animationDuration = (14+Math.random()*10)+'s';
+    l.style.width = l.style.height = (18+Math.random()*16)+'px';
+    sky.appendChild(l);
+    setTimeout(()=>l.remove(), 26000);
+  }, 1400);
+}
+spawnLanterns();
+
+/* ---------- cloud reveal ---------- */
+function previewGarden(){
+  document.getElementById('screen-clouds').style.display='none';
+  window.currentPairId = 'preview';
+  show('screen-garden');
+  buildGarden();
+}
+function showGreeting(){
+  if(me){
+    document.getElementById('welcomeHeadline').textContent = 'Welcome back, '+me.name;
+    document.getElementById('welcomeSub').textContent = "The garden remembers you. Step back into the roster.";
+    document.getElementById('btnToCheckin').textContent = 'Return to the Lounge';
+  }
+  show('screen-welcome');
+}
+
+let titleAdvanced = false;
+function advanceFromTitle(){
+  if(titleAdvanced) return;
+  titleAdvanced = true;
+  showGreeting();
+}
+
+window.addEventListener('load', ()=>{
+  const params = new URLSearchParams(location.search);
+  if(params.get('preview') === 'garden'){ previewGarden(); return; }
+  setTimeout(()=>{
+    document.getElementById('cloudBackG').classList.add('dissolve');
+    document.getElementById('cloudFrontG').classList.add('dissolve');
+    document.getElementById('cloudLabel').style.transition='opacity 1.2s ease';
+    document.getElementById('cloudLabel').style.opacity='0';
+  }, 1400);
+  setTimeout(()=>{
+    document.getElementById('screen-clouds').style.zIndex='1';
+    if(isHost){ show('screen-host'); initHost(); return; }
+    const seenTitle = localStorage.getItem('fsc_seen_title');
+    if(!seenTitle){
+      localStorage.setItem('fsc_seen_title', '1');
+      show('screen-title');
+      document.getElementById('screen-title').addEventListener('click', advanceFromTitle, {once:true});
+      setTimeout(advanceFromTitle, 3200);
+    } else {
+      showGreeting();
+    }
+  }, 2500);
+});
+
+document.getElementById('btnToCheckin').addEventListener('click', ()=>{
+  if(me){ enterLounge(); } else { show('screen-checkin'); }
+});
+document.getElementById('btnPreviewGarden').addEventListener('click', previewGarden);
+
+/* ---------- avatar picker ---------- */
+let pickedAvatar = AVATARS[0];
+const grid = document.getElementById('avatarGrid');
+AVATARS.forEach((a,i)=>{
+  const el = document.createElement('div');
+  el.className='avatar-choice'+(i===0?' picked':'');
+  el.textContent=a;
+  el.addEventListener('click', ()=>{
+    grid.querySelectorAll('.avatar-choice').forEach(c=>c.classList.remove('picked'));
+    el.classList.add('picked'); pickedAvatar=a;
+  });
+  grid.appendChild(el);
+});
+
+/* ---------- join ---------- */
+document.getElementById('btnJoin').addEventListener('click', ()=>{
+  const name = document.getElementById('inputName').value.trim();
+  const pronouns = document.getElementById('inputPronouns').value.trim();
+  if(!name || !pronouns){ alert('Name and pronouns help everyone greet you right — please fill both in.'); return; }
+  const level = document.getElementById('inputLevel').value;
+  const id = 'g_'+Math.random().toString(36).slice(2,10);
+  me = {id, name, pronouns, level, avatar:pickedAvatar};
+  localStorage.setItem('fsc_guest', JSON.stringify(me));
+  ref(`events/${EVENT_ID}/attendees/${id}`).set({...me, joinedAt: Date.now()});
+  enterLounge();
+});
+
+/* ---------- lounge ---------- */
+function enterLounge(){
+  show('screen-lounge');
+  listenRoster();
+  listenPhase();
+  startBunnyGame();
+}
+function listenRoster(){
+  ref(`events/${EVENT_ID}/attendees`).on('value', snap=>{
+    const data = snap.val() || {};
+    const guests = Object.values(data);
+    document.getElementById('loungeCount').textContent = guests.length;
+    const grid = document.getElementById('rosterGrid');
+    grid.innerHTML='';
+    guests.sort((a,b)=>a.joinedAt-b.joinedAt).forEach(g=>{
+      const card = document.createElement('div');
+      card.className='guest-card';
+      card.innerHTML = `<div class="guest-avatar">${g.avatar}</div><div class="guest-name">${escapeHtml(g.name)}</div>`;
+      grid.appendChild(card);
+    });
+    if(isHost) renderHostList(guests);
+  });
+}
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- phase + pairing sync ---------- */
+function listenPhase(){
+  ref(`events/${EVENT_ID}/state`).on('value', snap=>{
+    const state = snap.val();
+    if(state === 'matched' && me){
+      ref(`events/${EVENT_ID}/pairs`).once('value').then(snap=>{
+        const pairs = snap.val() || {};
+        const myPair = Object.entries(pairs).find(([pid,p])=> (p.members||[]).some(m=>m.id===me.id));
+        if(!myPair) return;
+        const [pairId, pair] = myPair;
+        const partners = pair.members.filter(m=>m.id !== me.id);
+        document.getElementById('partnerHeadline').textContent = partners.length > 1 ? 'Your partners are' : 'Your partner is';
+        document.getElementById('partnerName').textContent = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
+        document.getElementById('partnerChip').style.background = pair.color;
+        document.getElementById('partnerColorLabel').textContent = 'your glow';
+        document.getElementById('partnerCard').style.borderColor = pair.color;
+        document.getElementById('glowRing').style.boxShadow = `inset 0 0 90px 8px ${pair.color}55`;
+        window.currentPairId = pairId;
+        stopBunnyGame();
+        show('screen-reveal');
+      });
+    }
+    if(state === 'aita' && me){
+      ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
+        const round = snap.val();
+        if(!round) return;
+        enterAitaRound(round);
+      });
+    }
+  });
+}
+
+/* ---------- AITA voting (guest) ---------- */
+function enterAitaRound(round){
+  window.currentAitaRound = round;
+  stopBunnyGame();
+  document.getElementById('aitaVerdictCard').style.display = 'none';
+  show('screen-aita');
+  ref(`events/${EVENT_ID}/aita/rounds/${round}/votes/${me.id}`).on('value', snap=>{
+    showAitaVoteState(snap.val());
+  });
+}
+function showAitaVoteState(vote){
+  const card = document.getElementById('aitaVerdictCard');
+  if(vote){
+    document.getElementById('aitaVerdictText').textContent = vote === 'YTA' ? 'ASSHOLE' : 'NOT THE\nASSHOLE';
+    card.classList.remove('aita-red','aita-green');
+    card.classList.add(vote === 'YTA' ? 'aita-red' : 'aita-green');
+    card.style.display = 'flex';
+  } else {
+    card.style.display = 'none';
+  }
+}
+function castAitaVote(v){
+  if(!me || !window.currentAitaRound) return;
+  ref(`events/${EVENT_ID}/aita/rounds/${window.currentAitaRound}/votes/${me.id}`).set(v);
+}
+document.getElementById('btnVoteYTA').addEventListener('click', ()=> castAitaVote('YTA'));
+document.getElementById('btnVoteNTA').addEventListener('click', ()=> castAitaVote('NTA'));
+document.getElementById('btnChangeVote').addEventListener('click', ()=>{
+  if(!me || !window.currentAitaRound) return;
+  ref(`events/${EVENT_ID}/aita/rounds/${window.currentAitaRound}/votes/${me.id}`).set(null);
+});
+
+document.getElementById('btnToGarden').addEventListener('click', ()=>{
+  stopBunnyGame();
+  show('screen-garden');
+  buildGarden();
+});
+
+/* ---------- bunny-hop mini game ---------- */
+let bg = null; // bunny-game state, created fresh each time it starts
+function startBunnyGame(){
+  stopBunnyGame();
+  const track = document.getElementById('gameTrack');
+  const bunnyEl = document.getElementById('gameBunny');
+  const scoreEl = document.getElementById('gameScore');
+  const overlay = document.getElementById('gameOverlay');
+  if(!track) return;
+
+  bg = {
+    running:false, over:false,
+    y:0, vy:0, score:0, speed:3.2, frame:0, nextSpawn:60,
+    obstacles:[], raf:null,
+    track, bunnyEl, scoreEl, overlay
+  };
+
+  const high = Number(localStorage.getItem('fsc_bunny_high')||0);
+  scoreEl.textContent = high ? `best ${high}` : '0';
+
+  function jump(){
+    if(!bg || !bg.running) return;
+    if(bg.y <= 0.5){ bg.vy = 12.5; }
+  }
+  function beginRun(){
+    bg.obstacles.forEach(o=>o.el.remove());
+    bg.obstacles = [];
+    bg.y = 0; bg.vy = 0; bg.score = 0; bg.speed = 3.2; bg.frame = 0; bg.nextSpawn = 60;
+    bg.over = false; bg.running = true;
+    bunnyEl.style.transform = 'translateY(0)';
+    overlay.classList.add('hidden');
+    loop();
+  }
+  function gameOver(){
+    bg.running = false; bg.over = true;
+    const best = Math.max(Number(localStorage.getItem('fsc_bunny_high')||0), Math.floor(bg.score));
+    localStorage.setItem('fsc_bunny_high', String(best));
+    overlay.innerHTML = `<div>You hopped ${Math.floor(bg.score)} times!<br><span class="game-overlay-note">best ${best}</span></div><button class="btn" id="gameStartBtn">Play Again</button>`;
+    overlay.classList.remove('hidden');
+    document.getElementById('gameStartBtn').addEventListener('click', beginRun);
+    scoreEl.textContent = `best ${best}`;
+  }
+  function loop(){
+    if(!bg || !bg.running) return;
+    bg.frame++;
+
+    bg.y += bg.vy;
+    bg.vy -= 0.75;
+    if(bg.y < 0){ bg.y = 0; bg.vy = 0; }
+    bunnyEl.style.transform = `translateY(${-bg.y}px)`;
+
+    if(bg.frame >= bg.nextSpawn){
+      const kind = Math.random() < 0.5 ? '🍄' : '🪨';
+      const el = document.createElement('div');
+      el.className = 'obstacle';
+      el.textContent = kind;
+      const w = track.clientWidth;
+      el.style.left = w + 'px';
+      track.appendChild(el);
+      bg.obstacles.push({el, x:w});
+      bg.nextSpawn = bg.frame + 55 + Math.random()*45;
+    }
+
+    const bunnyLeft = 34, bunnyWidth = 26;
+    for(let idx = bg.obstacles.length - 1; idx >= 0; idx--){
+      const o = bg.obstacles[idx];
+      o.x -= bg.speed;
+      o.el.style.left = o.x + 'px';
+      if(o.x < -30){ o.el.remove(); bg.obstacles.splice(idx,1); continue; }
+      const overlapX = o.x < bunnyLeft + bunnyWidth && o.x + 22 > bunnyLeft;
+      if(overlapX && bg.y < 20){ gameOver(); return; }
+    }
+
+    bg.score += 0.12;
+    bg.speed = Math.min(7, 3.2 + bg.score * 0.01);
+    scoreEl.textContent = String(Math.floor(bg.score));
+
+    bg.raf = requestAnimationFrame(loop);
+  }
+
+  document.getElementById('gameStartBtn').addEventListener('click', beginRun);
+  if(!track.dataset.jumpBound){
+    track.addEventListener('click', ()=>{ bg && jump(); });
+    track.dataset.jumpBound = '1';
+  }
+}
+function stopBunnyGame(){
+  if(bg && bg.raf) cancelAnimationFrame(bg.raf);
+  bg = null;
+}
+window.addEventListener('keydown', (e)=>{
+  if(e.code==='Space' && bg && bg.running && document.getElementById('screen-lounge').classList.contains('active')){
+    e.preventDefault(); bg.vy = bg.y <= 0.5 ? 12.5 : bg.vy;
+  }
+});
+
+/* ---------- garden ---------- */
+function buildGarden(){
+  const bed = document.getElementById('gardenBed');
+  bed.innerHTML = '';
+  const pairId = window.currentPairId || 'solo';
+
+  const cols = 3;
+  const rowH = 148;
+  const rows = Math.ceil(QUESTIONS.length / cols);
+  const totalHeight = rows * rowH + 150;
+  bed.style.height = totalHeight + 'px';
+
+  /* drifting mist, laid down first so everything else sits above it */
+  const mist = document.createElement('div');
+  mist.className = 'garden-mist';
+  bed.appendChild(mist);
+
+  /* rolling hills, stacked up the whole meadow */
+  for(let r = 0; r <= rows; r++){
+    const hill = document.createElement('div');
+    hill.className = 'hill';
+    hill.style.bottom = (r * rowH - 60) + 'px';
+    hill.style.opacity = (0.45 + seeded(r * 7.3) * 0.4).toFixed(2);
+    bed.appendChild(hill);
+  }
+
+  /* drifting fireflies across the whole scene */
+  const fireflyCount = Math.max(12, rows * 5);
+  for(let f = 0; f < fireflyCount; f++){
+    const fly = document.createElement('div');
+    fly.className = 'firefly';
+    fly.style.left = (seeded(f * 3.11) * 92 + 4) + '%';
+    fly.style.bottom = (seeded(f * 5.77) * totalHeight) + 'px';
+    fly.style.animationDuration = (2.6 + seeded(f * 9.31) * 3) + 's';
+    fly.style.animationDelay = '-' + (seeded(f * 1.73) * 3) + 's';
+    bed.appendChild(fly);
+  }
+
+  /* the flowers themselves, scattered like a real meadow */
+  QUESTIONS.forEach((q, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const jitterL = (seeded(i * 2.3) - 0.5) * 20;
+    const jitterB = (seeded(i * 4.1) - 0.5) * 44;
+    const left = Math.min(90, Math.max(6, (col + 0.5) * (100 / cols) + jitterL));
+    const bottom = 56 + row * rowH + jitterB;
+    const stemH = 62 + seeded(i * 6.7) * 48;
+    const scale = (0.8 + seeded(i * 8.3) * 0.34).toFixed(2);
+
+    /* harmonized color: each row draws from one cluster, columns alternate its two tones */
+    const cluster = CLUSTERS[row % CLUSTERS.length];
+    const color = cluster[col % 2];
+
+    /* species variety: mostly round blooms, with stars and bell-clusters scattered in */
+    const speciesRoll = seeded(i * 13.7);
+    const species = speciesRoll < 0.45 ? 'round' : speciesRoll < 0.72 ? 'star' : 'bell';
+    let bloomHtml;
+    if(species === 'star'){
+      bloomHtml = `<div class="bloom">
+          <div class="petal-star"></div><div class="petal-star"></div><div class="petal-star"></div>
+          <div class="petal-star"></div><div class="petal-star"></div>
+          <div class="bloom-center"></div>
+        </div>`;
+    } else if(species === 'bell'){
+      bloomHtml = `<div class="bloom bloom-bell">
+          <div class="bell"></div><div class="bell"></div><div class="bell"></div>
+        </div>`;
+    } else {
+      bloomHtml = `<div class="bloom">
+          <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+          <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+          <div class="bloom-center"></div>
+        </div>`;
+    }
+
+    const plant = document.createElement('div');
+    plant.className = 'flower-plant';
+    plant.dataset.i = i;
+    plant.style.left = left + '%';
+    plant.style.bottom = bottom + 'px';
+    plant.style.color = color;
+    plant.style.setProperty('--fscale', scale);
+    plant.innerHTML = `
+      <div class="flower-head">
+        <div class="bud"></div>
+        ${bloomHtml}
+      </div>
+      <div class="stem" style="height:${stemH.toFixed(0)}px;">
+        <div class="leaf" style="top:${(64 + stemH * 0.3).toFixed(0)}px; left:-11px;"></div>
+        <div class="leaf" style="top:${(64 + stemH * 0.62).toFixed(0)}px; left:15px; transform:scaleX(-1);"></div>
+      </div>`;
+    plant.addEventListener('click', () => bloom(i, pairId, plant, color, left, bottom));
+    bed.appendChild(plant);
+  });
+
+  ref(`events/${EVENT_ID}/pairs/${pairId}/bloomed`).on('value', snap=>{
+    const bloomed = snap.val() || {};
+    Object.keys(bloomed).forEach(i=>{
+      const el = bed.querySelector(`.flower-plant[data-i="${i}"]`);
+      if(el) el.classList.add('bloomed');
+    });
+  });
+}
+function bloom(i, pairId, plant, color, left, bottom){
+  const wasAlreadyBloomed = plant.classList.contains('bloomed');
+  plant.classList.add('bloomed');
+  showQuestion(i);
+  if(!wasAlreadyBloomed){ spawnBloomBurst(plant, color, left, bottom); }
+  try{ ref(`events/${EVENT_ID}/pairs/${pairId}/bloomed/${i}`).set(true); }
+  catch(e){ console.warn('Could not sync bloom to partner:', e); }
+}
+function spawnBloomBurst(plant, color, left, bottom){
+  const bed = document.getElementById('gardenBed');
+  if(!bed) return;
+
+  /* pollen motes rising from the flower itself */
+  for(let p = 0; p < 6; p++){
+    const mote = document.createElement('div');
+    mote.className = 'pollen';
+    mote.style.setProperty('--dx', ((seeded(p * 17.3 + Math.random()) - 0.5) * 60).toFixed(0) + 'px');
+    mote.style.animationDelay = (p * 0.06) + 's';
+    plant.appendChild(mote);
+    setTimeout(()=> mote.remove(), 1700);
+  }
+
+  /* nearby fireflies drawn in as bright sparks */
+  for(let s = 0; s < 4; s++){
+    const spark = document.createElement('div');
+    spark.className = 'spark';
+    const sx = ((seeded(s * 23.9 + Math.random()) - 0.5) * 90).toFixed(0) + 'px';
+    const sy = (40 + seeded(s * 31.1 + Math.random()) * 60).toFixed(0) + 'px';
+    spark.style.left = `calc(${left}% + ${(seeded(s * 5.5) - 0.5) * 40}px)`;
+    spark.style.bottom = (bottom + 40) + 'px';
+    spark.style.color = color;
+    spark.style.setProperty('--sx', sx);
+    spark.style.setProperty('--sy', sy);
+    spark.style.animationDelay = (s * 0.1) + 's';
+    bed.appendChild(spark);
+    setTimeout(()=> spark.remove(), 3000);
+  }
+}
+function showQuestion(i){
+  const textEl = document.getElementById('questionText');
+  const counterEl = document.getElementById('questionCounter');
+  textEl.classList.add('swap');
+  setTimeout(()=>{
+    textEl.textContent = QUESTIONS[i];
+    counterEl.textContent = `flower ${String(i+1).padStart(2,'0')} of ${String(QUESTIONS.length).padStart(2,'0')}`;
+    textEl.classList.remove('swap');
+  }, 220);
+}
+
+/* ---------- host console ---------- */
+let hostGuestsCache = [];
+function initHost(){
+  listenRoster();
+  ref(`events/${EVENT_ID}/state`).set('lounge');
+  ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
+    const round = snap.val();
+    if(round){ listenAitaTally(round); document.getElementById('aitaTally').style.display='flex'; }
+  });
+}
+function renderHostList(guests){
+  hostGuestsCache = guests;
+  const list = document.getElementById('hostList');
+  list.innerHTML='';
+  guests.forEach(g=>{
+    const row = document.createElement('div');
+    row.className='host-row';
+    row.innerHTML = `<div class="guest-avatar">${g.avatar}</div>
+      <div><div>${escapeHtml(g.name)}</div><div class="host-meta">${escapeHtml(g.pronouns)}${g.level? ' · '+g.level:''}</div></div>`;
+    list.appendChild(row);
+  });
+}
+document.getElementById('btnMatch').addEventListener('click', ()=>{
+  const guests = [...hostGuestsCache];
+  if(guests.length < 2){ alert('Need at least two guests checked in to form a pair.'); return; }
+  for(let i=guests.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [guests[i],guests[j]]=[guests[j],guests[i]]; }
+  const pairs = {};
+  let pi = 0;
+  let i = 0;
+  while(i < guests.length){
+    const remaining = guests.length - i;
+    let members;
+    if(remaining === 3){
+      members = [guests[i], guests[i+1], guests[i+2]];
+      i += 3;
+    } else {
+      members = [guests[i], guests[i+1]];
+      i += 2;
+    }
+    pairs['p'+pi] = { members, color: PAIR_COLORS[pi % PAIR_COLORS.length] };
+    pi++;
+  }
+  ref(`events/${EVENT_ID}/pairs`).set(pairs);
+  ref(`events/${EVENT_ID}/state`).set('matched');
+  alert('Pairs are set and glowing on everyone\'s screen.');
+});
+document.getElementById('btnResetEvent').addEventListener('click', ()=>{
+  if(!confirm('Clear the roster, pairs, and phase for a brand new event?')) return;
+  ref(`events/${EVENT_ID}/attendees`).set(null);
+  ref(`events/${EVENT_ID}/pairs`).set(null);
+  ref(`events/${EVENT_ID}/aita`).set(null);
+  document.getElementById('aitaTally').style.display='none';
+  document.getElementById('aitaPicked').textContent='';
+  ref(`events/${EVENT_ID}/state`).set('lounge');
+});
+
+/* ---------- AITA voting (host) ---------- */
+document.getElementById('btnStartAita').addEventListener('click', ()=>{
+  const round = String(Date.now());
+  ref(`events/${EVENT_ID}/aita/round`).set(round);
+  ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
+  ref(`events/${EVENT_ID}/state`).set('aita');
+  document.getElementById('aitaPicked').textContent = '';
+  document.getElementById('aitaTally').style.display = 'flex';
+  listenAitaTally(round);
+  alert("Vote is live — everyone's screen just flipped to the ballot.");
+});
+function listenAitaTally(round){
+  ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).on('value', snap=>{
+    const votes = snap.val() || {};
+    const vals = Object.values(votes);
+    const yta = vals.filter(v=>v==='YTA').length;
+    const nta = vals.filter(v=>v==='NTA').length;
+    const total = Math.max(yta + nta, 1);
+    document.getElementById('aitaTallyRed').style.width = (yta/total*100) + '%';
+    document.getElementById('aitaTallyGreen').style.width = (nta/total*100) + '%';
+    document.getElementById('aitaCountYTA').textContent = yta + ' asshole';
+    document.getElementById('aitaCountNTA').textContent = nta + ' not the asshole';
+  });
+}
+document.getElementById('btnPickElaborate').addEventListener('click', ()=>{
+  if(hostGuestsCache.length === 0){ alert('No guests checked in yet.'); return; }
+  const pick = hostGuestsCache[Math.floor(Math.random()*hostGuestsCache.length)];
+  document.getElementById('aitaPicked').textContent = `🎙️ ${pick.name}, tell us why!`;
+});
+</script>
+</body>
+</html>
