@@ -345,6 +345,14 @@
     width:100%; max-width:420px; margin:10px auto 6px;
     display:grid; grid-template-columns:1fr; gap:12px;
   }
+  .activity-connector{
+    display:flex; justify-content:center; align-items:center;
+    height:22px; margin:-6px 0;
+  }
+  .activity-connector .connector-line{
+    width:2px; height:100%; border-radius:2px;
+    background:linear-gradient(180deg, rgba(242,193,78,.7), rgba(242,193,78,.15));
+  }
   .hub-card{
     display:flex; align-items:center; gap:14px; text-align:left;
     padding:16px 18px; border-radius:18px; cursor:pointer;
@@ -908,6 +916,34 @@
   #tour-dots { display: flex; gap: 6px; margin-top: 12px; }
   #tour-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); }
   #tour-dots span.tour-dot-done { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+
+  /* --- SASHA'S GAME STYLES --- */
+  .obs-basic {
+    position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
+    filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none;
+  }
+  .obs-iconic {
+    position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
+    filter: drop-shadow(0 0 10px rgba(242,193,78,.8)); pointer-events: none;
+    animation: float-icon 2s ease-in-out infinite;
+  }
+  @keyframes float-icon { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+
+  /* --- LEADERBOARD --- */
+  .leaderboard-container {
+    position: relative; z-index: 20; width: 100%; max-width: 420px;
+    margin: 24px auto 0; padding: 20px;
+    background: rgba(0,0,0,0.4); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);
+  }
+  .leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
+  .lb-row {
+    display: flex; align-items: center; padding: 8px 12px;
+    background: rgba(255,255,255,0.05); border-radius: 12px;
+  }
+  .lb-rank { font-family: 'Space Mono', monospace; color: var(--dim); width: 24px; font-size: 12px; }
+  .lb-rank.rank-1 { color: var(--gold); font-size: 14px; font-weight: bold; }
+  .lb-name { flex: 1; font-weight: 500; font-size: 15px; color: var(--mist); }
+  .lb-score { font-family: 'Space Mono', monospace; color: var(--gold); }
 </style>
 </head>
 <body>
@@ -989,26 +1025,16 @@
   <div id="state-gathering" class="lounge-state active">
     <div class="lounge-content">
 
-      <!-- 1. CLEAN HEADER -->
+      <!-- CLEAN HEADER -->
       <div class="lounge-header">
         <h1 class="display" style="font-size:38px; margin:0 0 4px; background:linear-gradient(120deg, var(--gold), #ffdf94, var(--rose)); -webkit-background-clip:text; color:transparent;">RELATIONSHIPS</h1>
         <div class="eyebrow" style="color:var(--mist); letter-spacing:.4em;">Speaking Club</div>
       </div>
 
-      <!-- 2. THE ROSTER SECTION -->
-      <div class="dashboard-section">
-        <div class="section-header">
-          <div class="eyebrow">The Roster</div>
-          <div class="guest-count"><span id="loungeCount">0</span> present</div>
-        </div>
-        <div class="roster" id="rosterGrid"></div>
-      </div>
-
-      <!-- 3. TODAY'S ACTIVITIES -->
+      <!-- TODAY'S ACTIVITIES (roster removed) -->
       <div class="dashboard-section" id="activitiesSection">
         <div class="section-header">
           <div class="eyebrow">Today's Activities</div>
-          <div class="status-note" id="waitingNote">Tap to join</div>
         </div>
         <div class="hub-sections">
 
@@ -1022,6 +1048,9 @@
               <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
             </div>
           </div>
+
+          <!-- Connector line -->
+          <div class="activity-connector"><div class="connector-line"></div></div>
 
           <!-- Group Activity -->
           <div class="hub-card locked" id="hubCardAita">
@@ -1037,31 +1066,34 @@
         </div>
       </div>
 
-      <!-- Upgraded Ethereal Game (scroll down to find it) -->
       <div class="game-section">
         <div class="lounge-ground" aria-hidden="true" id="loungeGround">
           <div class="ground-sky-fade"></div>
-          <!-- Parallax Layers -->
           <div class="parallax-layer layer-back" id="parallaxBack"></div>
           <div class="parallax-layer layer-mid" id="parallaxMid"></div>
           <div class="ground-grass" id="parallaxFront"></div>
         </div>
 
         <div class="lounge-game" id="loungeGame">
-          <div class="game-instructions">tap to jump over basic t-shirts & jeans</div>
+          <div class="game-instructions">jump the basics • catch the bows</div>
           <div class="game-score" id="gameScore">0</div>
           <div class="game-track" id="gameTrack">
             <div class="game-bunny" id="gameBunny">
-              <!-- Uses your image, falls back to a glowing wisp -->
               <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
               <span class="game-wisp-fallback"></span>
             </div>
             <div class="game-overlay" id="gameOverlay">
-              <div>Sasha hates basic white t-shirts and jeans!<br>Help him jump over them.</div>
-              <button class="btn" id="gameStartBtn">Start</button>
+              <div>Help Sasha jump over basic T-shirts and jeans and catch cute pink bows!</div>
+              <button class="btn" id="gameStartBtn">Play</button>
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="leaderboard-container">
+        <div class="eyebrow" style="text-align:center; margin-bottom:12px;">Top Scores</div>
+        <div id="gameLeaderboard" class="leaderboard-list"></div>
       </div>
 
     </div>
@@ -1075,8 +1107,8 @@
     <div class="match-header" style="padding-top: 30px; position: relative; z-index: 10;">
       <div class="eyebrow">Pairs Activity</div>
       <h1 class="display" style="font-size:36px;">The Bouquet</h1>
-      <!-- Partner visibility -->
-      <p class="sub" style="margin-top:10px; font-size: 16px;" id="bouquetPartnerLabel">Paired with: ...</p>
+      <!-- Specific Partner Phrasing -->
+      <p class="sub" style="margin-top:10px; font-size: 17px; color: var(--gold);" id="bouquetPartnerLabel">Your partner today is: ...</p>
       <p class="sub" style="margin-top:6px; font-size: 14px; opacity: 0.7;">Pick a flower together to reveal your next question.</p>
     </div>
 
@@ -1364,7 +1396,6 @@ function showTourStep() {
   const target = document.querySelector(step.selector);
   if (!target) { tourNext(); return; }
 
-  // Position the Spotlight
   const rect = target.getBoundingClientRect();
   const spot = document.getElementById('tour-spotlight');
   spot.style.top = (rect.top - step.pad) + 'px';
@@ -1372,14 +1403,14 @@ function showTourStep() {
   spot.style.width = (rect.width + step.pad * 2) + 'px';
   spot.style.height = (rect.height + step.pad * 2) + 'px';
 
-  // Update the Tooltip Text
   document.getElementById('tour-step-label').textContent = `Step ${tourIdx + 1} of ${TOUR_STEPS.length}`;
   document.getElementById('tour-title').textContent = step.title;
   document.getElementById('tour-desc').textContent = step.desc;
-  document.getElementById('tour-next').textContent = tourIdx === TOUR_STEPS.length - 1 ? 'Got it' : 'Next';
+
+  // Changed "Got it" to "Let's go"
+  document.getElementById('tour-next').textContent = tourIdx === TOUR_STEPS.length - 1 ? "Let's go" : 'Next';
   document.querySelectorAll('#tour-dots span').forEach((d, i) => d.classList.toggle('tour-dot-done', i <= tourIdx));
 
-  // Position the Tooltip intelligently
   const tooltip = document.getElementById('tour-tooltip');
   requestAnimationFrame(() => {
     const spaceBelow = window.innerHeight - (rect.bottom + step.pad);
@@ -1392,8 +1423,12 @@ function showTourStep() {
 }
 
 function tourNext() {
+  if (tourIdx >= TOUR_STEPS.length - 1) {
+    endTour();
+    setLoungeState('state-garden'); // Sends them to bouquet!
+    return;
+  }
   tourIdx++;
-  if (tourIdx >= TOUR_STEPS.length) { endTour(); return; }
   showTourStep();
 }
 
@@ -1405,12 +1440,35 @@ let stateGuests = [];
 let statePairs = {};
 let currentKnownState = 'lounge';
 
+function renderLeaderboard(guests) {
+  const list = document.getElementById('gameLeaderboard');
+  if(!list) return;
+
+  // Sort everyone by high score
+  const ranked = [...guests].filter(g => g.highScore > 0).sort((a,b) => b.highScore - a.highScore);
+
+  if(ranked.length === 0) {
+    list.innerHTML = `<div style="text-align:center; color:var(--dim); font-size:13px;">No scores yet. Play to rank!</div>`;
+    return;
+  }
+
+  list.innerHTML = ranked.map((g, i) => `
+    <div class="lb-row">
+      <div class="lb-rank ${i === 0 ? 'rank-1' : ''}">${i + 1}</div>
+      <div class="lb-name">${escapeHtml(g.name)} ${g.id === me?.id ? '<span style="color:var(--gold); font-size:10px;">(you)</span>' : ''}</div>
+      <div class="lb-score">${g.highScore}</div>
+    </div>
+  `).join('');
+}
+
 function listenRoster(){
   // 1. Listen to guests joining
   ref(`events/${EVENT_ID}/attendees`).on('value', snap=>{
     stateGuests = Object.values(snap.val() || {}).sort((a,b)=>a.joinedAt-b.joinedAt);
-    document.getElementById('loungeCount').textContent = stateGuests.length;
+    const countEl = document.getElementById('loungeCount');
+    if(countEl) countEl.textContent = stateGuests.length;
     renderRoster();
+    renderLeaderboard(stateGuests);
     if(isHost) renderHostList(stateGuests);
   });
 
@@ -1550,15 +1608,18 @@ function listenHubs() {
 
 function applyPair([pairId, pair]){
   const partners = pair.members.filter(m=>m.id !== me.id);
+  const isGroup = partners.length > 1;
   const partnerText = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
 
   const isNewPairing = window.currentPairId !== pairId;
   window.currentPairId = pairId;
 
-  // Update the Bouquet header to show the partner
+  // Update the Bouquet header to show the partner (exact phrasing requested)
   const partnerLabel = document.getElementById('bouquetPartnerLabel');
   if (partnerLabel) {
-    partnerLabel.innerHTML = `Paired with: <strong style="color:var(--gold);">${partnerText}</strong>`;
+    partnerLabel.innerHTML = isGroup
+        ? `Your partners today are <strong style="color:#fff;">${partnerText}</strong>`
+        : `Your partner today is <strong style="color:#fff;">${partnerText}</strong>`;
   }
 
   buildGarden(); // Prepares it silently so it's ready when they tap the glowing card.
@@ -1686,7 +1747,7 @@ function startBunnyGame(){
   if(!track) return;
 
   // clear any obstacles left over from a previous round of this game
-  track.querySelectorAll('.obs-basic').forEach(el=>el.remove());
+  track.querySelectorAll('.obs-basic, .obs-iconic').forEach(el=>el.remove());
 
   bg = {
     running:false, over:false, y:0, vy:0, score:0, speed:3.2, frame:0, nextSpawn:60,
@@ -1697,7 +1758,7 @@ function startBunnyGame(){
   scoreEl.textContent = high ? `best ${high}` : '0';
   bunnyEl.style.transform = 'translateY(0)';
   overlay.classList.remove('hidden');
-  overlay.innerHTML = '<div>Sasha hates basic white t-shirts and jeans!<br>Help him jump over them.</div><button class="btn" id="gameStartBtn">Start</button>';
+  overlay.innerHTML = '<div>Help Sasha jump over basic T-shirts and jeans and catch cute pink bows!</div><button class="btn" id="gameStartBtn">Play</button>';
 
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
@@ -1728,9 +1789,17 @@ function startBunnyGame(){
   }
   function gameOver(){
     bg.running = false; bg.over = true;
-    const best = Math.max(Number(localStorage.getItem('fsc_bunny_high')||0), Math.floor(bg.score));
+    const finalScore = Math.floor(bg.score);
+    const best = Math.max(Number(localStorage.getItem('fsc_bunny_high')||0), finalScore);
     localStorage.setItem('fsc_bunny_high', String(best));
-    overlay.innerHTML = `<div>You hopped ${Math.floor(bg.score)} times!<br><span class="game-overlay-note">best ${best}</span></div><button class="btn" id="gameStartBtn">Play Again</button>`;
+
+    // Save to Firebase for the Global Leaderboard
+    if (me && finalScore > (me.highScore || 0)) {
+      me.highScore = finalScore; // update local
+      ref(`events/${EVENT_ID}/attendees/${me.id}`).update({ highScore: finalScore });
+    }
+
+    overlay.innerHTML = `<div>Score: ${finalScore}</div><button class="btn" id="gameStartBtn">Play Again</button>`;
     overlay.classList.remove('hidden');
     scoreEl.textContent = `best ${best}`;
   }
@@ -1750,31 +1819,63 @@ function startBunnyGame(){
     if(parallaxMid) parallaxMid.style.backgroundPosition = `${bg.scrollMid}px bottom`;
     if(parallaxFront) parallaxFront.style.backgroundPosition = `${bg.scrollFront}px bottom`;
 
-    // Spawn Obstacles (T-shirts and Jeans)
+    // SPAWN LOGIC (Bows vs Basics)
+    const BAD_ITEMS = ['👕', '👖'];
+    const GOOD_ITEMS = ['🎀'];
     if(bg.frame >= bg.nextSpawn){
-      const isTshirt = Math.random() < 0.5;
+      const isBad = Math.random() < 0.6; // 60% bad, 40% good
       const el = document.createElement('div');
-      el.className = 'obs-basic';
-      el.textContent = isTshirt ? '👕' : '👖'; // Sasha's nightmare
+      el.className = isBad ? 'obs-basic' : 'obs-iconic';
+      el.textContent = isBad ? BAD_ITEMS[Math.floor(Math.random()*BAD_ITEMS.length)] : GOOD_ITEMS[Math.floor(Math.random()*GOOD_ITEMS.length)];
+      el.dataset.type = isBad ? 'bad' : 'good';
+
       const w = track.clientWidth;
       el.style.left = w + 'px';
       track.appendChild(el);
       bg.obstacles.push({el, x:w});
-      bg.nextSpawn = bg.frame + 55 + Math.random()*45;
+      bg.nextSpawn = bg.frame + 60 + Math.random()*40;
     }
 
     const bunnyLeft = 26, bunnyWidth = 40;
+
+    // COLLISION LOGIC
     for(let idx = bg.obstacles.length - 1; idx >= 0; idx--){
       const o = bg.obstacles[idx];
       o.x -= bg.speed;
       o.el.style.left = o.x + 'px';
-      if(o.x < -30){ o.el.remove(); bg.obstacles.splice(idx,1); continue; }
-      const overlapX = o.x < bunnyLeft + bunnyWidth && o.x + 22 > bunnyLeft;
-      if(overlapX && bg.y < 20){ gameOver(); return; }
+
+      // Is Sasha overlapping the item horizontally?
+      const overlapX = o.x < bunnyLeft + bunnyWidth && o.x + 28 > bunnyLeft;
+      // Is Sasha low enough to touch it?
+      const isGrounded = bg.y < 25;
+
+      if (overlapX && isGrounded) {
+        if (o.el.dataset.type === 'bad') {
+          // Hit a basic t-shirt = LOSE
+          gameOver(); return;
+        } else {
+          // Collected an icon = +50 POINTS!
+          bg.score += 50;
+          o.el.remove();
+          bg.obstacles.splice(idx, 1);
+          continue;
+        }
+      } else if (o.x + 28 < bunnyLeft) {
+        // Passed the item!
+        if (o.el.dataset.type === 'good') {
+          // Jumped over a good item = LOSE
+          gameOver(); return;
+        } else {
+          // Jumped over a bad item successfully
+          o.el.remove();
+          bg.obstacles.splice(idx, 1);
+          continue;
+        }
+      }
     }
 
-    bg.score += 0.12;
-    bg.speed = Math.min(7, 3.2 + bg.score * 0.01);
+    bg.score += 0.5; // Passive survival points
+    bg.speed = Math.min(8, 3.5 + bg.score * 0.005); // Speeds up slowly
     scoreEl.textContent = String(Math.floor(bg.score));
     bg.raf = requestAnimationFrame(loop);
   }
