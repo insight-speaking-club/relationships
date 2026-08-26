@@ -146,6 +146,71 @@
     color:var(--gold); margin-top:2px;
   }
 
+  /* ---------- Sasha's iMessage partner-reveal popup ---------- */
+  .imessage-overlay{
+    position:fixed; inset:0; z-index:900; display:none;
+    align-items:flex-end; justify-content:center;
+    background:rgba(10,4,20,.55); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    padding: 0 0 max(24px, env(safe-area-inset-bottom)) 0;
+  }
+  .imessage-overlay.show{ display:flex; }
+  .imessage-window{
+    width:100%; max-width:400px; margin:0 16px;
+    background:#f4f4f6; border-radius:24px; padding:14px 14px 18px;
+    box-shadow:0 -10px 50px rgba(0,0,0,.5), 0 20px 60px rgba(0,0,0,.4);
+    animation: imessage-slide-up .45s cubic-bezier(.2,.9,.25,1) both;
+  }
+  @keyframes imessage-slide-up{ from{ transform:translateY(40px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+  .imessage-header{
+    display:flex; align-items:center; gap:10px; padding:2px 6px 12px;
+    border-bottom:1px solid rgba(0,0,0,.08); margin-bottom:12px;
+  }
+  .imessage-avatar{
+    width:34px; height:34px; border-radius:50%; object-fit:cover; flex:none;
+    background:conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
+  }
+  .imessage-name{
+    font-family:'Jost',sans-serif; font-weight:600; font-size:14px; color:#111;
+  }
+  .imessage-close{
+    margin-left:auto; width:26px; height:26px; border-radius:50%; border:none;
+    background:rgba(0,0,0,.06); color:#666; font-size:14px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .imessage-thread{
+    display:flex; flex-direction:column; gap:8px; min-height:44px;
+  }
+  .imessage-row{ display:flex; }
+  .imessage-bubble{
+    position:relative; max-width:78%; padding:10px 14px; border-radius:18px 18px 18px 5px;
+    background:#e9e9eb; color:#111; text-align:left;
+    font-family:'Jost',sans-serif; font-size:15px; line-height:1.35;
+    box-shadow:0 1px 1px rgba(0,0,0,.03);
+    animation: imessage-pop .3s cubic-bezier(.2,.9,.25,1) both;
+  }
+  .imessage-bubble.gold{
+    background:linear-gradient(135deg, #fff3d6, #ffe6a8); color:#5a4207; font-weight:600;
+  }
+  @keyframes imessage-pop{ from{ transform:scale(.7); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  .imessage-typing{
+    display:inline-flex; align-items:center; gap:4px;
+    padding:12px 14px; border-radius:18px 18px 18px 5px; background:#e9e9eb;
+    animation: imessage-pop .3s cubic-bezier(.2,.9,.25,1) both;
+  }
+  .imessage-typing span{
+    width:6px; height:6px; border-radius:50%; background:#9a9aa0;
+    animation: imessage-bounce 1.1s ease-in-out infinite;
+  }
+  .imessage-typing span:nth-child(2){ animation-delay:.15s; }
+  .imessage-typing span:nth-child(3){ animation-delay:.3s; }
+  @keyframes imessage-bounce{ 0%,60%,100%{ transform:translateY(0); opacity:.5; } 30%{ transform:translateY(-4px); opacity:1; } }
+  .imessage-cta{
+    margin-top:14px; width:100%; padding:12px; border-radius:14px; border:none;
+    background:var(--gold); color:#1a1200; font-family:'Jost',sans-serif; font-weight:600; font-size:14px;
+    cursor:pointer; opacity:0; transition:opacity .3s ease;
+  }
+  .imessage-cta.show{ opacity:1; }
+
   .btn{
     font-family:'Jost',sans-serif; font-weight:500; font-size:14.5px; letter-spacing:.03em;
     color:var(--ink); background:linear-gradient(135deg, #ffdf94 0%, var(--gold) 100%);
@@ -1049,6 +1114,19 @@
   <button class="btn ghost" id="btnChangeVote" style="border-color:rgba(255,255,255,.5); color:#fff;">change my vote</button>
 </div>
 
+<!-- SASHA'S iMESSAGE POPUP (partner reveal) -->
+<div class="imessage-overlay" id="imessageOverlay">
+  <div class="imessage-window">
+    <div class="imessage-header">
+      <img class="imessage-avatar" src="sasha.png" alt="Sasha" onerror="this.style.display='none';">
+      <div class="imessage-name">Sasha</div>
+      <button class="imessage-close" id="imessageClose" aria-label="Close">✕</button>
+    </div>
+    <div class="imessage-thread" id="imessageThread"></div>
+    <button class="imessage-cta" id="imessageCta">Got it</button>
+  </div>
+</div>
+
 <!-- HOST DASHBOARD -->
 <div class="screen" id="screen-host">
   <div class="eyebrow">Host Console</div>
@@ -1474,6 +1552,7 @@ function applyPair([pairId, pair]){
   const partners = pair.members.filter(m=>m.id !== me.id);
   const partnerText = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
 
+  const isNewPairing = window.currentPairId !== pairId;
   window.currentPairId = pairId;
 
   // Update the Bouquet header to show the partner
@@ -1483,7 +1562,71 @@ function applyPair([pairId, pair]){
   }
 
   buildGarden(); // Prepares it silently so it's ready when they tap the glowing card.
+
+  // Only pop Sasha's iMessage the moment this is a genuinely NEW match —
+  // Firebase can re-fire this whole flow on reconnect, and we don't want
+  // to spam the reveal every time that happens.
+  if (isNewPairing) {
+    showPartnerImessage(partnerText);
+  }
 }
+
+/* ---------- Sasha's iMessage partner-reveal popup ---------- */
+function showPartnerImessage(partnerText){
+  const overlay = document.getElementById('imessageOverlay');
+  const thread = document.getElementById('imessageThread');
+  const cta = document.getElementById('imessageCta');
+  if(!overlay || !thread) return;
+
+  thread.innerHTML = '';
+  cta.classList.remove('show');
+  overlay.classList.add('show');
+
+  const messages = [
+    { text: `Your partner for today is&hellip;`, gold:false },
+    { text: `${escapeHtml(partnerText)} 💛`, gold:true },
+    { text: `Tap "The Bouquet" to find the questions.`, gold:false },
+  ];
+
+  let i = 0;
+  function nextMessage(){
+    if(!overlay.classList.contains('show')) return; // dismissed early
+    if(i >= messages.length){
+      cta.classList.add('show');
+      return;
+    }
+    const row = document.createElement('div');
+    row.className = 'imessage-row';
+    const typing = document.createElement('div');
+    typing.className = 'imessage-typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    row.appendChild(typing);
+    thread.appendChild(row);
+    thread.scrollTop = thread.scrollHeight;
+
+    setTimeout(() => {
+      if(!overlay.classList.contains('show')) return;
+      const msg = messages[i];
+      const bubble = document.createElement('div');
+      bubble.className = 'imessage-bubble' + (msg.gold ? ' gold' : '');
+      bubble.innerHTML = msg.text;
+      row.innerHTML = '';
+      row.appendChild(bubble);
+      thread.scrollTop = thread.scrollHeight;
+      i++;
+      setTimeout(nextMessage, 550);
+    }, 700 + Math.random() * 400);
+  }
+  nextMessage();
+}
+function closeImessagePopup(){
+  document.getElementById('imessageOverlay').classList.remove('show');
+}
+document.getElementById('imessageClose').addEventListener('click', closeImessagePopup);
+document.getElementById('imessageCta').addEventListener('click', closeImessagePopup);
+document.getElementById('imessageOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'imessageOverlay') closeImessagePopup();
+});
 
 // Bind the hub cards!
 document.getElementById('hubCardGarden').addEventListener('click', () => {
