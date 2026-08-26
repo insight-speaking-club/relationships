@@ -307,6 +307,9 @@
   .hub-card-title{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px; color:var(--mist);}
   .hub-card-sub{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; text-transform:uppercase;}
   .hub-card-desc{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; font-weight:500; color:var(--dim); margin-top:4px; line-height:1.35; text-transform:none; letter-spacing:.01em;}
+  .hub-card-lock-note{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; font-weight:500; color:var(--gold); margin-top:4px; line-height:1.35; opacity:.85; display:none;}
+  .hub-card.locked .hub-card-desc{display:none;}
+  .hub-card.locked .hub-card-lock-note{display:block;}
 
   /* Bunny Game Elements */
   .game-section{
@@ -940,7 +943,7 @@
       <div class="dashboard-section" id="activitiesSection">
         <div class="section-header">
           <div class="eyebrow">Today's Activities</div>
-          <div class="status-note" id="waitingNote">Waiting for host...</div>
+          <div class="status-note" id="waitingNote">Tap to join</div>
         </div>
         <div class="hub-sections">
 
@@ -951,6 +954,7 @@
               <div class="hub-card-sub" style="color:var(--gold);">Pairs Activity</div>
               <div class="hub-card-title">The Bouquet</div>
               <div class="hub-card-desc">Pick flowers together to spark deep conversation.</div>
+              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
             </div>
           </div>
 
@@ -961,6 +965,7 @@
               <div class="hub-card-sub" style="color:var(--gold);">Group Activity</div>
               <div class="hub-card-title">Relationships Court™</div>
               <div class="hub-card-desc">Evaluate real-life relationship dilemmas, cross-examinations, and cast your official verdicts.</div>
+              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
             </div>
           </div>
 
@@ -1055,6 +1060,12 @@
   <div style="display:flex; gap:10px; width:100%; margin-bottom: 30px;">
     <button class="btn" id="btnMatch" style="flex:2; margin-top:0;">Match People</button>
     <button class="btn ghost" id="btnUnpair" style="flex:1; margin-top:0; border-color:var(--rose); color:var(--rose);">Unpair</button>
+  </div>
+
+  <div class="host-section-label">Quick Actions</div>
+  <div style="display:flex; gap:10px; width:100%; margin-bottom: 30px;">
+    <button class="btn ghost" id="btnUnlockAll" style="flex:1; margin-top:0; border-color:var(--gold); color:var(--gold);">Open All Sections</button>
+    <button class="btn ghost" id="btnLockAll" style="flex:1; margin-top:0;">Lock All</button>
   </div>
 
   <div class="host-section-label">2. The Bouquet (Pairs)</div>
@@ -1890,6 +1901,19 @@ document.getElementById('btnUnlockCourt').addEventListener('click', () => {
 });
 document.getElementById('btnLockCourt').addEventListener('click', () => {
   ref(`events/${EVENT_ID}/hubs/aita`).set(false);
+});
+
+// --- QUICK ACTIONS: OPEN ALL / LOCK ALL ---
+// Reuses the exact same logic as the individual Unlock/Lock buttons above
+// (including the Court's round-reset) by simply triggering their clicks,
+// so "Open All" never falls out of sync with what each button does.
+document.getElementById('btnUnlockAll').addEventListener('click', () => {
+  document.getElementById('btnUnlockBouquet').click();
+  document.getElementById('btnUnlockCourt').click();
+});
+document.getElementById('btnLockAll').addEventListener('click', () => {
+  document.getElementById('btnLockBouquet').click();
+  document.getElementById('btnLockCourt').click();
 });
 
 // --- INDEPENDENT TIMER CONTROLS ---
