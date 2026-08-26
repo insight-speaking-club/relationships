@@ -385,6 +385,11 @@
     animation: wisp-pulse 1s ease-in-out infinite alternate;
   }
   @keyframes wisp-pulse { from { transform: scale(0.9); } to { transform: scale(1.1); } }
+  /* --- SASHA'S FASHION NIGHTMARES --- */
+  .obs-basic {
+    position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
+    filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none;
+  }
   .jump-particle {
     position: absolute; width: 6px; height: 6px; border-radius: 50%;
     background: var(--gold); box-shadow: 0 0 10px var(--gold); pointer-events: none;
@@ -639,6 +644,49 @@
   .flower-plant{ transition: opacity 0.8s ease, filter 0.8s ease, transform 0.3s ease; }
   .garden-bed.dim-active .flower-plant:not(.bloomed){ opacity: 0.25; filter: grayscale(60%); }
 
+  /* --- THE BOUQUET SCENE --- */
+  .bouquet-scene {
+    position: relative; width: 100%; flex: 1; min-height: 350px;
+    display: flex; justify-content: center; align-items: flex-end;
+    padding-bottom: 90px; /* Space above the question panel */
+  }
+
+  /* Anchors all flowers to the center ribbon */
+  .flower-plant {
+    position: absolute; left: 50%; bottom: 90px;
+    margin-left: -32px; /* Centers the 64px flower head */
+    transform-origin: 50% 100%; /* Anchor rotation to the bottom of the stem */
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.3, 0, 0.2, 1);
+    will-change: transform, opacity;
+  }
+
+  /* The Picking Animation */
+  .flower-plant.picked {
+    opacity: 0 !important;
+    pointer-events: none;
+    /* Floats up gently as it fades */
+    transform: var(--base-transform) translateY(-60px) scale(1.1) !important;
+  }
+
+  /* The Ribbon / Base of the vase */
+  .bouquet-ribbon {
+    position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%);
+    width: 50px; height: 16px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 40px rgba(242, 193, 78, 0.4), inset 0 2px 10px rgba(255,255,255,0.1);
+    z-index: 100;
+  }
+
+  /* The End State Message */
+  .empty-bouquet-msg {
+    position: absolute; top: 40%; left: 0; right: 0; text-align: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px;
+    color: var(--gold); opacity: 0; transition: opacity 1.5s ease;
+    pointer-events: none; text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  }
+  .bouquet-scene.empty .empty-bouquet-msg { opacity: 1; }
+
   .soul-spark{
     position: fixed; width: 8px; height: 8px; border-radius: 50%;
     background: #fff; box-shadow: 0 0 20px 6px currentColor;
@@ -853,7 +901,7 @@
     </div>
 
     <div class="lounge-game" id="loungeGame">
-      <div class="game-instructions">tap to hop over the crystals</div>
+      <div class="game-instructions">tap to jump over basic t-shirts & jeans</div>
       <div class="game-score" id="gameScore">0</div>
       <div class="game-track" id="gameTrack">
         <div class="game-bunny" id="gameBunny">
@@ -862,34 +910,36 @@
           <span class="game-wisp-fallback"></span>
         </div>
         <div class="game-overlay" id="gameOverlay">
-          <div>While you wait, guide the light over the crystals.</div>
+          <div>Sasha hates basic white t-shirts and jeans!<br>Help him jump over them.</div>
           <button class="btn" id="gameStartBtn">Start</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- STATE 2: THE ENCHANTED GARDEN (Match Reveal & Blossoms) -->
+  <!-- STATE 2: THE BOUQUET -->
   <div id="state-garden" class="lounge-state">
     <button class="back-btn" id="btnBackToGathering" onclick="setLoungeState('state-gathering')">‹</button>
     <div class="garden-bg-layer"></div>
-    
-    <!-- Clean, simple activity header -->
-    <div class="match-header" style="padding-top: 20px;">
+
+    <div class="match-header" style="padding-top: 30px; position: relative; z-index: 10;">
       <div class="eyebrow">Pairs Activity</div>
-      <h1 class="display" style="font-size:32px;">The Enchanted Garden</h1>
-      <p class="sub" style="margin-top:10px;">Take turns blooming the flowers to reveal your questions.</p>
+      <h1 class="display" style="font-size:36px;">The Bouquet</h1>
+      <!-- Partner visibility -->
+      <p class="sub" style="margin-top:10px; font-size: 16px;" id="bouquetPartnerLabel">Paired with: ...</p>
+      <p class="sub" style="margin-top:6px; font-size: 14px; opacity: 0.7;">Pick a flower together to reveal your next question.</p>
     </div>
 
-    <div class="garden-scene">
-      <div class="moonglow"></div>
-      <div class="garden-bed" id="gardenBed"></div>
-      <div class="garden-vignette"></div>
+    <!-- The Bouquet Scene -->
+    <div class="bouquet-scene" id="gardenBed">
+      <!-- Flowers will fan out from here -->
+      <div class="bouquet-ribbon"></div>
+      <div class="empty-bouquet-msg">The bouquet has been shared.</div>
     </div>
-    
+
     <div class="question-panel" id="questionPanel">
-      <div class="question-eyebrow" id="questionCounter">the meadow awaits</div>
-      <div class="question-text" id="questionText">Tap any glowing bud above to bloom your first question&hellip;</div>
+      <div class="question-eyebrow" id="questionCounter">A gift of conversation</div>
+      <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
     </div>
   </div>
 
@@ -921,21 +971,28 @@
   <!-- Mini Roster -->
   <div class="host-list" id="hostList" style="margin-top: 10px; margin-bottom: 30px; max-height: 160px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; background: rgba(0,0,0,0.2);"></div>
 
-  <!-- BARE MINIMUM CONTROLS -->
-
   <div class="host-section-label">1. Matchmaking</div>
   <button class="btn" id="btnMatch" style="width:100%; margin-top:0; margin-bottom: 30px;">Match People</button>
 
-  <div class="host-section-label">2. The Garden</div>
-  <div style="display:flex; gap:10px; width:100%; margin-bottom: 30px;">
-    <input type="number" id="inputTimerMinutes" placeholder="Mins" style="width: 80px; text-align: center; border-radius: 999px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
-    <button class="btn" id="btnOpenGarden" style="flex:1; margin-top:0;">Open Garden + Timer</button>
+  <div class="host-section-label">2. The Bouquet (Pairs)</div>
+  <div style="display:flex; gap:10px; width:100%; margin-bottom: 12px;">
+    <button class="btn ghost" id="btnUnlockBouquet" style="flex:1; margin-top:0; border-color:var(--gold); color:var(--gold);">Unlock</button>
+    <button class="btn ghost" id="btnLockBouquet" style="flex:1; margin-top:0;">Lock</button>
+  </div>
+  <!-- Independent Timer -->
+  <div style="display:flex; gap:10px; width:100%; margin-bottom: 30px; align-items:center;">
+    <input type="number" id="inputTimerMinutes" placeholder="Mins" style="width: 70px; padding:10px; text-align: center; border-radius: 12px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
+    <button class="btn" id="btnSetTimer" style="flex:1; margin-top:0; padding:10px; font-size:13px;">Set Timer</button>
+    <button class="btn ghost" id="btnClearTimer" style="margin-top:0; padding:10px; font-size:13px; border-color:#ff4d5e; color:#ff4d5e;">Clear</button>
   </div>
 
-  <div class="host-section-label">3. The Court</div>
-  <button class="btn" id="btnStartAita" style="width:100%; margin-top:0; background:linear-gradient(135deg,#1b8c5e,#0d4d32); color:#fff; box-shadow: 0 10px 30px rgba(27, 140, 94, 0.4);">Open Relationships Court</button>
+  <div class="host-section-label">3. Relationships Court (Group)</div>
+  <div style="display:flex; gap:10px; width:100%; margin-bottom: 12px;">
+    <button class="btn ghost" id="btnUnlockCourt" style="flex:1; margin-top:0; border-color:#3ddc84; color:#3ddc84;">Unlock</button>
+    <button class="btn ghost" id="btnLockCourt" style="flex:1; margin-top:0;">Lock</button>
+  </div>
 
-  <div class="aita-tally" id="aitaTally" style="margin-top: 24px;">
+  <div class="aita-tally" id="aitaTally" style="margin-top: 12px;">
     <div class="aita-tally-bar">
       <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
       <div class="aita-tally-fill aita-tally-green" id="aitaTallyGreen"></div>
@@ -1252,7 +1309,17 @@ function lockHub(kind){
 }
 
 function applyPair([pairId, pair]){
+  const partners = pair.members.filter(m=>m.id !== me.id);
+  const partnerText = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
+
   window.currentPairId = pairId;
+
+  // Update the Bouquet header to show the partner
+  const partnerLabel = document.getElementById('bouquetPartnerLabel');
+  if (partnerLabel) {
+    partnerLabel.innerHTML = `Paired with: <strong style="color:var(--gold);">${partnerText}</strong>`;
+  }
+
   buildGarden(); // Prepares it silently so it's ready when they tap the glowing card.
 }
 
@@ -1316,7 +1383,7 @@ function startBunnyGame(){
   if(!track) return;
 
   // clear any obstacles left over from a previous round of this game
-  track.querySelectorAll('.obs-crystal, .obs-thorn').forEach(el=>el.remove());
+  track.querySelectorAll('.obs-basic').forEach(el=>el.remove());
 
   bg = {
     running:false, over:false, y:0, vy:0, score:0, speed:3.2, frame:0, nextSpawn:60,
@@ -1327,7 +1394,7 @@ function startBunnyGame(){
   scoreEl.textContent = high ? `best ${high}` : '0';
   bunnyEl.style.transform = 'translateY(0)';
   overlay.classList.remove('hidden');
-  overlay.innerHTML = '<div>While you wait, guide the light over the crystals.</div><button class="btn" id="gameStartBtn">Start</button>';
+  overlay.innerHTML = '<div>Sasha hates basic white t-shirts and jeans!<br>Help him jump over them.</div><button class="btn" id="gameStartBtn">Start</button>';
 
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
@@ -1380,11 +1447,12 @@ function startBunnyGame(){
     if(parallaxMid) parallaxMid.style.backgroundPosition = `${bg.scrollMid}px bottom`;
     if(parallaxFront) parallaxFront.style.backgroundPosition = `${bg.scrollFront}px bottom`;
 
-    // Spawn Obstacles (CSS shapes instead of emojis)
+    // Spawn Obstacles (T-shirts and Jeans)
     if(bg.frame >= bg.nextSpawn){
-      const isCrystal = Math.random() < 0.6;
+      const isTshirt = Math.random() < 0.5;
       const el = document.createElement('div');
-      el.className = isCrystal ? 'obs-crystal' : 'obs-thorn';
+      el.className = 'obs-basic';
+      el.textContent = isTshirt ? '👕' : '👖'; // Sasha's nightmare
       const w = track.clientWidth;
       el.style.left = w + 'px';
       track.appendChild(el);
@@ -1432,7 +1500,7 @@ function stopBunnyGame(){
   const track = document.getElementById('gameTrack');
   if(track) {
     // Safely wipe all obstacles and leftover particle effects
-    track.querySelectorAll('.obs-crystal, .obs-thorn, .jump-particle').forEach(el => el.remove());
+    track.querySelectorAll('.obs-basic, .jump-particle').forEach(el => el.remove());
   }
 
   bg = null;
@@ -1445,85 +1513,34 @@ window.addEventListener('keydown', (e)=>{
   }
 });
 
-/* ---------- garden builder ---------- */
+/* ---------- bouquet builder ---------- */
 function buildGarden(){
   const bed = document.getElementById('gardenBed');
-  bed.innerHTML = '';
-  bed.classList.remove('full-bloom', 'dim-active');
-  const moon = document.querySelector('.moonglow');
-  if(moon) moon.classList.remove('full-bloom');
+  // Preserve the ribbon and end message, clear the rest
+  bed.innerHTML = '<div class="bouquet-ribbon"></div><div class="empty-bouquet-msg">The bouquet has been shared.</div>';
+
   const pairId = window.currentPairId || 'solo';
-
-  // S-Curve Math
   const items = QUESTIONS.length;
-  const rowH = 120; // Distance between flowers vertically
-  const totalHeight = items * rowH + 200;
-  bed.style.height = totalHeight + 'px';
 
-  const mist = document.createElement('div');
-  mist.className = 'garden-mist';
-  bed.appendChild(mist);
+  // Scramble the array indices so the questions aren't just left-to-right
+  const shuffledIndices = Array.from({length: items}, (_, i) => i).sort(() => Math.random() - 0.5);
 
-  // Background Hills & Atmosphere
-  for(let r = 0; r <= items; r += 2){
-    const hill = document.createElement('div');
-    hill.className = 'hill';
-    hill.style.bottom = (r * rowH - 40) + 'px';
-    hill.style.opacity = (0.3 + seeded(r * 7.3) * 0.4).toFixed(2);
-    bed.appendChild(hill);
-  }
+  QUESTIONS.forEach((q, originalIndex) => {
+    const displayPos = shuffledIndices.indexOf(originalIndex);
 
-  // Fireflies and Sparkles
-  const fireflyCount = Math.max(16, items * 4);
-  for(let f = 0; f < fireflyCount; f++){
-    const fly = document.createElement('div');
-    fly.className = 'firefly';
-    fly.style.left = (seeded(f * 3.11) * 94 + 3) + '%';
-    fly.style.bottom = (seeded(f * 5.77) * totalHeight) + 'px';
-    fly.style.animationDuration = (2.6 + seeded(f * 9.31) * 4) + 's';
-    fly.style.animationDelay = '-' + (seeded(f * 1.73) * 3) + 's';
-    fly.style.color = FIREFLY_COLORS[f % FIREFLY_COLORS.length];
-    bed.appendChild(fly);
-  }
+    // Fan Math: Spread flowers between -55 and +55 degrees
+    const spread = 110;
+    const angle = -55 + (displayPos / (items - 1)) * spread + (Math.random() * 8 - 4);
 
-  const sparkleCount = Math.max(16, items * 5);
-  for(let s = 0; s < sparkleCount; s++){
-    const sp = document.createElement('div');
-    sp.className = 'sparkle';
-    sp.style.left = (seeded(s * 4.4 + 100) * 94 + 3) + '%';
-    sp.style.bottom = (seeded(s * 6.6 + 200) * totalHeight) + 'px';
-    sp.style.color = FIREFLY_COLORS[(s + 2) % FIREFLY_COLORS.length];
-    sp.style.animationDuration = (1.8 + seeded(s * 2.2 + 300) * 2.4) + 's';
-    sp.style.animationDelay = '-' + (seeded(s * 8.8 + 400) * 3) + 's';
-    bed.appendChild(sp);
-  }
+    // Taller stems for the middle, shorter for the edges
+    const centerProximity = 1 - Math.abs((displayPos / (items - 1)) - 0.5) * 2;
+    const stemH = 130 + (centerProximity * 80) + (Math.random() * 30);
+    const scale = (0.75 + Math.random() * 0.3).toFixed(2);
 
-  const butterflyEmojis = ['🦋'];
-  const butterflyCount = Math.max(4, Math.round(items * 0.6));
-  for(let b = 0; b < butterflyCount; b++){
-    const fly = document.createElement('div');
-    fly.className = 'butterfly';
-    fly.textContent = butterflyEmojis[0];
-    fly.style.left = (seeded(b * 11.3 + 500) * 88 + 5) + '%';
-    fly.style.bottom = (seeded(b * 13.7 + 600) * totalHeight) + 'px';
-    fly.style.color = CLUSTERS[b % CLUSTERS.length][0];
-    fly.style.animationDuration = (6 + seeded(b * 3.9 + 700) * 5) + 's';
-    fly.style.animationDelay = '-' + (seeded(b * 5.1 + 800) * 6) + 's';
-    bed.appendChild(fly);
-  }
+    const cluster = CLUSTERS[originalIndex % CLUSTERS.length];
+    const color = cluster[originalIndex % 2];
 
-  // Generate S-Curve Flowers
-  QUESTIONS.forEach((q, i) => {
-    // S-Curve Logic: sine wave mapping left to right
-    const curvePhase = (i / Math.max(1, items - 1)) * Math.PI * 3; // 1.5 full swings
-    const left = Math.min(88, Math.max(12, 50 + Math.sin(curvePhase) * 35 + (seeded(i * 9.1) * 6 - 3)));
-    const bottom = 70 + (i * rowH);
-    const stemH = 50 + seeded(i * 6.7) * 50;
-    const scale = (0.85 + seeded(i * 8.3) * 0.3).toFixed(2);
-
-    const cluster = CLUSTERS[i % CLUSTERS.length];
-    const color = cluster[i % 2];
-    const speciesRoll = seeded(i * 13.7);
+    const speciesRoll = Math.random();
     const species = speciesRoll < 0.34 ? 'round' : speciesRoll < 0.58 ? 'star' : speciesRoll < 0.8 ? 'bell' : 'orchid';
     const sparkleRing = `<div class="bloom-sparkles"><span></span><span></span><span></span></div>`;
 
@@ -1539,117 +1556,92 @@ function buildGarden(){
     }
 
     const plant = document.createElement('div');
-    plant.className = 'flower-plant';
-    plant.dataset.i = i;
-    plant.style.left = left + '%';
-    plant.style.bottom = bottom + 'px';
+    plant.className = 'flower-plant bloomed'; // They are already fully bloomed now!
+    plant.dataset.i = originalIndex;
     plant.style.color = color;
     plant.style.setProperty('--fscale', scale);
+
+    // Set the base rotation and height
+    plant.style.setProperty('--base-transform', `rotate(${angle}deg) scale(${scale})`);
+    plant.style.transform = `rotate(${angle}deg) scale(${scale})`;
+
+    // Mix up the z-index so stems overlap naturally
+    plant.style.zIndex = Math.floor(Math.random() * 50);
+
     plant.innerHTML = `
-      <div class="flower-head"><div class="bud"></div>${bloomHtml}</div>
+      <div class="flower-head">${bloomHtml}</div>
       <div class="stem" style="height:${stemH.toFixed(0)}px;">
-        <div class="leaf" style="top:${(64 + stemH * 0.3).toFixed(0)}px; left:-11px;"></div>
-        <div class="leaf" style="top:${(64 + stemH * 0.62).toFixed(0)}px; left:15px; transform:scaleX(-1);"></div>
+        <div class="leaf" style="top:${(stemH * 0.3).toFixed(0)}px; left:-11px;"></div>
+        <div class="leaf" style="top:${(stemH * 0.6).toFixed(0)}px; left:15px; transform:scaleX(-1);"></div>
       </div>`;
 
-    plant.addEventListener('click', () => bloom(i, pairId, plant, color, left, bottom));
+    plant.addEventListener('click', () => pickFlower(originalIndex, pairId, plant, color));
     bed.appendChild(plant);
   });
 
+  // Listen for picked flowers
   ref(`events/${EVENT_ID}/pairs/${pairId}/bloomed`).on('value', snap=>{
-    const bloomed = snap.val() || {};
-    Object.keys(bloomed).forEach(i=>{
+    const picked = snap.val() || {};
+    Object.keys(picked).forEach(i => {
       const el = bed.querySelector(`.flower-plant[data-i="${i}"]`);
-      if(el) el.classList.add('bloomed');
+      if(el) el.classList.add('picked');
     });
-    // Check Full Bloom
-    if(Object.keys(bloomed).length === QUESTIONS.length){
-      bed.classList.add('full-bloom');
-      const moon = document.querySelector('.moonglow');
-      if(moon) moon.classList.add('full-bloom');
+
+    // Check if the bouquet is empty
+    if (Object.keys(picked).length === items) {
+      bed.classList.add('empty');
     }
   });
 }
-function bloom(i, pairId, plant, color, left, bottom){
-  const wasAlreadyBloomed = plant.classList.contains('bloomed');
-  plant.classList.add('bloomed');
+function pickFlower(i, pairId, plant, color){
+  if (plant.classList.contains('picked')) return; // Prevent double clicking
 
-  if(!wasAlreadyBloomed){
-    const bed = document.getElementById('gardenBed');
-    const panel = document.getElementById('questionPanel');
+  plant.classList.add('picked');
+  const panel = document.getElementById('questionPanel');
 
-    // 1. Dim other flowers
-    bed.classList.add('dim-active');
-    setTimeout(() => bed.classList.remove('dim-active'), 3000);
+  // 1. Ethereal Spark to Panel
+  const rect = plant.getBoundingClientRect();
+  const spark = document.createElement('div');
+  spark.className = 'soul-spark';
+  spark.style.color = color;
 
-    // 2. Local particle burst
-    spawnBloomBurst(plant, color, left, bottom);
+  // Start from the flower head (approximate center)
+  spark.style.left = (rect.left + rect.width / 2) + 'px';
+  spark.style.top = (rect.top + 30) + 'px';
 
-    // 3. Ethereal spark to the question panel
-    const rect = plant.getBoundingClientRect();
-    const spark = document.createElement('div');
-    spark.className = 'soul-spark';
-    spark.style.color = color;
-    spark.style.left = (rect.left + rect.width / 2) + 'px';
-    spark.style.top = (rect.top + rect.height / 2) + 'px';
+  // Arc towards the center of the question panel
+  const targetX = window.innerWidth / 2 - (rect.left + rect.width / 2);
+  const targetY = window.innerHeight - 80 - (rect.top + 30);
+  spark.style.setProperty('--tx', targetX + 'px');
+  spark.style.setProperty('--ty', targetY + 'px');
 
-    const targetX = window.innerWidth / 2 - (rect.left + rect.width / 2);
-    const targetY = window.innerHeight - 60 - (rect.top + rect.height / 2);
-    spark.style.setProperty('--tx', targetX + 'px');
-    spark.style.setProperty('--ty', targetY + 'px');
+  document.body.appendChild(spark);
 
-    document.body.appendChild(spark);
+  // 2. Flash panel and show text on impact
+  setTimeout(() => {
+    spark.remove();
+    panel.style.setProperty('--flash-color', color + '66');
+    panel.classList.add('flash');
 
-    // Flash panel on impact
+    // Update Text
+    const textEl = document.getElementById('questionText');
+    const counterEl = document.getElementById('questionCounter');
+    textEl.classList.add('swap');
     setTimeout(() => {
-      spark.remove();
-      panel.style.setProperty('--flash-color', color + '66');
-      panel.classList.add('flash');
-      showQuestion(i);
-      setTimeout(() => panel.classList.remove('flash'), 600);
-    }, 800);
-  } else {
-    showQuestion(i);
-  }
+      textEl.textContent = QUESTIONS[i];
+      counterEl.textContent = `A gift of conversation`;
+      textEl.classList.remove('swap');
+    }, 220);
 
-  try{ ref(`events/${EVENT_ID}/pairs/${pairId}/bloomed/${i}`).set(true); }
-  catch(e){ console.warn('Could not sync bloom to partner:', e); }
-}
-function spawnBloomBurst(plant, color, left, bottom){
-  const bed = document.getElementById('gardenBed');
-  if(!bed) return;
-  for(let p = 0; p < 6; p++){
-    const mote = document.createElement('div');
-    mote.className = 'pollen';
-    mote.style.setProperty('--dx', ((seeded(p * 17.3 + Math.random()) - 0.5) * 60).toFixed(0) + 'px');
-    mote.style.animationDelay = (p * 0.06) + 's';
-    plant.appendChild(mote);
-    setTimeout(()=> mote.remove(), 1700);
+    setTimeout(() => panel.classList.remove('flash'), 600);
+  }, 800);
+
+  // 3. Sync to Firebase so it disappears on partner's screen too
+  try {
+      ref(`events/${EVENT_ID}/pairs/${pairId}/bloomed/${i}`).set(true);
+  } catch(e) {
+      console.warn('Could not sync pick to partner:', e);
   }
-  for(let s = 0; s < 4; s++){
-    const spark = document.createElement('div');
-    spark.className = 'spark';
-    const sx = ((seeded(s * 23.9 + Math.random()) - 0.5) * 90).toFixed(0) + 'px';
-    const sy = (40 + seeded(s * 31.1 + Math.random()) * 60).toFixed(0) + 'px';
-    spark.style.left = `calc(${left}% + ${(seeded(s * 5.5) - 0.5) * 40}px)`;
-    spark.style.bottom = (bottom + 40) + 'px';
-    spark.style.color = color;
-    spark.style.setProperty('--sx', sx);
-    spark.style.setProperty('--sy', sy);
-    spark.style.animationDelay = (s * 0.1) + 's';
-    bed.appendChild(spark);
-    setTimeout(()=> spark.remove(), 3000);
-  }
-}
-function showQuestion(i){
-  const textEl = document.getElementById('questionText');
-  const counterEl = document.getElementById('questionCounter');
-  textEl.classList.add('swap');
-  setTimeout(()=>{
-    textEl.textContent = QUESTIONS[i];
-    counterEl.textContent = `flower ${String(i+1).padStart(2,'0')} of ${String(QUESTIONS.length).padStart(2,'0')}`;
-    textEl.classList.remove('swap');
-  }, 220);
 }
 
 /* ---------- synced garden timer ---------- */
@@ -1726,23 +1718,42 @@ function renderHostList(guests){
 
 /* ---------- Host Controls ---------- */
 
-// OPEN GARDEN + SET TIMER
-document.getElementById('btnOpenGarden').addEventListener('click', () => {
-  const mins = parseFloat(document.getElementById('inputTimerMinutes').value) || 0;
+// --- HUB LOCK/UNLOCK CONTROLS ---
 
-  // Unlock Garden, Lock Court
+document.getElementById('btnUnlockBouquet').addEventListener('click', () => {
   ref(`events/${EVENT_ID}/hubs/garden`).set(true);
-  ref(`events/${EVENT_ID}/hubs/aita`).set(false);
+});
+document.getElementById('btnLockBouquet').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/hubs/garden`).set(false);
+});
 
-  // Set Timer
+document.getElementById('btnUnlockCourt').addEventListener('click', () => {
+  const round = String(Date.now());
+  ref(`events/${EVENT_ID}/aita/round`).set(round);
+  ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
+
+  ref(`events/${EVENT_ID}/hubs/aita`).set(true);
+
+  document.getElementById('aitaPicked').textContent = '';
+  document.getElementById('aitaTally').style.display = 'flex';
+  listenAitaTally(round);
+});
+document.getElementById('btnLockCourt').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/hubs/aita`).set(false);
+});
+
+// --- INDEPENDENT TIMER CONTROLS ---
+
+document.getElementById('btnSetTimer').addEventListener('click', () => {
+  const mins = parseFloat(document.getElementById('inputTimerMinutes').value) || 0;
   if (mins > 0) {
     ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + mins * 60000);
-  } else {
-    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null); // Clear timer if input is empty
+    document.getElementById('btnSetTimer').textContent = "Set!";
+    setTimeout(() => document.getElementById('btnSetTimer').textContent = "Set Timer", 2000);
   }
-
-  document.getElementById('btnOpenGarden').textContent = "Garden Opened!";
-  setTimeout(() => document.getElementById('btnOpenGarden').textContent = "Open Garden + Timer", 2000);
+});
+document.getElementById('btnClearTimer').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
 });
 
 document.getElementById('btnMatch').addEventListener('click', async ()=>{
@@ -1828,27 +1839,6 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
 });
 
 /* ---------- AITA voting (host) ---------- */
-// OPEN RELATIONSHIPS COURT
-document.getElementById('btnStartAita').addEventListener('click', ()=>{
-  const round = String(Date.now());
-  ref(`events/${EVENT_ID}/aita/round`).set(round);
-  ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
-  ref(`events/${EVENT_ID}/state`).set('aita');
-
-  // Unlock Court, Lock Garden
-  ref(`events/${EVENT_ID}/hubs/aita`).set(true);
-  ref(`events/${EVENT_ID}/hubs/garden`).set(false);
-
-  // Clear any lingering timer
-  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
-
-  document.getElementById('aitaPicked').textContent = '';
-  document.getElementById('aitaTally').style.display = 'flex';
-  listenAitaTally(round);
-
-  document.getElementById('btnStartAita').textContent = "Court is Open!";
-  setTimeout(() => document.getElementById('btnStartAita').textContent = "Open Relationships Court", 2000);
-});
 function listenAitaTally(round){
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).on('value', snap=>{
     const votes = snap.val() || {};
