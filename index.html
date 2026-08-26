@@ -306,6 +306,7 @@
   }
   .hub-card-title{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px; color:var(--mist);}
   .hub-card-sub{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; text-transform:uppercase;}
+  .hub-card-desc{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; font-weight:500; color:var(--dim); margin-top:4px; line-height:1.35; text-transform:none; letter-spacing:.01em;}
 
   /* Bunny Game Elements */
   .lounge-ground{
@@ -657,12 +658,12 @@
   .bouquet-scene {
     position: relative; width: 100%; min-height: 450px;
     display: flex; justify-content: center; align-items: flex-end;
-    padding-bottom: 90px; margin-top: auto;
+    padding-bottom: 60px; margin-top: auto;
   }
 
   /* The Flowers */
   .flower-plant {
-    position: absolute; left: 50%; bottom: 100px;
+    position: absolute; left: 50%; bottom: 160px;
     margin-left: -32px; width: 64px;
     display: flex; flex-direction: column; align-items: center; /* THIS WAS MISSING! */
     cursor: pointer;
@@ -679,7 +680,7 @@
 
   /* The Ribbon / Base */
   .bouquet-ribbon {
-    position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 145px; left: 50%; transform: translateX(-50%);
     width: 40px; height: 12px; border-radius: 50%;
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -936,11 +937,28 @@
           <div class="eyebrow">Today's Activities</div>
           <div class="status-note" id="waitingNote">Waiting for host...</div>
         </div>
-        <div class="itinerary-actions">
-          <!-- Appears only when host unlocks the Bouquet -->
-          <button class="btn ghost btn-sm" id="btnEnterBouquet" style="display:none;">Enter the Bouquet</button>
-          <!-- Appears only when host unlocks the Court -->
-          <button class="btn ghost btn-sm" id="btnEnterCourt" style="display:none; border-color:#3ddc84; color:#3ddc84;">Enter the Court</button>
+        <div class="hub-sections">
+
+          <!-- Pairs Activity -->
+          <div class="hub-card locked" id="hubCardGarden">
+            <div class="hub-card-icon">💐</div>
+            <div>
+              <div class="hub-card-sub" style="color:var(--gold);">Pairs Activity</div>
+              <div class="hub-card-title">The Bouquet</div>
+              <div class="hub-card-desc">Pick flowers together to spark deep conversation.</div>
+            </div>
+          </div>
+
+          <!-- Group Activity -->
+          <div class="hub-card locked" id="hubCardAita">
+            <div class="hub-card-icon">⚖️</div>
+            <div>
+              <div class="hub-card-sub" style="color:var(--gold);">Group Activity</div>
+              <div class="hub-card-title">Relationships Court™</div>
+              <div class="hub-card-desc">Evaluate real-life relationship dilemmas, cross-examinations, and cast your official verdicts.</div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -1234,8 +1252,8 @@ function enterLounge(){
 let tourIdx = 0;
 const TOUR_STEPS = [
   { selector: '#rosterGrid', title: 'The Gathering', desc: 'First, we wait for everyone to arrive and settle into the lounge. Keep an eye on the roster.', pad: 10 },
-  { selector: '#activitiesSection', title: 'The Bouquet', desc: 'Once everyone is here, I will divide you into pairs. This section will light up with a button when it is time to open the bouquet.', pad: 8 },
-  { selector: '#activitiesSection', title: 'Relationships Court™', desc: 'Afterwards, we will all regroup here to participate in the Relationships Court. Get ready to cast your verdicts.', pad: 8 }
+  { selector: '#hubCardGarden', title: 'The Bouquet', desc: 'Once everyone is here, I will divide you into pairs. This card will unlock and glow when it is time to open the bouquet.', pad: 8 },
+  { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'Afterwards, we will all regroup here to participate in the Relationships Court. Get ready to cast your verdicts.', pad: 8 }
 ];
 
 function startTour() {
@@ -1374,6 +1392,7 @@ function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;'
 function listenPhase(){
   ref(`events/${EVENT_ID}/state`).on('value', snap=>{
     const state = snap.val();
+    const prevState = currentKnownState;
     currentKnownState = state;
     if(!me) return;
     
@@ -1382,7 +1401,14 @@ function listenPhase(){
       setLoungeState('state-gathering');
       document.getElementById('aitaVerdictCard').style.display = 'none';
       document.getElementById('glowRing').style.boxShadow = `none`;
-      startBunnyGame();
+      // Firebase re-fires 'value' listeners on every reconnect (phone locks,
+      // app backgrounds, spotty wifi) even when the value hasn't changed.
+      // Only (re)start the game on an actual transition into the lounge, or
+      // if no game exists yet — otherwise a resync mid-run was silently
+      // wiping the player's progress and dumping them back to "Start".
+      if(prevState !== 'lounge' || !bg){
+        startBunnyGame();
+      }
     }
     else if(state === 'matched'){
       show('screen-lounge');
@@ -1417,12 +1443,12 @@ function listenHubs() {
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
     const hubs = snap.val() || {};
 
-    const btnBouquet = document.getElementById('btnEnterBouquet');
-    const btnCourt = document.getElementById('btnEnterCourt');
+    const cardGarden = document.getElementById('hubCardGarden');
+    const cardAita = document.getElementById('hubCardAita');
 
-    // Show/Hide the enter buttons based on Host Locks
-    if(btnBouquet) btnBouquet.style.display = hubs.garden ? 'inline-block' : 'none';
-    if(btnCourt) btnCourt.style.display = hubs.aita ? 'inline-block' : 'none';
+    // Toggle the locked state on the hub cards based on Host Locks
+    if(cardGarden) cardGarden.classList.toggle('locked', !hubs.garden);
+    if(cardAita) cardAita.classList.toggle('locked', !hubs.aita);
   });
 }
 
@@ -1441,11 +1467,19 @@ function applyPair([pairId, pair]){
   buildGarden(); // Prepares it silently so it's ready when they tap the glowing card.
 }
 
-// Bind the new Enter buttons!
-document.getElementById('btnEnterBouquet').addEventListener('click', () => {
+// Bind the hub cards!
+document.getElementById('hubCardGarden').addEventListener('click', () => {
+  if (document.getElementById('hubCardGarden').classList.contains('locked')) return;
   setLoungeState('state-garden');
+  // Failsafe: if no pairing event has built the bouquet yet, build it now
+  // so the flowers are always visible the moment the guest enters.
+  const bed = document.getElementById('gardenBed');
+  if (bed && !bed.querySelector('.flower-plant')) {
+    buildGarden();
+  }
 });
-document.getElementById('btnEnterCourt').addEventListener('click', () => {
+document.getElementById('hubCardAita').addEventListener('click', () => {
+  if (document.getElementById('hubCardAita').classList.contains('locked')) return;
   setLoungeState('state-aita');
 });
 
