@@ -80,31 +80,6 @@
   }
   .screen.active{opacity:1; visibility:visible; pointer-events:auto;}
 
-  /* ---------- CLOUDS (real cloud silhouettes via SVG) ---------- */
-  #screen-clouds{z-index:5; background:var(--ink); overflow:hidden; padding:0;}
-  #cloudsSvg{position:absolute; inset:0; width:100%; height:100%;}
-  .cloud-g{
-    transform-box:fill-box; transform-origin:center;
-    animation:cloud-drift 10s ease-in-out infinite;
-    transition:transform 2.6s cubic-bezier(.4,0,.2,1), opacity 2.2s ease .1s, filter 2.6s ease;
-  }
-  .cloud-g-back{ fill:#d9c9f0; filter:blur(9px); opacity:.9; animation-duration:12s; }
-  .cloud-g-front{ fill:#fbf6ff; filter:blur(2.5px); animation-duration:8s; animation-direction:reverse; }
-  @keyframes cloud-drift{
-    0%,100%{transform:translate(0,0) scale(1);}
-    50%{transform:translate(-1.2%,0.8%) scale(1.015);}
-  }
-  .cloud-g.dissolve{ animation:none; }
-  .cloud-g-back.dissolve{ transform:scale(1.6) translateY(-8%); opacity:0; filter:blur(55px); }
-  .cloud-g-front.dissolve{ transform:scale(1.4) translateY(-6%); opacity:0; filter:blur(40px); transition-delay:.22s,.3s,.22s; }
-  .cloud-label{
-    position:absolute; left:0; right:0; bottom:14vh; z-index:6; color:var(--twilight);
-    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px;
-    letter-spacing:.05em; text-align:center;
-    animation:pulse-fade 1.8s ease-in-out infinite;
-  }
-  @keyframes pulse-fade{0%,100%{opacity:.55;}50%{opacity:1;}}
-
   /* ---------- shared UI atoms ---------- */
   .display{font-family:'Cormorant Garamond',serif; font-weight:500; line-height:1.05;}
   h1.display{font-size:44px; margin:14px 0 6px;}
@@ -200,8 +175,13 @@
   .lounge-state.active { opacity: 1; pointer-events: auto; }
 
   /* -- State 1: The Gathering (Roster & Game) -- */
-  #state-gathering { padding-top: 64px; }
-  .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:200px; padding-left: 26px; padding-right: 26px;}
+  #state-gathering { padding-top: 0; overflow: hidden; }
+  .lounge-scroll{
+    flex: 1 1 auto; min-height: 0; width: 100%;
+    overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+    padding-top: 64px;
+  }
+  .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding:0 26px 32px;}
   .lounge-count{font-family:'Cormorant Garamond',serif; font-size:56px; font-style:italic; margin:2px 0;}
   .roster{
     width:100%; max-width:420px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
@@ -243,8 +223,11 @@
   .hub-card-sub{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; text-transform:uppercase;}
 
   /* Bunny Game Elements */
+  .lounge-game-footer{
+    position:relative; flex:none; width:100%; height:190px; z-index:2;
+  }
   .lounge-ground{
-    position:absolute; left:0; right:0; bottom:0; height:190px; z-index:0;
+    position:absolute; inset:0; z-index:0;
     pointer-events:none; overflow:hidden;
   }
   .ground-sky-fade{
@@ -261,7 +244,7 @@
     opacity:.5;
   }
   .lounge-game{
-    position:absolute; left:0; right:0; bottom:0; height:190px; z-index:1;
+    position:absolute; inset:0; z-index:1;
   }
   .game-instructions{
     position:absolute; top:6px; left:16px; z-index:3; max-width:60%;
@@ -276,6 +259,7 @@
   }
   .game-track{
     position:absolute; inset:0; cursor:pointer; -webkit-tap-highlight-color:transparent;
+    touch-action:none;
   }
   .game-bunny{
     position:absolute; left:14px; bottom:52px; width:104px; height:104px; z-index:2;
@@ -604,37 +588,6 @@
 <div class="glow-ring" id="glowRing"></div>
 <div id="offlineBadge" class="offline-badge" style="display:none;">preview mode · connect firebase for live sync</div>
 
-<!-- CLOUDS (Animation) -->
-<div class="screen active" id="screen-clouds" style="z-index:5;">
-  <svg id="cloudsSvg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">
-    <defs>
-      <symbol id="cloudShape" viewBox="0 0 200 110">
-        <ellipse cx="100" cy="86" rx="96" ry="20"/>
-        <circle cx="42" cy="64" r="36"/>
-        <circle cx="88" cy="42" r="46"/>
-        <circle cx="144" cy="58" r="38"/>
-        <circle cx="114" cy="74" r="28"/>
-      </symbol>
-    </defs>
-    <g id="cloudBackG" class="cloud-g cloud-g-back">
-      <use href="#cloudShape" x="-50" y="70" width="270" height="145"/>
-      <use href="#cloudShape" x="160" y="20" width="310" height="165"/>
-      <use href="#cloudShape" x="40" y="370" width="290" height="155"/>
-      <use href="#cloudShape" x="190" y="510" width="270" height="145"/>
-      <use href="#cloudShape" x="-40" y="610" width="250" height="135"/>
-    </g>
-    <g id="cloudFrontG" class="cloud-g cloud-g-front">
-      <use href="#cloudShape" x="0" y="140" width="230" height="125"/>
-      <use href="#cloudShape" x="195" y="190" width="250" height="135"/>
-      <use href="#cloudShape" x="65" y="290" width="210" height="115"/>
-      <use href="#cloudShape" x="10" y="450" width="240" height="130"/>
-      <use href="#cloudShape" x="205" y="490" width="220" height="120"/>
-      <use href="#cloudShape" x="85" y="590" width="230" height="125"/>
-    </g>
-  </svg>
-  <div class="cloud-label" id="cloudLabel">gathering the night&hellip;</div>
-</div>
-
 <!-- TITLE SPLASH -->
 <div class="screen" id="screen-title">
   <div class="title-kicker">You're invited to</div>
@@ -671,43 +624,47 @@
 
   <!-- STATE 1: THE GATHERING -->
   <div id="state-gathering" class="lounge-state active">
-    <div class="lounge-content">
-      <div class="eyebrow">The Digital Lounge</div>
-      <div class="lounge-count" id="loungeCount">0</div>
-      <div class="sub">people in the room right now</div>
-      <div class="roster" id="rosterGrid"></div>
-      
-      <!-- Locked Agenda -->
-      <div class="waiting-note">Waiting for everyone to arrive...</div>
-      <div class="hub-section-label" style="margin-top: 30px;">Today's Agenda</div>
-      <div class="hub-sections" style="opacity: 0.4; pointer-events: none;">
-        <div class="hub-card">
-          <div class="hub-card-icon">🌸</div>
-          <div><div class="hub-card-title">The Enchanted Garden</div><div class="hub-card-sub">locked by host</div></div>
-        </div>
-        <div class="hub-card">
-          <div class="hub-card-icon">⚖️</div>
-          <div><div class="hub-card-title">Relationships Committee™</div><div class="hub-card-sub">locked by host</div></div>
+    <div class="lounge-scroll">
+      <div class="lounge-content">
+        <div class="eyebrow">The Digital Lounge</div>
+        <div class="lounge-count" id="loungeCount">0</div>
+        <div class="sub">people in the room right now</div>
+        <div class="roster" id="rosterGrid"></div>
+
+        <!-- Locked Agenda -->
+        <div class="waiting-note">Waiting for everyone to arrive...</div>
+        <div class="hub-section-label" style="margin-top: 30px;">Today's Agenda</div>
+        <div class="hub-sections" style="opacity: 0.4; pointer-events: none;">
+          <div class="hub-card">
+            <div class="hub-card-icon">🌸</div>
+            <div><div class="hub-card-title">The Enchanted Garden</div><div class="hub-card-sub">locked by host</div></div>
+          </div>
+          <div class="hub-card">
+            <div class="hub-card-icon">⚖️</div>
+            <div><div class="hub-card-title">Relationships Committee™</div><div class="hub-card-sub">locked by host</div></div>
+          </div>
         </div>
       </div>
     </div>
-    
-    <!-- Bunny Game -->
-    <div class="lounge-ground" aria-hidden="true" id="loungeGround">
-      <div class="ground-sky-fade"></div>
-      <div class="ground-grass"></div>
-    </div>
-    <div class="lounge-game" id="loungeGame">
-      <div class="game-instructions">tap to hop over obstacles</div>
-      <div class="game-score" id="gameScore">0</div>
-      <div class="game-track" id="gameTrack">
-        <div class="game-bunny" id="gameBunny">
-          <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-          <span class="game-bunny-fallback">🐰</span>
-        </div>
-        <div class="game-overlay" id="gameOverlay">
-          <div>While you wait, help Sasha hop over the mushrooms &amp; rocks!</div>
-          <button class="btn" id="gameStartBtn">Start</button>
+
+    <!-- Bunny Game — locked to the bottom of the lounge, outside the scroll area -->
+    <div class="lounge-game-footer">
+      <div class="lounge-ground" aria-hidden="true" id="loungeGround">
+        <div class="ground-sky-fade"></div>
+        <div class="ground-grass"></div>
+      </div>
+      <div class="lounge-game" id="loungeGame">
+        <div class="game-instructions">tap to hop over obstacles</div>
+        <div class="game-score" id="gameScore">0</div>
+        <div class="game-track" id="gameTrack">
+          <div class="game-bunny" id="gameBunny">
+            <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="game-bunny-fallback">🐰</span>
+          </div>
+          <div class="game-overlay" id="gameOverlay">
+            <div>While you wait, help Sasha hop over the mushrooms &amp; rocks!</div>
+            <button class="btn" id="gameStartBtn">Start</button>
+          </div>
         </div>
       </div>
     </div>
@@ -890,43 +847,25 @@ spawnLanterns();
 
 /* ---------- application routing & VIP bypass ---------- */
 window.addEventListener('load', ()=>{
-  // 1. The Beautiful Cloud Dissolve
-  setTimeout(()=>{
-    const cloudBack = document.getElementById('cloudBackG');
-    const cloudFront = document.getElementById('cloudFrontG');
-    const cloudLabel = document.getElementById('cloudLabel');
-    if(cloudBack) cloudBack.classList.add('dissolve');
-    if(cloudFront) cloudFront.classList.add('dissolve');
-    if(cloudLabel){
-      cloudLabel.style.transition='opacity 1.2s ease';
-      cloudLabel.style.opacity='0';
-    }
-  }, 1400);
-
-  // 2. Directing the User
-  setTimeout(()=>{
-    const cloudScreen = document.getElementById('screen-clouds');
-    if(cloudScreen) cloudScreen.style.zIndex='1';
-
-    if(isHost){
-      show('screen-host');
-      initHost();
-    } else if(me){
-      // RETURNING VIP
-      ref(`events/${EVENT_ID}/attendees/${me.id}`).update({...me, joinedAt: Date.now()});
-      enterLounge();
-    } else {
-      // FIRST TIME USER
-      show('screen-title');
-      const advanceToWelcome = () => {
-        if(document.getElementById('screen-title').classList.contains('active')){
-          show('screen-welcome');
-        }
-      };
-      document.getElementById('screen-title').addEventListener('click', advanceToWelcome, {once:true});
-      setTimeout(advanceToWelcome, 4000);
-    }
-  }, 2500);
+  // Directing the user (clouds intro removed — go straight in)
+  if(isHost){
+    show('screen-host');
+    initHost();
+  } else if(me){
+    // RETURNING VIP
+    ref(`events/${EVENT_ID}/attendees/${me.id}`).update({...me, joinedAt: Date.now()});
+    enterLounge();
+  } else {
+    // FIRST TIME USER
+    show('screen-title');
+    const advanceToWelcome = () => {
+      if(document.getElementById('screen-title').classList.contains('active')){
+        show('screen-welcome');
+      }
+    };
+    document.getElementById('screen-title').addEventListener('click', advanceToWelcome, {once:true});
+    setTimeout(advanceToWelcome, 4000);
+  }
 });
 
 document.getElementById('btnToCheckin').addEventListener('click', ()=>{ show('screen-checkin'); });
@@ -1141,7 +1080,14 @@ function startBunnyGame(){
 
   document.getElementById('gameStartBtn').addEventListener('click', beginRun);
   if(!track.dataset.jumpBound){
-    track.addEventListener('click', ()=>{ bg && jump(); });
+    // Bound to the game track itself (bottom footer only) so frantic tapping
+    // to jump can never hit the roster or agenda cards above it.
+    track.addEventListener('pointerdown', (e)=>{
+      if(e.target.closest('button')) return; // let Start / Play Again buttons work
+      e.preventDefault();
+      e.stopPropagation();
+      bg && jump();
+    });
     track.dataset.jumpBound = '1';
   }
 }
