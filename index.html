@@ -258,6 +258,60 @@
     color: var(--dim); text-align: right; line-height: 1.1;
   }
 
+  /* --- SASHA'S ITINERARY TIMELINE --- */
+  .itinerary-header {
+    display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 18px; margin-bottom: 20px;
+  }
+  .host-pic-wrapper {
+    width: 60px; height: 60px; border-radius: 50%; padding: 3px; flex-shrink: 0;
+    background: conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
+    box-shadow: 0 0 20px rgba(217,79,140,.4); margin-right: 16px;
+  }
+  .host-pic {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+    background: var(--twilight);
+  }
+
+  /* The Vertical Line */
+  .itinerary-steps { position: relative; padding-left: 12px; }
+  .itinerary-steps::before {
+    content: ''; position: absolute; left: 16.5px; top: 10px; bottom: 10px;
+    width: 1px; background: rgba(255,255,255,0.15);
+  }
+
+  /* Individual Steps */
+  .itinerary-step {
+    display: flex; margin-bottom: 26px; position: relative; opacity: 0.5;
+    transition: opacity 0.4s ease;
+  }
+  .itinerary-step:last-child { margin-bottom: 0; }
+  .itinerary-step.active { opacity: 1; }
+
+  /* The Glowing Dots */
+  .step-dot {
+    width: 10px; height: 10px; border-radius: 50%; background: var(--twilight);
+    border: 2px solid rgba(255,255,255,0.3); z-index: 2; margin-top: 6px;
+    transition: all 0.4s ease;
+  }
+  .itinerary-step.active .step-dot {
+    background: var(--gold); border-color: #fff; box-shadow: 0 0 12px var(--gold);
+  }
+
+  /* Text & Buttons */
+  .step-content { padding-left: 20px; flex: 1; }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 600;
+    color: var(--mist); margin-bottom: 4px; transition: color 0.4s ease;
+  }
+  .itinerary-step.active .step-title { color: var(--gold); }
+  .step-desc { font-size: 14.5px; color: var(--dim); line-height: 1.45; }
+
+  .btn-sm {
+    padding: 10px 20px; font-size: 13px; border-color: var(--gold); color: var(--gold);
+    box-shadow: 0 4px 15px rgba(242, 193, 78, 0.15);
+  }
+
   /* Adjustments for the new layout */
   .roster { margin-top: 0; }
   .hub-sections { margin-top: 0; }
@@ -646,41 +700,41 @@
 
   /* --- THE BOUQUET SCENE --- */
   .bouquet-scene {
-    position: relative; width: 100%; flex: 1; min-height: 350px;
+    position: relative; width: 100%; min-height: 450px;
     display: flex; justify-content: center; align-items: flex-end;
-    padding-bottom: 90px; /* Space above the question panel */
+    padding-bottom: 90px; margin-top: auto;
   }
 
-  /* Anchors all flowers to the center ribbon */
+  /* The Flowers */
   .flower-plant {
-    position: absolute; left: 50%; bottom: 90px;
-    margin-left: -32px; /* Centers the 64px flower head */
-    transform-origin: 50% 100%; /* Anchor rotation to the bottom of the stem */
-    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.3, 0, 0.2, 1);
+    position: absolute; left: 50%; bottom: 100px;
+    margin-left: -32px; width: 64px;
+    display: flex; flex-direction: column; align-items: center; /* THIS WAS MISSING! */
+    cursor: pointer;
+    transform-origin: 50% 100%;
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.3, 0, 0.2, 1);
     will-change: transform, opacity;
   }
 
-  /* The Picking Animation */
   .flower-plant.picked {
     opacity: 0 !important;
     pointer-events: none;
-    /* Floats up gently as it fades */
-    transform: var(--base-transform) translateY(-60px) scale(1.1) !important;
+    transform: var(--base-transform) translateY(-80px) scale(1.15) !important;
   }
 
-  /* The Ribbon / Base of the vase */
+  /* The Ribbon / Base */
   .bouquet-ribbon {
     position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%);
-    width: 50px; height: 16px; border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 10px 40px rgba(242, 193, 78, 0.4), inset 0 2px 10px rgba(255,255,255,0.1);
+    width: 40px; height: 12px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 40px rgba(242, 193, 78, 0.4), inset 0 2px 10px rgba(255,255,255,0.2);
     z-index: 100;
   }
 
-  /* The End State Message */
+  /* The End Message */
   .empty-bouquet-msg {
-    position: absolute; top: 40%; left: 0; right: 0; text-align: center;
+    position: absolute; top: 35%; left: 0; right: 0; text-align: center;
     font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px;
     color: var(--gold); opacity: 0; transition: opacity 1.5s ease;
     pointer-events: none; text-shadow: 0 4px 15px rgba(0,0,0,0.5);
@@ -863,29 +917,54 @@
         <div class="roster" id="rosterGrid"></div>
       </div>
 
-      <!-- 3. TODAY'S AGENDA SECTION -->
-      <div class="dashboard-section">
-        <div class="section-header">
-          <div class="eyebrow">Today's Agenda</div>
-          <div class="status-note" id="waitingNote">Waiting for host...</div>
+      <!-- 3. SASHA'S ITINERARY SECTION -->
+      <div class="dashboard-section itinerary-section">
+
+        <!-- Host Intro Header -->
+        <div class="itinerary-header">
+          <div class="host-pic-wrapper">
+            <img src="sasha.png" alt="Sasha" class="host-pic" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%237c2f6e\'/><text x=\'50%\' y=\'50%\' fill=\'white\' font-size=\'24\' text-anchor=\'middle\' dy=\'.3em\'>S</text></svg>'">
+          </div>
+          <div>
+            <div class="eyebrow">Your Host</div>
+            <div class="display" style="font-size:26px; color:var(--mist); line-height:1.1; margin-top:4px;">Sasha's Itinerary</div>
+          </div>
         </div>
-        <div class="hub-sections">
-          <div class="hub-card locked" id="hubCardGarden">
-            <div class="hub-card-icon">🌸</div>
-            <div>
-              <div class="hub-card-sub" style="color:var(--gold);">PAIRS ACTIVITY</div>
-              <div class="hub-card-title">The Enchanted Garden</div>
-              <div class="hub-card-sub" id="hubGardenSub">locked by host</div>
+
+        <!-- The Dynamic Timeline Tour -->
+        <div class="itinerary-steps">
+
+          <!-- Step 1: Gathering -->
+          <div class="itinerary-step active" id="stepGathering">
+            <div class="step-dot"></div>
+            <div class="step-content">
+              <div class="step-title">1. The Gathering</div>
+              <div class="step-desc">Settle into the lounge. We are waiting for everyone to arrive and grab a drink.</div>
             </div>
           </div>
-          <div class="hub-card locked" id="hubCardAita">
-            <div class="hub-card-icon">⚖️</div>
-            <div>
-              <div class="hub-card-sub" style="color:var(--gold);">GROUP ACTIVITY</div>
-              <div class="hub-card-title">Relationships Court™</div>
-              <div class="hub-card-sub" id="hubAitaSub">locked by host</div>
+
+          <!-- Step 2: Pairs -->
+          <div class="itinerary-step" id="stepBouquet">
+            <div class="step-dot"></div>
+            <div class="step-content">
+              <div class="step-title">2. The Bouquet</div>
+              <div class="step-desc">I will divide you into pairs. You'll enter the garden to share questions from a blooming bouquet.</div>
+              <!-- Appears only when host unlocks Garden -->
+              <button class="btn ghost btn-sm step-action" id="btnEnterBouquet" style="display:none; margin-top:12px;">Enter the Bouquet</button>
             </div>
           </div>
+
+          <!-- Step 3: Court -->
+          <div class="itinerary-step" id="stepCourt">
+            <div class="step-dot"></div>
+            <div class="step-content">
+              <div class="step-title">3. Relationships Court™</div>
+              <div class="step-desc">We regroup to cast our verdicts on real-life relationship drama. Don't hold back.</div>
+              <!-- Appears only when host unlocks Court -->
+              <button class="btn ghost btn-sm step-action" id="btnEnterCourt" style="display:none; margin-top:12px; border-color:#3ddc84; color:#3ddc84;">Enter the Court</button>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -972,7 +1051,10 @@
   <div class="host-list" id="hostList" style="margin-top: 10px; margin-bottom: 30px; max-height: 160px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; background: rgba(0,0,0,0.2);"></div>
 
   <div class="host-section-label">1. Matchmaking</div>
-  <button class="btn" id="btnMatch" style="width:100%; margin-top:0; margin-bottom: 30px;">Match People</button>
+  <div style="display:flex; gap:10px; width:100%; margin-bottom: 30px;">
+    <button class="btn" id="btnMatch" style="flex:2; margin-top:0;">Match People</button>
+    <button class="btn ghost" id="btnUnpair" style="flex:1; margin-top:0; border-color:var(--rose); color:var(--rose);">Unpair</button>
+  </div>
 
   <div class="host-section-label">2. The Bouquet (Pairs)</div>
   <div style="display:flex; gap:10px; width:100%; margin-bottom: 12px;">
@@ -1247,6 +1329,8 @@ function renderRoster(){
     groupDiv.innerHTML = html;
     grid.appendChild(groupDiv);
   }
+
+  updateItineraryHighlight();
 }
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -1295,17 +1379,36 @@ function listenPhase(){
 function listenHubs() {
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
     const hubs = snap.val() || {};
-    if (hubs.garden) unlockHub('garden'); else lockHub('garden');
-    if (hubs.aita) unlockHub('aita'); else lockHub('aita');
+
+    const btnBouquet = document.getElementById('btnEnterBouquet');
+    const btnCourt = document.getElementById('btnEnterCourt');
+
+    // Show/Hide the enter buttons based on Host Locks
+    if(btnBouquet) btnBouquet.style.display = hubs.garden ? 'inline-block' : 'none';
+    if(btnCourt) btnCourt.style.display = hubs.aita ? 'inline-block' : 'none';
+
+    updateItineraryHighlight();
   });
 }
 
-function lockHub(kind){
-  const card = document.getElementById(kind === 'garden' ? 'hubCardGarden' : 'hubCardAita');
-  const sub = document.getElementById(kind === 'garden' ? 'hubGardenSub' : 'hubAitaSub');
-  if(!card) return;
-  card.classList.add('locked');
-  if(sub) sub.textContent = 'locked by host';
+function updateItineraryHighlight() {
+   const hasPairs = Object.keys(statePairs || {}).length > 0;
+
+   document.getElementById('stepGathering').classList.remove('active');
+   document.getElementById('stepBouquet').classList.remove('active');
+   document.getElementById('stepCourt').classList.remove('active');
+
+   ref(`events/${EVENT_ID}/hubs`).once('value').then(snap => {
+       const hubs = snap.val() || {};
+       if (hubs.aita) {
+           document.getElementById('stepCourt').classList.add('active');
+       } else if (hasPairs || hubs.garden) {
+           // Highlights step 2 if they are matched OR if the garden is unlocked
+           document.getElementById('stepBouquet').classList.add('active');
+       } else {
+           document.getElementById('stepGathering').classList.add('active');
+       }
+   });
 }
 
 function applyPair([pairId, pair]){
@@ -1323,27 +1426,17 @@ function applyPair([pairId, pair]){
   buildGarden(); // Prepares it silently so it's ready when they tap the glowing card.
 }
 
-function unlockHub(kind){
-  const card = document.getElementById(kind === 'garden' ? 'hubCardGarden' : 'hubCardAita');
-  const sub = document.getElementById(kind === 'garden' ? 'hubGardenSub' : 'hubAitaSub');
-  if(!card) return;
-  card.classList.remove('locked');
-  if(sub) sub.textContent = 'tap to reopen';
-}
-
-document.getElementById('hubCardGarden').addEventListener('click', ()=>{
-  if(document.getElementById('hubCardGarden').classList.contains('locked')) return;
+// Bind the new Enter buttons!
+document.getElementById('btnEnterBouquet').addEventListener('click', () => {
   setLoungeState('state-garden');
 });
-document.getElementById('hubCardAita').addEventListener('click', ()=>{
-  if(document.getElementById('hubCardAita').classList.contains('locked')) return;
+document.getElementById('btnEnterCourt').addEventListener('click', () => {
   setLoungeState('state-aita');
 });
 
 function enterAitaRound(round){
   window.currentAitaRound = round;
   setLoungeState('state-aita');
-  unlockHub('aita');
   document.getElementById('aitaVerdictCard').style.display = 'none';
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes/${me.id}`).on('value', snap=>{
     showAitaVoteState(snap.val());
@@ -1516,6 +1609,7 @@ window.addEventListener('keydown', (e)=>{
 /* ---------- bouquet builder ---------- */
 function buildGarden(){
   const bed = document.getElementById('gardenBed');
+  if(!bed) return;
   // Preserve the ribbon and end message, clear the rest
   bed.innerHTML = '<div class="bouquet-ribbon"></div><div class="empty-bouquet-msg">The bouquet has been shared.</div>';
 
@@ -1528,14 +1622,14 @@ function buildGarden(){
   QUESTIONS.forEach((q, originalIndex) => {
     const displayPos = shuffledIndices.indexOf(originalIndex);
 
-    // Fan Math: Spread flowers between -55 and +55 degrees
-    const spread = 110;
-    const angle = -55 + (displayPos / (items - 1)) * spread + (Math.random() * 8 - 4);
+    // Fan Math: Spread flowers between -60 and +60 degrees
+    const spread = 120;
+    const angle = -60 + (displayPos / (items - 1)) * spread + (Math.random() * 6 - 3);
 
     // Taller stems for the middle, shorter for the edges
     const centerProximity = 1 - Math.abs((displayPos / (items - 1)) - 0.5) * 2;
-    const stemH = 130 + (centerProximity * 80) + (Math.random() * 30);
-    const scale = (0.75 + Math.random() * 0.3).toFixed(2);
+    const stemH = 140 + (centerProximity * 90) + (Math.random() * 20);
+    const scale = (0.75 + Math.random() * 0.25).toFixed(2);
 
     const cluster = CLUSTERS[originalIndex % CLUSTERS.length];
     const color = cluster[originalIndex % 2];
@@ -1823,6 +1917,19 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
     btn.disabled = false;
     btn.textContent = originalLabel;
   }
+});
+
+// HOST: UNPAIR BUTTON
+document.getElementById('btnUnpair').addEventListener('click', async () => {
+  if(!confirm('Are you sure you want to unpair everyone and return them to the Lounge?')) return;
+
+  // Wipe the pairs
+  await ref(`events/${EVENT_ID}/pairs`).set(null);
+
+  // Optional: Auto-lock the bouquet since no one is paired anymore
+  await ref(`events/${EVENT_ID}/hubs/garden`).set(false);
+
+  alert('Everyone has been unpaired.');
 });
 // RESET EVENT
 document.getElementById('btnResetEvent').addEventListener('click', ()=>{
