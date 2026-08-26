@@ -190,9 +190,23 @@
   /* -- State 1: The Gathering (Roster & Game) -- */
   .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:210px; padding-left: 26px; padding-right: 26px;}
   .lounge-count{font-family:'Cormorant Garamond',serif; font-size:56px; font-style:italic; margin:2px 0;}
-  .roster{
-    width:100%; max-width:420px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
-    margin-top:28px; overflow-y:visible; padding:4px;
+  /* --- GROUPED ROSTER UI --- */
+  .roster {
+    margin-top: 0; width: 100%;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .pair-group {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px; padding: 14px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .pair-group-label {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase;
+    margin-bottom: 12px; text-align: center; opacity: 0.9;
+  }
+  .pair-group-members {
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
   }
   .guest-card{
     display:flex; flex-direction:column; align-items:center; gap:6px;
@@ -318,6 +332,8 @@
   }
   .game-track{
     position:absolute; left:0; right:0; bottom:0; height:100%; cursor:pointer; -webkit-tap-highlight-color:transparent;
+    /* Kills the 300ms mobile tap delay for instant jumping */
+    touch-action: manipulation;
   }
   .game-bunny{
     position:absolute; left:14px; bottom:52px; width:104px; height:104px; z-index:2;
@@ -735,11 +751,15 @@
 <div id="offlineBadge" class="offline-badge" style="display:none;">preview mode · connect firebase for live sync</div>
 
 <!-- Timer Overlays -->
-<div id="timerWarning" style="position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:90; background:rgba(217,79,140,0.9); color:white; padding:10px 24px; border-radius:999px; font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.1em; opacity:0; pointer-events:none; transition: opacity 0.5s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">5 MINUTES REMAINING</div>
+<!-- Elegant, small Garden Timer -->
+<div id="timerWarning" style="position:fixed; top:20px; right:20px; z-index:90; background:rgba(255,255,255,0.08); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); color:var(--gold); padding:8px 16px; border-radius:999px; font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.05em; opacity:0; pointer-events:none; transition: opacity 0.5s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">00:00</div>
 
-<div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.3s ease; backdrop-filter: blur(10px);">
-  <div id="countdownNumber" style="font-family:'Cormorant Garamond', serif; font-size:40vw; font-style:italic; color:var(--gold); text-shadow: 0 0 40px rgba(242,193,78,0.5);">10</div>
-  <div id="countdownMessage" style="font-family:'Jost', sans-serif; font-size:24px; color:var(--mist); margin-top:20px; display:none; text-align: center; padding: 0 20px;">Time is up.<br><span style="color:var(--gold); font-size:18px;">Please return to the main table.</span></div>
+<!-- Time's Up Screen -->
+<div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.3s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+  <div style="font-family:'Cormorant Garamond', serif; font-size:46px; font-style:italic; color:var(--gold); text-align: center; line-height: 1.1; text-shadow: 0 0 30px rgba(242,193,78,0.3);">
+    Time's up.<br>
+    <span style="color:var(--mist); font-family:'Jost', sans-serif; font-size:22px; font-style:normal; display:block; margin-top:16px;">Please come to the table.</span>
+  </div>
 </div>
 
 <!-- TITLE SPLASH -->
@@ -854,15 +874,11 @@
     <button class="back-btn" id="btnBackToGathering" onclick="setLoungeState('state-gathering')">‹</button>
     <div class="garden-bg-layer"></div>
     
-    <div class="match-header">
-      <div class="eyebrow">The Pairing</div>
-      <h1 class="display" style="font-size:30px;" id="partnerHeadline">Your partner is</h1>
-      <div class="partner-card" id="partnerCard">
-        <div class="partner-name" id="partnerName">—</div>
-        <div class="host-meta" style="margin-top:8px;"><span class="color-chip" id="partnerChip"></span><span id="partnerColorLabel">your color</span></div>
-      </div>
-      <p class="sub" style="margin-top:14px;">Find your matching glow across the room.</p>
-      <button class="btn" id="btnToGarden" style="margin-top:20px;">Tap to see the questions</button>
+    <!-- Clean, simple activity header -->
+    <div class="match-header" style="padding-top: 20px;">
+      <div class="eyebrow">Pairs Activity</div>
+      <h1 class="display" style="font-size:32px;">The Enchanted Garden</h1>
+      <p class="sub" style="margin-top:10px;">Take turns blooming the flowers to reveal your questions.</p>
     </div>
 
     <div class="garden-scene">
@@ -901,25 +917,25 @@
 <!-- HOST DASHBOARD -->
 <div class="screen" id="screen-host">
   <div class="eyebrow">Host Console</div>
-  <h1 class="display" style="font-size:28px;">Tonight's Roster</h1>
-  <div class="host-list" id="hostList"></div>
-  <button class="btn" id="btnMatch" style="align-self:center;">Match Pairs</button>
-  <div style="display:flex; gap:10px; justify-content:center; width:100%; max-width:320px; margin: 0 auto;">
-    <button class="btn ghost" id="btnResetEvent" style="flex:1;">Reset Event</button>
-    <button class="btn ghost" id="btnForceLounge" style="flex:1;">Return Everyone to Lounge</button>
+
+  <!-- Mini Roster -->
+  <div class="host-list" id="hostList" style="margin-top: 10px; margin-bottom: 30px; max-height: 160px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; background: rgba(0,0,0,0.2);"></div>
+
+  <!-- BARE MINIMUM CONTROLS -->
+
+  <div class="host-section-label">1. Matchmaking</div>
+  <button class="btn" id="btnMatch" style="width:100%; margin-top:0; margin-bottom: 30px;">Match People</button>
+
+  <div class="host-section-label">2. The Garden</div>
+  <div style="display:flex; gap:10px; width:100%; margin-bottom: 30px;">
+    <input type="number" id="inputTimerMinutes" placeholder="Mins" style="width: 80px; text-align: center; border-radius: 999px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
+    <button class="btn" id="btnOpenGarden" style="flex:1; margin-top:0;">Open Garden + Timer</button>
   </div>
 
-  <div class="host-section-label" style="margin-top:40px;">Garden Timer</div>
-  <div class="aita-toggle-row">
-    <input type="number" id="inputTimerMinutes" placeholder="Minutes (e.g., 15)" style="width: 120px; text-align: center; border-radius: 12px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(244,233,255,0.2); padding: 8px;">
-    <button class="btn" id="btnStartTimer" style="margin-top: 0; padding: 10px 20px;">Start</button>
-  </div>
-  <button class="btn ghost" id="btnClearTimer" style="margin-top: 10px; width: 100%; max-width:380px; border: 1px solid #ff4d5e; color: #ff4d5e;">Stop & Clear Timer</button>
+  <div class="host-section-label">3. The Court</div>
+  <button class="btn" id="btnStartAita" style="width:100%; margin-top:0; background:linear-gradient(135deg,#1b8c5e,#0d4d32); color:#fff; box-shadow: 0 10px 30px rgba(27, 140, 94, 0.4);">Open Relationships Court</button>
 
-  <div class="host-section-label" style="margin-top:40px;">Relationships Committee™</div>
-  <button class="btn" id="btnStartAita" style="align-self:center; background:linear-gradient(120deg,#ff4d5e,#c81f3a); color:#fff;">Convene the Committee</button>
-  
-  <div class="aita-tally" id="aitaTally">
+  <div class="aita-tally" id="aitaTally" style="margin-top: 24px;">
     <div class="aita-tally-bar">
       <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
       <div class="aita-tally-fill aita-tally-green" id="aitaTallyGreen"></div>
@@ -928,9 +944,12 @@
       <span id="aitaCountYTA">0 asshole</span>
       <span id="aitaCountNTA">0 not the asshole</span>
     </div>
-    <button class="btn ghost" id="btnPickElaborate" style="align-self:center;">🎲 Pick someone to elaborate</button>
+    <button class="btn ghost" id="btnPickElaborate" style="align-self:center; font-size:12px; padding: 10px 20px;">🎲 Pick someone to elaborate</button>
     <div class="aita-picked" id="aitaPicked"></div>
   </div>
+
+  <!-- Hidden Reset -->
+  <button class="btn ghost" id="btnResetEvent" style="margin-top: 40px; margin-bottom: 20px; width: 100%; font-size: 11px; border-color: rgba(255,0,0,0.3); color: rgba(255,255,255,0.4);">Reset Event (Danger)</button>
 </div>
 
 
@@ -1086,6 +1105,7 @@ function enterLounge(){
   setLoungeState('state-gathering');
   listenRoster();
   listenPhase();
+  listenHubs();
   startBunnyGame();
 }
 
@@ -1121,44 +1141,55 @@ function renderRoster(){
   if(!grid) return;
   grid.innerHTML = '';
 
-  // Sort guests: group by pair ID first, so partners sit next to each other
-  const sortedGuests = [...stateGuests].sort((a, b) => {
-    let pairA = Object.entries(statePairs).find(p => p[1].members && p[1].members.some(m => m.id === a.id))?.[0] || 'z';
-    let pairB = Object.entries(statePairs).find(p => p[1].members && p[1].members.some(m => m.id === b.id))?.[0] || 'z';
+  const existingPairsArr = Object.entries(statePairs);
+  const pairedGuestIds = new Set();
 
-    if (pairA !== pairB) return pairA.localeCompare(pairB);
-    return a.joinedAt - b.joinedAt;
-  });
+  // 1. Render Matched Pairs
+  if(existingPairsArr.length > 0) {
+    existingPairsArr.forEach(([pid, pair], index) => {
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'pair-group';
 
-  sortedGuests.forEach(g => {
-    const isYou = !!(me && g.id === me.id);
+      // Name it "Pair X" (or "Group X" if it's a trio)
+      const label = pair.members.length > 2 ? `Group ${index + 1}` : `Pair ${index + 1}`;
+      let html = `<div class="pair-group-label">${label}</div><div class="pair-group-members">`;
 
-    // Check if this guest is in a pair to give them a colored ring
-    let pairColor = 'transparent';
-    let hasPair = false;
-    Object.values(statePairs).forEach(p => {
-      if(p.members && p.members.some(m => m.id === g.id)) {
-        pairColor = p.color;
-        hasPair = true;
-      }
+      pair.members.forEach(m => {
+        pairedGuestIds.add(m.id);
+        const isYou = !!(me && m.id === me.id);
+        html += `
+          <div class="guest-card">
+            <div class="guest-avatar${isYou ? ' is-me' : ''}">${m.avatar}</div>
+            <div class="guest-name${isYou ? ' is-me' : ''}">${escapeHtml(m.name)}${isYou ? ' <span class="you-tag">you</span>' : ''}</div>
+          </div>`;
+      });
+      html += `</div>`;
+      groupDiv.innerHTML = html;
+      grid.appendChild(groupDiv);
     });
+  }
 
-    const card = document.createElement('div');
-    card.className = 'guest-card';
+  // 2. Render Anyone Unmatched (Waiting Room)
+  const unmatched = stateGuests.filter(g => !pairedGuestIds.has(g.id));
+  if(unmatched.length > 0) {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'pair-group';
 
-    const avatarStyle = hasPair
-      ? `border-color: ${pairColor}; box-shadow: 0 0 15px ${pairColor}88;`
-      : '';
+    const label = existingPairsArr.length > 0 ? 'Waiting for Match' : 'In the Lounge';
+    let html = `<div class="pair-group-label" style="color:var(--dim);">${label}</div><div class="pair-group-members">`;
 
-    card.innerHTML = `
-      <div class="guest-avatar${isYou && !hasPair ? ' is-me' : ''}" style="${avatarStyle}">
-        ${g.avatar}
-      </div>
-      <div class="guest-name${isYou ? ' is-me' : ''}">
-        ${escapeHtml(g.name)}${isYou ? ' <span class="you-tag">you</span>' : ''}
-      </div>`;
-    grid.appendChild(card);
-  });
+    unmatched.forEach(m => {
+      const isYou = !!(me && m.id === me.id);
+      html += `
+        <div class="guest-card">
+          <div class="guest-avatar${isYou ? ' is-me' : ''}">${m.avatar}</div>
+          <div class="guest-name${isYou ? ' is-me' : ''}">${escapeHtml(m.name)}${isYou ? ' <span class="you-tag">you</span>' : ''}</div>
+        </div>`;
+    });
+    html += `</div>`;
+    groupDiv.innerHTML = html;
+    grid.appendChild(groupDiv);
+  }
 }
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -1204,31 +1235,25 @@ function listenPhase(){
   });
 }
 
+function listenHubs() {
+  ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
+    const hubs = snap.val() || {};
+    if (hubs.garden) unlockHub('garden'); else lockHub('garden');
+    if (hubs.aita) unlockHub('aita'); else lockHub('aita');
+  });
+}
+
+function lockHub(kind){
+  const card = document.getElementById(kind === 'garden' ? 'hubCardGarden' : 'hubCardAita');
+  const sub = document.getElementById(kind === 'garden' ? 'hubGardenSub' : 'hubAitaSub');
+  if(!card) return;
+  card.classList.add('locked');
+  if(sub) sub.textContent = 'locked by host';
+}
+
 function applyPair([pairId, pair]){
-  const partners = pair.members.filter(m=>m.id !== me.id);
-  const isGroup = partners.length > 1;
-  const partnerText = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
-
-  // Prepare the Garden content
-  document.getElementById('partnerHeadline').textContent = isGroup ? 'Your partners are' : 'Your partner is';
-  document.getElementById('partnerName').textContent = partnerText;
-  document.getElementById('partnerChip').style.background = pair.color;
-  document.getElementById('partnerColorLabel').textContent = 'your glow';
-  document.getElementById('partnerCard').style.borderColor = pair.color;
-  document.getElementById('glowRing').style.boxShadow = `inset 0 0 90px 8px ${pair.color}55`;
   window.currentPairId = pairId;
-
-  buildGarden();
-
-  // Unlock the Garden Hub card (it will glow automatically based on our CSS)
-  unlockHub('garden');
-
-  // Update the Lounge text to guide them
-  const waitingNote = document.getElementById('waitingNote');
-  if (waitingNote) {
-    waitingNote.innerHTML = "Pairs set!<br>Select the Garden below.";
-    waitingNote.style.color = "var(--gold)"; // Make it glow slightly when ready
-  }
+  buildGarden(); // Prepares it silently so it's ready when they tap the glowing card.
 }
 
 function unlockHub(kind){
@@ -1246,10 +1271,6 @@ document.getElementById('hubCardGarden').addEventListener('click', ()=>{
 document.getElementById('hubCardAita').addEventListener('click', ()=>{
   if(document.getElementById('hubCardAita').classList.contains('locked')) return;
   setLoungeState('state-aita');
-});
-
-document.getElementById('btnToGarden').addEventListener('click', () => {
-    document.getElementById('state-garden').scrollTo({ top: 400, behavior: 'smooth' });
 });
 
 function enterAitaRound(round){
@@ -1388,6 +1409,7 @@ function startBunnyGame(){
   }
 
   bg.beginRun = beginRun;
+  bg.jump = jump;
 
   // Bind Start/Play Again + jump handlers ONCE via delegation so repeated
   // calls to startBunnyGame() (every time the lounge reactivates) don't
@@ -1406,13 +1428,20 @@ function startBunnyGame(){
 }
 function stopBunnyGame(){
   if(bg && bg.raf) cancelAnimationFrame(bg.raf);
+
   const track = document.getElementById('gameTrack');
-  if(track) track.querySelectorAll('.obs-crystal, .obs-thorn').forEach(el=>el.remove());
+  if(track) {
+    // Safely wipe all obstacles and leftover particle effects
+    track.querySelectorAll('.obs-crystal, .obs-thorn, .jump-particle').forEach(el => el.remove());
+  }
+
   bg = null;
 }
 window.addEventListener('keydown', (e)=>{
-  if(e.code==='Space' && bg && bg.running && document.getElementById('screen-lounge').classList.contains('active')){
-    e.preventDefault(); bg.vy = bg.y <= 0.5 ? 12.5 : bg.vy;
+  // Only trigger if they press Spacebar AND the game is actually running
+  if(e.code === 'Space' && bg && bg.running && document.getElementById('screen-lounge').classList.contains('active')){
+    e.preventDefault(); // This stops the page from scrolling down!
+    if(bg.y <= 0.5) bg.jump();
   }
 });
 
@@ -1629,61 +1658,42 @@ function listenTimer() {
   ref(`events/${EVENT_ID}/gardenTimerEnd`).on('value', snap => {
     const endTime = snap.val();
     if (timerInterval) clearInterval(timerInterval);
-    
+
     const warningEl = document.getElementById('timerWarning');
     const overlayEl = document.getElementById('countdownOverlay');
-    const numEl = document.getElementById('countdownNumber');
-    const msgEl = document.getElementById('countdownMessage');
 
     if (!endTime) {
-      // Timer cleared by host
       warningEl.style.opacity = '0';
       overlayEl.style.opacity = '0';
-      setTimeout(() => {
-         overlayEl.style.pointerEvents = 'none';
-         numEl.style.display = 'block';
-         msgEl.style.display = 'none';
-      }, 300);
       return;
     }
 
     timerInterval = setInterval(() => {
       const timeLeft = endTime - Date.now();
-      
-      if (timeLeft > 10000 && timeLeft <= 300000) {
-        // 5 minute warning
+
+      if (timeLeft > 0) {
+        // Show small timer persistently while running
         const mins = Math.floor(timeLeft / 60000);
         const secs = Math.floor((timeLeft % 60000) / 1000);
-        warningEl.textContent = `${mins}:${secs.toString().padStart(2, '0')} REMAINING`;
+        warningEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
         warningEl.style.opacity = '1';
         overlayEl.style.opacity = '0';
         overlayEl.style.pointerEvents = 'none';
-      } else if (timeLeft <= 10000 && timeLeft > 0) {
-        // 10 second countdown
+      } else if (timeLeft <= 0) {
+        // Time is up -> Show the overlay
         warningEl.style.opacity = '0';
         overlayEl.style.opacity = '1';
         overlayEl.style.pointerEvents = 'auto';
-        numEl.style.display = 'block';
-        msgEl.style.display = 'none';
-        numEl.textContent = Math.ceil(timeLeft / 1000);
-      } else if (timeLeft <= 0) {
-        // Time up
-        warningEl.style.opacity = '0';
-        numEl.style.display = 'none';
-        msgEl.style.display = 'block';
-        
-        // Auto transition out of garden after 6 seconds of holding the message
+
+        // Auto transition back to lounge after 6 seconds of holding the message
         if (timeLeft < -6000) {
            clearInterval(timerInterval);
            overlayEl.style.opacity = '0';
            overlayEl.style.pointerEvents = 'none';
-           if (!isHost && document.getElementById('state-garden').classList.contains('active')) { 
-             setLoungeState('state-gathering'); 
+           if (!isHost && document.getElementById('state-garden').classList.contains('active')) {
+             setLoungeState('state-gathering');
            }
         }
-      } else {
-        // More than 5 mins
-        warningEl.style.opacity = '0';
       }
     }, 100);
   });
@@ -1693,6 +1703,7 @@ function listenTimer() {
 let hostGuestsCache = [];
 function initHost(){
   listenRoster();
+  listenHubs();
   ref(`events/${EVENT_ID}/state`).set('lounge');
   ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
     const round = snap.val();
@@ -1713,19 +1724,25 @@ function renderHostList(guests){
   });
 }
 
-document.getElementById('btnStartTimer').addEventListener('click', () => {
-  const mins = parseFloat(document.getElementById('inputTimerMinutes').value);
-  if (!mins || mins <= 0) { alert('Enter a valid number of minutes'); return; }
-  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + mins * 60000);
-});
+/* ---------- Host Controls ---------- */
 
-document.getElementById('btnClearTimer').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
-});
+// OPEN GARDEN + SET TIMER
+document.getElementById('btnOpenGarden').addEventListener('click', () => {
+  const mins = parseFloat(document.getElementById('inputTimerMinutes').value) || 0;
 
-document.getElementById('btnForceLounge').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/state`).set('lounge');
-  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null); // Instantly clear timer if forced to lounge
+  // Unlock Garden, Lock Court
+  ref(`events/${EVENT_ID}/hubs/garden`).set(true);
+  ref(`events/${EVENT_ID}/hubs/aita`).set(false);
+
+  // Set Timer
+  if (mins > 0) {
+    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + mins * 60000);
+  } else {
+    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null); // Clear timer if input is empty
+  }
+
+  document.getElementById('btnOpenGarden').textContent = "Garden Opened!";
+  setTimeout(() => document.getElementById('btnOpenGarden').textContent = "Open Garden + Timer", 2000);
 });
 
 document.getElementById('btnMatch').addEventListener('click', async ()=>{
@@ -1796,10 +1813,12 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
     btn.textContent = originalLabel;
   }
 });
+// RESET EVENT
 document.getElementById('btnResetEvent').addEventListener('click', ()=>{
   if(!confirm('Clear the roster, pairs, and phase for a brand new event?')) return;
   ref(`events/${EVENT_ID}/attendees`).set(null);
   ref(`events/${EVENT_ID}/pairs`).set(null);
+  ref(`events/${EVENT_ID}/hubs`).set(null); // Lock all hubs
   ref(`events/${EVENT_ID}/aita/round`).set(null);
   ref(`events/${EVENT_ID}/aita/rounds`).set(null);
   ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
@@ -1809,14 +1828,26 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
 });
 
 /* ---------- AITA voting (host) ---------- */
+// OPEN RELATIONSHIPS COURT
 document.getElementById('btnStartAita').addEventListener('click', ()=>{
   const round = String(Date.now());
   ref(`events/${EVENT_ID}/aita/round`).set(round);
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
   ref(`events/${EVENT_ID}/state`).set('aita');
+
+  // Unlock Court, Lock Garden
+  ref(`events/${EVENT_ID}/hubs/aita`).set(true);
+  ref(`events/${EVENT_ID}/hubs/garden`).set(false);
+
+  // Clear any lingering timer
+  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
+
   document.getElementById('aitaPicked').textContent = '';
   document.getElementById('aitaTally').style.display = 'flex';
   listenAitaTally(round);
+
+  document.getElementById('btnStartAita').textContent = "Court is Open!";
+  setTimeout(() => document.getElementById('btnStartAita').textContent = "Open Relationships Court", 2000);
 });
 function listenAitaTally(round){
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).on('value', snap=>{
