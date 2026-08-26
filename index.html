@@ -194,6 +194,20 @@
     font-size:20px; background:rgba(255,255,255,.07); border:1px solid rgba(244,233,255,.25);
   }
   .guest-name{font-size:11px; color:var(--dim); max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .guest-avatar.is-me{
+    border-color:var(--gold);
+    box-shadow:0 0 10px 2px rgba(242,193,78,.5);
+    animation:me-glow 2.2s ease-in-out infinite;
+  }
+  @keyframes me-glow{
+    0%,100%{ box-shadow:0 0 8px 2px rgba(242,193,78,.4); }
+    50%{ box-shadow:0 0 18px 5px rgba(242,193,78,.9); }
+  }
+  .guest-name.is-me{ color:var(--gold); }
+  .you-tag{
+    font-family:'Space Mono',monospace; font-size:8.5px; letter-spacing:.05em;
+    color:var(--gold); opacity:.85; text-transform:uppercase;
+  }
   .waiting-note{
     margin-top:26px; font-size:17px; color:var(--dim); font-style:italic; 
     font-family:'Cormorant Garamond',serif; text-align: center;
@@ -208,9 +222,14 @@
   }
   .hub-card{
     display:flex; align-items:center; gap:14px; text-align:left;
-    padding:16px 18px; border-radius:18px; 
+    padding:16px 18px; border-radius:18px; cursor:pointer;
     background:rgba(255,255,255,.06); border:1px solid rgba(244,233,255,.18);
+    opacity:1; pointer-events:auto;
+    transition:opacity .3s ease, transform .15s ease, border-color .3s ease;
   }
+  .hub-card.locked{ opacity:.4; pointer-events:none; cursor:default; }
+  .hub-card:not(.locked):active{ transform:scale(.97); }
+  .hub-card:not(.locked){ border-color:rgba(242,193,78,.4); }
   .hub-card-icon{
     width:44px; height:44px; border-radius:50%; flex:none;
     display:flex; align-items:center; justify-content:center; font-size:20px;
@@ -255,7 +274,7 @@
     position:absolute; left:0; right:0; bottom:0; height:100%; cursor:pointer; -webkit-tap-highlight-color:transparent;
   }
   .game-bunny{
-    position:absolute; left:14px; bottom:52px; width:104px; height:104px; z-index:2;
+    position:absolute; left:14px; bottom:52px; width:150px; height:150px; z-index:2;
     display:flex; align-items:center; justify-content:center;
     transform:translateY(0); will-change:transform;
     filter:drop-shadow(0 6px 6px rgba(0,0,0,.4)); pointer-events:none;
@@ -651,14 +670,14 @@
       <!-- Locked Agenda -->
       <div class="waiting-note">Waiting for everyone to arrive...</div>
       <div class="hub-section-label" style="margin-top: 30px;">Today's Agenda</div>
-      <div class="hub-sections" style="opacity: 0.4; pointer-events: none;">
-        <div class="hub-card">
+      <div class="hub-sections">
+        <div class="hub-card locked" id="hubCardGarden">
           <div class="hub-card-icon">🌸</div>
-          <div><div class="hub-card-title">The Enchanted Garden</div><div class="hub-card-sub">locked by host</div></div>
+          <div><div class="hub-card-title">The Enchanted Garden</div><div class="hub-card-sub" id="hubGardenSub">locked by host</div></div>
         </div>
-        <div class="hub-card">
+        <div class="hub-card locked" id="hubCardAita">
           <div class="hub-card-icon">⚖️</div>
-          <div><div class="hub-card-title">Relationships Committee™</div><div class="hub-card-sub">locked by host</div></div>
+          <div><div class="hub-card-title">Relationships Committee™</div><div class="hub-card-sub" id="hubAitaSub">locked by host</div></div>
         </div>
       </div>
     </div>
@@ -936,8 +955,9 @@ function listenRoster(){
       grid.innerHTML='';
       sorted.forEach(g=>{
         const card = document.createElement('div');
+        const isYou = !!(me && g.id === me.id);
         card.className='guest-card';
-        card.innerHTML = `<div class="guest-avatar">${g.avatar}</div><div class="guest-name">${escapeHtml(g.name)}</div>`;
+        card.innerHTML = `<div class="guest-avatar${isYou ? ' is-me' : ''}">${g.avatar}</div><div class="guest-name${isYou ? ' is-me' : ''}">${escapeHtml(g.name)}${isYou ? ' <span class="you-tag">you</span>' : ''}</div>`;
         grid.appendChild(card);
       });
     };
@@ -1000,7 +1020,25 @@ function applyPair([pairId, pair]){
   
   setLoungeState('state-garden');
   buildGarden();
+  unlockHub('garden');
 }
+
+function unlockHub(kind){
+  const card = document.getElementById(kind === 'garden' ? 'hubCardGarden' : 'hubCardAita');
+  const sub = document.getElementById(kind === 'garden' ? 'hubGardenSub' : 'hubAitaSub');
+  if(!card) return;
+  card.classList.remove('locked');
+  if(sub) sub.textContent = 'tap to reopen';
+}
+
+document.getElementById('hubCardGarden').addEventListener('click', ()=>{
+  if(document.getElementById('hubCardGarden').classList.contains('locked')) return;
+  setLoungeState('state-garden');
+});
+document.getElementById('hubCardAita').addEventListener('click', ()=>{
+  if(document.getElementById('hubCardAita').classList.contains('locked')) return;
+  setLoungeState('state-aita');
+});
 
 document.getElementById('btnToGarden').addEventListener('click', () => {
     document.getElementById('state-garden').scrollTo({ top: 400, behavior: 'smooth' });
@@ -1009,6 +1047,7 @@ document.getElementById('btnToGarden').addEventListener('click', () => {
 function enterAitaRound(round){
   window.currentAitaRound = round;
   setLoungeState('state-aita');
+  unlockHub('aita');
   document.getElementById('aitaVerdictCard').style.display = 'none';
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes/${me.id}`).on('value', snap=>{
     showAitaVoteState(snap.val());
@@ -1047,12 +1086,18 @@ function startBunnyGame(){
   const overlay = document.getElementById('gameOverlay');
   if(!track) return;
 
+  // clear any obstacles left over from a previous round of this game
+  track.querySelectorAll('.obstacle').forEach(el=>el.remove());
+
   bg = {
     running:false, over:false, y:0, vy:0, score:0, speed:3.2, frame:0, nextSpawn:60,
     obstacles:[], raf:null, track, bunnyEl, scoreEl, overlay
   };
   const high = Number(localStorage.getItem('fsc_bunny_high')||0);
   scoreEl.textContent = high ? `best ${high}` : '0';
+  bunnyEl.style.transform = 'translateY(0)';
+  overlay.classList.remove('hidden');
+  overlay.innerHTML = '<div>While you wait, help Sasha hop over the mushrooms &amp; rocks!</div><button class="btn" id="gameStartBtn">Start</button>';
 
   function jump(){
     if(!bg || !bg.running) return;
@@ -1073,7 +1118,6 @@ function startBunnyGame(){
     localStorage.setItem('fsc_bunny_high', String(best));
     overlay.innerHTML = `<div>You hopped ${Math.floor(bg.score)} times!<br><span class="game-overlay-note">best ${best}</span></div><button class="btn" id="gameStartBtn">Play Again</button>`;
     overlay.classList.remove('hidden');
-    document.getElementById('gameStartBtn').addEventListener('click', beginRun);
     scoreEl.textContent = `best ${best}`;
   }
   function loop(){
@@ -1112,7 +1156,18 @@ function startBunnyGame(){
     bg.raf = requestAnimationFrame(loop);
   }
 
-  document.getElementById('gameStartBtn').addEventListener('click', beginRun);
+  bg.beginRun = beginRun;
+
+  // Bind Start/Play Again + jump handlers ONCE via delegation so repeated
+  // calls to startBunnyGame() (every time the lounge reactivates) don't
+  // stack up duplicate listeners, which was causing the bunny to double
+  // speed up / glitch after a few rounds.
+  if(!overlay.dataset.startBound){
+    overlay.addEventListener('click', (e)=>{
+      if(e.target.closest('#gameStartBtn') && bg && bg.beginRun) bg.beginRun();
+    });
+    overlay.dataset.startBound = '1';
+  }
   if(!track.dataset.jumpBound){
     track.addEventListener('click', ()=>{ bg && jump(); });
     track.dataset.jumpBound = '1';
@@ -1120,6 +1175,8 @@ function startBunnyGame(){
 }
 function stopBunnyGame(){
   if(bg && bg.raf) cancelAnimationFrame(bg.raf);
+  const track = document.getElementById('gameTrack');
+  if(track) track.querySelectorAll('.obstacle').forEach(el=>el.remove());
   bg = null;
 }
 window.addEventListener('keydown', (e)=>{
