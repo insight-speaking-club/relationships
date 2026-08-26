@@ -80,29 +80,6 @@
   }
   .screen.active{opacity:1; visibility:visible; pointer-events:auto;}
 
-  /* ---------- CLOUDS (real cloud silhouettes via SVG) ---------- */
-  #screen-clouds{z-index:5; background:var(--ink); overflow:hidden; padding:0;}
-  #cloudsSvg{position:absolute; inset:0; width:100%; height:100%;}
-  .cloud-g{
-    transform-box:fill-box; transform-origin:center;
-    animation:cloud-drift 10s ease-in-out infinite;
-    transition:transform 2.6s cubic-bezier(.4,0,.2,1), opacity 2.2s ease .1s, filter 2.6s ease;
-  }
-  .cloud-g-back{ fill:#d9c9f0; filter:blur(9px); opacity:.9; animation-duration:12s; }
-  .cloud-g-front{ fill:#fbf6ff; filter:blur(2.5px); animation-duration:8s; animation-direction:reverse; }
-  @keyframes cloud-drift{
-    0%,100%{transform:translate(0,0) scale(1);}
-    50%{transform:translate(-1.2%,0.8%) scale(1.015);}
-  }
-  .cloud-g.dissolve{ animation:none; }
-  .cloud-g-back.dissolve{ transform:scale(1.6) translateY(-8%); opacity:0; filter:blur(55px); }
-  .cloud-g-front.dissolve{ transform:scale(1.4) translateY(-6%); opacity:0; filter:blur(40px); transition-delay:.22s,.3s,.22s; }
-  .cloud-label{
-    position:absolute; left:0; right:0; bottom:14vh; z-index:6; color:var(--twilight);
-    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px;
-    letter-spacing:.05em; text-align:center;
-    animation:pulse-fade 1.8s ease-in-out infinite;
-  }
   @keyframes pulse-fade{0%,100%{opacity:.55;}50%{opacity:1;}}
 
   /* ---------- shared UI atoms ---------- */
@@ -256,13 +233,13 @@
     position:absolute; inset:0; cursor:pointer; -webkit-tap-highlight-color:transparent;
   }
   .game-bunny{
-    position:absolute; left:34px; bottom:56px; width:36px; height:36px; z-index:2;
+    position:absolute; left:22px; bottom:56px; width:68px; height:68px; z-index:2;
     display:flex; align-items:center; justify-content:center;
     transform:translateY(0); will-change:transform;
     filter:drop-shadow(0 6px 6px rgba(0,0,0,.4));
   }
   .game-bunny img{width:100%; height:100%; object-fit:contain; display:block;}
-  .game-bunny-fallback{font-size:30px; display:none;}
+  .game-bunny-fallback{font-size:52px; display:none;}
   .obstacle{
     position:absolute; bottom:52px; font-size:22px; z-index:2;
     filter:drop-shadow(0 4px 5px rgba(0,0,0,.4));
@@ -549,6 +526,23 @@
   .aita-tally-green{background:#3ddc84;}
   .aita-tally-counts{display:flex; justify-content:space-between; width:100%; font-family:'Space Mono',monospace; font-size:11px; color:var(--dim);}
   .aita-picked{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:18px; text-align:center; margin-top:8px; min-height:24px; color:var(--gold);}
+  .aita-toggle-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    width:100%; max-width:380px; margin:0 auto 16px;
+    font-family:'Jost',sans-serif; font-size:14px; color:var(--mist);
+  }
+  .switch{position:relative; display:inline-block; width:44px; height:26px; flex:none;}
+  .switch input{opacity:0; width:0; height:0;}
+  .switch-slider{
+    position:absolute; cursor:pointer; inset:0; border-radius:999px;
+    background:rgba(244,233,255,.25); transition:background .2s ease;
+  }
+  .switch-slider::before{
+    content:''; position:absolute; height:20px; width:20px; left:3px; top:3px;
+    border-radius:50%; background:var(--mist); transition:transform .2s ease;
+  }
+  .switch input:checked + .switch-slider{background:linear-gradient(120deg,var(--gold),#ffdf94);}
+  .switch input:checked + .switch-slider::before{transform:translateX(18px); background:var(--ink);}
 
   .offline-badge{
     position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:50;
@@ -565,37 +559,6 @@
 </div>
 <div class="glow-ring" id="glowRing"></div>
 <div id="offlineBadge" class="offline-badge" style="display:none;">preview mode · connect firebase for live sync</div>
-
-<!-- CLOUD REVEAL -->
-<div class="screen active" id="screen-clouds" style="z-index:5;">
-  <svg id="cloudsSvg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">
-    <defs>
-      <symbol id="cloudShape" viewBox="0 0 200 110">
-        <ellipse cx="100" cy="86" rx="96" ry="20"/>
-        <circle cx="42" cy="64" r="36"/>
-        <circle cx="88" cy="42" r="46"/>
-        <circle cx="144" cy="58" r="38"/>
-        <circle cx="114" cy="74" r="28"/>
-      </symbol>
-    </defs>
-    <g id="cloudBackG" class="cloud-g cloud-g-back">
-      <use href="#cloudShape" x="-50" y="70" width="270" height="145"/>
-      <use href="#cloudShape" x="160" y="20" width="310" height="165"/>
-      <use href="#cloudShape" x="40" y="370" width="290" height="155"/>
-      <use href="#cloudShape" x="190" y="510" width="270" height="145"/>
-      <use href="#cloudShape" x="-40" y="610" width="250" height="135"/>
-    </g>
-    <g id="cloudFrontG" class="cloud-g cloud-g-front">
-      <use href="#cloudShape" x="0" y="140" width="230" height="125"/>
-      <use href="#cloudShape" x="195" y="190" width="250" height="135"/>
-      <use href="#cloudShape" x="65" y="290" width="210" height="115"/>
-      <use href="#cloudShape" x="10" y="450" width="240" height="130"/>
-      <use href="#cloudShape" x="205" y="490" width="220" height="120"/>
-      <use href="#cloudShape" x="85" y="590" width="230" height="125"/>
-    </g>
-  </svg>
-  <div class="cloud-label" id="cloudLabel">gathering the night&hellip;</div>
-</div>
 
 <!-- TITLE SPLASH (first visit only) -->
 <div class="screen" id="screen-title">
@@ -652,7 +615,7 @@
   <div class="lounge-content">
     <div class="eyebrow">The Digital Lounge</div>
     <div class="lounge-count" id="loungeCount">0</div>
-    <div class="sub">souls in the room right now</div>
+    <div class="sub">people in the room right now</div>
     <div class="roster" id="rosterGrid"></div>
     <div class="waiting-note">The Host is gathering everyone before the pairing begins&hellip;</div>
   </div>
@@ -731,6 +694,13 @@
   <button class="btn ghost" id="btnResetEvent" style="align-self:center;">Reset Event</button>
 
   <div class="host-section-label">AITA Voting</div>
+  <div class="aita-toggle-row">
+    <span>Enable AITA voting for this event</span>
+    <label class="switch">
+      <input type="checkbox" id="toggleAitaEnabled" checked>
+      <span class="switch-slider"></span>
+    </label>
+  </div>
   <button class="btn" id="btnStartAita" style="align-self:center;">Start AITA Vote</button>
   <div class="aita-tally" id="aitaTally">
     <div class="aita-tally-bar">
@@ -854,7 +824,6 @@ spawnLanterns();
 
 /* ---------- cloud reveal ---------- */
 function previewGarden(){
-  document.getElementById('screen-clouds').style.display='none';
   window.currentPairId = 'preview';
   show('screen-garden');
   buildGarden();
@@ -878,25 +847,16 @@ function advanceFromTitle(){
 window.addEventListener('load', ()=>{
   const params = new URLSearchParams(location.search);
   if(params.get('preview') === 'garden'){ previewGarden(); return; }
-  setTimeout(()=>{
-    document.getElementById('cloudBackG').classList.add('dissolve');
-    document.getElementById('cloudFrontG').classList.add('dissolve');
-    document.getElementById('cloudLabel').style.transition='opacity 1.2s ease';
-    document.getElementById('cloudLabel').style.opacity='0';
-  }, 1400);
-  setTimeout(()=>{
-    document.getElementById('screen-clouds').style.zIndex='1';
-    if(isHost){ show('screen-host'); initHost(); return; }
-    const seenTitle = localStorage.getItem('fsc_seen_title');
-    if(!seenTitle){
-      localStorage.setItem('fsc_seen_title', '1');
-      show('screen-title');
-      document.getElementById('screen-title').addEventListener('click', advanceFromTitle, {once:true});
-      setTimeout(advanceFromTitle, 3200);
-    } else {
-      showGreeting();
-    }
-  }, 2500);
+  if(isHost){ show('screen-host'); initHost(); return; }
+  const seenTitle = localStorage.getItem('fsc_seen_title');
+  if(!seenTitle){
+    localStorage.setItem('fsc_seen_title', '1');
+    show('screen-title');
+    document.getElementById('screen-title').addEventListener('click', advanceFromTitle, {once:true});
+    setTimeout(advanceFromTitle, 3200);
+  } else {
+    showGreeting();
+  }
 });
 
 document.getElementById('btnToCheckin').addEventListener('click', ()=>{
@@ -979,10 +939,13 @@ function listenPhase(){
       });
     }
     if(state === 'aita' && me){
-      ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
-        const round = snap.val();
-        if(!round) return;
-        enterAitaRound(round);
+      ref(`events/${EVENT_ID}/aita/enabled`).once('value').then(enabledSnap=>{
+        if(enabledSnap.val() === false) return;
+        ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
+          const round = snap.val();
+          if(!round) return;
+          enterAitaRound(round);
+        });
       });
     }
   });
@@ -1276,14 +1239,37 @@ function showQuestion(i){
 
 /* ---------- host console ---------- */
 let hostGuestsCache = [];
+function applyAitaToggleUI(enabled){
+  document.getElementById('btnStartAita').style.display = enabled ? '' : 'none';
+  if(!enabled){ document.getElementById('aitaTally').style.display = 'none'; }
+}
 function initHost(){
   listenRoster();
   ref(`events/${EVENT_ID}/state`).set('lounge');
+  ref(`events/${EVENT_ID}/aita/enabled`).once('value').then(snap=>{
+    const enabled = snap.val() !== false; // default on unless explicitly disabled
+    document.getElementById('toggleAitaEnabled').checked = enabled;
+    applyAitaToggleUI(enabled);
+  });
   ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
     const round = snap.val();
     if(round){ listenAitaTally(round); document.getElementById('aitaTally').style.display='flex'; }
   });
 }
+document.getElementById('toggleAitaEnabled').addEventListener('change', (e)=>{
+  const enabled = e.target.checked;
+  ref(`events/${EVENT_ID}/aita/enabled`).set(enabled);
+  applyAitaToggleUI(enabled);
+  if(!enabled){
+    // End any live round so guests currently voting return to the lounge/garden.
+    ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
+      if(snap.val()){
+        ref(`events/${EVENT_ID}/aita/round`).set(null);
+        ref(`events/${EVENT_ID}/state`).set('lounge');
+      }
+    });
+  }
+});
 function renderHostList(guests){
   hostGuestsCache = guests;
   const list = document.getElementById('hostList');
@@ -1324,7 +1310,8 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
   if(!confirm('Clear the roster, pairs, and phase for a brand new event?')) return;
   ref(`events/${EVENT_ID}/attendees`).set(null);
   ref(`events/${EVENT_ID}/pairs`).set(null);
-  ref(`events/${EVENT_ID}/aita`).set(null);
+  ref(`events/${EVENT_ID}/aita/round`).set(null);
+  ref(`events/${EVENT_ID}/aita/rounds`).set(null);
   document.getElementById('aitaTally').style.display='none';
   document.getElementById('aitaPicked').textContent='';
   ref(`events/${EVENT_ID}/state`).set('lounge');
@@ -1332,6 +1319,7 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
 
 /* ---------- AITA voting (host) ---------- */
 document.getElementById('btnStartAita').addEventListener('click', ()=>{
+  if(!document.getElementById('toggleAitaEnabled').checked){ alert('Turn on AITA voting above first.'); return; }
   const round = String(Date.now());
   ref(`events/${EVENT_ID}/aita/round`).set(round);
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
