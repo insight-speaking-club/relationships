@@ -233,13 +233,13 @@
     position:absolute; inset:0; cursor:pointer; -webkit-tap-highlight-color:transparent;
   }
   .game-bunny{
-    position:absolute; left:22px; bottom:56px; width:68px; height:68px; z-index:2;
+    position:absolute; left:14px; bottom:52px; width:104px; height:104px; z-index:2;
     display:flex; align-items:center; justify-content:center;
     transform:translateY(0); will-change:transform;
     filter:drop-shadow(0 6px 6px rgba(0,0,0,.4));
   }
   .game-bunny img{width:100%; height:100%; object-fit:contain; display:block;}
-  .game-bunny-fallback{font-size:52px; display:none;}
+  .game-bunny-fallback{font-size:80px; display:none;}
   .obstacle{
     position:absolute; bottom:52px; font-size:22px; z-index:2;
     filter:drop-shadow(0 4px 5px rgba(0,0,0,.4));
@@ -271,65 +271,76 @@
   .partner-name{font-family:'Cormorant Garamond',serif; font-size:32px; font-style:italic;}
   .color-chip{width:14px; height:14px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle;}
 
-  /* ---------- garden scene ---------- */
+  /* ---------- garden scene : enchanted, magical meadow ---------- */
   #screen-garden{
     justify-content:flex-start; padding:40px 0 0; overflow-y:auto; -webkit-overflow-scrolling:touch;
     background:
-      radial-gradient(130% 55% at 50% 0%, rgba(120,255,190,.12) 0%, transparent 55%),
-      linear-gradient(180deg, #081410 0%, #0b1f16 35%, #0f2a1c 70%, #0a1712 100%);
+      radial-gradient(120% 60% at 20% -5%, rgba(255,190,240,.16) 0%, transparent 55%),
+      radial-gradient(110% 55% at 85% 5%, rgba(160,210,255,.14) 0%, transparent 55%),
+      linear-gradient(190deg, #1c0f3d 0%, #3a1657 30%, #6a2372 58%, #a83e82 82%, #d1637a 100%);
   }
   #screen-garden::before{
     content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
     background-image:
-      radial-gradient(1.3px 1.3px at 12% 15%, rgba(255,255,255,.55), transparent),
-      radial-gradient(1px 1px at 42% 8%, rgba(255,255,255,.4), transparent),
-      radial-gradient(1.4px 1.4px at 68% 22%, rgba(255,255,255,.45), transparent),
-      radial-gradient(1px 1px at 88% 12%, rgba(255,255,255,.35), transparent),
-      radial-gradient(1.2px 1.2px at 25% 40%, rgba(255,255,255,.3), transparent);
-    background-repeat:repeat; background-size:320px 320px; opacity:.55;
+      radial-gradient(1.6px 1.6px at 12% 15%, rgba(255,255,255,.75), transparent),
+      radial-gradient(1.2px 1.2px at 42% 8%, rgba(255,230,255,.6), transparent),
+      radial-gradient(1.8px 1.8px at 68% 22%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1.2px 1.2px at 88% 12%, rgba(255,220,255,.55), transparent),
+      radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.3px 1.3px at 92% 34%, rgba(255,255,255,.5), transparent);
+    background-repeat:repeat; background-size:320px 320px; opacity:.8;
+    animation:twinkle-sky 5s ease-in-out infinite;
   }
+  @keyframes twinkle-sky{0%,100%{opacity:.55;}50%{opacity:.9;}}
   #screen-garden .eyebrow, #screen-garden h1, #screen-garden .sub{padding:0 26px;}
+  #screen-garden h1.display{
+    background:linear-gradient(120deg, var(--gold), #ffd1f0 45%, #ff8fd0);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
   .garden-scene{position:relative; width:calc(100% - 28px); margin:20px auto 0; z-index:1;}
   .garden-bed{
     position:relative; overflow:hidden; border-radius:30px;
     background:
-      radial-gradient(160% 55% at 30% 4%, rgba(120,255,190,.14) 0%, transparent 55%),
-      radial-gradient(130% 50% at 78% 40%, rgba(217,79,140,.10) 0%, transparent 60%),
-      linear-gradient(180deg, #0d2417 0%, #0a1a12 45%, #06110c 80%, #040b08 100%);
+      radial-gradient(160% 55% at 25% 2%, rgba(255,180,235,.20) 0%, transparent 55%),
+      radial-gradient(140% 50% at 80% 30%, rgba(140,210,255,.16) 0%, transparent 60%),
+      radial-gradient(120% 60% at 50% 100%, rgba(255,214,140,.14) 0%, transparent 62%),
+      linear-gradient(180deg, #2a1348 0%, #3c1a52 35%, #341455 65%, #240f3f 100%);
     box-shadow:
       0 24px 70px rgba(0,0,0,.5),
-      inset 0 0 0 1px rgba(180,255,210,.1),
-      inset 0 40px 60px -30px rgba(120,255,190,.15);
+      inset 0 0 0 1px rgba(255,220,250,.14),
+      inset 0 40px 60px -30px rgba(255,190,235,.18);
   }
   .garden-bed::after{
-    content:''; position:absolute; inset:0; pointer-events:none; opacity:.55; mix-blend-mode:screen;
+    content:''; position:absolute; inset:0; pointer-events:none; opacity:.6; mix-blend-mode:screen;
     background-image:
-      radial-gradient(1.6px 10px at 8px 6px, rgba(90,220,150,.32), transparent 72%),
-      radial-gradient(1.6px 8px at 24px 20px, rgba(90,220,150,.22), transparent 72%),
-      radial-gradient(1.6px 11px at 34px 34px, rgba(90,220,150,.26), transparent 72%);
+      radial-gradient(1.8px 10px at 8px 6px, rgba(255,200,240,.3), transparent 72%),
+      radial-gradient(1.8px 8px at 24px 20px, rgba(160,220,255,.24), transparent 72%),
+      radial-gradient(1.8px 11px at 34px 34px, rgba(255,225,150,.24), transparent 72%);
     background-repeat:repeat; background-size:46px 46px;
   }
   .garden-vignette{position:absolute; inset:0; pointer-events:none; z-index:5; border-radius:30px;
-    box-shadow:inset 0 40px 50px -20px rgba(4,10,8,.9), inset 0 -60px 70px -30px rgba(4,10,8,.85);
+    box-shadow:inset 0 40px 50px -20px rgba(20,8,36,.85), inset 0 -60px 70px -30px rgba(20,8,36,.8);
   }
   .garden-fade-top{position:absolute; top:0; left:0; right:0; height:70px; z-index:4; pointer-events:none;
-    background:linear-gradient(180deg, #0d2417, rgba(13,36,23,0));
+    background:linear-gradient(180deg, #2a1348, rgba(42,19,72,0));
   }
-  .moonglow{position:absolute; top:-40px; left:50%; transform:translateX(-50%); width:240px; height:240px; border-radius:50%;
-    background:radial-gradient(circle, rgba(244,233,255,.16), rgba(244,233,255,0) 70%); pointer-events:none; z-index:1;}
+  .moonglow{position:absolute; top:-50px; left:50%; transform:translateX(-50%); width:280px; height:280px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,225,190,.28), rgba(255,190,235,.14) 45%, rgba(244,233,255,0) 72%);
+    pointer-events:none; z-index:1; animation:moon-breathe 6s ease-in-out infinite;}
+  @keyframes moon-breathe{0%,100%{opacity:.85; transform:translateX(-50%) scale(1);} 50%{opacity:1; transform:translateX(-50%) scale(1.06);}}
   .hill{
     position:absolute; left:-15%; right:-15%; bottom:-20px; height:150px;
     background-image:
-      radial-gradient(42% 80% at 12% 100%, #1c4a30 0%, rgba(28,74,48,0) 74%),
-      radial-gradient(48% 90% at 40% 100%, #245736 0%, rgba(36,87,54,0) 76%),
-      radial-gradient(45% 85% at 68% 100%, #1c4a30 0%, rgba(28,74,48,0) 74%),
-      radial-gradient(40% 75% at 94% 100%, #245736 0%, rgba(36,87,54,0) 72%),
-      radial-gradient(70% 34% at 50% 94%, rgba(120,255,190,.18) 0%, rgba(120,255,190,0) 76%);
+      radial-gradient(42% 80% at 12% 100%, #4a2166 0%, rgba(74,33,102,0) 74%),
+      radial-gradient(48% 90% at 40% 100%, #632a63 0%, rgba(99,42,99,0) 76%),
+      radial-gradient(45% 85% at 68% 100%, #3d1f5c 0%, rgba(61,31,92,0) 74%),
+      radial-gradient(40% 75% at 94% 100%, #7a3060 0%, rgba(122,48,96,0) 72%),
+      radial-gradient(70% 34% at 50% 94%, rgba(255,200,240,.22) 0%, rgba(255,200,240,0) 76%);
     filter:blur(2px);
   }
   .firefly{
     position:absolute; width:4px; height:4px; border-radius:50%;
-    background:#eaffb0; box-shadow:0 0 8px 3px rgba(234,255,176,.85);
+    background:#fff4c9; box-shadow:0 0 8px 3px currentColor;
     animation:firefly-float ease-in-out infinite;
   }
   @keyframes firefly-float{
@@ -337,17 +348,37 @@
     50%{transform:translate(8px,-14px); opacity:1;}
   }
 
-  /* drifting atmospheric mist across the meadow */
+  /* tiny twinkling star-sparkles scattered through the meadow */
+  .sparkle{
+    position:absolute; width:6px; height:6px; pointer-events:none; z-index:2;
+    background:radial-gradient(circle, #fff, currentColor 45%, transparent 72%);
+    clip-path:polygon(50% 0%,63% 38%,100% 50%,63% 62%,50% 100%,37% 62%,0% 50%,37% 38%);
+    animation:sparkle-twinkle ease-in-out infinite;
+  }
+  @keyframes sparkle-twinkle{0%,100%{opacity:0; transform:scale(.3) rotate(0deg);} 50%{opacity:1; transform:scale(1) rotate(45deg);}}
+
+  /* butterflies drifting through the meadow */
+  .butterfly{position:absolute; font-size:16px; z-index:3; pointer-events:none; filter:drop-shadow(0 0 6px currentColor);
+    animation:butterfly-drift ease-in-out infinite;}
+  @keyframes butterfly-drift{
+    0%{transform:translate(0,0) rotate(0deg);}
+    25%{transform:translate(24px,-18px) rotate(8deg);}
+    50%{transform:translate(4px,-34px) rotate(-6deg);}
+    75%{transform:translate(-22px,-14px) rotate(6deg);}
+    100%{transform:translate(0,0) rotate(0deg);}
+  }
+
+  /* drifting atmospheric mist across the meadow — soft rainbow haze */
   .garden-mist{position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
   .garden-mist::before, .garden-mist::after{
     content:''; position:absolute; width:160%; height:220px; left:-30%; top:14%;
-    background:radial-gradient(ellipse at center, rgba(200,255,230,.11), transparent 70%);
+    background:radial-gradient(ellipse at center, rgba(255,210,245,.14), transparent 70%);
     filter:blur(16px);
     animation:mist-drift 28s ease-in-out infinite;
   }
   .garden-mist::after{
     top:58%; animation-duration:36s; animation-direction:reverse;
-    background:radial-gradient(ellipse at center, rgba(180,220,255,.09), transparent 70%);
+    background:radial-gradient(ellipse at center, rgba(190,220,255,.12), transparent 70%);
   }
   @keyframes mist-drift{0%,100%{transform:translateX(0);} 50%{transform:translateX(10%);}}
 
@@ -379,10 +410,10 @@
     position:absolute; bottom:96px; display:flex; flex-direction:column; align-items:center;
     cursor:pointer; z-index:2; transform:scale(var(--fscale,1)); transition:transform .3s ease;
   }
-  .stem{width:2.5px; border-radius:2px; background:linear-gradient(180deg, rgba(90,200,140,0), #2f6b4a 40%, #1e4a30); order:2;}
+  .stem{width:2.5px; border-radius:2px; background:linear-gradient(180deg, rgba(140,220,170,0), #3c8f5f 40%, #235838); order:2;}
   .leaf{
-    position:absolute; width:15px; height:7px; background:#2f6b4a; border-radius:0 100% 0 100%;
-    opacity:.8; z-index:1;
+    position:absolute; width:15px; height:7px; background:#3c8f5f; border-radius:0 100% 0 100%;
+    opacity:.85; z-index:1;
   }
   .flower-head{position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center; order:1;}
   .bud{
@@ -402,7 +433,8 @@
   .petal{
     position:absolute; width:14px; height:26px; top:6px; left:50%; margin-left:-7px;
     border-radius:50% 50% 50% 50% / 72% 72% 28% 28%;
-    background-color:currentColor; opacity:.92;
+    background:linear-gradient(200deg, #fff 0%, currentColor 38%, currentColor 100%);
+    opacity:.94;
     transform-origin:50% 100%;
     box-shadow:0 0 10px currentColor;
   }
@@ -417,15 +449,32 @@
     background:radial-gradient(circle at 35% 30%,#fffef2,#f2c14e 70%);
     box-shadow:0 0 14px 5px rgba(255,240,180,.75);
   }
-  .flower-plant.bloomed .petal, .flower-plant.bloomed .petal-star, .flower-plant.bloomed .bell{
+  .flower-plant.bloomed .petal, .flower-plant.bloomed .petal-star, .flower-plant.bloomed .bell, .flower-plant.bloomed .petal-orchid{
     animation:petal-breathe 3.4s ease-in-out infinite;
   }
-  @keyframes petal-breathe{0%,100%{opacity:.82; filter:brightness(1);} 50%{opacity:1; filter:brightness(1.18);}}
+  @keyframes petal-breathe{0%,100%{opacity:.82; filter:brightness(1);} 50%{opacity:1; filter:brightness(1.22);}}
+
+  /* sparkle ring that twinkles around every open bloom */
+  .bloom-sparkles{position:absolute; inset:-10px; pointer-events:none; z-index:0;}
+  .bloom-sparkles span{
+    position:absolute; width:5px; height:5px; top:50%; left:50%;
+    background:radial-gradient(circle,#fff,currentColor 55%,transparent 75%);
+    clip-path:polygon(50% 0%,63% 38%,100% 50%,63% 62%,50% 100%,37% 62%,0% 50%,37% 38%);
+    animation:orbit-twinkle 3.2s ease-in-out infinite;
+  }
+  .bloom-sparkles span:nth-child(1){ --r:30px; --a:20deg; animation-delay:0s; }
+  .bloom-sparkles span:nth-child(2){ --r:28px; --a:150deg; animation-delay:.6s; }
+  .bloom-sparkles span:nth-child(3){ --r:32px; --a:260deg; animation-delay:1.2s; }
+  @keyframes orbit-twinkle{
+    0%,100%{opacity:0; transform:translate(-50%,-50%) rotate(var(--a)) translateX(var(--r)) scale(.4);}
+    50%{opacity:1; transform:translate(-50%,-50%) rotate(calc(var(--a) + 25deg)) translateX(var(--r)) scale(1);}
+  }
 
   /* species: star bloom — narrow pointed petals */
   .petal-star{
     position:absolute; width:9px; height:30px; top:2px; left:50%; margin-left:-4.5px;
-    background-color:currentColor; opacity:.92;
+    background:linear-gradient(200deg,#fff, currentColor 45%);
+    opacity:.92;
     clip-path:polygon(50% 0%, 100% 55%, 62% 100%, 38% 100%, 0% 55%);
     transform-origin:50% 100%;
     box-shadow:0 0 10px currentColor;
@@ -436,11 +485,11 @@
   .petal-star:nth-child(4){transform:rotate(216deg);}
   .petal-star:nth-child(5){transform:rotate(288deg);}
 
-  /* species: bell cluster — three drooping bioluminescent bells */
+  /* species: bell cluster — three drooping enchanted bells */
   .bloom-bell{ align-items:flex-start; }
   .bell{
     position:absolute; width:13px; height:19px; border-radius:0 0 50% 50% / 0 0 65% 65%;
-    background:linear-gradient(180deg, currentColor, rgba(255,255,255,.35));
+    background:linear-gradient(180deg, currentColor, rgba(255,255,255,.45));
     opacity:.92; box-shadow:0 4px 12px -2px currentColor;
   }
   .bell::after{
@@ -450,6 +499,26 @@
   .bell:nth-child(1){ top:2px; left:6px; transform:rotate(-14deg) scale(.92); }
   .bell:nth-child(2){ top:-4px; left:24px; transform:rotate(4deg) scale(1.08); }
   .bell:nth-child(3){ top:4px; left:40px; transform:rotate(16deg) scale(.86); }
+
+  /* species: enchanted orchid — five curved, two-toned petals around a jeweled throat */
+  .petal-orchid{
+    position:absolute; width:17px; height:24px; top:8px; left:50%; margin-left:-8.5px;
+    background:linear-gradient(210deg,#fff 0%, currentColor 55%);
+    opacity:.94;
+    border-radius:50% 50% 50% 4% / 65% 65% 35% 35%;
+    transform-origin:50% 100%;
+    box-shadow:0 0 10px currentColor;
+  }
+  .petal-orchid:nth-child(1){transform:rotate(-8deg) translateY(-4px);}
+  .petal-orchid:nth-child(2){transform:rotate(64deg);}
+  .petal-orchid:nth-child(3){transform:rotate(136deg);}
+  .petal-orchid:nth-child(4){transform:rotate(208deg);}
+  .petal-orchid:nth-child(5){transform:rotate(280deg);}
+  .orchid-throat{
+    position:absolute; width:10px; height:10px; border-radius:50%; z-index:2;
+    background:radial-gradient(circle at 35% 30%,#fff,#ff9ee6 55%,#c078ff 90%);
+    box-shadow:0 0 12px 4px rgba(255,180,240,.7);
+  }
 
   .flower-plant:not(.bloomed) .flower-head{ animation:bud-sway 4.5s ease-in-out infinite; }
   @keyframes bud-sway{0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);}}
@@ -648,15 +717,15 @@
     <div class="host-meta" style="margin-top:8px;"><span class="color-chip" id="partnerChip"></span><span id="partnerColorLabel">your color</span></div>
   </div>
   <p class="sub" style="margin-top:18px;">Find your matching glow across the room.</p>
-  <button class="btn" id="btnToGarden">Enter the Garden</button>
+  <button class="btn" id="btnToGarden">Start Answering Questions →</button>
 </div>
 
 
 <!-- GARDEN -->
 <div class="screen" id="screen-garden">
-  <div class="eyebrow">The Bioluminescent Garden</div>
-  <h1 class="display" style="font-size:28px; margin-bottom:2px;">Tap a Flower to Bloom</h1>
-  <div class="sub">wander the meadow — every bloom opens a new question</div>
+  <div class="eyebrow">✦ The Enchanted Garden ✦</div>
+  <h1 class="display" style="font-size:28px; margin-bottom:2px;">Tap a Blossom to Bloom</h1>
+  <div class="sub">wander the moonlit meadow — every bloom opens a new question</div>
   <div class="garden-scene">
     <div class="moonglow"></div>
     <div class="garden-bed" id="gardenBed"></div>
@@ -792,11 +861,13 @@ const QUESTIONS = [
 ];
 
 const CLUSTERS = [
-  ['#3ef5c4','#5ec8ff'],   /* cool teal-blue */
-  ['#ff4fd8','#f2c14e'],   /* magenta-gold */
-  ['#c78bff','#39d0ff'],   /* violet-cyan */
-  ['#ff8a5c','#7dff3f']    /* ember-lime */
+  ['#ff9ee6','#ffd76e'],   /* candy pink - honey gold */
+  ['#9ad8ff','#c9a4ff'],   /* sky blue - lavender */
+  ['#ff8fae','#8effc1'],   /* rose - mint */
+  ['#ffe66d','#ff6fae'],   /* sunshine - fuchsia */
+  ['#c9a4ff','#6ee7ff']    /* amethyst - aqua */
 ];
+const FIREFLY_COLORS = ['#fff4c9','#ffc9f0','#c9f0ff','#e6c9ff','#c9ffdf'];
 function seeded(n){ const x = Math.sin(n*12.9898)*43758.5453; return x - Math.floor(x); }
 
 let me = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
@@ -917,26 +988,34 @@ function listenRoster(){
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 /* ---------- phase + pairing sync ---------- */
+function applyPair([pairId, pair]){
+  const partners = pair.members.filter(m=>m.id !== me.id);
+  document.getElementById('partnerHeadline').textContent = partners.length > 1 ? 'Your partners are' : 'Your partner is';
+  document.getElementById('partnerName').textContent = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
+  document.getElementById('partnerChip').style.background = pair.color;
+  document.getElementById('partnerColorLabel').textContent = 'your glow';
+  document.getElementById('partnerCard').style.borderColor = pair.color;
+  document.getElementById('glowRing').style.boxShadow = `inset 0 0 90px 8px ${pair.color}55`;
+  window.currentPairId = pairId;
+  stopBunnyGame();
+  show('screen-reveal');
+}
 function listenPhase(){
   ref(`events/${EVENT_ID}/state`).on('value', snap=>{
     const state = snap.val();
     if(state === 'matched' && me){
-      ref(`events/${EVENT_ID}/pairs`).once('value').then(snap=>{
-        const pairs = snap.val() || {};
-        const myPair = Object.entries(pairs).find(([pid,p])=> (p.members||[]).some(m=>m.id===me.id));
-        if(!myPair) return;
-        const [pairId, pair] = myPair;
-        const partners = pair.members.filter(m=>m.id !== me.id);
-        document.getElementById('partnerHeadline').textContent = partners.length > 1 ? 'Your partners are' : 'Your partner is';
-        document.getElementById('partnerName').textContent = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
-        document.getElementById('partnerChip').style.background = pair.color;
-        document.getElementById('partnerColorLabel').textContent = 'your glow';
-        document.getElementById('partnerCard').style.borderColor = pair.color;
-        document.getElementById('glowRing').style.boxShadow = `inset 0 0 90px 8px ${pair.color}55`;
-        window.currentPairId = pairId;
-        stopBunnyGame();
-        show('screen-reveal');
-      });
+      const tryFindPair = (attemptsLeft)=>{
+        ref(`events/${EVENT_ID}/pairs`).once('value').then(snap=>{
+          const pairs = snap.val() || {};
+          const myPair = Object.entries(pairs).find(([pid,p])=> (p.members||[]).some(m=>m.id===me.id));
+          if(!myPair){
+            if(attemptsLeft > 0){ setTimeout(()=>tryFindPair(attemptsLeft-1), 500); }
+            return;
+          }
+          applyPair(myPair);
+        });
+      };
+      tryFindPair(4);
     }
     if(state === 'aita' && me){
       ref(`events/${EVENT_ID}/aita/enabled`).once('value').then(enabledSnap=>{
@@ -1052,7 +1131,7 @@ function startBunnyGame(){
       bg.nextSpawn = bg.frame + 55 + Math.random()*45;
     }
 
-    const bunnyLeft = 34, bunnyWidth = 26;
+    const bunnyLeft = 26, bunnyWidth = 40;
     for(let idx = bg.obstacles.length - 1; idx >= 0; idx--){
       const o = bg.obstacles[idx];
       o.x -= bg.speed;
@@ -1111,7 +1190,7 @@ function buildGarden(){
     bed.appendChild(hill);
   }
 
-  /* drifting fireflies across the whole scene */
+  /* drifting fireflies across the whole scene, in soft rainbow hues */
   const fireflyCount = Math.max(12, rows * 5);
   for(let f = 0; f < fireflyCount; f++){
     const fly = document.createElement('div');
@@ -1120,6 +1199,35 @@ function buildGarden(){
     fly.style.bottom = (seeded(f * 5.77) * totalHeight) + 'px';
     fly.style.animationDuration = (2.6 + seeded(f * 9.31) * 3) + 's';
     fly.style.animationDelay = '-' + (seeded(f * 1.73) * 3) + 's';
+    fly.style.color = FIREFLY_COLORS[f % FIREFLY_COLORS.length];
+    bed.appendChild(fly);
+  }
+
+  /* twinkling star-sparkles scattered through the meadow */
+  const sparkleCount = Math.max(16, rows * 6);
+  for(let s = 0; s < sparkleCount; s++){
+    const sp = document.createElement('div');
+    sp.className = 'sparkle';
+    sp.style.left = (seeded(s * 4.4 + 100) * 94 + 3) + '%';
+    sp.style.bottom = (seeded(s * 6.6 + 200) * totalHeight) + 'px';
+    sp.style.color = FIREFLY_COLORS[(s + 2) % FIREFLY_COLORS.length];
+    sp.style.animationDuration = (1.8 + seeded(s * 2.2 + 300) * 2.4) + 's';
+    sp.style.animationDelay = '-' + (seeded(s * 8.8 + 400) * 3) + 's';
+    bed.appendChild(sp);
+  }
+
+  /* a handful of butterflies drifting lazily through the meadow */
+  const butterflyEmojis = ['🦋'];
+  const butterflyCount = Math.max(4, Math.round(rows * 1.4));
+  for(let b = 0; b < butterflyCount; b++){
+    const fly = document.createElement('div');
+    fly.className = 'butterfly';
+    fly.textContent = butterflyEmojis[0];
+    fly.style.left = (seeded(b * 11.3 + 500) * 88 + 5) + '%';
+    fly.style.bottom = (seeded(b * 13.7 + 600) * totalHeight) + 'px';
+    fly.style.color = CLUSTERS[b % CLUSTERS.length][0];
+    fly.style.animationDuration = (6 + seeded(b * 3.9 + 700) * 5) + 's';
+    fly.style.animationDelay = '-' + (seeded(b * 5.1 + 800) * 6) + 's';
     bed.appendChild(fly);
   }
 
@@ -1138,22 +1246,29 @@ function buildGarden(){
     const cluster = CLUSTERS[row % CLUSTERS.length];
     const color = cluster[col % 2];
 
-    /* species variety: mostly round blooms, with stars and bell-clusters scattered in */
+    /* species variety: round, star, bell, and enchanted orchid blooms scattered throughout */
     const speciesRoll = seeded(i * 13.7);
-    const species = speciesRoll < 0.45 ? 'round' : speciesRoll < 0.72 ? 'star' : 'bell';
+    const species = speciesRoll < 0.34 ? 'round' : speciesRoll < 0.58 ? 'star' : speciesRoll < 0.8 ? 'bell' : 'orchid';
+    const sparkleRing = `<div class="bloom-sparkles"><span></span><span></span><span></span></div>`;
     let bloomHtml;
     if(species === 'star'){
-      bloomHtml = `<div class="bloom">
+      bloomHtml = `${sparkleRing}<div class="bloom">
           <div class="petal-star"></div><div class="petal-star"></div><div class="petal-star"></div>
           <div class="petal-star"></div><div class="petal-star"></div>
           <div class="bloom-center"></div>
         </div>`;
     } else if(species === 'bell'){
-      bloomHtml = `<div class="bloom bloom-bell">
+      bloomHtml = `${sparkleRing}<div class="bloom bloom-bell">
           <div class="bell"></div><div class="bell"></div><div class="bell"></div>
         </div>`;
+    } else if(species === 'orchid'){
+      bloomHtml = `${sparkleRing}<div class="bloom">
+          <div class="petal-orchid"></div><div class="petal-orchid"></div><div class="petal-orchid"></div>
+          <div class="petal-orchid"></div><div class="petal-orchid"></div>
+          <div class="orchid-throat"></div>
+        </div>`;
     } else {
-      bloomHtml = `<div class="bloom">
+      bloomHtml = `${sparkleRing}<div class="bloom">
           <div class="petal"></div><div class="petal"></div><div class="petal"></div>
           <div class="petal"></div><div class="petal"></div><div class="petal"></div>
           <div class="bloom-center"></div>
@@ -1282,7 +1397,7 @@ function renderHostList(guests){
     list.appendChild(row);
   });
 }
-document.getElementById('btnMatch').addEventListener('click', ()=>{
+document.getElementById('btnMatch').addEventListener('click', async ()=>{
   const guests = [...hostGuestsCache];
   if(guests.length < 2){ alert('Need at least two guests checked in to form a pair.'); return; }
   for(let i=guests.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [guests[i],guests[j]]=[guests[j],guests[i]]; }
@@ -1302,9 +1417,24 @@ document.getElementById('btnMatch').addEventListener('click', ()=>{
     pairs['p'+pi] = { members, color: PAIR_COLORS[pi % PAIR_COLORS.length] };
     pi++;
   }
-  ref(`events/${EVENT_ID}/pairs`).set(pairs);
-  ref(`events/${EVENT_ID}/state`).set('matched');
-  alert('Pairs are set and glowing on everyone\'s screen.');
+  const btn = document.getElementById('btnMatch');
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.textContent = 'Matching…';
+  try{
+    // Write the pairs FIRST and wait for it to land, then flip the state.
+    // Flipping state before pairs finish writing is a race condition that
+    // can leave guests' screens with no partner data to read.
+    await ref(`events/${EVENT_ID}/pairs`).set(pairs);
+    await ref(`events/${EVENT_ID}/state`).set('matched');
+    alert('Pairs are set and glowing on everyone\'s screen.');
+  } catch(err){
+    console.error('Failed to set pairs/state:', err);
+    alert('Something went wrong matching pairs: ' + (err && err.message ? err.message : err) + '\nPlease check your connection and try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
 });
 document.getElementById('btnResetEvent').addEventListener('click', ()=>{
   if(!confirm('Clear the roster, pairs, and phase for a brand new event?')) return;
