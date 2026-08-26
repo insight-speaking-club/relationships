@@ -188,7 +188,7 @@
   .lounge-state.active { opacity: 1; pointer-events: auto; }
 
   /* -- State 1: The Gathering (Roster & Game) -- */
-  .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:210px; padding-left: 26px; padding-right: 26px;}
+  .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:50px; padding-left: 26px; padding-right: 26px;}
   .lounge-count{font-family:'Cormorant Garamond',serif; font-size:56px; font-style:italic; margin:2px 0;}
   /* --- GROUPED ROSTER UI --- */
   .roster {
@@ -309,8 +309,13 @@
   .hub-card-desc{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; font-weight:500; color:var(--dim); margin-top:4px; line-height:1.35; text-transform:none; letter-spacing:.01em;}
 
   /* Bunny Game Elements */
+  .game-section{
+    position:relative; width:100%; height:190px; margin-top:36px;
+    border-radius:20px; overflow:hidden;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
   .lounge-ground{
-    position:fixed; left:0; right:0; bottom:0; height:190px; z-index:10;
+    position:absolute; left:0; right:0; bottom:0; height:190px; z-index:10;
     pointer-events:none; overflow:hidden;
   }
   .ground-sky-fade{
@@ -327,7 +332,7 @@
     opacity:.5;
   }
   .lounge-game{
-    position:fixed; left:0; right:0; bottom:0; height:190px; z-index:11;
+    position:absolute; left:0; right:0; bottom:0; height:190px; z-index:11;
   }
   .game-instructions{
     position:absolute; top:6px; left:16px; z-index:3; max-width:60%;
@@ -962,31 +967,33 @@
         </div>
       </div>
 
-    </div>
-    
-    <!-- Upgraded Ethereal Game -->
-    <div class="lounge-ground" aria-hidden="true" id="loungeGround">
-      <div class="ground-sky-fade"></div>
-      <!-- Parallax Layers -->
-      <div class="parallax-layer layer-back" id="parallaxBack"></div>
-      <div class="parallax-layer layer-mid" id="parallaxMid"></div>
-      <div class="ground-grass" id="parallaxFront"></div>
-    </div>
-
-    <div class="lounge-game" id="loungeGame">
-      <div class="game-instructions">tap to jump over basic t-shirts & jeans</div>
-      <div class="game-score" id="gameScore">0</div>
-      <div class="game-track" id="gameTrack">
-        <div class="game-bunny" id="gameBunny">
-          <!-- Uses your image, falls back to a glowing wisp -->
-          <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-          <span class="game-wisp-fallback"></span>
+      <!-- Upgraded Ethereal Game (scroll down to find it) -->
+      <div class="game-section">
+        <div class="lounge-ground" aria-hidden="true" id="loungeGround">
+          <div class="ground-sky-fade"></div>
+          <!-- Parallax Layers -->
+          <div class="parallax-layer layer-back" id="parallaxBack"></div>
+          <div class="parallax-layer layer-mid" id="parallaxMid"></div>
+          <div class="ground-grass" id="parallaxFront"></div>
         </div>
-        <div class="game-overlay" id="gameOverlay">
-          <div>Sasha hates basic white t-shirts and jeans!<br>Help him jump over them.</div>
-          <button class="btn" id="gameStartBtn">Start</button>
+
+        <div class="lounge-game" id="loungeGame">
+          <div class="game-instructions">tap to jump over basic t-shirts & jeans</div>
+          <div class="game-score" id="gameScore">0</div>
+          <div class="game-track" id="gameTrack">
+            <div class="game-bunny" id="gameBunny">
+              <!-- Uses your image, falls back to a glowing wisp -->
+              <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <span class="game-wisp-fallback"></span>
+            </div>
+            <div class="game-overlay" id="gameOverlay">
+              <div>Sasha hates basic white t-shirts and jeans!<br>Help him jump over them.</div>
+              <button class="btn" id="gameStartBtn">Start</button>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
