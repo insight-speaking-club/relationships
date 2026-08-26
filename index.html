@@ -188,7 +188,6 @@
   .lounge-state.active { opacity: 1; pointer-events: auto; }
 
   /* -- State 1: The Gathering (Roster & Game) -- */
-  #state-gathering { padding-top: 64px; }
   .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:210px; padding-left: 26px; padding-right: 26px;}
   .lounge-count{font-family:'Cormorant Garamond',serif; font-size:56px; font-style:italic; margin:2px 0;}
   .roster{
@@ -219,10 +218,37 @@
     font-family:'Space Mono',monospace; font-size:8.5px; letter-spacing:.05em;
     color:var(--gold); opacity:.85; text-transform:uppercase;
   }
-  .waiting-note{
-    margin-top:26px; font-size:17px; color:var(--dim); font-style:italic; 
-    font-family:'Cormorant Garamond',serif; text-align: center;
+  /* --- CLEAN LOUNGE DASHBOARD --- */
+  .lounge-header {
+    text-align: center; margin-bottom: 24px;
   }
+  .dashboard-section {
+    width: 100%; max-width: 420px; margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px; padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px; margin-bottom: 16px;
+  }
+  .guest-count {
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--gold); text-transform: uppercase;
+  }
+  .status-note {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px;
+    color: var(--dim); text-align: right; line-height: 1.1;
+  }
+
+  /* Adjustments for the new layout */
+  .roster { margin-top: 0; }
+  .hub-sections { margin-top: 0; }
+  #state-gathering { padding-top: 40px; }
+
   .hub-section-label{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
     color:var(--dim); margin:30px 0 14px; text-align:center; width:100%;
@@ -692,61 +718,6 @@
     font-family:'Jost',sans-serif; font-size:14px; color:var(--mist);
   }
   
-  /* ---------- Theatrical Reveal ---------- */
-  .reveal-overlay {
-    position: fixed; inset: 0; z-index: 200;
-    background: #0a0410;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 1.2s ease;
-  }
-  .reveal-overlay.active {
-    opacity: 1; pointer-events: auto;
-  }
-
-  .reveal-ring {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 140px; height: 140px; border-radius: 50%;
-    background: var(--ring-color, var(--gold));
-    filter: blur(28px);
-    opacity: 0;
-  }
-  .reveal-overlay.active .reveal-ring {
-    animation: reveal-pulse 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
-  }
-
-  @keyframes reveal-pulse {
-    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.6; }
-    100% { transform: translate(-50%, -50%) scale(3.5); opacity: 0; }
-  }
-
-  .reveal-step {
-    opacity: 0; transform: translateY(12px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-    position: relative; z-index: 2;
-    text-align: center;
-  }
-  .reveal-step.visible {
-    opacity: 1; transform: translateY(0);
-  }
-
-  #revealStep1 { margin-bottom: 24px; color: rgba(255,255,255,0.6); }
-  #revealStep2 { font-size: 22px; margin-bottom: 8px; color: var(--mist); }
-  #revealStep3 {
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-size: 46px; color: #fff; line-height: 1.1;
-    text-shadow: 0 4px 24px rgba(0,0,0,0.6);
-  }
-
-  .reveal-glow-indicator {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin-top: 10px; font-family: 'Space Mono', monospace; font-size: 11.5px;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim);
-  }
-  .reveal-glow-indicator .color-chip {
-    width: 20px; height: 20px; border-radius: 50%;
-    box-shadow: 0 0 16px currentColor;
-  }
-
   .offline-badge{
     position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:50;
     font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.05em;
@@ -756,23 +727,6 @@
 </style>
 </head>
 <body>
-
-<!-- THEATRICAL REVEAL OVERLAY -->
-<div class="reveal-overlay" id="revealOverlay">
-  <div class="reveal-ring" id="revealRing"></div>
-  <div class="reveal-step eyebrow" id="revealStep1">The Universe has spoken</div>
-  <div class="reveal-step display" id="revealStep2">Your partner is</div>
-  <div class="reveal-step partner-name" id="revealStep3" style="margin-bottom: 20px;"></div>
-
-  <!-- Explicitly show the glow color -->
-  <div class="reveal-step reveal-glow-indicator" id="revealStep4">
-     <div class="color-chip" id="revealColorChip"></div>
-     <span>Look for this glow in the garden</span>
-  </div>
-
-  <!-- New Button -->
-  <button class="reveal-step btn" id="btnDismissReveal" style="pointer-events: none; margin-top: 30px;">Enter the Garden</button>
-</div>
 
 <div class="sky" id="sky">
   <div class="stars"></div>
@@ -825,24 +779,48 @@
   <!-- STATE 1: THE GATHERING -->
   <div id="state-gathering" class="lounge-state active">
     <div class="lounge-content">
-      <div class="eyebrow">The Digital Lounge</div>
-      <div class="lounge-count" id="loungeCount">0</div>
-      <div class="sub">people in the room right now</div>
-      <div class="roster" id="rosterGrid"></div>
-      
-      <!-- Locked Agenda -->
-      <div class="waiting-note">Waiting for everyone to arrive...</div>
-      <div class="hub-section-label" style="margin-top: 30px;">Today's Agenda</div>
-      <div class="hub-sections">
-        <div class="hub-card locked" id="hubCardGarden">
-          <div class="hub-card-icon">🌸</div>
-          <div><div class="hub-card-title">The Enchanted Garden</div><div class="hub-card-sub" id="hubGardenSub">locked by host 🔒</div></div>
+
+      <!-- 1. CLEAN HEADER -->
+      <div class="lounge-header">
+        <h1 class="display" style="font-size:38px; margin:0 0 4px; background:linear-gradient(120deg, var(--gold), #ffdf94, var(--rose)); -webkit-background-clip:text; color:transparent;">RELATIONSHIPS</h1>
+        <div class="eyebrow" style="color:var(--mist); letter-spacing:.4em;">Speaking Club</div>
+      </div>
+
+      <!-- 2. THE ROSTER SECTION -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <div class="eyebrow">The Roster</div>
+          <div class="guest-count"><span id="loungeCount">0</span> present</div>
         </div>
-        <div class="hub-card locked" id="hubCardAita">
-          <div class="hub-card-icon">⚖️</div>
-          <div><div class="hub-card-title">Relationships Committee™</div><div class="hub-card-sub" id="hubAitaSub">locked by host 🔒</div></div>
+        <div class="roster" id="rosterGrid"></div>
+      </div>
+
+      <!-- 3. TODAY'S AGENDA SECTION -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <div class="eyebrow">Today's Agenda</div>
+          <div class="status-note" id="waitingNote">Waiting for host...</div>
+        </div>
+        <div class="hub-sections">
+          <div class="hub-card locked" id="hubCardGarden">
+            <div class="hub-card-icon">🌸</div>
+            <div>
+              <div class="hub-card-sub" style="color:var(--gold);">PAIRS ACTIVITY</div>
+              <div class="hub-card-title">The Enchanted Garden</div>
+              <div class="hub-card-sub" id="hubGardenSub">locked by host</div>
+            </div>
+          </div>
+          <div class="hub-card locked" id="hubCardAita">
+            <div class="hub-card-icon">⚖️</div>
+            <div>
+              <div class="hub-card-sub" style="color:var(--gold);">GROUP ACTIVITY</div>
+              <div class="hub-card-title">Relationships Court™</div>
+              <div class="hub-card-sub" id="hubAitaSub">locked by host</div>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
     
     <!-- Upgraded Ethereal Game -->
@@ -1143,7 +1121,16 @@ function renderRoster(){
   if(!grid) return;
   grid.innerHTML = '';
 
-  stateGuests.forEach(g => {
+  // Sort guests: group by pair ID first, so partners sit next to each other
+  const sortedGuests = [...stateGuests].sort((a, b) => {
+    let pairA = Object.entries(statePairs).find(p => p[1].members && p[1].members.some(m => m.id === a.id))?.[0] || 'z';
+    let pairB = Object.entries(statePairs).find(p => p[1].members && p[1].members.some(m => m.id === b.id))?.[0] || 'z';
+
+    if (pairA !== pairB) return pairA.localeCompare(pairB);
+    return a.joinedAt - b.joinedAt;
+  });
+
+  sortedGuests.forEach(g => {
     const isYou = !!(me && g.id === me.id);
 
     // Check if this guest is in a pair to give them a colored ring
@@ -1217,17 +1204,12 @@ function listenPhase(){
   });
 }
 
-document.getElementById('btnDismissReveal').addEventListener('click', () => {
-  document.getElementById('revealOverlay').classList.remove('active');
-  setLoungeState('state-garden');
-});
-
 function applyPair([pairId, pair]){
   const partners = pair.members.filter(m=>m.id !== me.id);
   const isGroup = partners.length > 1;
   const partnerText = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
 
-  // 1. Prepare the Garden silently in the background
+  // Prepare the Garden content
   document.getElementById('partnerHeadline').textContent = isGroup ? 'Your partners are' : 'Your partner is';
   document.getElementById('partnerName').textContent = partnerText;
   document.getElementById('partnerChip').style.background = pair.color;
@@ -1237,53 +1219,16 @@ function applyPair([pairId, pair]){
   window.currentPairId = pairId;
 
   buildGarden();
+
+  // Unlock the Garden Hub card (it will glow automatically based on our CSS)
   unlockHub('garden');
 
-  // Update the Lounge waiting text so it no longer says "Waiting..."
-  const waitingNote = document.querySelector('.waiting-note');
+  // Update the Lounge text to guide them
+  const waitingNote = document.getElementById('waitingNote');
   if (waitingNote) {
-    waitingNote.innerHTML = "The event is currently underway.<br>Select an open hub below.";
+    waitingNote.innerHTML = "Pairs set!<br>Select the Garden below.";
+    waitingNote.style.color = "var(--gold)"; // Make it glow slightly when ready
   }
-
-  // 2. Setup the Reveal Overlay
-  const overlay = document.getElementById('revealOverlay');
-  const ring = document.getElementById('revealRing');
-  const step1 = document.getElementById('revealStep1');
-  const step2 = document.getElementById('revealStep2');
-  const step3 = document.getElementById('revealStep3');
-  const step4 = document.getElementById('revealStep4');
-  const chip = document.getElementById('revealColorChip');
-  const btnReveal = document.getElementById('btnDismissReveal');
-
-  // Inject the specific pair data into the overlay
-  ring.style.setProperty('--ring-color', pair.color);
-  step2.textContent = isGroup ? 'Your partners are' : 'Your partner is';
-  step3.textContent = partnerText;
-  chip.style.backgroundColor = pair.color;
-  chip.style.color = pair.color;
-
-  // Ensure steps are hidden if run multiple times
-  step1.classList.remove('visible');
-  step2.classList.remove('visible');
-  step3.classList.remove('visible');
-  step4.classList.remove('visible');
-  btnReveal.classList.remove('visible');
-  btnReveal.style.pointerEvents = 'none'; // Prevent clicking before it fades in
-
-  // 3. Execute the Sequence
-  overlay.classList.add('active'); // Fade to black
-
-  // Cascade the text in step-by-step
-  setTimeout(() => step1.classList.add('visible'), 800);
-  setTimeout(() => step2.classList.add('visible'), 2200);
-  setTimeout(() => step3.classList.add('visible'), 3600);
-  setTimeout(() => step4.classList.add('visible'), 5000);
-
-  // Reveal the button last and enable clicking
-  setTimeout(() => {
-    btnReveal.classList.add('visible');
-    btnReveal.style.pointerEvents = 'auto';
-  }, 6500);
 }
 
 function unlockHub(kind){
