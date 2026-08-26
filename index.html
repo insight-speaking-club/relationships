@@ -80,6 +80,29 @@
   }
   .screen.active{opacity:1; visibility:visible; pointer-events:auto;}
 
+  /* ---------- CLOUDS (real cloud silhouettes via SVG) ---------- */
+  #screen-clouds{z-index:5; background:var(--ink); overflow:hidden; padding:0;}
+  #cloudsSvg{position:absolute; inset:0; width:100%; height:100%;}
+  .cloud-g{
+    transform-box:fill-box; transform-origin:center;
+    animation:cloud-drift 10s ease-in-out infinite;
+    transition:transform 2.6s cubic-bezier(.4,0,.2,1), opacity 2.2s ease .1s, filter 2.6s ease;
+  }
+  .cloud-g-back{ fill:#d9c9f0; filter:blur(9px); opacity:.9; animation-duration:12s; }
+  .cloud-g-front{ fill:#fbf6ff; filter:blur(2.5px); animation-duration:8s; animation-direction:reverse; }
+  @keyframes cloud-drift{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-1.2%,0.8%) scale(1.015);}
+  }
+  .cloud-g.dissolve{ animation:none; }
+  .cloud-g-back.dissolve{ transform:scale(1.6) translateY(-8%); opacity:0; filter:blur(55px); }
+  .cloud-g-front.dissolve{ transform:scale(1.4) translateY(-6%); opacity:0; filter:blur(40px); transition-delay:.22s,.3s,.22s; }
+  .cloud-label{
+    position:absolute; left:0; right:0; bottom:14vh; z-index:6; color:var(--twilight);
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px;
+    letter-spacing:.05em; text-align:center;
+    animation:pulse-fade 1.8s ease-in-out infinite;
+  }
   @keyframes pulse-fade{0%,100%{opacity:.55;}50%{opacity:1;}}
 
   /* ---------- shared UI atoms ---------- */
@@ -101,7 +124,7 @@
     font-family:'Cormorant Garamond',serif; font-style:italic; font-size:52px; color:var(--mist);
   }
 
-  /* ---------- title splash (first visit only) ---------- */
+  /* ---------- title splash ---------- */
   #screen-title{cursor:pointer;}
   .title-kicker{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.32em; text-transform:uppercase;
@@ -158,30 +181,31 @@
     width:100%; max-width:320px; text-align:left; margin-top:16px;
   }
   .field label{display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-bottom:6px; font-family:'Space Mono',monospace;}
-  .field input, .field select{
+  .field input{
     width:100%; padding:13px 15px; border-radius:12px; border:1px solid rgba(244,233,255,.25);
     background:rgba(255,255,255,.06); color:var(--mist); font-family:'Jost',sans-serif; font-size:15px;
-    outline:none; transition:border-color .2s ease, background .2s ease;
+    outline:none; transition:border-color .2s ease, background .2s ease; text-align:center;
   }
-  .field input:focus, .field select:focus{border-color:var(--gold); background:rgba(255,255,255,.1);}
+  .field input:focus{border-color:var(--gold); background:rgba(255,255,255,.1);}
   .field input::placeholder{color:rgba(244,233,255,.4);}
-  .field select option{background:#2a0e3f; color:var(--mist);}
 
-  .avatar-grid{display:flex; gap:12px; margin-top:8px; justify-content:center; flex-wrap:wrap; max-width:320px;}
-  .avatar-choice{
-    width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-size:22px; background:rgba(255,255,255,.06); border:1.5px solid rgba(244,233,255,.2);
-    cursor:pointer; transition:all .2s ease;
+  /* ---------- MASTER LOUNGE & INTERNAL STATES ---------- */
+  #screen-lounge{justify-content:flex-start; padding:0; overflow:hidden;}
+  
+  .lounge-state {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.8s ease; z-index: 2;
+    overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   }
-  .avatar-choice.picked{border-color:var(--gold); background:rgba(242,193,78,.18); box-shadow:0 0 16px rgba(242,193,78,.4); transform:scale(1.08);}
+  .lounge-state.active { opacity: 1; pointer-events: auto; }
 
-  /* ---------- lounge ---------- */
-  #screen-lounge{justify-content:flex-start; padding-top:64px; overflow:hidden;}
-  .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:200px;}
+  /* -- State 1: The Gathering (Roster & Game) -- */
+  #state-gathering { padding-top: 64px; }
+  .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:200px; padding-left: 26px; padding-right: 26px;}
   .lounge-count{font-family:'Cormorant Garamond',serif; font-size:56px; font-style:italic; margin:2px 0;}
   .roster{
     width:100%; max-width:420px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
-    margin-top:28px; overflow-y:auto; max-height:40vh; padding:4px;
+    margin-top:28px; overflow-y:visible; padding:4px;
   }
   .guest-card{
     display:flex; flex-direction:column; align-items:center; gap:6px;
@@ -193,9 +217,32 @@
     font-size:20px; background:rgba(255,255,255,.07); border:1px solid rgba(244,233,255,.25);
   }
   .guest-name{font-size:11px; color:var(--dim); max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .waiting-note{margin-top:26px; font-size:13px; color:var(--dim); font-style:italic; font-family:'Cormorant Garamond',serif; font-size:17px;}
+  .waiting-note{
+    margin-top:26px; font-size:17px; color:var(--dim); font-style:italic; 
+    font-family:'Cormorant Garamond',serif; text-align: center;
+  }
+  .hub-section-label{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--dim); margin:30px 0 14px; text-align:center; width:100%;
+  }
+  .hub-sections{
+    width:100%; max-width:420px; margin:10px auto 6px;
+    display:grid; grid-template-columns:1fr; gap:12px;
+  }
+  .hub-card{
+    display:flex; align-items:center; gap:14px; text-align:left;
+    padding:16px 18px; border-radius:18px; 
+    background:rgba(255,255,255,.06); border:1px solid rgba(244,233,255,.18);
+  }
+  .hub-card-icon{
+    width:44px; height:44px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+    background:conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
+  }
+  .hub-card-title{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px; color:var(--mist);}
+  .hub-card-sub{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; text-transform:uppercase;}
 
-  /* ---------- lounge ground: simple, uncluttered strip ---------- */
+  /* Bunny Game Elements */
   .lounge-ground{
     position:absolute; left:0; right:0; bottom:0; height:190px; z-index:0;
     pointer-events:none; overflow:hidden;
@@ -213,8 +260,6 @@
     background-image:repeating-linear-gradient(100deg, rgba(90,180,110,.4) 0 2px, transparent 2px 8px);
     opacity:.5;
   }
-
-  /* ---------- bunny-hop mini game ---------- */
   .lounge-game{
     position:absolute; left:0; right:0; bottom:0; height:190px; z-index:1;
   }
@@ -253,59 +298,45 @@
   }
   .game-overlay.hidden{opacity:0; pointer-events:none;}
   .game-overlay .btn{margin-top:0; padding:10px 28px; font-size:13px;}
-  .game-overlay-note{
-    font-family:'Space Mono',monospace; font-style:normal; font-size:10.5px; letter-spacing:.06em; color:var(--gold);
-  }
 
-  /* ---------- reveal ---------- */
-  .glow-ring{
-    position:fixed; inset:0; pointer-events:none; z-index:1;
-    box-shadow: inset 0 0 0 0 transparent;
-    transition:box-shadow 1s ease;
+  /* -- State 2: The Garden (Match Reveal & Blossoms) -- */
+  #state-garden {
+    justify-content: flex-start; padding: 40px 0 0;
   }
-  .partner-card{
-    margin-top:26px; padding:22px 30px; border-radius:20px;
-    background:rgba(255,255,255,.06); border:2px solid rgba(244,233,255,.2);
-    transition:border-color .4s ease;
-  }
-  .partner-name{font-family:'Cormorant Garamond',serif; font-size:32px; font-style:italic;}
-  .color-chip{width:14px; height:14px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle;}
-
-  /* ---------- garden scene : enchanted, magical meadow ---------- */
-  #screen-garden{
-    justify-content:flex-start; padding:40px 0 0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  .garden-bg-layer {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity 1.5s ease;
     background: linear-gradient(180deg, #150b30 0%, #271350 40%, #45205a 72%, #672f57 100%);
   }
-  #screen-garden::before{
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-    background-image:
-      radial-gradient(1.4px 1.4px at 15% 12%, rgba(255,255,255,.6), transparent),
-      radial-gradient(1.2px 1.2px at 45% 6%, rgba(255,255,255,.45), transparent),
-      radial-gradient(1.5px 1.5px at 72% 18%, rgba(255,255,255,.55), transparent),
-      radial-gradient(1.1px 1.1px at 90% 10%, rgba(255,255,255,.4), transparent),
-      radial-gradient(1.3px 1.3px at 28% 34%, rgba(255,255,255,.35), transparent);
-    background-repeat:repeat; background-size:320px 320px; opacity:.6;
+  #state-garden.active .garden-bg-layer { opacity: 1; }
+  
+  .glow-ring{
+    position:fixed; inset:0; pointer-events:none; z-index:5;
+    box-shadow: inset 0 0 0 0 transparent;
+    transition:box-shadow 1.5s ease;
   }
-  #screen-garden .eyebrow, #screen-garden h1, #screen-garden .sub{padding:0 26px;}
-  #screen-garden h1.display{
-    background:linear-gradient(120deg, var(--gold), #ffd1f0 45%, #ff8fd0);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
+  
+  .match-header {
+    text-align: center; padding: 0 26px; margin-bottom: 20px;
+    animation: pop-in 0.8s ease forwards;
   }
-  .garden-scene{position:relative; width:calc(100% - 28px); margin:20px auto 0; z-index:1;}
+  .partner-card{
+    margin: 16px auto 0; padding:20px 30px; border-radius:20px;
+    background:rgba(255,255,255,.06); border:2px solid rgba(244,233,255,.2);
+    display: inline-block; transition:border-color .4s ease;
+  }
+  .partner-name{font-family:'Cormorant Garamond',serif; font-size:32px; font-style:italic; margin-bottom: 8px;}
+  .color-chip{width:14px; height:14px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle;}
+
+  .garden-scene{position:relative; width:calc(100% - 28px); margin:10px auto 0; z-index:1; padding-bottom: 150px;}
   .garden-bed{
     position:relative; overflow:hidden; border-radius:30px;
     background:
       radial-gradient(120% 45% at 50% 0%, rgba(255,205,235,.14) 0%, transparent 60%),
       linear-gradient(180deg, #241046 0%, #2f1650 40%, #2a1348 72%, #1c0d33 100%);
-    box-shadow:
-      0 24px 70px rgba(0,0,0,.5),
-      inset 0 0 0 1px rgba(255,220,250,.12);
+    box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,220,250,.12);
   }
   .garden-vignette{position:absolute; inset:0; pointer-events:none; z-index:5; border-radius:30px;
     box-shadow:inset 0 34px 40px -20px rgba(18,8,32,.7), inset 0 -50px 60px -30px rgba(18,8,32,.65);
-  }
-  .garden-fade-top{position:absolute; top:0; left:0; right:0; height:70px; z-index:4; pointer-events:none;
-    background:linear-gradient(180deg, #241046, rgba(36,16,70,0));
   }
   .moonglow{position:absolute; top:-50px; left:50%; transform:translateX(-50%); width:260px; height:260px; border-radius:50%;
     background:radial-gradient(circle, rgba(255,225,190,.24), rgba(255,190,235,.1) 45%, rgba(244,233,255,0) 72%);
@@ -328,8 +359,6 @@
     0%,100%{transform:translate(0,0); opacity:.3;}
     50%{transform:translate(8px,-14px); opacity:1;}
   }
-
-  /* tiny twinkling star-sparkles scattered through the meadow */
   .sparkle{
     position:absolute; width:6px; height:6px; pointer-events:none; z-index:2;
     background:radial-gradient(circle, #fff, currentColor 45%, transparent 72%);
@@ -337,8 +366,6 @@
     animation:sparkle-twinkle ease-in-out infinite;
   }
   @keyframes sparkle-twinkle{0%,100%{opacity:0; transform:scale(.3) rotate(0deg);} 50%{opacity:1; transform:scale(1) rotate(45deg);}}
-
-  /* butterflies drifting through the meadow */
   .butterfly{position:absolute; font-size:16px; z-index:3; pointer-events:none; filter:drop-shadow(0 0 6px currentColor);
     animation:butterfly-drift ease-in-out infinite;}
   @keyframes butterfly-drift{
@@ -348,8 +375,6 @@
     75%{transform:translate(-22px,-14px) rotate(6deg);}
     100%{transform:translate(0,0) rotate(0deg);}
   }
-
-  /* drifting atmospheric mist across the meadow — soft, subtle haze */
   .garden-mist{position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
   .garden-mist::before{
     content:''; position:absolute; width:160%; height:220px; left:-30%; top:30%;
@@ -358,9 +383,7 @@
     animation:mist-drift 30s ease-in-out infinite;
   }
   @keyframes mist-drift{0%,100%{transform:translateX(0);} 50%{transform:translateX(10%);}}
-
-
-  /* bloom-burst particles: pollen motes rising from a freshly opened flower */
+  
   .pollen{
     position:absolute; top:8px; left:50%; width:5px; height:5px; border-radius:50%;
     background:currentColor; box-shadow:0 0 10px 3px currentColor;
@@ -372,7 +395,6 @@
     18%{opacity:1;}
     100%{opacity:0; transform:translate(calc(-50% + var(--dx,0px)), -68px) scale(1);}
   }
-  /* sparks: nearby fireflies drawn toward a freshly opened flower */
   .spark{
     position:absolute; width:5px; height:5px; border-radius:50%;
     background:currentColor; box-shadow:0 0 14px 5px currentColor;
@@ -384,6 +406,7 @@
     14%{opacity:.95;}
     100%{opacity:0; transform:translate(var(--sx,10px), calc(-1 * var(--sy,60px))) scale(.8);}
   }
+  
   .flower-plant{
     position:absolute; bottom:96px; display:flex; flex-direction:column; align-items:center;
     cursor:pointer; z-index:2; transform:translateX(-50%) scale(var(--fscale,1)); transition:transform .3s ease;
@@ -432,7 +455,6 @@
   }
   @keyframes petal-breathe{0%,100%{opacity:.82; filter:brightness(1);} 50%{opacity:1; filter:brightness(1.22);}}
 
-  /* sparkle ring that twinkles around every open bloom */
   .bloom-sparkles{position:absolute; inset:-10px; pointer-events:none; z-index:0;}
   .bloom-sparkles span{
     position:absolute; width:5px; height:5px; top:50%; left:50%;
@@ -447,8 +469,6 @@
     0%,100%{opacity:0; transform:translate(-50%,-50%) rotate(var(--a)) translateX(var(--r)) scale(.4);}
     50%{opacity:1; transform:translate(-50%,-50%) rotate(calc(var(--a) + 25deg)) translateX(var(--r)) scale(1);}
   }
-
-  /* species: star bloom — narrow pointed petals */
   .petal-star{
     position:absolute; width:9px; height:30px; top:2px; left:50%; margin-left:-4.5px;
     background:linear-gradient(200deg,#fff, currentColor 45%);
@@ -462,8 +482,6 @@
   .petal-star:nth-child(3){transform:rotate(144deg);}
   .petal-star:nth-child(4){transform:rotate(216deg);}
   .petal-star:nth-child(5){transform:rotate(288deg);}
-
-  /* species: bell cluster — three drooping enchanted bells */
   .bloom-bell{ align-items:flex-start; }
   .bell{
     position:absolute; width:13px; height:19px; border-radius:0 0 50% 50% / 0 0 65% 65%;
@@ -477,8 +495,6 @@
   .bell:nth-child(1){ top:2px; left:6px; transform:rotate(-14deg) scale(.92); }
   .bell:nth-child(2){ top:-4px; left:24px; transform:rotate(4deg) scale(1.08); }
   .bell:nth-child(3){ top:4px; left:40px; transform:rotate(16deg) scale(.86); }
-
-  /* species: enchanted orchid — five curved, two-toned petals around a jeweled throat */
   .petal-orchid{
     position:absolute; width:17px; height:24px; top:8px; left:50%; margin-left:-8.5px;
     background:linear-gradient(210deg,#fff 0%, currentColor 55%);
@@ -514,7 +530,7 @@
   .flower-plant.bloomed::after{ opacity:.5; transform:translate(-50%,50%) scale(1); }
 
   .question-panel{
-    position:sticky; bottom:0; left:0; right:0; z-index:8;
+    position:fixed; bottom:0; left:0; right:0; z-index:10;
     background:linear-gradient(180deg, rgba(18,8,33,0) 0%, rgba(18,8,33,.9) 30%, rgba(18,8,33,.98) 100%);
     padding:30px 26px 24px; text-align:center;
   }
@@ -525,16 +541,8 @@
   }
   .question-text.swap{opacity:0;}
 
-  /* ---------- host dashboard ---------- */
-  #screen-host{align-items:stretch; text-align:left; padding:26px 22px; overflow-y:auto;}
-  .host-list{width:100%; max-width:440px; margin:0 auto; }
-  .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
-  .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
-  .host-meta{font-size:12px; color:var(--dim);}
-  .pair-tag{margin-left:auto; font-family:'Space Mono',monospace; font-size:10px; padding:4px 8px; border-radius:999px;}
-
-  /* ---------- AITA voting (guest) ---------- */
-  #screen-aita{padding:40px 26px;}
+  /* -- State 3: The Relationships Committee™ (AITA) -- */
+  #state-aita { padding: 40px 26px; justify-content: center; }
   .aita-buttons{
     display:flex; flex-direction:column; gap:16px; width:100%; max-width:340px; margin-top:34px;
   }
@@ -561,7 +569,13 @@
     text-shadow:0 8px 30px rgba(0,0,0,.35);
   }
 
-  /* ---------- host: AITA panel ---------- */
+  /* ---------- host dashboard ---------- */
+  #screen-host{align-items:stretch; text-align:left; padding:26px 22px; overflow-y:auto;}
+  .host-list{width:100%; max-width:440px; margin:0 auto; }
+  .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
+  .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
+  .host-meta{font-size:12px; color:var(--dim);}
+
   .host-section-label{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
     color:var(--dim); margin:30px 0 12px; text-align:center;
@@ -573,77 +587,12 @@
   .aita-tally-green{background:#3ddc84;}
   .aita-tally-counts{display:flex; justify-content:space-between; width:100%; font-family:'Space Mono',monospace; font-size:11px; color:var(--dim);}
   .aita-picked{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:18px; text-align:center; margin-top:8px; min-height:24px; color:var(--gold);}
-  .aita-toggle-row{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    width:100%; max-width:380px; margin:0 auto 16px;
-    font-family:'Jost',sans-serif; font-size:14px; color:var(--mist);
-  }
-  .switch{position:relative; display:inline-block; width:44px; height:26px; flex:none;}
-  .switch input{opacity:0; width:0; height:0;}
-  .switch-slider{
-    position:absolute; cursor:pointer; inset:0; border-radius:999px;
-    background:rgba(244,233,255,.25); transition:background .2s ease;
-  }
-  .switch-slider::before{
-    content:''; position:absolute; height:20px; width:20px; left:3px; top:3px;
-    border-radius:50%; background:var(--mist); transition:transform .2s ease;
-  }
-  .switch input:checked + .switch-slider{background:linear-gradient(120deg,var(--gold),#ffdf94);}
-  .switch input:checked + .switch-slider::before{transform:translateX(18px); background:var(--ink);}
-
+  
   .offline-badge{
     position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:50;
     font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.05em;
     background:rgba(0,0,0,.5); color:var(--gold); padding:6px 14px; border-radius:999px;
     border:1px solid rgba(242,193,78,.3);
-  }
-
-  /* ---------- back button (shown on section screens) ---------- */
-  .back-btn{
-    position:absolute; top:16px; left:16px; z-index:20;
-    display:flex; align-items:center; justify-content:center;
-    width:36px; height:36px; border-radius:50%; padding:0;
-    font-family:'Jost',sans-serif; font-size:18px; font-weight:500; line-height:1; color:var(--mist);
-    background:rgba(18,8,33,.5); border:1px solid rgba(244,233,255,.25); cursor:pointer;
-    backdrop-filter:blur(4px); transition:background .2s ease, transform .2s ease;
-  }
-  .back-btn:active{transform:scale(.9);}
-  .back-btn:hover{background:rgba(18,8,33,.75);}
-
-  /* ---------- hub (home base): sections + tonight's participants ---------- */
-  #screen-hub{justify-content:flex-start; padding:56px 26px 40px; overflow-y:auto;}
-  .hub-match-strip{
-    margin-top:6px; padding:10px 18px; border-radius:999px;
-    background:rgba(255,255,255,.06); border:1px solid rgba(244,233,255,.2);
-    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:var(--mist);
-  }
-  .hub-sections{
-    width:100%; max-width:420px; margin:26px auto 6px;
-    display:grid; grid-template-columns:1fr 1fr; gap:12px;
-  }
-  .hub-card{
-    grid-column:span 2;
-    display:flex; align-items:center; gap:14px; text-align:left;
-    padding:16px 18px; border-radius:18px; cursor:pointer;
-    background:rgba(255,255,255,.06); border:1px solid rgba(244,233,255,.18);
-    transition:transform .2s ease, background .2s ease, border-color .2s ease;
-  }
-  .hub-card:active{transform:scale(.97);}
-  .hub-card:hover{background:rgba(255,255,255,.1); border-color:rgba(242,193,78,.4);}
-  .hub-card-icon{
-    width:44px; height:44px; border-radius:50%; flex:none;
-    display:flex; align-items:center; justify-content:center; font-size:20px;
-    background:conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
-  }
-  .hub-card-title{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px; color:var(--mist);}
-  .hub-card-sub{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; text-transform:uppercase;}
-  .hub-section-label{
-    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
-    color:var(--dim); margin:30px 0 14px; text-align:center; width:100%;
-  }
-  .hub-roster{
-    width:100%; max-width:420px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
-    padding:4px;
   }
 </style>
 </head>
@@ -655,7 +604,38 @@
 <div class="glow-ring" id="glowRing"></div>
 <div id="offlineBadge" class="offline-badge" style="display:none;">preview mode · connect firebase for live sync</div>
 
-<!-- TITLE SPLASH (first visit only) -->
+<!-- CLOUDS (Animation) -->
+<div class="screen active" id="screen-clouds" style="z-index:5;">
+  <svg id="cloudsSvg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <symbol id="cloudShape" viewBox="0 0 200 110">
+        <ellipse cx="100" cy="86" rx="96" ry="20"/>
+        <circle cx="42" cy="64" r="36"/>
+        <circle cx="88" cy="42" r="46"/>
+        <circle cx="144" cy="58" r="38"/>
+        <circle cx="114" cy="74" r="28"/>
+      </symbol>
+    </defs>
+    <g id="cloudBackG" class="cloud-g cloud-g-back">
+      <use href="#cloudShape" x="-50" y="70" width="270" height="145"/>
+      <use href="#cloudShape" x="160" y="20" width="310" height="165"/>
+      <use href="#cloudShape" x="40" y="370" width="290" height="155"/>
+      <use href="#cloudShape" x="190" y="510" width="270" height="145"/>
+      <use href="#cloudShape" x="-40" y="610" width="250" height="135"/>
+    </g>
+    <g id="cloudFrontG" class="cloud-g cloud-g-front">
+      <use href="#cloudShape" x="0" y="140" width="230" height="125"/>
+      <use href="#cloudShape" x="195" y="190" width="250" height="135"/>
+      <use href="#cloudShape" x="65" y="290" width="210" height="115"/>
+      <use href="#cloudShape" x="10" y="450" width="240" height="130"/>
+      <use href="#cloudShape" x="205" y="490" width="220" height="120"/>
+      <use href="#cloudShape" x="85" y="590" width="230" height="125"/>
+    </g>
+  </svg>
+  <div class="cloud-label" id="cloudLabel">gathering the night&hellip;</div>
+</div>
+
+<!-- TITLE SPLASH -->
 <div class="screen" id="screen-title">
   <div class="title-kicker">You're invited to</div>
   <h1 class="display title-main">RELATIONSHIPS</h1>
@@ -673,138 +653,110 @@
     <div class="greeting-sign">— Sasha, your host</div>
   </div>
   <button class="btn" id="btnToCheckin">Enter the Roster</button>
-  <button class="btn ghost" id="btnPreviewGarden" style="margin-top:10px;">Preview the Garden →</button>
 </div>
 
-<!-- CHECK-IN -->
+<!-- VIP CHECK-IN (Simplified) -->
 <div class="screen" id="screen-checkin">
   <div class="eyebrow">VIP Check-In</div>
-  <h1 class="display" style="font-size:32px;">Add Yourself<br>to the Roster</h1>
+  <h1 class="display" style="font-size:32px;">Identify Yourself</h1>
   <div class="field">
     <label>Name</label>
     <input type="text" id="inputName" placeholder="What should we call you?" maxlength="24">
   </div>
-  <div class="field">
-    <label>Preferred pronouns</label>
-    <input type="text" id="inputPronouns" placeholder="she/her, they/them, he/him…" maxlength="20">
-  </div>
-  <div class="field">
-    <label>English level (optional)</label>
-    <select id="inputLevel">
-      <option value="">Prefer not to say</option>
-      <option value="Beginner">Beginner</option>
-      <option value="Intermediate">Intermediate</option>
-      <option value="Advanced">Advanced</option>
-      <option value="Fluent">Fluent</option>
-    </select>
-  </div>
-  <div class="field">
-    <label>Choose your avatar</label>
-    <div class="avatar-grid" id="avatarGrid"></div>
-  </div>
   <button class="btn" id="btnJoin">Join the Lounge</button>
 </div>
 
-<!-- DIGITAL LOUNGE -->
+<!-- MASTER LOUNGE (Handles all dynamic guest states) -->
 <div class="screen" id="screen-lounge">
-  <button class="back-btn" id="btnBackFromLounge" aria-label="Back" style="display:none;">‹</button>
-  <div class="lounge-content">
-    <div class="eyebrow">The Digital Lounge</div>
-    <div class="lounge-count" id="loungeCount">0</div>
-    <div class="sub">people in the room right now</div>
-    <div class="roster" id="rosterGrid"></div>
-    <div class="waiting-note">The Host is gathering everyone before the pairing begins&hellip;</div>
-  </div>
-  <div class="lounge-ground" aria-hidden="true" id="loungeGround">
-    <div class="ground-sky-fade"></div>
-    <div class="ground-grass"></div>
-  </div>
-  <div class="lounge-game" id="loungeGame">
-    <div class="game-instructions">tap to hop over obstacles</div>
-    <div class="game-score" id="gameScore">0</div>
-    <div class="game-track" id="gameTrack">
-      <div class="game-bunny" id="gameBunny">
-        <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-        <span class="game-bunny-fallback">🐰</span>
+
+  <!-- STATE 1: THE GATHERING -->
+  <div id="state-gathering" class="lounge-state active">
+    <div class="lounge-content">
+      <div class="eyebrow">The Digital Lounge</div>
+      <div class="lounge-count" id="loungeCount">0</div>
+      <div class="sub">people in the room right now</div>
+      <div class="roster" id="rosterGrid"></div>
+      
+      <!-- Locked Agenda -->
+      <div class="waiting-note">Waiting for everyone to arrive...</div>
+      <div class="hub-section-label" style="margin-top: 30px;">Today's Agenda</div>
+      <div class="hub-sections" style="opacity: 0.4; pointer-events: none;">
+        <div class="hub-card">
+          <div class="hub-card-icon">🌸</div>
+          <div><div class="hub-card-title">The Enchanted Garden</div><div class="hub-card-sub">locked by host</div></div>
+        </div>
+        <div class="hub-card">
+          <div class="hub-card-icon">⚖️</div>
+          <div><div class="hub-card-title">Relationships Committee™</div><div class="hub-card-sub">locked by host</div></div>
+        </div>
       </div>
-      <div class="game-overlay" id="gameOverlay">
-        <div>While you wait, help Sasha hop over the mushrooms &amp; rocks!</div>
-        <button class="btn" id="gameStartBtn">Start</button>
+    </div>
+    
+    <!-- Bunny Game -->
+    <div class="lounge-ground" aria-hidden="true" id="loungeGround">
+      <div class="ground-sky-fade"></div>
+      <div class="ground-grass"></div>
+    </div>
+    <div class="lounge-game" id="loungeGame">
+      <div class="game-instructions">tap to hop over obstacles</div>
+      <div class="game-score" id="gameScore">0</div>
+      <div class="game-track" id="gameTrack">
+        <div class="game-bunny" id="gameBunny">
+          <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <span class="game-bunny-fallback">🐰</span>
+        </div>
+        <div class="game-overlay" id="gameOverlay">
+          <div>While you wait, help Sasha hop over the mushrooms &amp; rocks!</div>
+          <button class="btn" id="gameStartBtn">Start</button>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- STATE 2: THE ENCHANTED GARDEN (Match Reveal & Blossoms) -->
+  <div id="state-garden" class="lounge-state">
+    <div class="garden-bg-layer"></div>
+    
+    <div class="match-header">
+      <div class="eyebrow">The Pairing</div>
+      <h1 class="display" style="font-size:30px;" id="partnerHeadline">Your partner is</h1>
+      <div class="partner-card" id="partnerCard">
+        <div class="partner-name" id="partnerName">—</div>
+        <div class="host-meta" style="margin-top:8px;"><span class="color-chip" id="partnerChip"></span><span id="partnerColorLabel">your color</span></div>
+      </div>
+      <p class="sub" style="margin-top:14px;">Find your matching glow across the room.</p>
+    </div>
+
+    <div class="garden-scene">
+      <div class="moonglow"></div>
+      <div class="garden-bed" id="gardenBed"></div>
+      <div class="garden-vignette"></div>
+    </div>
+    
+    <div class="question-panel" id="questionPanel">
+      <div class="question-eyebrow" id="questionCounter">the meadow awaits</div>
+      <div class="question-text" id="questionText">Tap any glowing bud above to bloom your first question&hellip;</div>
+    </div>
+  </div>
+
+  <!-- STATE 3: RELATIONSHIPS COMMITTEE™ (AITA) -->
+  <div id="state-aita" class="lounge-state">
+    <div class="eyebrow">The Relationships Committee™</div>
+    <h1 class="display" style="font-size:28px;">Cast Your Verdict</h1>
+    <p class="sub">Listen to the story, then tap your call.</p>
+    <div class="aita-buttons">
+      <button class="aita-btn aita-btn-red" id="btnVoteYTA"><span class="aita-btn-label">ASSHOLE</span></button>
+      <button class="aita-btn aita-btn-green" id="btnVoteNTA"><span class="aita-btn-label">NOT THE ASSHOLE</span></button>
+    </div>
+  </div>
+
 </div>
 
-<!-- PARTNER REVEAL -->
-<div class="screen" id="screen-reveal">
-  <div class="eyebrow">The Pairing</div>
-  <h1 class="display" style="font-size:30px;" id="partnerHeadline">Your partner is</h1>
-  <div class="partner-card" id="partnerCard">
-    <div class="partner-name" id="partnerName">—</div>
-    <div class="host-meta" style="margin-top:8px;"><span class="color-chip" id="partnerChip"></span><span id="partnerColorLabel">your color</span></div>
-  </div>
-  <p class="sub" style="margin-top:18px;">Find your matching glow across the room.</p>
-  <button class="btn" id="btnToGarden">Start Answering Questions →</button>
-  <button class="btn ghost" id="btnRevealToHub" style="margin-top:10px;">See All Sections</button>
-</div>
-
-
-<!-- GARDEN -->
-<div class="screen" id="screen-garden">
-  <button class="back-btn" id="btnBackFromGarden" aria-label="Back">‹</button>
-  <div class="eyebrow">✦ The Enchanted Garden ✦</div>
-  <h1 class="display" style="font-size:28px; margin-bottom:2px;">Tap a Blossom to Bloom</h1>
-  <div class="sub">wander the moonlit meadow — every bloom opens a new question</div>
-  <div class="garden-scene">
-    <div class="moonglow"></div>
-    <div class="garden-bed" id="gardenBed"></div>
-    <div class="garden-fade-top"></div>
-    <div class="garden-vignette"></div>
-  </div>
-  <div class="question-panel" id="questionPanel">
-    <div class="question-eyebrow" id="questionCounter">the meadow awaits</div>
-    <div class="question-text" id="questionText">Tap any glowing bud below to bloom your first question&hellip;</div>
-  </div>
-</div>
-
-<!-- AITA VOTE -->
-<div class="screen" id="screen-aita">
-  <button class="back-btn" id="btnBackFromAita" aria-label="Back">‹</button>
-  <div class="eyebrow">The Relationships Committee™</div>
-  <h1 class="display" style="font-size:28px;">Cast Your Verdict</h1>
-  <p class="sub">Listen to the story, then tap your call.</p>
-  <div class="aita-buttons">
-    <button class="aita-btn aita-btn-red" id="btnVoteYTA"><span class="aita-btn-label">ASSHOLE</span></button>
-    <button class="aita-btn aita-btn-green" id="btnVoteNTA"><span class="aita-btn-label">NOT THE ASSHOLE</span></button>
-  </div>
-</div>
+<!-- AITA VERDICT CARD (Overlays everything when vote is cast) -->
 <div class="aita-verdict-card" id="aitaVerdictCard">
   <div class="aita-verdict-text" id="aitaVerdictText">ASSHOLE</div>
   <p class="sub" style="color:rgba(255,255,255,.85);">hold your phone up so everyone can see</p>
   <button class="btn ghost" id="btnChangeVote" style="border-color:rgba(255,255,255,.5); color:#fff;">change my vote</button>
-</div>
-
-<!-- HUB: home base with every section + tonight's participants -->
-<div class="screen" id="screen-hub">
-  <div class="eyebrow">✦ Speaking Club ✦</div>
-  <h1 class="display" style="font-size:32px;">Where to next?</h1>
-  <div class="hub-match-strip" id="hubMatchStrip" style="display:none;"></div>
-  <div class="hub-sections">
-    <div class="hub-card" id="hubCardGarden">
-      <div class="hub-card-icon">🌸</div>
-      <div><div class="hub-card-title">The Enchanted Garden</div><div class="hub-card-sub">bloom a question</div></div>
-    </div>
-    <div class="hub-card" id="hubCardAita">
-      <div class="hub-card-icon">⚖️</div>
-      <div><div class="hub-card-title">Relationships Committee™</div><div class="hub-card-sub">cast tonight's verdict</div></div>
-    </div>
-    <div class="hub-card" id="hubCardLounge">
-      <div class="hub-card-icon">🐰</div>
-      <div><div class="hub-card-title">Digital Lounge</div><div class="hub-card-sub">roster &amp; mini-game</div></div>
-    </div>
-  </div>
-  <div class="hub-section-label">Tonight's Roster</div>
-  <div class="hub-roster" id="hubRosterGrid"></div>
 </div>
 
 <!-- HOST DASHBOARD -->
@@ -815,15 +767,9 @@
   <button class="btn" id="btnMatch" style="align-self:center;">Match Pairs</button>
   <button class="btn ghost" id="btnResetEvent" style="align-self:center;">Reset Event</button>
 
-  <div class="host-section-label">Relationships Committee™</div>
-  <div class="aita-toggle-row">
-    <span>Enable Relationships Committee™ voting for this event</span>
-    <label class="switch">
-      <input type="checkbox" id="toggleAitaEnabled" checked>
-      <span class="switch-slider"></span>
-    </label>
-  </div>
-  <button class="btn" id="btnStartAita" style="align-self:center;">Convene the Committee</button>
+  <div class="host-section-label" style="margin-top:40px;">Relationships Committee™</div>
+  <button class="btn" id="btnStartAita" style="align-self:center; background:linear-gradient(120deg,#ff4d5e,#c81f3a); color:#fff;">Convene the Committee</button>
+  
   <div class="aita-tally" id="aitaTally">
     <div class="aita-tally-bar">
       <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
@@ -843,12 +789,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script>
 /* =========================================================
-   SETUP — drop your Firebase Realtime Database config here.
-   Create a free project at https://console.firebase.google.com,
-   enable "Realtime Database" in test mode, and paste the config
-   object from Project Settings > Your apps > SDK setup.
-   Until you do, the site runs in local preview mode (synced
-   only across tabs in this same browser, not across devices).
+   SETUP
    ========================================================= */
 const firebaseConfig = {
   apiKey: "AIzaSyDv47HEwF9APQLLoLdJgHwdLHzoYfTawyQ",
@@ -871,10 +812,6 @@ try{
   }
 }catch(e){ console.warn("Firebase init failed, falling back to preview mode.", e); }
 
-/* ---------- tiny local-preview backend (fallback) ----------
-   Mimics the same ref().on()/.set() surface using localStorage,
-   synced across tabs via the 'storage' event. Good enough to
-   test the whole flow solo before wiring real Firebase. */
 function localRef(path){
   const key = "fsc:"+path;
   return {
@@ -931,6 +868,11 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
+function setLoungeState(stateId) {
+  document.querySelectorAll('.lounge-state').forEach(s => s.classList.remove('active'));
+  document.getElementById(stateId).classList.add('active');
+}
+
 /* ---------- ambient lanterns ---------- */
 function spawnLanterns(){
   const sky = document.getElementById('sky');
@@ -946,83 +888,73 @@ function spawnLanterns(){
 }
 spawnLanterns();
 
-/* ---------- cloud reveal ---------- */
-function previewGarden(){
-  window.currentPairId = 'preview';
-  show('screen-garden');
-  buildGarden();
-}
-function showGreeting(){
-  if(me){
-    document.getElementById('welcomeHeadline').textContent = 'Welcome back, '+me.name;
-    document.getElementById('welcomeSub').textContent = "The garden remembers you. Step back into the roster.";
-    document.getElementById('btnToCheckin').textContent = 'Return to the Lounge';
-  }
-  show('screen-welcome');
-}
-
-let titleAdvanced = false;
-function advanceFromTitle(){
-  if(titleAdvanced) return;
-  titleAdvanced = true;
-  showGreeting();
-}
-
+/* ---------- application routing & VIP bypass ---------- */
 window.addEventListener('load', ()=>{
-  const params = new URLSearchParams(location.search);
-  if(params.get('preview') === 'garden'){ previewGarden(); return; }
-  if(isHost){ show('screen-host'); initHost(); return; }
-  const seenTitle = localStorage.getItem('fsc_seen_title');
-  if(!seenTitle){
-    localStorage.setItem('fsc_seen_title', '1');
-    show('screen-title');
-    document.getElementById('screen-title').addEventListener('click', advanceFromTitle, {once:true});
-    setTimeout(advanceFromTitle, 3200);
-  } else {
-    showGreeting();
-  }
+  // 1. The Beautiful Cloud Dissolve
+  setTimeout(()=>{
+    const cloudBack = document.getElementById('cloudBackG');
+    const cloudFront = document.getElementById('cloudFrontG');
+    const cloudLabel = document.getElementById('cloudLabel');
+    if(cloudBack) cloudBack.classList.add('dissolve');
+    if(cloudFront) cloudFront.classList.add('dissolve');
+    if(cloudLabel){
+      cloudLabel.style.transition='opacity 1.2s ease';
+      cloudLabel.style.opacity='0';
+    }
+  }, 1400);
+
+  // 2. Directing the User
+  setTimeout(()=>{
+    const cloudScreen = document.getElementById('screen-clouds');
+    if(cloudScreen) cloudScreen.style.zIndex='1';
+
+    if(isHost){
+      show('screen-host');
+      initHost();
+    } else if(me){
+      // RETURNING VIP
+      ref(`events/${EVENT_ID}/attendees/${me.id}`).update({...me, joinedAt: Date.now()});
+      enterLounge();
+    } else {
+      // FIRST TIME USER
+      show('screen-title');
+      const advanceToWelcome = () => {
+        if(document.getElementById('screen-title').classList.contains('active')){
+          show('screen-welcome');
+        }
+      };
+      document.getElementById('screen-title').addEventListener('click', advanceToWelcome, {once:true});
+      setTimeout(advanceToWelcome, 4000);
+    }
+  }, 2500);
 });
 
-document.getElementById('btnToCheckin').addEventListener('click', ()=>{
-  if(me){ enterLounge(); } else { show('screen-checkin'); }
-});
-document.getElementById('btnPreviewGarden').addEventListener('click', previewGarden);
-
-/* ---------- avatar picker ---------- */
-let pickedAvatar = AVATARS[0];
-const grid = document.getElementById('avatarGrid');
-AVATARS.forEach((a,i)=>{
-  const el = document.createElement('div');
-  el.className='avatar-choice'+(i===0?' picked':'');
-  el.textContent=a;
-  el.addEventListener('click', ()=>{
-    grid.querySelectorAll('.avatar-choice').forEach(c=>c.classList.remove('picked'));
-    el.classList.add('picked'); pickedAvatar=a;
-  });
-  grid.appendChild(el);
-});
+document.getElementById('btnToCheckin').addEventListener('click', ()=>{ show('screen-checkin'); });
 
 /* ---------- join ---------- */
 document.getElementById('btnJoin').addEventListener('click', ()=>{
   const name = document.getElementById('inputName').value.trim();
-  const pronouns = document.getElementById('inputPronouns').value.trim();
-  if(!name || !pronouns){ alert('Name and pronouns help everyone greet you right — please fill both in.'); return; }
-  const level = document.getElementById('inputLevel').value;
+  if(!name){ alert('Standards require a name to enter.'); return; }
+  
+  // Auto-assign random avatar
+  const randomAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
   const id = 'g_'+Math.random().toString(36).slice(2,10);
-  me = {id, name, pronouns, level, avatar:pickedAvatar};
+  
+  me = {id, name, avatar:randomAvatar};
   localStorage.setItem('fsc_guest', JSON.stringify(me));
   ref(`events/${EVENT_ID}/attendees/${id}`).set({...me, joinedAt: Date.now()});
   enterLounge();
 });
 
-/* ---------- lounge ---------- */
+/* ---------- single room logic ---------- */
 function enterLounge(){
   show('screen-lounge');
-  document.getElementById('btnBackFromLounge').style.display = 'none';
+  setLoungeState('state-gathering');
   listenRoster();
   listenPhase();
   startBunnyGame();
 }
+
 function listenRoster(){
   ref(`events/${EVENT_ID}/attendees`).on('value', snap=>{
     const data = snap.val() || {};
@@ -1041,29 +973,26 @@ function listenRoster(){
       });
     };
     renderInto('rosterGrid');
-    renderInto('hubRosterGrid');
     if(isHost) renderHostList(guests);
   });
 }
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-/* ---------- phase + pairing sync ---------- */
-function applyPair([pairId, pair]){
-  const partners = pair.members.filter(m=>m.id !== me.id);
-  document.getElementById('partnerHeadline').textContent = partners.length > 1 ? 'Your partners are' : 'Your partner is';
-  document.getElementById('partnerName').textContent = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
-  document.getElementById('partnerChip').style.background = pair.color;
-  document.getElementById('partnerColorLabel').textContent = 'your glow';
-  document.getElementById('partnerCard').style.borderColor = pair.color;
-  document.getElementById('glowRing').style.boxShadow = `inset 0 0 90px 8px ${pair.color}55`;
-  window.currentPairId = pairId;
-  stopBunnyGame();
-  show('screen-reveal');
-}
 function listenPhase(){
   ref(`events/${EVENT_ID}/state`).on('value', snap=>{
     const state = snap.val();
-    if(state === 'matched' && me){
+    if(!me) return;
+    
+    if(state === 'lounge'){
+      show('screen-lounge');
+      setLoungeState('state-gathering');
+      document.getElementById('aitaVerdictCard').style.display = 'none';
+      document.getElementById('glowRing').style.boxShadow = `none`;
+      startBunnyGame();
+    }
+    else if(state === 'matched'){
+      show('screen-lounge');
+      stopBunnyGame();
       const tryFindPair = (attemptsLeft)=>{
         ref(`events/${EVENT_ID}/pairs`).once('value').then(snap=>{
           const pairs = snap.val() || {};
@@ -1077,29 +1006,42 @@ function listenPhase(){
       };
       tryFindPair(4);
     }
-    if(state === 'aita' && me){
-      ref(`events/${EVENT_ID}/aita/enabled`).once('value').then(enabledSnap=>{
-        if(enabledSnap.val() === false) return;
-        ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
-          const round = snap.val();
-          if(!round) return;
-          enterAitaRound(round);
-        });
+    else if(state === 'aita'){
+      show('screen-lounge');
+      stopBunnyGame();
+      document.getElementById('glowRing').style.boxShadow = `none`;
+      ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
+        const round = snap.val();
+        if(!round) return;
+        enterAitaRound(round);
       });
     }
   });
 }
 
-/* ---------- AITA voting (guest) ---------- */
+function applyPair([pairId, pair]){
+  const partners = pair.members.filter(m=>m.id !== me.id);
+  document.getElementById('partnerHeadline').textContent = partners.length > 1 ? 'Your partners are' : 'Your partner is';
+  document.getElementById('partnerName').textContent = partners.length ? partners.map(p=>p.name).join(' & ') : 'the group';
+  document.getElementById('partnerChip').style.background = pair.color;
+  document.getElementById('partnerColorLabel').textContent = 'your glow';
+  document.getElementById('partnerCard').style.borderColor = pair.color;
+  document.getElementById('glowRing').style.boxShadow = `inset 0 0 90px 8px ${pair.color}55`;
+  window.currentPairId = pairId;
+  
+  setLoungeState('state-garden');
+  buildGarden();
+}
+
 function enterAitaRound(round){
   window.currentAitaRound = round;
-  stopBunnyGame();
+  setLoungeState('state-aita');
   document.getElementById('aitaVerdictCard').style.display = 'none';
-  show('screen-aita');
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes/${me.id}`).on('value', snap=>{
     showAitaVoteState(snap.val());
   });
 }
+
 function showAitaVoteState(vote){
   const card = document.getElementById('aitaVerdictCard');
   if(vote){
@@ -1122,59 +1064,8 @@ document.getElementById('btnChangeVote').addEventListener('click', ()=>{
   ref(`events/${EVENT_ID}/aita/rounds/${window.currentAitaRound}/votes/${me.id}`).set(null);
 });
 
-document.getElementById('btnToGarden').addEventListener('click', ()=>{
-  stopBunnyGame();
-  show('screen-garden');
-  buildGarden();
-});
-
-/* ---------- hub: home base with every section + tonight's participants ---------- */
-function showHub(){
-  stopBunnyGame();
-  const strip = document.getElementById('hubMatchStrip');
-  const partnerName = document.getElementById('partnerName').textContent;
-  if(partnerName && partnerName !== '—'){
-    strip.textContent = `paired tonight with ${partnerName}`;
-    strip.style.display = 'block';
-  } else {
-    strip.style.display = 'none';
-  }
-  show('screen-hub');
-}
-document.getElementById('btnBackFromGarden').addEventListener('click', showHub);
-document.getElementById('btnBackFromAita').addEventListener('click', showHub);
-document.getElementById('btnBackFromLounge').addEventListener('click', showHub);
-document.getElementById('btnRevealToHub').addEventListener('click', showHub);
-
-document.getElementById('hubCardGarden').addEventListener('click', ()=>{
-  stopBunnyGame();
-  show('screen-garden');
-  buildGarden();
-});
-document.getElementById('hubCardAita').addEventListener('click', ()=>{
-  ref(`events/${EVENT_ID}/aita/enabled`).once('value').then(enabledSnap=>{
-    if(enabledSnap.val() === false){
-      alert('The Relationships Committee™ is not in session tonight — ask your host to enable it.');
-      return;
-    }
-    ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
-      const round = snap.val();
-      if(!round){
-        alert('No vote is live right now — check back once your host starts one!');
-        return;
-      }
-      enterAitaRound(round);
-    });
-  });
-});
-document.getElementById('hubCardLounge').addEventListener('click', ()=>{
-  show('screen-lounge');
-  document.getElementById('btnBackFromLounge').style.display = 'flex';
-  startBunnyGame();
-});
-
 /* ---------- bunny-hop mini game ---------- */
-let bg = null; // bunny-game state, created fresh each time it starts
+let bg = null;
 function startBunnyGame(){
   stopBunnyGame();
   const track = document.getElementById('gameTrack');
@@ -1184,12 +1075,9 @@ function startBunnyGame(){
   if(!track) return;
 
   bg = {
-    running:false, over:false,
-    y:0, vy:0, score:0, speed:3.2, frame:0, nextSpawn:60,
-    obstacles:[], raf:null,
-    track, bunnyEl, scoreEl, overlay
+    running:false, over:false, y:0, vy:0, score:0, speed:3.2, frame:0, nextSpawn:60,
+    obstacles:[], raf:null, track, bunnyEl, scoreEl, overlay
   };
-
   const high = Number(localStorage.getItem('fsc_bunny_high')||0);
   scoreEl.textContent = high ? `best ${high}` : '0';
 
@@ -1218,7 +1106,6 @@ function startBunnyGame(){
   function loop(){
     if(!bg || !bg.running) return;
     bg.frame++;
-
     bg.y += bg.vy;
     bg.vy -= 0.75;
     if(bg.y < 0){ bg.y = 0; bg.vy = 0; }
@@ -1249,7 +1136,6 @@ function startBunnyGame(){
     bg.score += 0.12;
     bg.speed = Math.min(7, 3.2 + bg.score * 0.01);
     scoreEl.textContent = String(Math.floor(bg.score));
-
     bg.raf = requestAnimationFrame(loop);
   }
 
@@ -1269,24 +1155,21 @@ window.addEventListener('keydown', (e)=>{
   }
 });
 
-/* ---------- garden ---------- */
+/* ---------- garden builder ---------- */
 function buildGarden(){
   const bed = document.getElementById('gardenBed');
   bed.innerHTML = '';
   const pairId = window.currentPairId || 'solo';
-
   const cols = 3;
   const rowH = 148;
   const rows = Math.ceil(QUESTIONS.length / cols);
   const totalHeight = rows * rowH + 150;
   bed.style.height = totalHeight + 'px';
 
-  /* drifting mist, laid down first so everything else sits above it */
   const mist = document.createElement('div');
   mist.className = 'garden-mist';
   bed.appendChild(mist);
 
-  /* rolling hills, stacked up the whole meadow */
   for(let r = 0; r <= rows; r++){
     const hill = document.createElement('div');
     hill.className = 'hill';
@@ -1295,7 +1178,6 @@ function buildGarden(){
     bed.appendChild(hill);
   }
 
-  /* drifting fireflies across the whole scene, in soft rainbow hues */
   const fireflyCount = Math.max(12, rows * 5);
   for(let f = 0; f < fireflyCount; f++){
     const fly = document.createElement('div');
@@ -1308,7 +1190,6 @@ function buildGarden(){
     bed.appendChild(fly);
   }
 
-  /* twinkling star-sparkles scattered through the meadow */
   const sparkleCount = Math.max(16, rows * 6);
   for(let s = 0; s < sparkleCount; s++){
     const sp = document.createElement('div');
@@ -1321,7 +1202,6 @@ function buildGarden(){
     bed.appendChild(sp);
   }
 
-  /* a handful of butterflies drifting lazily through the meadow */
   const butterflyEmojis = ['🦋'];
   const butterflyCount = Math.max(4, Math.round(rows * 1.4));
   for(let b = 0; b < butterflyCount; b++){
@@ -1336,7 +1216,6 @@ function buildGarden(){
     bed.appendChild(fly);
   }
 
-  /* the flowers themselves, scattered like a real meadow */
   QUESTIONS.forEach((q, i) => {
     const col = i % cols;
     const row = Math.floor(i / cols);
@@ -1347,37 +1226,21 @@ function buildGarden(){
     const stemH = 62 + seeded(i * 6.7) * 48;
     const scale = (0.8 + seeded(i * 8.3) * 0.34).toFixed(2);
 
-    /* harmonized color: each row draws from one cluster, columns alternate its two tones */
     const cluster = CLUSTERS[row % CLUSTERS.length];
     const color = cluster[col % 2];
 
-    /* species variety: round, star, bell, and enchanted orchid blooms scattered throughout */
     const speciesRoll = seeded(i * 13.7);
     const species = speciesRoll < 0.34 ? 'round' : speciesRoll < 0.58 ? 'star' : speciesRoll < 0.8 ? 'bell' : 'orchid';
     const sparkleRing = `<div class="bloom-sparkles"><span></span><span></span><span></span></div>`;
     let bloomHtml;
     if(species === 'star'){
-      bloomHtml = `${sparkleRing}<div class="bloom">
-          <div class="petal-star"></div><div class="petal-star"></div><div class="petal-star"></div>
-          <div class="petal-star"></div><div class="petal-star"></div>
-          <div class="bloom-center"></div>
-        </div>`;
+      bloomHtml = `${sparkleRing}<div class="bloom"><div class="petal-star"></div><div class="petal-star"></div><div class="petal-star"></div><div class="petal-star"></div><div class="petal-star"></div><div class="bloom-center"></div></div>`;
     } else if(species === 'bell'){
-      bloomHtml = `${sparkleRing}<div class="bloom bloom-bell">
-          <div class="bell"></div><div class="bell"></div><div class="bell"></div>
-        </div>`;
+      bloomHtml = `${sparkleRing}<div class="bloom bloom-bell"><div class="bell"></div><div class="bell"></div><div class="bell"></div></div>`;
     } else if(species === 'orchid'){
-      bloomHtml = `${sparkleRing}<div class="bloom">
-          <div class="petal-orchid"></div><div class="petal-orchid"></div><div class="petal-orchid"></div>
-          <div class="petal-orchid"></div><div class="petal-orchid"></div>
-          <div class="orchid-throat"></div>
-        </div>`;
+      bloomHtml = `${sparkleRing}<div class="bloom"><div class="petal-orchid"></div><div class="petal-orchid"></div><div class="petal-orchid"></div><div class="petal-orchid"></div><div class="petal-orchid"></div><div class="orchid-throat"></div></div>`;
     } else {
-      bloomHtml = `${sparkleRing}<div class="bloom">
-          <div class="petal"></div><div class="petal"></div><div class="petal"></div>
-          <div class="petal"></div><div class="petal"></div><div class="petal"></div>
-          <div class="bloom-center"></div>
-        </div>`;
+      bloomHtml = `${sparkleRing}<div class="bloom"><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="bloom-center"></div></div>`;
     }
 
     const plant = document.createElement('div');
@@ -1388,10 +1251,7 @@ function buildGarden(){
     plant.style.color = color;
     plant.style.setProperty('--fscale', scale);
     plant.innerHTML = `
-      <div class="flower-head">
-        <div class="bud"></div>
-        ${bloomHtml}
-      </div>
+      <div class="flower-head"><div class="bud"></div>${bloomHtml}</div>
       <div class="stem" style="height:${stemH.toFixed(0)}px;">
         <div class="leaf" style="top:${(64 + stemH * 0.3).toFixed(0)}px; left:-11px;"></div>
         <div class="leaf" style="top:${(64 + stemH * 0.62).toFixed(0)}px; left:15px; transform:scaleX(-1);"></div>
@@ -1419,8 +1279,6 @@ function bloom(i, pairId, plant, color, left, bottom){
 function spawnBloomBurst(plant, color, left, bottom){
   const bed = document.getElementById('gardenBed');
   if(!bed) return;
-
-  /* pollen motes rising from the flower itself */
   for(let p = 0; p < 6; p++){
     const mote = document.createElement('div');
     mote.className = 'pollen';
@@ -1429,8 +1287,6 @@ function spawnBloomBurst(plant, color, left, bottom){
     plant.appendChild(mote);
     setTimeout(()=> mote.remove(), 1700);
   }
-
-  /* nearby fireflies drawn in as bright sparks */
   for(let s = 0; s < 4; s++){
     const spark = document.createElement('div');
     spark.className = 'spark';
@@ -1459,37 +1315,15 @@ function showQuestion(i){
 
 /* ---------- host console ---------- */
 let hostGuestsCache = [];
-function applyAitaToggleUI(enabled){
-  document.getElementById('btnStartAita').style.display = enabled ? '' : 'none';
-  if(!enabled){ document.getElementById('aitaTally').style.display = 'none'; }
-}
 function initHost(){
   listenRoster();
   ref(`events/${EVENT_ID}/state`).set('lounge');
-  ref(`events/${EVENT_ID}/aita/enabled`).once('value').then(snap=>{
-    const enabled = snap.val() !== false; // default on unless explicitly disabled
-    document.getElementById('toggleAitaEnabled').checked = enabled;
-    applyAitaToggleUI(enabled);
-  });
   ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
     const round = snap.val();
     if(round){ listenAitaTally(round); document.getElementById('aitaTally').style.display='flex'; }
   });
 }
-document.getElementById('toggleAitaEnabled').addEventListener('change', (e)=>{
-  const enabled = e.target.checked;
-  ref(`events/${EVENT_ID}/aita/enabled`).set(enabled);
-  applyAitaToggleUI(enabled);
-  if(!enabled){
-    // End any live round so guests currently voting return to the lounge/garden.
-    ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
-      if(snap.val()){
-        ref(`events/${EVENT_ID}/aita/round`).set(null);
-        ref(`events/${EVENT_ID}/state`).set('lounge');
-      }
-    });
-  }
-});
+
 function renderHostList(guests){
   hostGuestsCache = guests;
   const list = document.getElementById('hostList');
@@ -1498,7 +1332,7 @@ function renderHostList(guests){
     const row = document.createElement('div');
     row.className='host-row';
     row.innerHTML = `<div class="guest-avatar">${g.avatar}</div>
-      <div><div>${escapeHtml(g.name)}</div><div class="host-meta">${escapeHtml(g.pronouns)}${g.level? ' · '+g.level:''}</div></div>`;
+      <div><div>${escapeHtml(g.name)}</div></div>`;
     list.appendChild(row);
   });
 }
@@ -1512,13 +1346,8 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
   while(i < guests.length){
     const remaining = guests.length - i;
     let members;
-    if(remaining === 3){
-      members = [guests[i], guests[i+1], guests[i+2]];
-      i += 3;
-    } else {
-      members = [guests[i], guests[i+1]];
-      i += 2;
-    }
+    if(remaining === 3){ members = [guests[i], guests[i+1], guests[i+2]]; i += 3; } 
+    else { members = [guests[i], guests[i+1]]; i += 2; }
     pairs['p'+pi] = { members, color: PAIR_COLORS[pi % PAIR_COLORS.length] };
     pi++;
   }
@@ -1527,15 +1356,11 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
   const originalLabel = btn.textContent;
   btn.textContent = 'Matching…';
   try{
-    // Write the pairs FIRST and wait for it to land, then flip the state.
-    // Flipping state before pairs finish writing is a race condition that
-    // can leave guests' screens with no partner data to read.
     await ref(`events/${EVENT_ID}/pairs`).set(pairs);
     await ref(`events/${EVENT_ID}/state`).set('matched');
-    alert('Pairs are set and glowing on everyone\'s screen.');
   } catch(err){
     console.error('Failed to set pairs/state:', err);
-    alert('Something went wrong matching pairs: ' + (err && err.message ? err.message : err) + '\nPlease check your connection and try again.');
+    alert('Something went wrong matching pairs.');
   } finally {
     btn.disabled = false;
     btn.textContent = originalLabel;
@@ -1554,7 +1379,6 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
 
 /* ---------- AITA voting (host) ---------- */
 document.getElementById('btnStartAita').addEventListener('click', ()=>{
-  if(!document.getElementById('toggleAitaEnabled').checked){ alert('Turn on the Relationships Committee™ above first.'); return; }
   const round = String(Date.now());
   ref(`events/${EVENT_ID}/aita/round`).set(round);
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
@@ -1562,7 +1386,6 @@ document.getElementById('btnStartAita').addEventListener('click', ()=>{
   document.getElementById('aitaPicked').textContent = '';
   document.getElementById('aitaTally').style.display = 'flex';
   listenAitaTally(round);
-  alert("Vote is live — everyone's screen just flipped to the ballot.");
 });
 function listenAitaTally(round){
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).on('value', snap=>{
