@@ -120,7 +120,6 @@
   }
 
   /* ---------- title splash ---------- */
-  #screen-title{cursor:pointer;}
   .title-kicker{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.32em; text-transform:uppercase;
     color:var(--dim); opacity:0; animation:title-fade-in .9s ease forwards .15s;
@@ -141,6 +140,41 @@
     color:var(--dim); opacity:0; animation:title-fade-in 1s ease forwards 1.6s, pulse-fade 1.8s ease-in-out infinite 1.6s;
   }
   @keyframes title-fade-in{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+  /* --- CINEMATIC ENTRANCE MAGIC --- */
+  .entrance-magic {
+    position: fixed; inset: 0; z-index: 99999;
+    background: var(--ink); /* Pitch black starting screen */
+    display: flex; align-items: center; justify-content: center;
+    animation: dissolve-magic 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards 1.2s;
+    pointer-events: none;
+  }
+  .entrance-spark {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 0 rgba(242, 193, 78, 0);
+    animation: spark-ignite 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes spark-ignite {
+    0% { transform: scale(0); opacity: 0; box-shadow: 0 0 0 0 rgba(242, 193, 78, 0); }
+    40% { transform: scale(1); opacity: 1; box-shadow: 0 0 40px 20px rgba(242, 193, 78, 0.9); }
+    100% { transform: scale(30); opacity: 0; box-shadow: 0 0 150px 80px rgba(242, 193, 78, 0); }
+  }
+  @keyframes dissolve-magic {
+    to { opacity: 0; visibility: hidden; }
+  }
+
+  /* Staggered float-up for the welcome elements */
+  .stagger-1 { opacity: 0; animation: float-up-fade 1s ease forwards 1.4s; }
+  .stagger-2 { opacity: 0; animation: float-up-fade 1s ease forwards 1.7s; }
+  .stagger-3 { opacity: 0; animation: float-up-fade 1s ease forwards 2.0s; }
+  .stagger-4 { opacity: 0; animation: float-up-fade 1s ease forwards 2.3s; }
+
+  @keyframes float-up-fade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
   /* ---------- Sasha's greeting bubble ---------- */
   .greeting-bubble{
@@ -1041,35 +1075,28 @@
   </div>
 </div>
 
-<!-- TITLE SPLASH -->
-<div class="screen" id="screen-title">
-  <div class="title-kicker">You're invited to</div>
-  <h1 class="display title-main">RELATIONSHIPS</h1>
-  <div class="title-sub">• Speaking Club •</div>
-  <div class="title-tap">tap anywhere to continue</div>
+<!-- MAGICAL ENTRANCE OVERLAY (Only shows for first-time users) -->
+<div id="entrance-magic" class="entrance-magic">
+  <div class="entrance-spark"></div>
 </div>
 
-<!-- WELCOME / SASHA'S GREETING -->
+<!-- COMBINED WELCOME & CHECK-IN -->
 <div class="screen" id="screen-welcome">
-  <div class="eyebrow">RELΛTIONSHIPS · Speaking Club</div>
-  <div class="host-frame"><div class="host-frame-inner">S</div></div>
-  <h1 class="display" id="welcomeHeadline" style="font-size:32px;">Hi, I'm Sasha</h1>
-  <div class="greeting-bubble">
-    <p id="welcomeSub">So glad you found your way in tonight. I'll be hosting — pop your name on the roster, find a seat, and get ready for a beautiful evening.</p>
-    <div class="greeting-sign">— Sasha, your host</div>
-  </div>
-  <button class="btn" id="btnToCheckin">Enter the Roster</button>
-</div>
+  <div class="eyebrow stagger-1">RELΛTIONSHIPS · Speaking Club</div>
 
-<!-- VIP CHECK-IN (Simplified) -->
-<div class="screen" id="screen-checkin">
-  <div class="eyebrow">VIP Check-In</div>
-  <h1 class="display" style="font-size:32px;">Identify Yourself</h1>
-  <div class="field">
-    <label>Name</label>
+  <div class="host-frame stagger-2" style="margin-top: 24px;"><div class="host-frame-inner">S</div></div>
+  <h1 class="display stagger-2" style="font-size:34px; margin-bottom: 8px;">Welcome to the club.</h1>
+
+  <div class="greeting-bubble stagger-3" style="margin-bottom: 24px; text-align: center;">
+    <p>I'm Sasha, and I'll be your host tonight. Pop your name on the roster below, find a comfortable seat, and get ready for a beautiful evening.</p>
+  </div>
+
+  <div class="field stagger-4" style="margin-top: 0;">
+    <label style="text-align: left;">Your Name</label>
     <input type="text" id="inputName" placeholder="What should we call you?" maxlength="24">
   </div>
-  <button class="btn" id="btnJoin">Join the Lounge</button>
+
+  <button class="btn stagger-4" id="btnJoin" style="width: 100%; max-width: 320px;">Enter the Lounge</button>
 </div>
 
 <!-- MASTER LOUNGE (Handles all dynamic guest states) -->
@@ -1167,6 +1194,30 @@
             </div>
             <button class="btn ghost" id="btnPickElaborate" style="align-self:center; font-size:12px; padding: 10px 20px;">🎲 Pick someone to elaborate</button>
             <div class="aita-picked" id="aitaPicked"></div>
+          </div>
+
+          <!-- Connector line -->
+          <div class="activity-connector"><div class="connector-line"></div></div>
+
+          <!-- Closer Activity -->
+          <div class="hub-card locked" id="hubCardCloser">
+            <div class="current-badge">Happening Now</div>
+            <div class="hub-card-icon">💌</div>
+            <div>
+              <div class="hub-card-sub" style="color:var(--gold);">Closing Ritual</div>
+              <div class="hub-card-title">Things We Love</div>
+              <div class="hub-card-desc">Leave a piece of yourself behind on our shared archive.</div>
+              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
+            </div>
+          </div>
+
+          <!-- HOST ONLY: Closer Controls -->
+          <div id="hostControlsCloser" class="host-inline-controls" style="display:none; justify-content: space-between;">
+            <button class="host-inline-btn action" id="btnHighlightCloser">Toggle "Happening Now"</button>
+            <button class="host-inline-btn" id="btnToggleLockCloser" style="display:flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Unlock</span>
+            </button>
           </div>
 
         </div>
@@ -1393,25 +1444,19 @@ window.addEventListener('load', ()=>{
   }
 
   if(me){
-    // RETURNING VIP (or the host, auto-identified above)
+    // RETURNING VIP (or the host, auto-identified above) — skip the entrance animation
+    const magicOverlay = document.getElementById('entrance-magic');
+    if(magicOverlay) magicOverlay.style.display = 'none';
+
     ref(`events/${EVENT_ID}/attendees/${me.id}`).update({...me, joinedAt: Date.now()});
     enterLounge();
   } else {
-    // FIRST TIME USER
-    show('screen-title');
-    const advanceToWelcome = () => {
-      if(document.getElementById('screen-title').classList.contains('active')){
-        show('screen-welcome');
-      }
-    };
-    document.getElementById('screen-title').addEventListener('click', advanceToWelcome, {once:true});
-    setTimeout(advanceToWelcome, 4000);
+    // FIRST TIME USER: go straight to the combined welcome screen
+    show('screen-welcome');
   }
 
   listenTimer();
 });
-
-document.getElementById('btnToCheckin').addEventListener('click', ()=>{ show('screen-checkin'); });
 
 /* ---------- join ---------- */
 document.getElementById('btnJoin').addEventListener('click', ()=>{
@@ -1595,9 +1640,15 @@ function listenHubs() {
       cardAita.classList.toggle('locked', !hubs.aita);
       cardAita.classList.toggle('is-current', hubs.current === 'aita');
     }
+    const cardCloser = document.getElementById('hubCardCloser');
+    if(cardCloser) {
+      cardCloser.classList.toggle('locked', !hubs.closer);
+      cardCloser.classList.toggle('is-current', hubs.current === 'closer');
+    }
 
     setLockButtonState(document.getElementById('btnToggleLockGarden'), !!hubs.garden, 'Lock', 'Unlock');
     setLockButtonState(document.getElementById('btnToggleLockCourt'), !!hubs.aita, 'Lock', 'Unlock');
+    setLockButtonState(document.getElementById('btnToggleLockCloser'), !!hubs.closer, 'Lock', 'Unlock');
 
     // The Timer button only makes sense once a section is unlocked —
     // setting a timer is always optional, so it's just a standalone extra.
@@ -1622,6 +1673,11 @@ document.getElementById('hubCardGarden').addEventListener('click', () => {
 document.getElementById('hubCardAita').addEventListener('click', () => {
   if (document.getElementById('hubCardAita').classList.contains('locked')) return;
   setLoungeState('state-aita');
+});
+document.getElementById('hubCardCloser').addEventListener('click', () => {
+  if (document.getElementById('hubCardCloser').classList.contains('locked')) return;
+  // Open Padlet in a new tab/window
+  window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank');
 });
 
 function enterAitaRound(round){
@@ -2041,6 +2097,7 @@ function initHost(){
   document.getElementById('hostRosterContainer').style.display = 'block';
   document.getElementById('hostControlsGarden').style.display = 'flex';
   document.getElementById('hostControlsAita').style.display = 'flex';
+  document.getElementById('hostControlsCloser').style.display = 'flex';
   document.getElementById('btnResetEvent').style.display = 'block';
 
   ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
@@ -2088,6 +2145,12 @@ document.getElementById('btnHighlightCourt').addEventListener('click', async () 
   else ref(`events/${EVENT_ID}/hubs/current`).set('aita');
 });
 
+document.getElementById('btnHighlightCloser').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
+  if (snap.val() === 'closer') ref(`events/${EVENT_ID}/hubs/current`).set(null);
+  else ref(`events/${EVENT_ID}/hubs/current`).set('closer');
+});
+
 // --- SYNC LOCK BUTTON LABEL/ICON TO CURRENT STATE ---
 const LOCK_ICON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
 function setLockButtonState(btn, isUnlocked, unlockedLabel, lockedLabel){
@@ -2130,6 +2193,16 @@ document.getElementById('btnToggleLockCourt').addEventListener('click', async ()
     document.getElementById('aitaPicked').textContent = '';
     document.getElementById('aitaTally').style.display = 'flex';
     listenAitaTally(round);
+  }
+});
+
+// Unlock toggle for Closer
+document.getElementById('btnToggleLockCloser').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/closer`).once('value');
+  if (snap.val()) {
+    ref(`events/${EVENT_ID}/hubs/closer`).set(false);
+  } else {
+    ref(`events/${EVENT_ID}/hubs/closer`).set(true);
   }
 });
 
