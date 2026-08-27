@@ -447,15 +447,18 @@
   }
   .affirmation {
     position: absolute; font-family: 'Cormorant Garamond', serif; font-style: italic;
-    color: rgba(244, 233, 255, 0.15); white-space: nowrap;
+    color: rgba(244, 233, 255, 0.18);
+    max-width: min(72vw, 300px);
+    text-align: center; white-space: normal; overflow-wrap: break-word;
+    line-height: 1.45;
     animation: float-up-aff 28s linear infinite;
     animation-fill-mode: backwards;
   }
   @keyframes float-up-aff {
-    0% { transform: translateY(110vh); opacity: 0; }
+    0% { transform: translate(-50%, 110vh); opacity: 0; }
     10% { opacity: 1; }
     90% { opacity: 1; }
-    100% { transform: translateY(-15vh); opacity: 0; }
+    100% { transform: translate(-50%, -15vh); opacity: 0; }
   }
   .game-instructions{
     position:absolute; top:6px; left:16px; z-index:3; max-width:60%;
@@ -474,7 +477,7 @@
     touch-action: manipulation;
   }
   .game-bunny{
-    position:absolute; left:14px; bottom:52px; width:104px; height:104px; z-index:2;
+    position:absolute; left:14px; bottom:52px; width:132px; height:132px; z-index:2;
     display:flex; align-items:center; justify-content:center;
     transform:translateY(0); will-change:transform;
     filter:drop-shadow(0 6px 6px rgba(0,0,0,.4)); pointer-events:none;
@@ -490,7 +493,40 @@
   .game-overlay.hidden{opacity:0; pointer-events:none;}
   .game-overlay .btn{margin-top:0; padding:10px 28px; font-size:13px;}
 
-  /* --- ETHEREAL BUNNY HOP (Parallax & Silhouettes) --- */
+  .game-fullscreen-btn{
+    position:absolute; bottom:8px; right:8px; z-index:5;
+    width:30px; height:30px; border-radius:50%;
+    background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.2);
+    color:var(--gold); font-size:14px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; pointer-events:auto;
+  }
+
+  /* --- FULLSCREEN LANDSCAPE MODE --- */
+  #gameSection:fullscreen{
+    position:fixed; top:50%; left:50%; margin:0; border-radius:0;
+    width:100vh; height:100vw;
+    transform:translate(-50%,-50%) rotate(90deg);
+    background:var(--ink);
+  }
+  #gameSection:-webkit-full-screen{
+    position:fixed; top:50%; left:50%; margin:0; border-radius:0;
+    width:100vh; height:100vw;
+    transform:translate(-50%,-50%) rotate(90deg);
+    background:var(--ink);
+  }
+  #gameSection:fullscreen .lounge-ground,
+  #gameSection:fullscreen .lounge-game,
+  #gameSection:-webkit-full-screen .lounge-ground,
+  #gameSection:-webkit-full-screen .lounge-game{
+    height:100%;
+  }
+  #gameSection:fullscreen .game-fullscreen-btn,
+  #gameSection:-webkit-full-screen .game-fullscreen-btn{
+    bottom:auto; top:8px; right:8px;
+  }
+
+  /* ---------- ETHEREAL BUNNY HOP (Parallax & Silhouettes) ---------- */
   .parallax-layer {
     position: absolute; left: 0; right: 0; bottom: 0; height: 100%;
     background-repeat: repeat-x; pointer-events: none; will-change: background-position;
@@ -525,7 +561,7 @@
   @keyframes wisp-pulse { from { transform: scale(0.9); } to { transform: scale(1.1); } }
   /* --- PINK CAR HIGHWAY OBSTACLES --- */
   .obs-basic {
-    position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
+    position: absolute; bottom: 52px; font-size: 40px; z-index: 2;
     filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none;
   }
   .jump-particle {
@@ -1036,7 +1072,7 @@
     filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none;
   }
   .obs-iconic {
-    position: absolute; bottom: 52px; width: 28px; height: 28px; z-index: 2;
+    position: absolute; bottom: 52px; width: 40px; height: 40px; z-index: 2;
     filter: drop-shadow(0 0 10px rgba(242,193,78,.8)); pointer-events: none;
     animation: float-icon 2s ease-in-out infinite;
   }
@@ -1091,9 +1127,12 @@
 
   <!-- Floating Love Quotes -->
   <div class="affirmations-layer">
-    <div class="affirmation" style="left: 15%; animation-delay: 0s; font-size: 20px;">"Love does not begin and end the way we seem to think it does." — James Baldwin</div>
-    <div class="affirmation" style="left: 55%; animation-delay: 9s; font-size: 20px;">"Caring for myself is not self-indulgence, it is self-preservation." — Audre Lorde</div>
-    <div class="affirmation" style="left: 25%; animation-delay: 19s; font-size: 20px;">"I am reduced to a thing that wants Virginia." — Vita Sackville-West</div>
+    <div class="affirmation" style="left: 50%; animation-delay: 0s; font-size: 18px;">"It is better to be hated for what you are than to be loved for what you are not."</div>
+    <div class="affirmation" style="left: 38%; animation-delay: 5s; font-size: 19px;">"We accept the love we think we deserve."</div>
+    <div class="affirmation" style="left: 62%; animation-delay: 9s; font-size: 17px;">"Being deeply loved by someone gives you strength, while loving someone deeply gives you courage."</div>
+    <div class="affirmation" style="left: 45%; animation-delay: 14s; font-size: 18px;">"You know you're in love when you can't fall asleep because reality is finally better than your dreams."</div>
+    <div class="affirmation" style="left: 58%; animation-delay: 18s; font-size: 19px;">"Love is composed of a single soul inhabiting two bodies."</div>
+    <div class="affirmation" style="left: 50%; animation-delay: 23s; font-size: 19px;">"Whatever our souls are made of, his and mine are the same."</div>
   </div>
 </div>
 <div class="glow-ring" id="glowRing"></div>
@@ -1265,7 +1304,7 @@
       <button class="btn ghost" id="btnResetEvent" style="display:none; width: 100%; max-width: 420px; margin: 20px auto; border-color: rgba(255,77,94,0.4); color: #ff4d5e; font-size:12px;">Reset Entire Event (Danger)</button>
 
       <div class="while-you-wait">While you wait...</div>
-      <div class="game-section">
+      <div class="game-section" id="gameSection">
         <div class="lounge-ground" aria-hidden="true" id="loungeGround">
           <div class="ground-sky-fade"></div>
           <div class="parallax-layer layer-back" id="parallaxBack"></div>
@@ -1277,13 +1316,14 @@
         <div class="lounge-game" id="loungeGame">
           <div class="game-instructions">jump the pets • run over the red flags</div>
           <div class="game-score" id="gameScore">0</div>
+          <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
           <div class="game-track" id="gameTrack">
             <div class="game-bunny" id="gameBunny">
               <img src="sasha-car.png" alt="Sasha in Car" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
               <span class="game-wisp-fallback"></span>
             </div>
             <div class="game-overlay" id="gameOverlay">
-              <div>Help Sasha jump over the bunnies and cats to keep them safe, and run over the red flags!</div>
+              <div>Help Sasha jump over cats and bunnies and run over red flags!</div>
               <button class="btn" id="gameStartBtn">Play</button>
             </div>
           </div>
@@ -1742,6 +1782,39 @@ document.getElementById('btnChangeVote').addEventListener('click', ()=>{
   ref(`events/${EVENT_ID}/aita/rounds/${window.currentAitaRound}/votes/${me.id}`).set(null);
 });
 
+/* ---------- game fullscreen / landscape toggle ---------- */
+(function(){
+  const btn = document.getElementById('btnGameFullscreen');
+  const section = document.getElementById('gameSection');
+  if(!btn || !section) return;
+
+  function isFullscreen(){
+    return document.fullscreenElement === section || document.webkitFullscreenElement === section;
+  }
+  function updateIcon(){
+    btn.textContent = isFullscreen() ? '↩' : '⛶';
+    btn.title = isFullscreen() ? 'Exit fullscreen' : 'Fullscreen';
+  }
+  btn.addEventListener('click', () => {
+    if(!isFullscreen()){
+      const req = section.requestFullscreen || section.webkitRequestFullscreen;
+      if(req){
+        req.call(section);
+        // Best-effort landscape lock — ignored where unsupported (e.g. iOS Safari),
+        // the CSS rotation trick below still gives a landscape-style layout there.
+        if(screen.orientation && screen.orientation.lock){
+          screen.orientation.lock('landscape').catch(()=>{});
+        }
+      }
+    } else {
+      const exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if(exit) exit.call(document);
+    }
+  });
+  document.addEventListener('fullscreenchange', updateIcon);
+  document.addEventListener('webkitfullscreenchange', updateIcon);
+})();
+
 /* ---------- bunny-hop mini game ---------- */
 let bg = null;
 function startBunnyGame(){
@@ -1764,7 +1837,7 @@ function startBunnyGame(){
   scoreEl.textContent = high ? `best ${high}` : '0';
   bunnyEl.style.transform = 'translateY(0)';
   overlay.classList.remove('hidden');
-  overlay.innerHTML = '<div>Help Sasha jump over basic T-shirts and jeans and catch cute pink bows!</div><button class="btn" id="gameStartBtn">Play</button>';
+  overlay.innerHTML = '<div>Help Sasha jump over cats and bunnies and run over red flags!</div><button class="btn" id="gameStartBtn">Play</button>';
 
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
@@ -1845,7 +1918,7 @@ function startBunnyGame(){
       bg.nextSpawn = bg.frame + 60 + Math.random()*40;
     }
 
-    const bunnyLeft = 26, bunnyWidth = 40;
+    const bunnyLeft = 33, bunnyWidth = 50;
 
     // COLLISION LOGIC
     for(let idx = bg.obstacles.length - 1; idx >= 0; idx--){
@@ -1854,7 +1927,7 @@ function startBunnyGame(){
       o.el.style.left = o.x + 'px';
 
       // Is Sasha overlapping the item horizontally?
-      const overlapX = o.x < bunnyLeft + bunnyWidth && o.x + 28 > bunnyLeft;
+      const overlapX = o.x < bunnyLeft + bunnyWidth && o.x + 40 > bunnyLeft;
       // Is Sasha low enough to touch it?
       const isGrounded = bg.y < 25;
 
@@ -1869,7 +1942,7 @@ function startBunnyGame(){
           bg.obstacles.splice(idx, 1);
           continue;
         }
-      } else if (o.x + 28 < bunnyLeft) {
+      } else if (o.x + 40 < bunnyLeft) {
         // Passed the item!
         if (o.el.dataset.type === 'good') {
           // Missed a hater target = LOSE
