@@ -914,17 +914,17 @@
     flex-direction:column; align-items:center; justify-content:center; gap:26px;
     padding:20px; text-align:center;
   }
-  .aita-verdict-card.aita-red{background:linear-gradient(160deg,#b31f47,#4a0618);}
-  .aita-verdict-card.aita-green{background:linear-gradient(160deg,#1b8c5e,#062b1a);}
+  .aita-verdict-card.aita-red{background:#b31f47 !important;}
+  .aita-verdict-card.aita-green{background:#1b8c5e !important;}
   .aita-verdict-text{
     font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:800 !important;
-    font-size:18vw !important; line-height:1; color:#fff !important; text-align:center; white-space:pre-line;
+    font-size:22vw !important; line-height:1.1; color:#fff !important; text-align:center; white-space:pre-line;
     text-shadow:0 8px 30px rgba(0,0,0,.35); margin-bottom:20px; text-transform:uppercase;
   }
-  .aita-verdict-card .sub{ font-size:18px !important; color:#fff !important; opacity:0.9; margin-bottom:40px; }
+  .aita-verdict-card .sub{ font-size:18px !important; color:#fff !important; opacity:0.9; margin-bottom:50px; }
   .aita-verdict-card .btn.ghost{
-    border:2px solid rgba(255,255,255,0.6) !important; padding:15px 35px !important;
-    font-size:16px !important; position:absolute !important; bottom:50px !important;
+    border:2px solid #fff !important; padding:15px 35px !important;
+    font-size:16px !important; margin-top:20px !important; position:relative !important; bottom:auto !important;
   }
   
   .back-btn{
@@ -938,40 +938,19 @@
   .back-btn:active{transform:scale(.9);}
   .back-btn:hover{background:rgba(18,8,33,.75);}
 
-  /* ---------- host dashboard (drawer, not a full screen) ---------- */
-  .host-toggle-btn{
-    position:fixed; bottom:22px; right:18px; z-index:500;
-    width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
-    display:none; align-items:center; justify-content:center; font-size:22px;
-    background:conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
-    box-shadow:0 8px 24px rgba(0,0,0,.5);
+  /* ---------- host dashboard (inline controls on the main screen) ---------- */
+  .host-inline-controls {
+    display: flex; gap: 6px; flex-wrap: wrap; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.3); border: 1px solid var(--gold); border-radius: 12px;
+    padding: 12px; margin-top: -6px; margin-bottom: 6px;
   }
-  .host-toggle-btn:active{transform:scale(.92);}
-
-  .host-drawer-overlay{
-    position:fixed; inset:0; z-index:950; display:none;
-    align-items:flex-end; justify-content:center;
-    background:rgba(10,4,20,.6); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  .host-inline-btn {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(244,233,255,0.25);
+    color: var(--mist); padding: 8px 14px; border-radius: 6px; font-size: 12px;
+    cursor: pointer; font-family: 'Jost', sans-serif; transition: transform 0.1s;
   }
-  .host-drawer-overlay.show{ display:flex; }
-  #screen-host{
-    display:flex; flex-direction:column;
-    width:100%; max-width:480px; max-height:82vh; margin:0;
-    background:var(--ink); border-radius:24px 24px 0 0;
-    padding:18px 22px calc(28px + env(safe-area-inset-bottom));
-    box-shadow:0 -10px 50px rgba(0,0,0,.5);
-    align-items:stretch; text-align:left; overflow-y:auto;
-    animation: imessage-slide-up .4s cubic-bezier(.2,.9,.25,1) both;
-  }
-  .host-drawer-handle{
-    width:36px; height:4px; border-radius:2px; background:rgba(244,233,255,.25);
-    margin:0 auto 14px;
-  }
-  .host-drawer-close{
-    position:absolute; top:14px; right:16px; z-index:5;
-    width:32px; height:32px; border-radius:50%; border:1px solid rgba(244,233,255,.25);
-    background:rgba(255,255,255,.05); color:var(--mist); font-size:15px; cursor:pointer;
-  }
+  .host-inline-btn:active { transform: scale(0.95); }
+  .host-inline-btn.action { background: var(--gold); color: var(--ink); border: none; font-weight: 600; }
   .host-list{width:100%; max-width:440px; margin:0 auto; }
   .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
   .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
@@ -1153,7 +1132,13 @@
         <div class="eyebrow" style="color:var(--mist); letter-spacing:.4em;">Speaking Club</div>
       </div>
 
-      <!-- TODAY'S ACTIVITIES (roster removed) -->
+      <!-- HOST ONLY: Roster -->
+      <div id="hostRosterContainer" class="dashboard-section" style="display:none; border-color: var(--gold);">
+        <div class="section-header"><div class="eyebrow" style="color:var(--gold);">Host Roster</div></div>
+        <div class="host-list" id="hostList" style="max-height: 200px; overflow-y: auto;"></div>
+      </div>
+
+      <!-- TODAY'S ACTIVITIES -->
       <div class="dashboard-section" id="activitiesSection">
         <div class="section-header">
           <div class="eyebrow">Today's Activities</div>
@@ -1171,6 +1156,18 @@
             </div>
           </div>
 
+          <!-- HOST ONLY: Pairs Controls -->
+          <div id="hostControlsGarden" class="host-inline-controls" style="display:none;">
+            <button class="host-inline-btn" id="btnUnlockBouquet">Unlock</button>
+            <button class="host-inline-btn action" id="btnMatch">Match Pairs</button>
+            <div style="display:flex; gap:4px;">
+              <input type="number" id="inputTimerMinutes" placeholder="Min" style="width:50px; text-align:center; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:6px; font-size:11px;">
+              <button class="host-inline-btn" id="btnSetTimer">Set Timer</button>
+            </div>
+            <button class="host-inline-btn" id="btnLockBouquet" style="color:#ff4d5e; border-color:#ff4d5e;">Lock</button>
+            <button class="host-inline-btn" id="btnUnpair" style="width:100%; margin-top:4px; color:#ff4d5e;">Force Unpair All</button>
+          </div>
+
           <!-- Connector line -->
           <div class="activity-connector"><div class="connector-line"></div></div>
 
@@ -1185,8 +1182,31 @@
             </div>
           </div>
 
+          <!-- HOST ONLY: Court Controls -->
+          <div id="hostControlsAita" class="host-inline-controls" style="display:none;">
+            <button class="host-inline-btn" id="btnUnlockCourt">Unlock</button>
+            <button class="host-inline-btn" id="btnLockCourt" style="color:#ff4d5e; border-color:#ff4d5e;">Lock</button>
+          </div>
+
+          <!-- HOST ONLY: AITA Tally (Displays during court) -->
+          <div class="aita-tally" id="aitaTally" style="margin-top: 16px;">
+            <div class="aita-tally-bar">
+              <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
+              <div class="aita-tally-fill aita-tally-green" id="aitaTallyGreen"></div>
+            </div>
+            <div class="aita-tally-counts">
+              <span id="aitaCountYTA">0 asshole</span>
+              <span id="aitaCountNTA">0 not the asshole</span>
+            </div>
+            <button class="btn ghost" id="btnPickElaborate" style="align-self:center; font-size:12px; padding: 10px 20px;">🎲 Pick someone to elaborate</button>
+            <div class="aita-picked" id="aitaPicked"></div>
+          </div>
+
         </div>
       </div>
+
+      <!-- HOST ONLY: Reset Button -->
+      <button class="btn ghost" id="btnResetEvent" style="display:none; width: 100%; max-width: 420px; margin: 20px auto; border-color: rgba(255,77,94,0.4); color: #ff4d5e; font-size:12px;">Reset Entire Event (Danger)</button>
 
       <div class="while-you-wait">While you wait...</div>
       <div class="game-section">
@@ -1290,46 +1310,6 @@
     <button class="imessage-cta" id="imessageCta">Let's go</button>
   </div>
 </div>
-
-<!-- HOST DASHBOARD (drawer, opens on top of the normal guest view) -->
-<div class="host-drawer-overlay" id="hostDrawerOverlay">
-<div id="screen-host" style="position:relative;">
-  <div class="host-drawer-handle"></div>
-  <button class="host-drawer-close" id="hostDrawerClose" aria-label="Close">✕</button>
-  <div class="eyebrow">Host Console</div>
-
-  <!-- Mini Roster -->
-  <div class="host-list" id="hostList" style="margin-top: 10px; margin-bottom: 24px; max-height: 160px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; background: rgba(0,0,0,0.2);"></div>
-
-  <div class="host-section-label">Master Modes</div>
-  <button class="btn" id="btnPairsMode" style="width:100%; margin-bottom:12px; margin-top:0;">🌸 PAIRS ACTIVITY MODE</button>
-  <button class="btn" id="btnGroupMode" style="width:100%; margin-bottom:24px; margin-top:0; background:linear-gradient(135deg,#ff4d5e,#c81f3a); color:#fff; box-shadow:none;">⚖️ GROUP ACTIVITY MODE</button>
-
-  <button class="btn ghost" id="btnForceLounge" style="width:100%; margin-bottom:24px;">Return Everyone to Lounge</button>
-
-  <div class="aita-tally" id="aitaTally" style="margin-top: 12px; margin-bottom: 24px;">
-    <div class="aita-tally-bar">
-      <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
-      <div class="aita-tally-fill aita-tally-green" id="aitaTallyGreen"></div>
-    </div>
-    <div class="aita-tally-counts">
-      <span id="aitaCountYTA">0 asshole</span>
-      <span id="aitaCountNTA">0 not the asshole</span>
-    </div>
-    <button class="btn ghost" id="btnPickElaborate" style="align-self:center; font-size:12px; padding: 10px 20px;">🎲 Pick someone to elaborate</button>
-    <div class="aita-picked" id="aitaPicked"></div>
-  </div>
-
-  <div style="display:none;">
-    <button id="btnMatch"></button>
-    <button id="btnUnpair"></button>
-  </div>
-
-  <!-- Hidden Reset -->
-  <button class="btn ghost" id="btnResetEvent" style="margin-top: 8px; margin-bottom: 20px; width: 100%; font-size: 11px; border-color: rgba(255,0,0,0.3); color: rgba(255,255,255,0.4);">Reset Event (Danger)</button>
-</div>
-</div>
-
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -1467,18 +1447,6 @@ window.addEventListener('load', ()=>{
   }
 
   listenTimer();
-});
-
-/* ---------- host drawer open/close ---------- */
-function openHostDrawer(){
-  document.getElementById('hostDrawerOverlay').classList.add('show');
-}
-function closeHostDrawer(){
-  document.getElementById('hostDrawerOverlay').classList.remove('show');
-}
-document.getElementById('hostDrawerClose').addEventListener('click', closeHostDrawer);
-document.getElementById('hostDrawerOverlay').addEventListener('click', (e) => {
-  if(e.target.id === 'hostDrawerOverlay') closeHostDrawer();
 });
 
 document.getElementById('btnToCheckin').addEventListener('click', ()=>{ show('screen-checkin'); });
@@ -1687,14 +1655,9 @@ function listenPhase(){
       setLoungeState('state-gathering');
       document.getElementById('aitaVerdictCard').style.display = 'none';
       document.getElementById('glowRing').style.boxShadow = `none`;
-      // Firebase re-fires 'value' listeners on every reconnect (phone locks,
-      // app backgrounds, spotty wifi) even when the value hasn't changed.
-      // Only (re)start the game on an actual transition into the lounge, or
-      // if no game exists yet — otherwise a resync mid-run was silently
-      // wiping the player's progress and dumping them back to "Start".
-      if(prevState !== 'lounge' || !bg || !bg.running){
-        startBunnyGame();
-      }
+
+      // Always restart the game engine when entering the lounge
+      startBunnyGame();
     }
     else if(state === 'matched'){
       show('screen-lounge');
@@ -2256,6 +2219,13 @@ function initHost(){
   // listenRoster() and listenHubs() are already started by enterLounge(),
   // which now also runs for the host — no need to attach them twice here.
   ref(`events/${EVENT_ID}/state`).set('lounge');
+
+  // Unhide the inline host controls
+  document.getElementById('hostRosterContainer').style.display = 'block';
+  document.getElementById('hostControlsGarden').style.display = 'flex';
+  document.getElementById('hostControlsAita').style.display = 'flex';
+  document.getElementById('btnResetEvent').style.display = 'block';
+
   ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
     const round = snap.val();
     const tally = document.getElementById('aitaTally');
@@ -2305,35 +2275,24 @@ function renderHostList(guests){
   });
 }
 
-/* ---------- Secret 5-Tap Host Door ---------- */
-let titleTaps = 0;
-let titleTapTimer = null;
-document.querySelector('.lounge-header h1').addEventListener('click', () => {
-  if(!isHost) return;
-  titleTaps++;
-  clearTimeout(titleTapTimer);
-  if(titleTaps >= 5) {
-    openHostDrawer();
-    titleTaps = 0;
-  } else {
-    titleTapTimer = setTimeout(() => { titleTaps = 0; }, 2000);
-  }
-});
+/* ---------- Host Controls: Inline Per-Activity Controls ---------- */
 
-/* ---------- Host Controls: Master Modes ---------- */
-
-document.getElementById('btnPairsMode').addEventListener('click', async () => {
-  // 1. Match people
-  const matched = await runMatch();
-  if(!matched) return;
-  // 2. Unlock the Bouquet
+document.getElementById('btnUnlockBouquet').addEventListener('click', () => {
   ref(`events/${EVENT_ID}/hubs/garden`).set(true);
-  // 3. Give the pairs a 35-minute window
-  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + 35 * 60000);
-  closeHostDrawer();
 });
 
-document.getElementById('btnGroupMode').addEventListener('click', () => {
+document.getElementById('btnSetTimer').addEventListener('click', () => {
+  const mins = Number(document.getElementById('inputTimerMinutes').value);
+  if(!mins || mins <= 0){ alert('Enter a number of minutes first.'); return; }
+  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + mins * 60000);
+});
+
+document.getElementById('btnLockBouquet').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/hubs/garden`).set(false);
+  ref(`events/${EVENT_ID}/state`).set('lounge');
+});
+
+document.getElementById('btnUnlockCourt').addEventListener('click', () => {
   const round = String(Date.now());
   ref(`events/${EVENT_ID}/aita/round`).set(round);
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
@@ -2343,14 +2302,12 @@ document.getElementById('btnGroupMode').addEventListener('click', () => {
   document.getElementById('aitaPicked').textContent = '';
   document.getElementById('aitaTally').style.display = 'flex';
   listenAitaTally(round);
-  closeHostDrawer();
 });
 
-document.getElementById('btnForceLounge').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/hubs/garden`).set(false);
+document.getElementById('btnLockCourt').addEventListener('click', () => {
   ref(`events/${EVENT_ID}/hubs/aita`).set(false);
   ref(`events/${EVENT_ID}/state`).set('lounge');
-  closeHostDrawer();
+  document.getElementById('aitaTally').style.display = 'none';
 });
 
 document.getElementById('btnMatch').addEventListener('click', runMatch);
