@@ -252,11 +252,55 @@
   }
   .lounge-state.active { opacity: 1; pointer-events: auto; }
 
-  /* -- State 1: The Gathering -- */
+  /* -- State 1: The Gathering (Roster & Game) -- */
   .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:50px; padding-left: 26px; padding-right: 26px;}
-  
+  .lounge-count{font-family:'Cormorant Garamond',serif; font-size:56px; font-style:italic; margin:2px 0;}
+  /* --- GROUPED ROSTER UI --- */
+  .roster {
+    margin-top: 0; width: 100%;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .pair-group {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px; padding: 14px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .pair-group-label {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase;
+    margin-bottom: 12px; text-align: center; opacity: 0.9;
+  }
+  .pair-group-members {
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+  }
+  .guest-card{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    animation:pop-in .5s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes pop-in{from{opacity:0; transform:scale(.5) translateY(10px);} to{opacity:1; transform:scale(1) translateY(0);}}
+  .guest-avatar{
+    width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:20px; background:rgba(255,255,255,.07); border:1px solid rgba(244,233,255,.25);
+  }
+  .guest-name{font-size:11px; color:var(--dim); max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .guest-avatar.is-me{
+    border-color:var(--gold);
+    box-shadow:0 0 10px 2px rgba(242,193,78,.5);
+    animation:me-glow 2.2s ease-in-out infinite;
+  }
+  @keyframes me-glow{
+    0%,100%{ box-shadow:0 0 8px 2px rgba(242,193,78,.4); }
+    50%{ box-shadow:0 0 18px 5px rgba(242,193,78,.9); }
+  }
+  .guest-name.is-me{ color:var(--gold); }
+  .you-tag{
+    font-family:'Space Mono',monospace; font-size:8.5px; letter-spacing:.05em;
+    color:var(--gold); opacity:.85; text-transform:uppercase;
+  }
   /* --- CLEAN LOUNGE DASHBOARD --- */
-  .lounge-header { text-align: center; margin-bottom: 24px; }
+  .lounge-header {
+    text-align: center; margin-bottom: 24px;
+  }
   .dashboard-section {
     width: 100%; max-width: 420px; margin-bottom: 24px;
     background: rgba(255, 255, 255, 0.04);
@@ -265,59 +309,86 @@
     border-radius: 24px; padding: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   }
-  #state-gathering { padding-top: 40px; }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px; margin-bottom: 16px;
+  }
+  .guest-count {
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--gold); text-transform: uppercase;
+  }
+  .status-note {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px;
+    color: var(--dim); text-align: right; line-height: 1.1;
+  }
 
-  /* --- SASHA'S ITINERARY TIMELINE --- */
-  .itinerary-header {
-    display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 18px; margin-bottom: 20px;
+  /* --- TODAY'S ACTIVITIES --- */
+  .itinerary-actions {
+    display: flex; flex-direction: column; gap: 12px; align-items: stretch;
   }
-  .host-pic-wrapper {
-    width: 60px; height: 60px; border-radius: 50%; padding: 3px; flex-shrink: 0;
-    background: conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
-    box-shadow: 0 0 20px rgba(217,79,140,.4); margin-right: 16px;
-  }
-  .host-pic {
-    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-    background: var(--twilight);
-  }
-  .itinerary-steps { position: relative; padding-left: 12px; }
-  .itinerary-steps::before {
-    content: ''; position: absolute; left: 16.5px; top: 10px; bottom: 10px;
-    width: 1px; background: rgba(255,255,255,0.15);
-  }
-  .itinerary-step {
-    display: flex; margin-bottom: 26px; position: relative; opacity: 0.5;
-    transition: opacity 0.4s ease;
-  }
-  .itinerary-step:last-child { margin-bottom: 0; }
-  .itinerary-step.active { opacity: 1; }
-  .step-dot {
-    width: 10px; height: 10px; border-radius: 50%; background: var(--twilight);
-    border: 2px solid rgba(255,255,255,0.3); z-index: 2; margin-top: 6px;
-    transition: all 0.4s ease;
-  }
-  .itinerary-step.active .step-dot {
-    background: var(--gold); border-color: #fff; box-shadow: 0 0 12px var(--gold);
-  }
-  .step-content { padding-left: 20px; flex: 1; text-align: left; }
-  .step-title {
-    font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 600;
-    color: var(--mist); margin-bottom: 4px; transition: color 0.4s ease;
-  }
-  .itinerary-step.active .step-title { color: var(--gold); }
-  .step-desc { font-family: 'Jost', sans-serif; font-size: 14px; color: var(--dim); line-height: 1.45; }
   .btn-sm {
     padding: 10px 20px; font-size: 13px; border-color: var(--gold); color: var(--gold);
     box-shadow: 0 4px 15px rgba(242, 193, 78, 0.15); margin-top: 0;
   }
 
+  /* Adjustments for the new layout */
+  .roster { margin-top: 0; }
+  .hub-sections { margin-top: 0; }
+  #state-gathering { padding-top: 40px; }
+
+  .hub-section-label{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--dim); margin:30px 0 14px; text-align:center; width:100%;
+  }
+  .hub-sections{
+    width:100%; max-width:420px; margin:10px auto 6px;
+    display:grid; grid-template-columns:1fr; gap:12px;
+  }
+  .activity-connector{
+    display:flex; justify-content:center; align-items:center;
+    height:22px; margin:-6px 0;
+  }
+  .activity-connector .connector-line{
+    width:2px; height:100%; border-radius:2px;
+    background:linear-gradient(180deg, rgba(242,193,78,.7), rgba(242,193,78,.15));
+  }
+  .hub-card{
+    display:flex; align-items:center; gap:14px; text-align:left;
+    padding:16px 18px; border-radius:18px; cursor:pointer;
+    opacity:1; pointer-events:auto;
+    transition:opacity .3s ease, transform .15s ease, border-color .3s ease, box-shadow .3s ease;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  }
+  .hub-card.locked{ opacity:.4; pointer-events:none; cursor:default; filter: grayscale(80%); }
+  .hub-card:not(.locked){
+    border-bottom-color: rgba(242, 193, 78, 0.6);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 15px rgba(242, 193, 78, 0.15);
+  }
+  .hub-card:not(.locked):active{ transform:scale(.97); }
+  .hub-card-icon{
+    width:44px; height:44px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+    background:conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
+  }
+  .hub-card-title{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px; color:var(--mist);}
+  .hub-card-sub{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; text-transform:uppercase;}
+  .hub-card-desc{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; font-weight:500; color:var(--dim); margin-top:4px; line-height:1.35; text-transform:none; letter-spacing:.01em;}
+  .hub-card-lock-note{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; font-weight:500; color:var(--gold); margin-top:4px; line-height:1.35; opacity:.85; display:none;}
+  .hub-card.locked .hub-card-desc{display:none;}
+  .hub-card.locked .hub-card-lock-note{display:block;}
+
   /* Bunny Game Elements */
   .game-section{
-    position:relative; width:100%; height:190px;
+    position:relative; width:100%; height:190px; margin-top:36px;
     border-radius:20px; overflow:hidden;
     box-shadow: 0 12px 32px rgba(0,0,0,0.4);
-    margin: 0; padding: 0;
   }
   .lounge-ground{
     position:absolute; left:0; right:0; bottom:0; height:190px; z-index:10;
@@ -329,7 +400,7 @@
   }
   .ground-grass{
     position:absolute; left:0; right:0; bottom:0; height:120px;
-    background:linear-gradient(180deg, #2d5f3c 0%, #20492c 55%, #163420 100%); pointer-events:none;
+    background:linear-gradient(180deg, #2d5f3c 0%, #20492c 55%, #163420 100%); pointer-events:auto;
   }
   .ground-grass::after{
     content:''; position:absolute; inset:0; top:auto; height:16px;
@@ -339,6 +410,11 @@
   .lounge-game{
     position:absolute; left:0; right:0; bottom:0; height:190px; z-index:11;
   }
+  .game-instructions{
+    position:absolute; top:6px; left:16px; z-index:3; max-width:60%;
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.06em;
+    color:var(--dim); pointer-events:none;
+  }
   .game-score{
     position:absolute; top:8px; right:16px; z-index:3;
     font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.08em;
@@ -347,10 +423,11 @@
   }
   .game-track{
     position:absolute; left:0; right:0; bottom:0; height:100%; cursor:pointer; -webkit-tap-highlight-color:transparent;
+    /* Kills the 300ms mobile tap delay for instant jumping */
     touch-action: manipulation;
   }
   .game-bunny{
-    position:absolute; left:26px; bottom:52px; width:104px; height:104px; z-index:2;
+    position:absolute; left:14px; bottom:52px; width:104px; height:104px; z-index:2;
     display:flex; align-items:center; justify-content:center;
     transform:translateY(0); will-change:transform;
     filter:drop-shadow(0 6px 6px rgba(0,0,0,.4)); pointer-events:none;
@@ -358,12 +435,13 @@
   .game-bunny img{width:100%; height:100%; object-fit:contain; display:block;}
   .game-overlay{
     position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:12px; text-align:center; z-index:4; padding:0 16px;
-    font-family:'Jost',sans-serif; font-size:14px; color:var(--mist); line-height: 1.4;
-    background:rgba(8,4,16,.75); backdrop-filter: blur(4px);
+    gap:12px; text-align:center; z-index:4; padding:0 24px;
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; color:var(--mist);
+    background:rgba(8,4,16,.6);
     transition:opacity .3s ease; pointer-events:auto;
   }
   .game-overlay.hidden{opacity:0; pointer-events:none;}
+  .game-overlay .btn{margin-top:0; padding:10px 28px; font-size:13px;}
 
   /* --- ETHEREAL BUNNY HOP (Parallax & Silhouettes) --- */
   .parallax-layer {
@@ -378,24 +456,31 @@
     background-image: radial-gradient(circle at 50% 100%, #15291f 0%, #15291f 48%, transparent 49%);
     background-size: 90px 70px; background-position: 0 bottom; z-index: 2; opacity: 0.9;
   }
+  .ground-grass { z-index: 3; background-repeat: repeat-x; will-change: background-position; }
+
+  .obs-crystal {
+    position: absolute; bottom: 52px; width: 14px; height: 38px; z-index: 2;
+    background: linear-gradient(180deg, #00f0ff 0%, transparent 90%);
+    clip-path: polygon(50% 0%, 100% 80%, 50% 100%, 0% 80%);
+    box-shadow: 0 0 15px #00f0ff; pointer-events: none;
+  }
+  .obs-thorn {
+    position: absolute; bottom: 52px; width: 22px; height: 26px; z-index: 2;
+    background: #110522; border: 1px solid #7c2f6e;
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    box-shadow: 0 0 10px #7c2f6e; pointer-events: none;
+  }
   .game-wisp-fallback {
     width: 24px; height: 24px; border-radius: 50%; background: #fff; display: none;
     box-shadow: 0 0 20px 8px var(--gold), 0 0 40px 12px rgba(255,255,255,0.5);
     animation: wisp-pulse 1s ease-in-out infinite alternate;
   }
   @keyframes wisp-pulse { from { transform: scale(0.9); } to { transform: scale(1.1); } }
-  
   /* --- SASHA'S FASHION NIGHTMARES --- */
   .obs-basic {
     position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
     filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none;
   }
-  .obs-iconic {
-    position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
-    filter: drop-shadow(0 0 10px rgba(242,193,78,.8)); pointer-events: none;
-    animation: float-icon 2s ease-in-out infinite;
-  }
-  @keyframes float-icon { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
   .jump-particle {
     position: absolute; width: 6px; height: 6px; border-radius: 50%;
     background: var(--gold); box-shadow: 0 0 10px var(--gold); pointer-events: none;
@@ -406,23 +491,7 @@
     100% { transform: scale(0) translate(-30px, 20px); opacity: 0; }
   }
 
-  /* --- LEADERBOARD --- */
-  .leaderboard-container {
-    position: relative; z-index: 20; width: 100%; max-width: 420px;
-    margin: 0 auto 40px; padding: 20px;
-    background: rgba(0,0,0,0.4); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);
-  }
-  .leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
-  .lb-row {
-    display: flex; align-items: center; padding: 8px 12px;
-    background: rgba(255,255,255,0.05); border-radius: 12px;
-  }
-  .lb-rank { font-family: 'Space Mono', monospace; color: var(--dim); width: 24px; font-size: 12px; }
-  .lb-rank.rank-1 { color: var(--gold); font-size: 14px; font-weight: bold; }
-  .lb-name { flex: 1; font-weight: 500; font-size: 15px; color: var(--mist); text-align: left; }
-  .lb-score { font-family: 'Space Mono', monospace; color: var(--gold); }
-
-  /* -- State 2: The Bouquet (Match Reveal & Blossoms) -- */
+  /* -- State 2: The Garden (Match Reveal & Blossoms) -- */
   #state-garden {
     justify-content: flex-start; padding: 40px 0 0;
   }
@@ -442,6 +511,229 @@
     text-align: center; padding: 0 26px; margin-bottom: 20px;
     animation: pop-in 0.8s ease forwards;
   }
+  .partner-card{
+    margin: 16px auto 0; padding:20px 30px; border-radius:20px;
+    display: inline-block; transition:border-color .4s ease;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.02);
+    border-bottom: 2px solid rgba(244,233,255,.2);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  }
+  .partner-name{font-family:'Cormorant Garamond',serif; font-size:32px; font-style:italic; margin-bottom: 8px;}
+  .color-chip{width:14px; height:14px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle;}
+
+  .garden-scene{position:relative; width:calc(100% - 28px); margin:10px auto 0; z-index:1; padding-bottom: 150px;}
+  .garden-bed{
+    position:relative; overflow:hidden; border-radius:30px;
+    background:
+      radial-gradient(120% 45% at 50% 0%, rgba(255,205,235,.14) 0%, transparent 60%),
+      linear-gradient(180deg, #241046 0%, #2f1650 40%, #2a1348 72%, #1c0d33 100%);
+    box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,220,250,.12);
+  }
+  .garden-vignette{position:absolute; inset:0; pointer-events:none; z-index:5; border-radius:30px;
+    box-shadow:inset 0 34px 40px -20px rgba(18,8,32,.7), inset 0 -50px 60px -30px rgba(18,8,32,.65);
+  }
+  .moonglow{position:absolute; top:-50px; left:50%; transform:translateX(-50%); width:260px; height:260px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,225,190,.24), rgba(255,190,235,.1) 45%, rgba(244,233,255,0) 72%);
+    pointer-events:none; z-index:1; transition:all 3s ease;}
+  .moonglow.full-bloom{
+    background:radial-gradient(circle, rgba(255,255,255,0.7), rgba(255,255,255,0.3) 55%, transparent 80%);
+    transform:translateX(-50%) scale(1.6);
+  }
+  .hill{
+    position:absolute; left:-15%; right:-15%; bottom:-20px; height:150px;
+    background-image:
+      radial-gradient(45% 85% at 20% 100%, #402060 0%, rgba(64,32,96,0) 76%),
+      radial-gradient(50% 90% at 55% 100%, #341955 0%, rgba(52,25,85,0) 78%),
+      radial-gradient(45% 85% at 88% 100%, #402060 0%, rgba(64,32,96,0) 76%),
+      radial-gradient(70% 30% at 50% 96%, rgba(255,200,240,.14) 0%, rgba(255,200,240,0) 78%);
+    filter:blur(2px);
+  }
+  .firefly{
+    position:absolute; width:4px; height:4px; border-radius:50%;
+    background:#fff4c9; box-shadow:0 0 8px 3px currentColor;
+    animation:firefly-float ease-in-out infinite;
+  }
+  @keyframes firefly-float{
+    0%,100%{transform:translate(0,0); opacity:.3;}
+    50%{transform:translate(8px,-14px); opacity:1;}
+  }
+  .sparkle{
+    position:absolute; width:6px; height:6px; pointer-events:none; z-index:2;
+    background:radial-gradient(circle, #fff, currentColor 45%, transparent 72%);
+    clip-path:polygon(50% 0%,63% 38%,100% 50%,63% 62%,50% 100%,37% 62%,0% 50%,37% 38%);
+    animation:sparkle-twinkle ease-in-out infinite;
+  }
+  @keyframes sparkle-twinkle{0%,100%{opacity:0; transform:scale(.3) rotate(0deg);} 50%{opacity:1; transform:scale(1) rotate(45deg);}}
+  .butterfly{position:absolute; font-size:16px; z-index:3; pointer-events:none; filter:drop-shadow(0 0 6px currentColor);
+    animation:butterfly-drift ease-in-out infinite;}
+  @keyframes butterfly-drift{
+    0%{transform:translate(0,0) rotate(0deg);}
+    25%{transform:translate(24px,-18px) rotate(8deg);}
+    50%{transform:translate(4px,-34px) rotate(-6deg);}
+    75%{transform:translate(-22px,-14px) rotate(6deg);}
+    100%{transform:translate(0,0) rotate(0deg);}
+  }
+  .garden-mist{position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
+  .garden-mist::before{
+    content:''; position:absolute; width:160%; height:220px; left:-30%; top:30%;
+    background:radial-gradient(ellipse at center, rgba(255,210,245,.08), transparent 70%);
+    filter:blur(16px);
+    animation:mist-drift 30s ease-in-out infinite;
+  }
+  @keyframes mist-drift{0%,100%{transform:translateX(0);} 50%{transform:translateX(10%);}}
+  
+  .pollen{
+    position:absolute; top:8px; left:50%; width:5px; height:5px; border-radius:50%;
+    background:currentColor; box-shadow:0 0 10px 3px currentColor;
+    opacity:0; pointer-events:none; z-index:3;
+    animation:pollen-rise 1.5s ease-out forwards;
+  }
+  @keyframes pollen-rise{
+    0%{opacity:0; transform:translate(-50%,0) scale(.4);}
+    18%{opacity:1;}
+    100%{opacity:0; transform:translate(calc(-50% + var(--dx,0px)), -68px) scale(1);}
+  }
+  .spark{
+    position:absolute; width:5px; height:5px; border-radius:50%;
+    background:currentColor; box-shadow:0 0 14px 5px currentColor;
+    opacity:0; pointer-events:none; z-index:3;
+    animation:spark-drift 2.6s ease-out forwards;
+  }
+  @keyframes spark-drift{
+    0%{opacity:0; transform:translate(0,0) scale(.5);}
+    14%{opacity:.95;}
+    100%{opacity:0; transform:translate(var(--sx,10px), calc(-1 * var(--sy,60px))) scale(.8);}
+  }
+  
+  .flower-plant{
+    position:absolute; bottom:96px; display:flex; flex-direction:column; align-items:center;
+    cursor:pointer; z-index:2; transform:translateX(-50%) scale(var(--fscale,1)); transition:transform .3s ease;
+  }
+  .stem{width:2.5px; border-radius:2px; background:linear-gradient(180deg, rgba(140,220,170,0), #3c8f5f 40%, #235838); order:2;}
+  .leaf{
+    position:absolute; width:15px; height:7px; background:#3c8f5f; border-radius:0 100% 0 100%;
+    opacity:.85; z-index:1;
+  }
+  .flower-head{position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center; order:1;}
+  .bud{
+    width:16px; height:26px; border-radius:50% 50% 48% 48% / 62% 62% 38% 38%;
+    background-color:currentColor; opacity:.9;
+    box-shadow:0 0 14px currentColor;
+    transition:transform .5s ease, opacity .4s ease;
+  }
+  .flower-plant.bloomed .bud{ transform:scale(0.1) translateY(8px); opacity:0; }
+  .bloom{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    opacity:0; transform:scale(.25) rotate(-20deg);
+    transition:transform .65s cubic-bezier(.22,1.6,.4,1), opacity .35s ease;
+    pointer-events:none;
+  }
+  .flower-plant.bloomed .bloom{ opacity:1; transform:scale(1) rotate(0deg); }
+  .petal{
+    position:absolute; width:14px; height:26px; top:6px; left:50%; margin-left:-7px;
+    border-radius:50% 50% 50% 50% / 72% 72% 28% 28%;
+    background:linear-gradient(200deg, #fff 0%, currentColor 38%, currentColor 100%);
+    opacity:.94;
+    transform-origin:50% 100%;
+    box-shadow:0 0 10px currentColor;
+  }
+  .petal:nth-child(1){transform:rotate(0deg);}
+  .petal:nth-child(2){transform:rotate(60deg);}
+  .petal:nth-child(3){transform:rotate(120deg);}
+  .petal:nth-child(4){transform:rotate(180deg);}
+  .petal:nth-child(5){transform:rotate(240deg);}
+  .petal:nth-child(6){transform:rotate(300deg);}
+  .bloom-center{
+    position:absolute; width:13px; height:13px; border-radius:50%; z-index:2;
+    background:radial-gradient(circle at 35% 30%,#fffef2,#f2c14e 70%);
+    box-shadow:0 0 14px 5px rgba(255,240,180,.75);
+  }
+  .flower-plant.bloomed .petal, .flower-plant.bloomed .petal-star, .flower-plant.bloomed .bell, .flower-plant.bloomed .petal-orchid{
+    animation:petal-breathe 3.4s ease-in-out infinite;
+  }
+  @keyframes petal-breathe{0%,100%{opacity:.82; filter:brightness(1);} 50%{opacity:1; filter:brightness(1.22);}}
+
+  .bloom-sparkles{position:absolute; inset:-10px; pointer-events:none; z-index:0;}
+  .bloom-sparkles span{
+    position:absolute; width:5px; height:5px; top:50%; left:50%;
+    background:radial-gradient(circle,#fff,currentColor 55%,transparent 75%);
+    clip-path:polygon(50% 0%,63% 38%,100% 50%,63% 62%,50% 100%,37% 62%,0% 50%,37% 38%);
+    animation:orbit-twinkle 3.2s ease-in-out infinite;
+  }
+  .bloom-sparkles span:nth-child(1){ --r:30px; --a:20deg; animation-delay:0s; }
+  .bloom-sparkles span:nth-child(2){ --r:28px; --a:150deg; animation-delay:.6s; }
+  .bloom-sparkles span:nth-child(3){ --r:32px; --a:260deg; animation-delay:1.2s; }
+  @keyframes orbit-twinkle{
+    0%,100%{opacity:0; transform:translate(-50%,-50%) rotate(var(--a)) translateX(var(--r)) scale(.4);}
+    50%{opacity:1; transform:translate(-50%,-50%) rotate(calc(var(--a) + 25deg)) translateX(var(--r)) scale(1);}
+  }
+  .petal-star{
+    position:absolute; width:9px; height:30px; top:2px; left:50%; margin-left:-4.5px;
+    background:linear-gradient(200deg,#fff, currentColor 45%);
+    opacity:.92;
+    clip-path:polygon(50% 0%, 100% 55%, 62% 100%, 38% 100%, 0% 55%);
+    transform-origin:50% 100%;
+    box-shadow:0 0 10px currentColor;
+  }
+  .petal-star:nth-child(1){transform:rotate(0deg);}
+  .petal-star:nth-child(2){transform:rotate(72deg);}
+  .petal-star:nth-child(3){transform:rotate(144deg);}
+  .petal-star:nth-child(4){transform:rotate(216deg);}
+  .petal-star:nth-child(5){transform:rotate(288deg);}
+  .bloom-bell{ align-items:flex-start; }
+  .bell{
+    position:absolute; width:13px; height:19px; border-radius:0 0 50% 50% / 0 0 65% 65%;
+    background:linear-gradient(180deg, currentColor, rgba(255,255,255,.45));
+    opacity:.92; box-shadow:0 4px 12px -2px currentColor;
+  }
+  .bell::after{
+    content:''; position:absolute; left:50%; bottom:2px; width:4px; height:4px; margin-left:-2px;
+    border-radius:50%; background:#fffef2; box-shadow:0 0 6px 2px rgba(255,255,255,.8);
+  }
+  .bell:nth-child(1){ top:2px; left:6px; transform:rotate(-14deg) scale(.92); }
+  .bell:nth-child(2){ top:-4px; left:24px; transform:rotate(4deg) scale(1.08); }
+  .bell:nth-child(3){ top:4px; left:40px; transform:rotate(16deg) scale(.86); }
+  .petal-orchid{
+    position:absolute; width:17px; height:24px; top:8px; left:50%; margin-left:-8.5px;
+    background:linear-gradient(210deg,#fff 0%, currentColor 55%);
+    opacity:.94;
+    border-radius:50% 50% 50% 4% / 65% 65% 35% 35%;
+    transform-origin:50% 100%;
+    box-shadow:0 0 10px currentColor;
+  }
+  .petal-orchid:nth-child(1){transform:rotate(-8deg) translateY(-4px);}
+  .petal-orchid:nth-child(2){transform:rotate(64deg);}
+  .petal-orchid:nth-child(3){transform:rotate(136deg);}
+  .petal-orchid:nth-child(4){transform:rotate(208deg);}
+  .petal-orchid:nth-child(5){transform:rotate(280deg);}
+  .orchid-throat{
+    position:absolute; width:10px; height:10px; border-radius:50%; z-index:2;
+    background:radial-gradient(circle at 35% 30%,#fff,#ff9ee6 55%,#c078ff 90%);
+    box-shadow:0 0 12px 4px rgba(255,180,240,.7);
+  }
+
+  .flower-plant:not(.bloomed) .flower-head{ animation:bud-sway 4.5s ease-in-out infinite; }
+  @keyframes bud-sway{0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);}}
+  .flower-plant.bloomed .flower-head{ animation:bloom-sway 6s ease-in-out infinite; }
+  @keyframes bloom-sway{0%,100%{transform:rotate(-1.5deg);}50%{transform:rotate(1.5deg);}}
+  .flower-plant:active{ transform:translateX(-50%) scale(var(--fscale,1)) translateY(2px); }
+  .flower-plant::after{
+    content:''; position:absolute; bottom:-4px; left:50%;
+    width:76px; height:24px; border-radius:50%;
+    background:radial-gradient(ellipse at center, currentColor, transparent 72%);
+    opacity:0; filter:blur(7px); z-index:-1; pointer-events:none;
+    transform:translate(-50%,50%) scale(.3);
+    transition:transform .7s cubic-bezier(.22,1.6,.4,1), opacity .6s ease;
+  }
+  .flower-plant.bloomed::after{ opacity:.5; transform:translate(-50%,50%) scale(1); }
+
+  /* --- GARDEN UPGRADES (Dimming, Ethereal Sparks) --- */
+  .flower-plant{ transition: opacity 0.8s ease, filter 0.8s ease, transform 0.3s ease; }
+  .garden-bed.dim-active .flower-plant:not(.bloomed){ opacity: 0.25; filter: grayscale(60%); }
 
   /* --- THE BOUQUET SCENE --- */
   .bouquet-scene {
@@ -454,7 +746,7 @@
   .flower-plant {
     position: absolute; left: 50%; bottom: 160px;
     margin-left: -32px; width: 64px;
-    display: flex; flex-direction: column; align-items: center;
+    display: flex; flex-direction: column; align-items: center; /* THIS WAS MISSING! */
     cursor: pointer;
     transform-origin: 50% 100%;
     transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.3, 0, 0.2, 1);
@@ -516,28 +808,6 @@
     margin-top:8px; min-height:58px; opacity:1; transition:opacity .25s ease;
   }
   .question-text.swap{opacity:0;}
-
-  /* STEM AND PETAL SHAPES */
-  .stem{width:2.5px; border-radius:2px; background:linear-gradient(180deg, rgba(140,220,170,0), #3c8f5f 40%, #235838); order:2;}
-  .leaf{position:absolute; width:15px; height:7px; background:#3c8f5f; border-radius:0 100% 0 100%; opacity:.85; z-index:1;}
-  .flower-head{position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center; order:1;}
-  .bloom{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:1;}
-  .petal{position:absolute; width:14px; height:26px; top:6px; left:50%; margin-left:-7px; border-radius:50% 50% 50% 50% / 72% 72% 28% 28%; background:linear-gradient(200deg, #fff 0%, currentColor 38%, currentColor 100%); opacity:.94; transform-origin:50% 100%; box-shadow:0 0 10px currentColor;}
-  .petal:nth-child(1){transform:rotate(0deg);} .petal:nth-child(2){transform:rotate(60deg);} .petal:nth-child(3){transform:rotate(120deg);} .petal:nth-child(4){transform:rotate(180deg);} .petal:nth-child(5){transform:rotate(240deg);} .petal:nth-child(6){transform:rotate(300deg);}
-  .bloom-center{position:absolute; width:13px; height:13px; border-radius:50%; z-index:2; background:radial-gradient(circle at 35% 30%,#fffef2,#f2c14e 70%); box-shadow:0 0 14px 5px rgba(255,240,180,.75);}
-  .bloom-sparkles{position:absolute; inset:-10px; pointer-events:none; z-index:0;}
-  .bloom-sparkles span{position:absolute; width:5px; height:5px; top:50%; left:50%; background:radial-gradient(circle,#fff,currentColor 55%,transparent 75%); clip-path:polygon(50% 0%,63% 38%,100% 50%,63% 62%,50% 100%,37% 62%,0% 50%,37% 38%); animation:orbit-twinkle 3.2s ease-in-out infinite;}
-  .bloom-sparkles span:nth-child(1){ --r:30px; --a:20deg; animation-delay:0s; } .bloom-sparkles span:nth-child(2){ --r:28px; --a:150deg; animation-delay:.6s; } .bloom-sparkles span:nth-child(3){ --r:32px; --a:260deg; animation-delay:1.2s; }
-  @keyframes orbit-twinkle{ 0%,100%{opacity:0; transform:translate(-50%,-50%) rotate(var(--a)) translateX(var(--r)) scale(.4);} 50%{opacity:1; transform:translate(-50%,-50%) rotate(calc(var(--a) + 25deg)) translateX(var(--r)) scale(1);} }
-  .petal-star{position:absolute; width:9px; height:30px; top:2px; left:50%; margin-left:-4.5px; background:linear-gradient(200deg,#fff, currentColor 45%); opacity:.92; clip-path:polygon(50% 0%, 100% 55%, 62% 100%, 38% 100%, 0% 55%); transform-origin:50% 100%; box-shadow:0 0 10px currentColor;}
-  .petal-star:nth-child(1){transform:rotate(0deg);} .petal-star:nth-child(2){transform:rotate(72deg);} .petal-star:nth-child(3){transform:rotate(144deg);} .petal-star:nth-child(4){transform:rotate(216deg);} .petal-star:nth-child(5){transform:rotate(288deg);}
-  .bloom-bell{ align-items:flex-start; } .bell{position:absolute; width:13px; height:19px; border-radius:0 0 50% 50% / 0 0 65% 65%; background:linear-gradient(180deg, currentColor, rgba(255,255,255,.45)); opacity:.92; box-shadow:0 4px 12px -2px currentColor;}
-  .bell::after{content:''; position:absolute; left:50%; bottom:2px; width:4px; height:4px; margin-left:-2px; border-radius:50%; background:#fffef2; box-shadow:0 0 6px 2px rgba(255,255,255,.8);}
-  .bell:nth-child(1){ top:2px; left:6px; transform:rotate(-14deg) scale(.92); } .bell:nth-child(2){ top:-4px; left:24px; transform:rotate(4deg) scale(1.08); } .bell:nth-child(3){ top:4px; left:40px; transform:rotate(16deg) scale(.86); }
-  .petal-orchid{position:absolute; width:17px; height:24px; top:8px; left:50%; margin-left:-8.5px; background:linear-gradient(210deg,#fff 0%, currentColor 55%); opacity:.94; border-radius:50% 50% 50% 4% / 65% 65% 35% 35%; transform-origin:50% 100%; box-shadow:0 0 10px currentColor;}
-  .petal-orchid:nth-child(1){transform:rotate(-8deg) translateY(-4px);} .petal-orchid:nth-child(2){transform:rotate(64deg);} .petal-orchid:nth-child(3){transform:rotate(136deg);} .petal-orchid:nth-child(4){transform:rotate(208deg);} .petal-orchid:nth-child(5){transform:rotate(280deg);}
-  .orchid-throat{position:absolute; width:10px; height:10px; border-radius:50%; z-index:2; background:radial-gradient(circle at 35% 30%,#fff,#ff9ee6 55%,#c078ff 90%); box-shadow:0 0 12px 4px rgba(255,180,240,.7);}
-
 
   /* -- State 3: The Relationships Committee™ (AITA) -- */
   #state-aita { padding: 40px 26px; justify-content: center; }
@@ -619,7 +889,7 @@
 
   .host-section-label{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
-    color:var(--dim); margin:30px 0 12px; text-align:left;
+    color:var(--dim); margin:30px 0 12px; text-align:center;
   }
   .aita-tally{display:none; flex-direction:column; gap:10px; align-items:center; width:100%; max-width:380px; margin:14px auto 0;}
   .aita-tally-bar{width:100%; height:14px; border-radius:999px; overflow:hidden; display:flex; background:rgba(255,255,255,.08);}
@@ -641,7 +911,6 @@
     background:rgba(0,0,0,.5); color:var(--gold); padding:6px 14px; border-radius:999px;
     border:1px solid rgba(242,193,78,.3);
   }
-
   /* --- DYNAMIC SPOTLIGHT TOUR --- */
   #tour-overlay { display: none; position: fixed; inset: 0; z-index: 100010; }
   #tour-overlay.show { display: block; }
@@ -649,6 +918,7 @@
 
   #tour-spotlight {
     position: fixed; pointer-events: none; border-radius: 14px;
+    /* The massive shadow that dims the background */
     box-shadow: 0 0 0 9999px rgba(18,8,33,0.85);
     outline: 2px solid var(--gold); outline-offset: 4px;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -678,6 +948,34 @@
   #tour-dots { display: flex; gap: 6px; margin-top: 12px; }
   #tour-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); }
   #tour-dots span.tour-dot-done { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+
+  /* --- SASHA'S GAME STYLES --- */
+  .obs-basic {
+    position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
+    filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none;
+  }
+  .obs-iconic {
+    position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
+    filter: drop-shadow(0 0 10px rgba(242,193,78,.8)); pointer-events: none;
+    animation: float-icon 2s ease-in-out infinite;
+  }
+  @keyframes float-icon { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+
+  /* --- LEADERBOARD --- */
+  .leaderboard-container {
+    position: relative; z-index: 20; width: 100%; max-width: 420px;
+    margin: 24px auto 0; padding: 20px;
+    background: rgba(0,0,0,0.4); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);
+  }
+  .leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
+  .lb-row {
+    display: flex; align-items: center; padding: 8px 12px;
+    background: rgba(255,255,255,0.05); border-radius: 12px;
+  }
+  .lb-rank { font-family: 'Space Mono', monospace; color: var(--dim); width: 24px; font-size: 12px; }
+  .lb-rank.rank-1 { color: var(--gold); font-size: 14px; font-weight: bold; }
+  .lb-name { flex: 1; font-weight: 500; font-size: 15px; color: var(--mist); }
+  .lb-score { font-family: 'Space Mono', monospace; color: var(--gold); }
 </style>
 </head>
 <body>
@@ -688,7 +986,7 @@
   <div id="tour-spotlight"></div>
   <div id="tour-tooltip">
     <div class="tt-head">
-      <img id="tour-avatar" class="tt-avatar" src="sasha.png" alt="Sasha" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%237c2f6e\'/><text x=\'50%\' y=\'50%\' fill=\'white\' font-size=\'24\' text-anchor=\'middle\' dy=\'.3em\'>S</text></svg>'">
+      <img id="tour-avatar" class="tt-avatar" src="sasha.png" alt="Sasha">
       <div class="tt-bubble">
         <div class="tt-step" id="tour-step-label"></div>
         <div class="tt-title" id="tour-title"></div>
@@ -735,10 +1033,10 @@
   <div class="host-frame"><div class="host-frame-inner">S</div></div>
   <h1 class="display" id="welcomeHeadline" style="font-size:32px;">Hi, I'm Sasha</h1>
   <div class="greeting-bubble">
-    <p id="welcomeSub">So glad you found your way in tonight. I'll be hosting — drop your name below so I can welcome you properly.</p>
+    <p id="welcomeSub">So glad you found your way in tonight. I'll be hosting — pop your name on the roster and I'll pair you up with someone lovely to talk to.</p>
     <div class="greeting-sign">— Sasha, your host</div>
   </div>
-  <button class="btn" id="btnToCheckin">Enter the Lounge</button>
+  <button class="btn" id="btnToCheckin">Enter the Roster</button>
 </div>
 
 <!-- VIP CHECK-IN (Simplified) -->
@@ -749,13 +1047,13 @@
     <label>Name</label>
     <input type="text" id="inputName" placeholder="What should we call you?" maxlength="24">
   </div>
-  <button class="btn" id="btnJoin">Join</button>
+  <button class="btn" id="btnJoin">Join the Lounge</button>
 </div>
 
 <!-- MASTER LOUNGE (Handles all dynamic guest states) -->
 <div class="screen" id="screen-lounge">
 
-  <!-- STATE 1: THE GATHERING (No Roster, Just Roadmap, Game, Leaderboard) -->
+  <!-- STATE 1: THE GATHERING -->
   <div id="state-gathering" class="lounge-state active">
     <div class="lounge-content">
 
@@ -765,64 +1063,60 @@
         <div class="eyebrow" style="color:var(--mist); letter-spacing:.4em;">Speaking Club</div>
       </div>
 
-      <!-- THE ROADMAP (Sasha's Itinerary) -->
-      <div class="dashboard-section itinerary-section" style="padding-bottom: 30px;">
-        <div class="itinerary-header">
-          <div class="host-pic-wrapper">
-            <img src="sasha.png" alt="Sasha" class="host-pic" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%237c2f6e\'/><text x=\'50%\' y=\'50%\' fill=\'white\' font-size=\'24\' text-anchor=\'middle\' dy=\'.3em\'>S</text></svg>'">
-          </div>
-          <div>
-            <div class="eyebrow">Your Host</div>
-            <div class="display" style="font-size:26px; color:var(--mist); line-height:1.1; margin-top:4px;">Today's Roadmap</div>
-          </div>
+      <!-- TODAY'S ACTIVITIES (roster removed) -->
+      <div class="dashboard-section" id="activitiesSection">
+        <div class="section-header">
+          <div class="eyebrow">Today's Activities</div>
         </div>
-        <div class="itinerary-steps">
-          <div class="itinerary-step active" id="stepGathering">
-            <div class="step-dot"></div>
-            <div class="step-content">
-              <div class="step-title">1. The Gathering</div>
-              <div class="step-desc">Settle into the lounge. Grab a drink while we wait for everyone to arrive.</div>
+        <div class="hub-sections">
+
+          <!-- Pairs Activity -->
+          <div class="hub-card locked" id="hubCardGarden">
+            <div class="hub-card-icon">💐</div>
+            <div>
+              <div class="hub-card-sub" style="color:var(--gold);">Pairs Activity</div>
+              <div class="hub-card-title">The Bouquet</div>
+              <div class="hub-card-desc">Pick flowers together to spark deep conversation.</div>
+              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
             </div>
           </div>
-          <div class="itinerary-step" id="stepBouquet">
-            <div class="step-dot"></div>
-            <div class="step-content">
-              <div class="step-title">2. The Bouquet</div>
-              <div class="step-desc">I will divide you into pairs. You'll enter the garden to pick flowers and share intimate questions.</div>
-              <button class="btn ghost btn-sm step-action" id="btnEnterBouquet" style="display:none; margin-top:12px;" onclick="setLoungeState('state-garden')">Enter the Bouquet</button>
+
+          <!-- Connector line -->
+          <div class="activity-connector"><div class="connector-line"></div></div>
+
+          <!-- Group Activity -->
+          <div class="hub-card locked" id="hubCardAita">
+            <div class="hub-card-icon">⚖️</div>
+            <div>
+              <div class="hub-card-sub" style="color:var(--gold);">Group Activity</div>
+              <div class="hub-card-title">Relationships Court™</div>
+              <div class="hub-card-desc">Evaluate real-life relationship dilemmas, cross-examinations, and cast your official verdicts.</div>
+              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
             </div>
           </div>
-          <div class="itinerary-step" id="stepCourt">
-            <div class="step-dot"></div>
-            <div class="step-content">
-              <div class="step-title">3. Relationships Court™</div>
-              <div class="step-desc">We regroup to cast verdicts on real-life relationship drama. Don't hold back.</div>
-              <button class="btn ghost btn-sm step-action" id="btnEnterCourt" style="display:none; margin-top:12px; border-color:#3ddc84; color:#3ddc84;" onclick="setLoungeState('state-aita')">Enter the Court</button>
-            </div>
-          </div>
+
         </div>
       </div>
 
-      <!-- WAITING ROOM GAME (Inside its own frosted block) -->
-      <div class="dashboard-section" style="padding:0; overflow:hidden; position:relative; height: 190px;">
+      <div class="game-section">
         <div class="lounge-ground" aria-hidden="true" id="loungeGround">
           <div class="ground-sky-fade"></div>
           <div class="parallax-layer layer-back" id="parallaxBack"></div>
           <div class="parallax-layer layer-mid" id="parallaxMid"></div>
           <div class="ground-grass" id="parallaxFront"></div>
         </div>
+
         <div class="lounge-game" id="loungeGame">
+          <div class="game-instructions">jump the basics • catch the bows</div>
           <div class="game-score" id="gameScore">0</div>
-          <!-- Game Track captures the clicks -->
-          <div class="game-track" id="gameTrack" onclick="window.handleGameJump()">
+          <div class="game-track" id="gameTrack">
             <div class="game-bunny" id="gameBunny">
               <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
               <span class="game-wisp-fallback"></span>
             </div>
-            <!-- Overlay explicitly handles the Start click -->
             <div class="game-overlay" id="gameOverlay">
-              <div style="font-size:14px; padding:0 10px;">Sasha hates basic t-shirts & jeans!<br><span style="color:var(--dim);">(Jump over them)</span><br><br>But he loves bows & Ariana!<br><span style="color:var(--dim);">(Run into them to collect. If you jump over them, you lose!)</span></div>
-              <button class="btn" style="margin-top:12px; padding: 10px 24px;" onclick="window.handleGameStart(event)">Play</button>
+              <div>Help Sasha jump over basic T-shirts and jeans and catch cute pink bows!</div>
+              <button class="btn" id="gameStartBtn">Play</button>
             </div>
           </div>
         </div>
@@ -845,12 +1139,14 @@
     <div class="match-header" style="padding-top: 30px; position: relative; z-index: 10;">
       <div class="eyebrow">Pairs Activity</div>
       <h1 class="display" style="font-size:36px;">The Bouquet</h1>
+      <!-- Specific Partner Phrasing -->
       <p class="sub" style="margin-top:10px; font-size: 17px; color: var(--gold);" id="bouquetPartnerLabel">Your partner today is: ...</p>
       <p class="sub" style="margin-top:6px; font-size: 14px; opacity: 0.7;">Pick a flower together to reveal your next question.</p>
     </div>
 
     <!-- The Bouquet Scene -->
     <div class="bouquet-scene" id="gardenBed">
+      <!-- Flowers will fan out from here -->
       <div class="bouquet-ribbon"></div>
       <div class="empty-bouquet-msg">The bouquet has been shared.</div>
     </div>
@@ -886,7 +1182,7 @@
 <div class="imessage-overlay" id="imessageOverlay">
   <div class="imessage-window">
     <div class="imessage-header">
-      <img class="imessage-avatar" src="sasha.png" alt="Sasha" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%237c2f6e\'/><text x=\'50%\' y=\'50%\' fill=\'white\' font-size=\'24\' text-anchor=\'middle\' dy=\'.3em\'>S</text></svg>'">
+      <img class="imessage-avatar" src="sasha.png" alt="Sasha" onerror="this.style.display='none';">
       <div class="imessage-name">Sasha</div>
       <button class="imessage-close" id="imessageClose" aria-label="Close">✕</button>
     </div>
@@ -903,7 +1199,7 @@
   <button class="host-drawer-close" id="hostDrawerClose" aria-label="Close">✕</button>
   <div class="eyebrow">Host Console</div>
 
-  <!-- Mini Roster (Visible ONLY to the host!) -->
+  <!-- Mini Roster -->
   <div class="host-list" id="hostList" style="margin-top: 10px; margin-bottom: 30px; max-height: 160px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; background: rgba(0,0,0,0.2);"></div>
 
   <div class="host-section-label">1. Matchmaking</div>
@@ -953,6 +1249,7 @@
   <button class="btn ghost" id="btnResetEvent" style="margin-top: 40px; margin-bottom: 20px; width: 100%; font-size: 11px; border-color: rgba(255,0,0,0.3); color: rgba(255,255,255,0.4);">Reset Event (Danger)</button>
 </div>
 </div>
+
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -1060,6 +1357,8 @@ spawnLanterns();
 /* ---------- application routing & VIP bypass ---------- */
 window.addEventListener('load', ()=>{
   if(isHost){
+    // The host sees the exact same lounge experience as everyone else,
+    // plus a floating control button that opens the admin drawer.
     if(!me){
       me = { id: 'host_'+Math.random().toString(36).slice(2,9), name:'Sasha', avatar:'👑' };
       localStorage.setItem('fsc_guest', JSON.stringify(me));
@@ -1069,9 +1368,11 @@ window.addEventListener('load', ()=>{
   }
 
   if(me){
+    // RETURNING VIP (or the host, auto-identified above)
     ref(`events/${EVENT_ID}/attendees/${me.id}`).update({...me, joinedAt: Date.now()});
     enterLounge();
   } else {
+    // FIRST TIME USER
     show('screen-title');
     const advanceToWelcome = () => {
       if(document.getElementById('screen-title').classList.contains('active')){
@@ -1086,8 +1387,12 @@ window.addEventListener('load', ()=>{
 });
 
 /* ---------- host drawer open/close ---------- */
-function openHostDrawer(){ document.getElementById('hostDrawerOverlay').classList.add('show'); }
-function closeHostDrawer(){ document.getElementById('hostDrawerOverlay').classList.remove('show'); }
+function openHostDrawer(){
+  document.getElementById('hostDrawerOverlay').classList.add('show');
+}
+function closeHostDrawer(){
+  document.getElementById('hostDrawerOverlay').classList.remove('show');
+}
 document.getElementById('hostToggleBtn').addEventListener('click', openHostDrawer);
 document.getElementById('hostDrawerClose').addEventListener('click', closeHostDrawer);
 document.getElementById('hostDrawerOverlay').addEventListener('click', (e) => {
@@ -1101,10 +1406,11 @@ document.getElementById('btnJoin').addEventListener('click', ()=>{
   const name = document.getElementById('inputName').value.trim();
   if(!name){ alert('Standards require a name to enter.'); return; }
   
+  // Auto-assign random avatar
   const randomAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
   const id = 'g_'+Math.random().toString(36).slice(2,10);
   
-  me = {id, name, avatar:randomAvatar, highScore:0};
+  me = {id, name, avatar:randomAvatar};
   localStorage.setItem('fsc_guest', JSON.stringify(me));
   ref(`events/${EVENT_ID}/attendees/${id}`).set({...me, joinedAt: Date.now()});
   enterLounge();
@@ -1119,6 +1425,7 @@ function enterLounge(){
   listenHubs();
   startBunnyGame();
 
+  // Auto-start the spotlight tour the first time a guest arrives
   if(!isHost && !localStorage.getItem('fsc_tour_seen')){
     localStorage.setItem('fsc_tour_seen', '1');
     setTimeout(startTour, 600);
@@ -1128,9 +1435,9 @@ function enterLounge(){
 /* --- SPOTLIGHT TOUR LOGIC --- */
 let tourIdx = 0;
 const TOUR_STEPS = [
-  { selector: '.itinerary-section', title: 'The Gathering', desc: 'First, we wait for everyone to arrive and settle into the lounge. Keep an eye on today\'s roadmap.', pad: 10 },
-  { selector: '#stepBouquet', title: 'The Bouquet', desc: 'Once everyone is here, I will divide you into pairs. This step will unlock and a button will appear when it is time to open the bouquet.', pad: 8 },
-  { selector: '#stepCourt', title: 'Relationships Court™', desc: 'Afterwards, we will all regroup here to participate in the Relationships Court. Get ready to cast your verdicts.', pad: 8 }
+  { selector: '#activitiesSection', title: 'The Gathering', desc: 'First, we wait for everyone to arrive and settle into the lounge. Keep an eye on today\'s activities.', pad: 10 },
+  { selector: '#hubCardGarden', title: 'The Bouquet', desc: 'Once everyone is here, I will divide you into pairs. This card will unlock and glow when it is time to open the bouquet.', pad: 8 },
+  { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'Afterwards, we will all regroup here to participate in the Relationships Court. Get ready to cast your verdicts.', pad: 8 }
 ];
 
 function startTour() {
@@ -1155,9 +1462,7 @@ function showTourStep() {
   document.getElementById('tour-step-label').textContent = `Step ${tourIdx + 1} of ${TOUR_STEPS.length}`;
   document.getElementById('tour-title').textContent = step.title;
   document.getElementById('tour-desc').textContent = step.desc;
-  
-  // "Let's go" instead of "Got it"
-  document.getElementById('tour-next').textContent = tourIdx === TOUR_STEPS.length - 1 ? "Let's go" : 'Next';
+  document.getElementById('tour-next').textContent = tourIdx === TOUR_STEPS.length - 1 ? 'Got it' : 'Next';
   document.querySelectorAll('#tour-dots span').forEach((d, i) => d.classList.toggle('tour-dot-done', i <= tourIdx));
 
   const tooltip = document.getElementById('tour-tooltip');
@@ -1172,15 +1477,11 @@ function showTourStep() {
 }
 
 function tourNext() {
-  if (tourIdx >= TOUR_STEPS.length - 1) { 
-    endTour(); 
-    // Instead of jumping directly to the garden, just end the tour 
-    // so they can play the game in the lounge while waiting.
-    return; 
-  }
   tourIdx++;
+  if (tourIdx >= TOUR_STEPS.length) { endTour(); return; }
   showTourStep();
 }
+
 function endTour() {
   document.getElementById('tour-overlay').classList.remove('show');
 }
@@ -1193,6 +1494,7 @@ function renderLeaderboard(guests) {
   const list = document.getElementById('gameLeaderboard');
   if(!list) return;
 
+  // Sort everyone by high score
   const ranked = [...guests].filter(g => g.highScore > 0).sort((a,b) => b.highScore - a.highScore);
 
   if(ranked.length === 0) {
@@ -1210,20 +1512,84 @@ function renderLeaderboard(guests) {
 }
 
 function listenRoster(){
+  // 1. Listen to guests joining
   ref(`events/${EVENT_ID}/attendees`).on('value', snap=>{
     stateGuests = Object.values(snap.val() || {}).sort((a,b)=>a.joinedAt-b.joinedAt);
+    const countEl = document.getElementById('loungeCount');
+    if(countEl) countEl.textContent = stateGuests.length;
+    renderRoster();
     renderLeaderboard(stateGuests);
     if(isHost) renderHostList(stateGuests);
   });
 
+  // 2. Listen to active pairs (powers the colored rings and latecomer catch)
   ref(`events/${EVENT_ID}/pairs`).on('value', snap=>{
     statePairs = snap.val() || {};
+    renderRoster();
+
+    // LATECOMER CATCH: if the event is already underway and you just got a pair, pull you in
     if (!me) return;
     const myNewPair = Object.entries(statePairs).find(([pid,p]) => (p.members||[]).some(m=>m.id === me.id));
     if (myNewPair && window.currentPairId !== myNewPair[0] && currentKnownState === 'matched') {
       applyPair(myNewPair);
     }
   });
+}
+
+function renderRoster(){
+  const grid = document.getElementById('rosterGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+
+  const existingPairsArr = Object.entries(statePairs);
+  const pairedGuestIds = new Set();
+
+  // 1. Render Matched Pairs
+  if(existingPairsArr.length > 0) {
+    existingPairsArr.forEach(([pid, pair], index) => {
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'pair-group';
+
+      // Name it "Pair X" (or "Group X" if it's a trio)
+      const label = pair.members.length > 2 ? `Group ${index + 1}` : `Pair ${index + 1}`;
+      let html = `<div class="pair-group-label">${label}</div><div class="pair-group-members">`;
+
+      pair.members.forEach(m => {
+        pairedGuestIds.add(m.id);
+        const isYou = !!(me && m.id === me.id);
+        html += `
+          <div class="guest-card">
+            <div class="guest-avatar${isYou ? ' is-me' : ''}">${m.avatar}</div>
+            <div class="guest-name${isYou ? ' is-me' : ''}">${escapeHtml(m.name)}${isYou ? ' <span class="you-tag">you</span>' : ''}</div>
+          </div>`;
+      });
+      html += `</div>`;
+      groupDiv.innerHTML = html;
+      grid.appendChild(groupDiv);
+    });
+  }
+
+  // 2. Render Anyone Unmatched (Waiting Room)
+  const unmatched = stateGuests.filter(g => !pairedGuestIds.has(g.id));
+  if(unmatched.length > 0) {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'pair-group';
+
+    const label = existingPairsArr.length > 0 ? 'Waiting for Match' : 'In the Lounge';
+    let html = `<div class="pair-group-label" style="color:var(--dim);">${label}</div><div class="pair-group-members">`;
+
+    unmatched.forEach(m => {
+      const isYou = !!(me && m.id === me.id);
+      html += `
+        <div class="guest-card">
+          <div class="guest-avatar${isYou ? ' is-me' : ''}">${m.avatar}</div>
+          <div class="guest-name${isYou ? ' is-me' : ''}">${escapeHtml(m.name)}${isYou ? ' <span class="you-tag">you</span>' : ''}</div>
+        </div>`;
+    });
+    html += `</div>`;
+    groupDiv.innerHTML = html;
+    grid.appendChild(groupDiv);
+  }
 }
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -1239,6 +1605,11 @@ function listenPhase(){
       setLoungeState('state-gathering');
       document.getElementById('aitaVerdictCard').style.display = 'none';
       document.getElementById('glowRing').style.boxShadow = `none`;
+      // Firebase re-fires 'value' listeners on every reconnect (phone locks,
+      // app backgrounds, spotty wifi) even when the value hasn't changed.
+      // Only (re)start the game on an actual transition into the lounge, or
+      // if no game exists yet — otherwise a resync mid-run was silently
+      // wiping the player's progress and dumping them back to "Start".
       if(prevState !== 'lounge' || !bg){
         startBunnyGame();
       }
@@ -1275,33 +1646,14 @@ function listenPhase(){
 function listenHubs() {
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
     const hubs = snap.val() || {};
-    updateItineraryHighlight(hubs);
+
+    const cardGarden = document.getElementById('hubCardGarden');
+    const cardAita = document.getElementById('hubCardAita');
+
+    // Toggle the locked state on the hub cards based on Host Locks
+    if(cardGarden) cardGarden.classList.toggle('locked', !hubs.garden);
+    if(cardAita) cardAita.classList.toggle('locked', !hubs.aita);
   });
-}
-
-function updateItineraryHighlight(hubs) {
-  const hasPairs = Object.keys(statePairs || {}).length > 0;
-  const sGather = document.getElementById('stepGathering');
-  const sBouquet = document.getElementById('stepBouquet');
-  const sCourt = document.getElementById('stepCourt');
-
-  const btnBouquet = document.getElementById('btnEnterBouquet');
-  const btnCourt = document.getElementById('btnEnterCourt');
-
-  if(sGather) sGather.classList.remove('active');
-  if(sBouquet) sBouquet.classList.remove('active');
-  if(sCourt) sCourt.classList.remove('active');
-
-  if(btnBouquet) btnBouquet.style.display = hubs.garden ? 'inline-block' : 'none';
-  if(btnCourt) btnCourt.style.display = hubs.aita ? 'inline-block' : 'none';
-
-  if (hubs.aita && sCourt) {
-    sCourt.classList.add('active');
-  } else if ((hasPairs || hubs.garden) && sBouquet) {
-    sBouquet.classList.add('active');
-  } else if(sGather) {
-    sGather.classList.add('active');
-  }
 }
 
 function applyPair([pairId, pair]){
@@ -1312,7 +1664,7 @@ function applyPair([pairId, pair]){
   const isNewPairing = window.currentPairId !== pairId;
   window.currentPairId = pairId;
 
-  // Use exact phrasing requested
+  // Update the Bouquet header to show the partner (exact phrasing requested)
   const partnerLabel = document.getElementById('bouquetPartnerLabel');
   if (partnerLabel) {
     partnerLabel.innerHTML = isGroup
@@ -1320,8 +1672,11 @@ function applyPair([pairId, pair]){
         : `Your partner today is <strong style="color:#fff;">${partnerText}</strong>`;
   }
 
-  buildGarden();
+  buildGarden(); // Prepares it silently so it's ready when they tap the glowing card.
 
+  // Only pop Sasha's iMessage the moment this is a genuinely NEW match —
+  // Firebase can re-fire this whole flow on reconnect, and we don't want
+  // to spam the reveal every time that happens.
   if (isNewPairing) {
     showPartnerImessage(partnerText);
   }
@@ -1346,7 +1701,7 @@ function showPartnerImessage(partnerText){
 
   let i = 0;
   function nextMessage(){
-    if(!overlay.classList.contains('show')) return;
+    if(!overlay.classList.contains('show')) return; // dismissed early
     if(i >= messages.length){
       cta.classList.add('show');
       return;
@@ -1375,12 +1730,33 @@ function showPartnerImessage(partnerText){
   }
   nextMessage();
 }
-function closeImessagePopup(){ document.getElementById('imessageOverlay').classList.remove('show'); }
-function goToBouquet(){ closeImessagePopup(); setLoungeState('state-garden'); }
+function closeImessagePopup(){
+  document.getElementById('imessageOverlay').classList.remove('show');
+}
+function goToBouquet(){
+  closeImessagePopup();
+  setLoungeState('state-garden');
+}
 document.getElementById('imessageClose').addEventListener('click', closeImessagePopup);
 document.getElementById('imessageCta').addEventListener('click', goToBouquet);
 document.getElementById('imessageOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'imessageOverlay') closeImessagePopup();
+});
+
+// Bind the hub cards!
+document.getElementById('hubCardGarden').addEventListener('click', () => {
+  if (document.getElementById('hubCardGarden').classList.contains('locked')) return;
+  setLoungeState('state-garden');
+  // Failsafe: if no pairing event has built the bouquet yet, build it now
+  // so the flowers are always visible the moment the guest enters.
+  const bed = document.getElementById('gardenBed');
+  if (bed && !bed.querySelector('.flower-plant')) {
+    buildGarden();
+  }
+});
+document.getElementById('hubCardAita').addEventListener('click', () => {
+  if (document.getElementById('hubCardAita').classList.contains('locked')) return;
+  setLoungeState('state-aita');
 });
 
 function enterAitaRound(round){
@@ -1414,19 +1790,8 @@ document.getElementById('btnChangeVote').addEventListener('click', ()=>{
   ref(`events/${EVENT_ID}/aita/rounds/${window.currentAitaRound}/votes/${me.id}`).set(null);
 });
 
-
 /* ---------- bunny-hop mini game ---------- */
 let bg = null;
-
-// Global bulletproof game handlers so events are never lost!
-window.handleGameStart = function(e) {
-  if (e) e.stopPropagation();
-  if (bg && bg.beginRun) bg.beginRun();
-};
-window.handleGameJump = function() {
-  if (bg && bg.jump) bg.jump();
-};
-
 function startBunnyGame(){
   stopBunnyGame();
   const track = document.getElementById('gameTrack');
@@ -1435,22 +1800,19 @@ function startBunnyGame(){
   const overlay = document.getElementById('gameOverlay');
   if(!track) return;
 
+  // clear any obstacles left over from a previous round of this game
+  track.querySelectorAll('.obs-basic, .obs-iconic').forEach(el=>el.remove());
+
   bg = {
     running:false, over:false, y:0, vy:0, score:0, speed:3.2, frame:0, nextSpawn:60,
     scrollBack:0, scrollMid:0, scrollFront:0,
     obstacles:[], raf:null, track, bunnyEl, scoreEl, overlay
   };
-
   const high = Number(localStorage.getItem('fsc_bunny_high')||0);
   scoreEl.textContent = high ? `best ${high}` : '0';
   bunnyEl.style.transform = 'translateY(0)';
   overlay.classList.remove('hidden');
-  
-  // Game instructions using the explicit global click handler
-  overlay.innerHTML = `
-    <div style="font-size:14px; padding:0 10px;">Sasha hates basic t-shirts & jeans!<br><span style="color:var(--dim);">(Jump over them)</span><br><br>But he loves bows & Ariana!<br><span style="color:var(--dim);">(Run into them to collect. If you jump over them, you lose!)</span></div>
-    <button class="btn" style="margin-top:12px; padding: 10px 24px;" onclick="window.handleGameStart(event)">Play</button>
-  `;
+  overlay.innerHTML = '<div>Help Sasha jump over basic T-shirts and jeans and catch cute pink bows!</div><button class="btn" id="gameStartBtn">Play</button>';
 
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
@@ -1460,6 +1822,7 @@ function startBunnyGame(){
     if(!bg || !bg.running) return;
     if(bg.y <= 0.5){
       bg.vy = 12.5;
+      // Jump spark
       const spark = document.createElement('div');
       spark.className = 'jump-particle';
       spark.style.left = '30px';
@@ -1468,7 +1831,6 @@ function startBunnyGame(){
       setTimeout(()=>spark.remove(), 600);
     }
   }
-
   function beginRun(){
     bg.obstacles.forEach(o=>o.el.remove());
     bg.obstacles = [];
@@ -1479,26 +1841,22 @@ function startBunnyGame(){
     overlay.classList.add('hidden');
     loop();
   }
-
   function gameOver(){
     bg.running = false; bg.over = true;
     const finalScore = Math.floor(bg.score);
     const best = Math.max(Number(localStorage.getItem('fsc_bunny_high')||0), finalScore);
     localStorage.setItem('fsc_bunny_high', String(best));
 
+    // Save to Firebase for the Global Leaderboard
     if (me && finalScore > (me.highScore || 0)) {
-      me.highScore = finalScore; 
+      me.highScore = finalScore; // update local
       ref(`events/${EVENT_ID}/attendees/${me.id}`).update({ highScore: finalScore });
     }
 
-    overlay.innerHTML = `
-      <div style="font-size:16px;">Game Over!<br>Score: ${finalScore}</div>
-      <button class="btn" style="margin-top:12px; padding: 10px 24px;" onclick="window.handleGameStart(event)">Play Again</button>
-    `;
+    overlay.innerHTML = `<div>Score: ${finalScore}</div><button class="btn" id="gameStartBtn">Play Again</button>`;
     overlay.classList.remove('hidden');
     scoreEl.textContent = `best ${best}`;
   }
-
   function loop(){
     if(!bg || !bg.running) return;
     bg.frame++;
@@ -1507,6 +1865,7 @@ function startBunnyGame(){
     if(bg.y < 0){ bg.y = 0; bg.vy = 0; }
     bunnyEl.style.transform = `translateY(${-bg.y}px)`;
 
+    // Parallax Background Scrolling
     bg.scrollBack -= bg.speed * 0.15;
     bg.scrollMid -= bg.speed * 0.4;
     bg.scrollFront -= bg.speed;
@@ -1514,9 +1873,9 @@ function startBunnyGame(){
     if(parallaxMid) parallaxMid.style.backgroundPosition = `${bg.scrollMid}px bottom`;
     if(parallaxFront) parallaxFront.style.backgroundPosition = `${bg.scrollFront}px bottom`;
 
-    // SPAWN LOGIC
+    // SPAWN LOGIC (Bows vs Basics)
     const BAD_ITEMS = ['👕', '👖'];
-    const GOOD_ITEMS = ['🎀', '🎤'];
+    const GOOD_ITEMS = ['🎀'];
     if(bg.frame >= bg.nextSpawn){
       const isBad = Math.random() < 0.6; // 60% bad, 40% good
       const el = document.createElement('div');
@@ -1539,22 +1898,29 @@ function startBunnyGame(){
       o.x -= bg.speed;
       o.el.style.left = o.x + 'px';
 
+      // Is Sasha overlapping the item horizontally?
       const overlapX = o.x < bunnyLeft + bunnyWidth && o.x + 28 > bunnyLeft;
+      // Is Sasha low enough to touch it?
       const isGrounded = bg.y < 25;
 
       if (overlapX && isGrounded) {
         if (o.el.dataset.type === 'bad') {
+          // Hit a basic t-shirt = LOSE
           gameOver(); return;
         } else {
+          // Collected an icon = +50 POINTS!
           bg.score += 50;
           o.el.remove();
           bg.obstacles.splice(idx, 1);
           continue;
         }
       } else if (o.x + 28 < bunnyLeft) {
+        // Passed the item!
         if (o.el.dataset.type === 'good') {
+          // Jumped over a good item = LOSE
           gameOver(); return;
         } else {
+          // Jumped over a bad item successfully
           o.el.remove();
           bg.obstacles.splice(idx, 1);
           continue;
@@ -1562,46 +1928,70 @@ function startBunnyGame(){
       }
     }
 
-    bg.score += 0.5;
-    bg.speed = Math.min(8, 3.5 + bg.score * 0.005);
+    bg.score += 0.5; // Passive survival points
+    bg.speed = Math.min(8, 3.5 + bg.score * 0.005); // Speeds up slowly
     scoreEl.textContent = String(Math.floor(bg.score));
     bg.raf = requestAnimationFrame(loop);
   }
 
   bg.beginRun = beginRun;
   bg.jump = jump;
-}
 
+  // Bind Start/Play Again + jump handlers ONCE via delegation so repeated
+  // calls to startBunnyGame() (every time the lounge reactivates) don't
+  // stack up duplicate listeners, which was causing the bunny to double
+  // speed up / glitch after a few rounds.
+  if(!overlay.dataset.startBound){
+    overlay.addEventListener('click', (e)=>{
+      if(e.target.closest('#gameStartBtn') && bg && bg.beginRun) bg.beginRun();
+    });
+    overlay.dataset.startBound = '1';
+  }
+  if(!track.dataset.jumpBound){
+    track.addEventListener('click', ()=>{ bg && jump(); });
+    track.dataset.jumpBound = '1';
+  }
+}
 function stopBunnyGame(){
   if(bg && bg.raf) cancelAnimationFrame(bg.raf);
+
   const track = document.getElementById('gameTrack');
   if(track) {
-    track.querySelectorAll('.obs-basic, .obs-iconic, .jump-particle').forEach(el => el.remove());
+    // Safely wipe all obstacles and leftover particle effects
+    track.querySelectorAll('.obs-basic, .jump-particle').forEach(el => el.remove());
   }
+
   bg = null;
 }
 window.addEventListener('keydown', (e)=>{
+  // Only trigger if they press Spacebar AND the game is actually running
   if(e.code === 'Space' && bg && bg.running && document.getElementById('screen-lounge').classList.contains('active')){
-    e.preventDefault(); 
+    e.preventDefault(); // This stops the page from scrolling down!
     if(bg.y <= 0.5) bg.jump();
   }
 });
-
 
 /* ---------- bouquet builder ---------- */
 function buildGarden(){
   const bed = document.getElementById('gardenBed');
   if(!bed) return;
+  // Preserve the ribbon and end message, clear the rest
   bed.innerHTML = '<div class="bouquet-ribbon"></div><div class="empty-bouquet-msg">The bouquet has been shared.</div>';
 
   const pairId = window.currentPairId || 'solo';
   const items = QUESTIONS.length;
+
+  // Scramble the array indices so the questions aren't just left-to-right
   const shuffledIndices = Array.from({length: items}, (_, i) => i).sort(() => Math.random() - 0.5);
 
   QUESTIONS.forEach((q, originalIndex) => {
     const displayPos = shuffledIndices.indexOf(originalIndex);
+
+    // Fan Math: Spread flowers between -60 and +60 degrees
     const spread = 120;
     const angle = -60 + (displayPos / (items - 1)) * spread + (Math.random() * 6 - 3);
+
+    // Taller stems for the middle, shorter for the edges
     const centerProximity = 1 - Math.abs((displayPos / (items - 1)) - 0.5) * 2;
     const stemH = 140 + (centerProximity * 90) + (Math.random() * 20);
     const scale = (0.75 + Math.random() * 0.25).toFixed(2);
@@ -1625,12 +2015,16 @@ function buildGarden(){
     }
 
     const plant = document.createElement('div');
-    plant.className = 'flower-plant bloomed'; 
+    plant.className = 'flower-plant bloomed'; // They are already fully bloomed now!
     plant.dataset.i = originalIndex;
     plant.style.color = color;
     plant.style.setProperty('--fscale', scale);
+
+    // Set the base rotation and height
     plant.style.setProperty('--base-transform', `rotate(${angle}deg) scale(${scale})`);
     plant.style.transform = `rotate(${angle}deg) scale(${scale})`;
+
+    // Mix up the z-index so stems overlap naturally
     plant.style.zIndex = Math.floor(Math.random() * 50);
 
     plant.innerHTML = `
@@ -1644,6 +2038,7 @@ function buildGarden(){
     bed.appendChild(plant);
   });
 
+  // Listen for picked flowers
   ref(`events/${EVENT_ID}/pairs/${pairId}/bloomed`).on('value', snap=>{
     const picked = snap.val() || {};
     Object.keys(picked).forEach(i => {
@@ -1651,25 +2046,29 @@ function buildGarden(){
       if(el) el.classList.add('picked');
     });
 
+    // Check if the bouquet is empty
     if (Object.keys(picked).length === items) {
       bed.classList.add('empty');
     }
   });
 }
 function pickFlower(i, pairId, plant, color){
-  if (plant.classList.contains('picked')) return; 
+  if (plant.classList.contains('picked')) return; // Prevent double clicking
 
   plant.classList.add('picked');
   const panel = document.getElementById('questionPanel');
 
+  // 1. Ethereal Spark to Panel
   const rect = plant.getBoundingClientRect();
   const spark = document.createElement('div');
   spark.className = 'soul-spark';
   spark.style.color = color;
 
+  // Start from the flower head (approximate center)
   spark.style.left = (rect.left + rect.width / 2) + 'px';
   spark.style.top = (rect.top + 30) + 'px';
 
+  // Arc towards the center of the question panel
   const targetX = window.innerWidth / 2 - (rect.left + rect.width / 2);
   const targetY = window.innerHeight - 80 - (rect.top + 30);
   spark.style.setProperty('--tx', targetX + 'px');
@@ -1677,11 +2076,13 @@ function pickFlower(i, pairId, plant, color){
 
   document.body.appendChild(spark);
 
+  // 2. Flash panel and show text on impact
   setTimeout(() => {
     spark.remove();
     panel.style.setProperty('--flash-color', color + '66');
     panel.classList.add('flash');
 
+    // Update Text
     const textEl = document.getElementById('questionText');
     const counterEl = document.getElementById('questionCounter');
     textEl.classList.add('swap');
@@ -1694,11 +2095,13 @@ function pickFlower(i, pairId, plant, color){
     setTimeout(() => panel.classList.remove('flash'), 600);
   }, 800);
 
+  // 3. Sync to Firebase so it disappears on partner's screen too
   try {
       ref(`events/${EVENT_ID}/pairs/${pairId}/bloomed/${i}`).set(true);
-  } catch(e) { console.warn('Could not sync pick to partner:', e); }
+  } catch(e) {
+      console.warn('Could not sync pick to partner:', e);
+  }
 }
-
 
 /* ---------- synced garden timer ---------- */
 let timerInterval = null;
@@ -1720,16 +2123,20 @@ function listenTimer() {
       const timeLeft = endTime - Date.now();
 
       if (timeLeft > 0) {
+        // Show small timer persistently while running
         const mins = Math.floor(timeLeft / 60000);
         const secs = Math.floor((timeLeft % 60000) / 1000);
         warningEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
         warningEl.style.opacity = '1';
         overlayEl.style.opacity = '0';
+        overlayEl.style.pointerEvents = 'none';
       } else if (timeLeft <= 0) {
+        // Time is up -> Show the overlay
         warningEl.style.opacity = '0';
         overlayEl.style.opacity = '1';
         overlayEl.style.pointerEvents = 'auto';
 
+        // Auto transition back to lounge after 6 seconds of holding the message
         if (timeLeft < -6000) {
            clearInterval(timerInterval);
            overlayEl.style.opacity = '0';
@@ -1746,6 +2153,8 @@ function listenTimer() {
 /* ---------- host console ---------- */
 let hostGuestsCache = [];
 function initHost(){
+  // listenRoster() and listenHubs() are already started by enterLounge(),
+  // which now also runs for the host — no need to attach them twice here.
   ref(`events/${EVENT_ID}/state`).set('lounge');
   ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
     const round = snap.val();
@@ -1756,7 +2165,6 @@ function initHost(){
 function renderHostList(guests){
   hostGuestsCache = guests;
   const list = document.getElementById('hostList');
-  if(!list) return;
   list.innerHTML='';
   guests.forEach(g=>{
     const row = document.createElement('div');
@@ -1767,20 +2175,36 @@ function renderHostList(guests){
   });
 }
 
-document.getElementById('btnUnlockBouquet').addEventListener('click', () => { ref(`events/${EVENT_ID}/hubs/garden`).set(true); });
-document.getElementById('btnLockBouquet').addEventListener('click', () => { ref(`events/${EVENT_ID}/hubs/garden`).set(false); });
+/* ---------- Host Controls ---------- */
+
+// --- HUB LOCK/UNLOCK CONTROLS ---
+
+document.getElementById('btnUnlockBouquet').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/hubs/garden`).set(true);
+});
+document.getElementById('btnLockBouquet').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/hubs/garden`).set(false);
+});
 
 document.getElementById('btnUnlockCourt').addEventListener('click', () => {
   const round = String(Date.now());
   ref(`events/${EVENT_ID}/aita/round`).set(round);
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
+
   ref(`events/${EVENT_ID}/hubs/aita`).set(true);
+
   document.getElementById('aitaPicked').textContent = '';
   document.getElementById('aitaTally').style.display = 'flex';
   listenAitaTally(round);
 });
-document.getElementById('btnLockCourt').addEventListener('click', () => { ref(`events/${EVENT_ID}/hubs/aita`).set(false); });
+document.getElementById('btnLockCourt').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/hubs/aita`).set(false);
+});
 
+// --- QUICK ACTIONS: OPEN ALL / LOCK ALL ---
+// Reuses the exact same logic as the individual Unlock/Lock buttons above
+// (including the Court's round-reset) by simply triggering their clicks,
+// so "Open All" never falls out of sync with what each button does.
 document.getElementById('btnUnlockAll').addEventListener('click', () => {
   document.getElementById('btnUnlockBouquet').click();
   document.getElementById('btnUnlockCourt').click();
@@ -1790,6 +2214,8 @@ document.getElementById('btnLockAll').addEventListener('click', () => {
   document.getElementById('btnLockCourt').click();
 });
 
+// --- INDEPENDENT TIMER CONTROLS ---
+
 document.getElementById('btnSetTimer').addEventListener('click', () => {
   const mins = parseFloat(document.getElementById('inputTimerMinutes').value) || 0;
   if (mins > 0) {
@@ -1798,10 +2224,14 @@ document.getElementById('btnSetTimer').addEventListener('click', () => {
     setTimeout(() => document.getElementById('btnSetTimer').textContent = "Set Timer", 2000);
   }
 });
-document.getElementById('btnClearTimer').addEventListener('click', () => { ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null); });
+document.getElementById('btnClearTimer').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
+});
 
 document.getElementById('btnMatch').addEventListener('click', async ()=>{
   const guests = [...hostGuestsCache];
+
+  // Fetch existing pairs so a re-match doesn't scramble people who are already paired
   const snap = await ref(`events/${EVENT_ID}/pairs`).once('value');
   const existingPairs = snap.val() || {};
   const existingPairsArr = Object.entries(existingPairs);
@@ -1811,10 +2241,12 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
   let unassigned = guests.filter(g => !pairedGuestIds.has(g.id));
 
   if(existingPairsArr.length === 0 && guests.length < 2){
-    alert('Need at least two guests checked in to form a pair.'); return;
+    alert('Need at least two guests checked in to form a pair.');
+    return;
   }
   if(existingPairsArr.length > 0 && unassigned.length === 0){
-    alert('Everyone on the roster is already matched!'); return;
+    alert('Everyone on the roster is already matched!');
+    return;
   }
 
   const btn = document.getElementById('btnMatch');
@@ -1824,10 +2256,12 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
 
   try{
     if(unassigned.length === 1 && existingPairsArr.length > 0) {
+      // Exactly one latecomer: fold them into an existing group as a trio
       let targetPairEntry = existingPairsArr.find(([pid, p]) => p.members.length < 3) || existingPairsArr[0];
       targetPairEntry[1].members.push(unassigned[0]);
       await ref(`events/${EVENT_ID}/pairs/${targetPairEntry[0]}/members`).set(targetPairEntry[1].members);
     } else {
+      // Shuffle the unassigned guests and pair them up
       for(let i=unassigned.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [unassigned[i],unassigned[j]]=[unassigned[j],unassigned[i]]; }
 
       let pi = existingPairsArr.length;
@@ -1835,16 +2269,19 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
       while(i < unassigned.length){
         const remaining = unassigned.length - i;
         let members;
+
         if(remaining === 3){
           members = [unassigned[i], unassigned[i+1], unassigned[i+2]];
           i += 3;
         } else if(remaining === 1 && pi > 0){
+          // Leftover single person: fold into the last newly-created pair
           existingPairs[`p${pi-1}`].members.push(unassigned[i]);
           i++; continue;
         } else {
           members = [unassigned[i], unassigned[i+1]];
           i += 2;
         }
+
         existingPairs[`p${pi}`] = { members, color: PAIR_COLORS[pi % PAIR_COLORS.length] };
         pi++;
       }
@@ -1852,6 +2289,7 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
     }
     await ref(`events/${EVENT_ID}/state`).set('matched');
   } catch(err){
+    console.error('Failed to set pairs/state:', err);
     alert('Something went wrong matching pairs.');
   } finally {
     btn.disabled = false;
@@ -1859,18 +2297,24 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
   }
 });
 
+// HOST: UNPAIR BUTTON
 document.getElementById('btnUnpair').addEventListener('click', async () => {
   if(!confirm('Are you sure you want to unpair everyone and return them to the Lounge?')) return;
+
+  // Wipe the pairs
   await ref(`events/${EVENT_ID}/pairs`).set(null);
+
+  // Optional: Auto-lock the bouquet since no one is paired anymore
   await ref(`events/${EVENT_ID}/hubs/garden`).set(false);
+
   alert('Everyone has been unpaired.');
 });
-
+// RESET EVENT
 document.getElementById('btnResetEvent').addEventListener('click', ()=>{
   if(!confirm('Clear the roster, pairs, and phase for a brand new event?')) return;
   ref(`events/${EVENT_ID}/attendees`).set(null);
   ref(`events/${EVENT_ID}/pairs`).set(null);
-  ref(`events/${EVENT_ID}/hubs`).set(null); 
+  ref(`events/${EVENT_ID}/hubs`).set(null); // Lock all hubs
   ref(`events/${EVENT_ID}/aita/round`).set(null);
   ref(`events/${EVENT_ID}/aita/rounds`).set(null);
   ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
@@ -1879,6 +2323,7 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
   ref(`events/${EVENT_ID}/state`).set('lounge');
 });
 
+/* ---------- AITA voting (host) ---------- */
 function listenAitaTally(round){
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).on('value', snap=>{
     const votes = snap.val() || {};
