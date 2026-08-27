@@ -1111,14 +1111,12 @@
           </div>
 
           <!-- HOST ONLY: Minimal Pairs Controls -->
-          <div id="hostControlsGarden" class="host-inline-controls" style="display:none;">
-            <button class="host-inline-btn action" id="btnHighlightGarden">Set Current</button>
-            <button class="host-inline-btn" id="btnUnlockBouquet">Unlock</button>
-            <button class="host-inline-btn" id="btnLockBouquet" style="color:#ff4d5e; border-color:#ff4d5e;">Lock</button>
-            <div style="display:flex; gap:4px; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 10px;">
-              <input type="number" id="inputTimerMinutes" placeholder="Min" style="width:45px; text-align:center; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:6px; font-size:12px;">
-              <button class="host-inline-btn" id="btnSetTimer">Timer</button>
-            </div>
+          <div id="hostControlsGarden" class="host-inline-controls" style="display:none; justify-content: space-between;">
+            <button class="host-inline-btn action" id="btnHighlightGarden">Toggle "Happening Now"</button>
+            <button class="host-inline-btn" id="btnToggleLockGarden" style="display:flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Unlock & Set Timer</span>
+            </button>
           </div>
 
           <!-- Connector line -->
@@ -1137,10 +1135,12 @@
           </div>
 
           <!-- HOST ONLY: Minimal Court Controls -->
-          <div id="hostControlsAita" class="host-inline-controls" style="display:none;">
-            <button class="host-inline-btn action" id="btnHighlightCourt">Set Current</button>
-            <button class="host-inline-btn" id="btnUnlockCourt">Unlock</button>
-            <button class="host-inline-btn" id="btnLockCourt" style="color:#ff4d5e; border-color:#ff4d5e;">Lock</button>
+          <div id="hostControlsAita" class="host-inline-controls" style="display:none; justify-content: space-between;">
+            <button class="host-inline-btn action" id="btnHighlightCourt">Toggle "Happening Now"</button>
+            <button class="host-inline-btn" id="btnToggleLockCourt" style="display:flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Unlock & Set Timer</span>
+            </button>
           </div>
 
           <!-- HOST ONLY: AITA Tally (Displays during court) -->
@@ -1568,6 +1568,9 @@ function listenHubs() {
       cardAita.classList.toggle('locked', !hubs.aita);
       cardAita.classList.toggle('is-current', hubs.current === 'aita');
     }
+
+    setLockButtonState(document.getElementById('btnToggleLockGarden'), !!hubs.garden, 'Lock Activity', 'Unlock & Set Timer');
+    setLockButtonState(document.getElementById('btnToggleLockCourt'), !!hubs.aita, 'Lock Court', 'Unlock & Set Timer');
   });
 }
 
@@ -2038,44 +2041,73 @@ function renderHostList(guests){
 
 /* ---------- Host Controls: Inline Per-Activity Controls ---------- */
 
-document.getElementById('btnUnlockBouquet').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/hubs/garden`).set(true);
+// --- TOGGLE "HAPPENING NOW" ---
+document.getElementById('btnHighlightGarden').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
+  if (snap.val() === 'garden') ref(`events/${EVENT_ID}/hubs/current`).set(null); // Turn off
+  else ref(`events/${EVENT_ID}/hubs/current`).set('garden'); // Turn on
 });
 
-document.getElementById('btnSetTimer').addEventListener('click', () => {
-  const mins = Number(document.getElementById('inputTimerMinutes').value);
-  if(!mins || mins <= 0){ alert('Enter a number of minutes first.'); return; }
-  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + mins * 60000);
+document.getElementById('btnHighlightCourt').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
+  if (snap.val() === 'aita') ref(`events/${EVENT_ID}/hubs/current`).set(null);
+  else ref(`events/${EVENT_ID}/hubs/current`).set('aita');
 });
 
-document.getElementById('btnLockBouquet').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/hubs/garden`).set(false);
-  ref(`events/${EVENT_ID}/state`).set('lounge');
+// --- SYNC LOCK BUTTON LABEL/ICON TO CURRENT STATE ---
+const LOCK_ICON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
+function setLockButtonState(btn, isUnlocked, unlockedLabel, lockedLabel){
+  if(!btn) return;
+  btn.innerHTML = isUnlocked
+    ? `${LOCK_ICON_SVG} <span style="color:#ff4d5e;">${unlockedLabel}</span>`
+    : `${LOCK_ICON_SVG} <span>${lockedLabel}</span>`;
+}
+
+// --- UNLOCK WITH TIMER PROMPT & LOCK ---
+document.getElementById('btnToggleLockGarden').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/garden`).once('value');
+  if (snap.val()) {
+    // It's currently unlocked -> LOCK IT
+    ref(`events/${EVENT_ID}/hubs/garden`).set(false);
+    ref(`events/${EVENT_ID}/state`).set('lounge');
+    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null); // Kill timer
+    setLockButtonState(document.getElementById('btnToggleLockGarden'), false, '', 'Unlock & Set Timer');
+  } else {
+    // It's currently locked -> PROMPT TIMER & UNLOCK
+    const mins = prompt("How many minutes do you want to spend on The Bouquet?", "35");
+    if (mins !== null && mins.trim() !== "") {
+      ref(`events/${EVENT_ID}/hubs/garden`).set(true);
+      ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + parseFloat(mins) * 60000);
+      setLockButtonState(document.getElementById('btnToggleLockGarden'), true, 'Lock Activity', '');
+    }
+  }
 });
 
-document.getElementById('btnUnlockCourt').addEventListener('click', () => {
-  const round = String(Date.now());
-  ref(`events/${EVENT_ID}/aita/round`).set(round);
-  ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
-  ref(`events/${EVENT_ID}/hubs/aita`).set(true);
-  ref(`events/${EVENT_ID}/state`).set('aita');
+document.getElementById('btnToggleLockCourt').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/aita`).once('value');
+  if (snap.val()) {
+    // It's currently unlocked -> LOCK IT
+    ref(`events/${EVENT_ID}/hubs/aita`).set(false);
+    ref(`events/${EVENT_ID}/state`).set('lounge');
+    document.getElementById('aitaTally').style.display = 'none';
+    setLockButtonState(document.getElementById('btnToggleLockCourt'), false, '', 'Unlock & Set Timer');
+  } else {
+    // It's currently locked -> PROMPT TIMER & UNLOCK (timer is optional for the court)
+    const mins = prompt("How many minutes for Relationships Court?", "25");
+    if (mins !== null) {
+      const round = String(Date.now());
+      ref(`events/${EVENT_ID}/aita/round`).set(round);
+      ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
+      ref(`events/${EVENT_ID}/hubs/aita`).set(true);
+      ref(`events/${EVENT_ID}/state`).set('aita');
+      if(mins.trim() !== "") ref(`events/${EVENT_ID}/aitaTimerEnd`).set(Date.now() + parseFloat(mins) * 60000);
 
-  document.getElementById('aitaPicked').textContent = '';
-  document.getElementById('aitaTally').style.display = 'flex';
-  listenAitaTally(round);
-});
-
-document.getElementById('btnLockCourt').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/hubs/aita`).set(false);
-  ref(`events/${EVENT_ID}/state`).set('lounge');
-  document.getElementById('aitaTally').style.display = 'none';
-});
-
-document.getElementById('btnHighlightGarden').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/hubs/current`).set('garden');
-});
-document.getElementById('btnHighlightCourt').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/hubs/current`).set('aita');
+      document.getElementById('aitaPicked').textContent = '';
+      document.getElementById('aitaTally').style.display = 'flex';
+      listenAitaTally(round);
+      setLockButtonState(document.getElementById('btnToggleLockCourt'), true, 'Lock Court', '');
+    }
+  }
 });
 
 // RESET EVENT
