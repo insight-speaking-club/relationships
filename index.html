@@ -38,34 +38,14 @@
     opacity:.85;
   }
 
-  .sky{
-    position:fixed; inset:0;
-    background:
-      radial-gradient(120% 90% at 50% -10%, #4a1a63 0%, transparent 55%),
-      linear-gradient(200deg, #2a0e3f 0%, #401450 35%, #7c2f6e 68%, #b8447e 100%);
-    overflow:hidden;
-    z-index:0;
-  }
-  .moon {
-    position: absolute; top: 20px; right: 40px;
-    width: 28px; height: 28px; border-radius: 50%;
-    background: #ffefc2;
-    box-shadow: 0 0 25px 5px rgba(255, 239, 194, 0.5), 0 0 50px 15px rgba(255, 239, 194, 0.2), inset 8px -4px 0 0 #2a0e3f;
-    z-index: 1;
-  }
-  .stars{position:absolute; inset:0; background-image:
-      radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,.8), transparent),
-      radial-gradient(1.5px 1.5px at 70% 20%, rgba(255,255,255,.6), transparent),
-      radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,.7), transparent),
-      radial-gradient(1.5px 1.5px at 85% 60%, rgba(255,255,255,.5), transparent),
-      radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,.6), transparent),
-      radial-gradient(1.5px 1.5px at 10% 80%, rgba(255,255,255,.5), transparent);
-    background-repeat:repeat; background-size:280px 280px;
-    animation: star-flicker 5s ease-in-out infinite alternate;
-  }
-  @keyframes star-flicker {
-    0% { opacity: 0.4; }
-    100% { opacity: 0.9; }
+  .sky {
+    position: fixed;
+    inset: 0;
+    background-image: url('night-sky.jpg');
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    z-index: 0;
   }
   .lantern {
     position: absolute; bottom: -60px;
@@ -105,9 +85,16 @@
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     padding:32px 26px; text-align:center;
     opacity:0; visibility:hidden; pointer-events:none;
-    transition:opacity .7s ease;
+    /* Added scale and blur for video-like depth of field */
+    transform: scale(0.95);
+    filter: blur(5px);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), filter 0.8s ease;
   }
-  .screen.active{opacity:1; visibility:visible; pointer-events:auto;}
+  .screen.active{
+    opacity:1; visibility:visible; pointer-events:auto;
+    transform: scale(1);
+    filter: blur(0);
+  }
 
   @keyframes pulse-fade{0%,100%{opacity:.55;}50%{opacity:1;}}
 
@@ -152,28 +139,77 @@
   }
   @keyframes title-fade-in{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
 
-  /* --- CINEMATIC ENTRANCE MAGIC --- */
+  /* --- CINEMATIC HEART EXPLOSION --- */
   .entrance-magic {
     position: fixed; inset: 0; z-index: 99999;
-    background: var(--ink); /* Pitch black starting screen */
+    background: var(--ink);
     display: flex; align-items: center; justify-content: center;
-    animation: dissolve-magic 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards 1.2s;
+    /* The black screen fades out right after the explosion */
+    animation: fade-out-world 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 2.5s;
     pointer-events: none;
   }
-  .entrance-spark {
-    width: 4px; height: 4px; border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 0 0 rgba(242, 193, 78, 0);
-    animation: spark-ignite 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+
+  .heart-container {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    /* The camera pushes THROUGH the heart */
+    animation: camera-push-through 2.5s cubic-bezier(0.8, 0, 0.2, 1) forwards;
   }
 
-  @keyframes spark-ignite {
-    0% { transform: scale(0); opacity: 0; box-shadow: 0 0 0 0 rgba(242, 193, 78, 0); }
-    40% { transform: scale(1); opacity: 1; box-shadow: 0 0 40px 20px rgba(242, 193, 78, 0.9); }
-    100% { transform: scale(30); opacity: 0; box-shadow: 0 0 150px 80px rgba(242, 193, 78, 0); }
+  .cinematic-heart {
+    width: 60px; height: auto;
+    filter: drop-shadow(0 0 20px rgba(217, 46, 73, 0.8));
+    /* Beating, then exploding */
+    animation:
+      heartbeat 0.8s ease-in-out 2,
+      heart-explode 0.6s cubic-bezier(0.1, 1, 0.3, 1) forwards 1.8s;
   }
-  @keyframes dissolve-magic {
+
+  .shatter-ring {
+    position: absolute; width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid var(--rose);
+    opacity: 0;
+    /* The shockwave when it bursts */
+    animation: shockwave 0.8s cubic-bezier(0.1, 1, 0.3, 1) forwards 1.8s;
+  }
+
+  /* --- THE KEYFRAMES --- */
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(217,46,73,0.8)); }
+    50% { transform: scale(1.3); filter: drop-shadow(0 0 40px rgba(255,112,134,1)); }
+  }
+
+  @keyframes heart-explode {
+    0% { transform: scale(1.3); opacity: 1; }
+    40% { transform: scale(0.8); opacity: 1; } /* Anticipation squash */
+    100% { transform: scale(25); opacity: 0; filter: blur(10px); } /* Massive burst */
+  }
+
+  @keyframes shockwave {
+    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 100px 50px rgba(255,112,134,0.8); }
+    100% { transform: scale(60); opacity: 0; box-shadow: 0 0 0 0 rgba(255,112,134,0); }
+  }
+
+  @keyframes fade-out-world {
     to { opacity: 0; visibility: hidden; }
+  }
+
+  @keyframes camera-push-through {
+    0% { transform: scale(1); }
+    100% { transform: scale(1); }
+  }
+
+  /* --- THE CAMERA PULL-BACK ON THE WELCOME SCREEN --- */
+  #screen-welcome.active {
+    /* This makes the whole welcome screen look like it's zooming out into place
+       as the heart explosion clears */
+    animation: camera-settle 1.5s cubic-bezier(0.2, 1, 0.3, 1) forwards 2.2s;
+    opacity: 0;
+    transform: scale(1.2) translateY(20px);
+  }
+
+  @keyframes camera-settle {
+    to { opacity: 1; transform: scale(1) translateY(0); }
   }
 
   /* Staggered float-up for the welcome elements */
@@ -301,11 +337,40 @@
   }
   .dashboard-section {
     width: 100%; max-width: 420px; margin-bottom: 24px;
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background: rgba(18, 8, 33, 0.75); /* Much darker, less transparent */
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px); /* Heavy blur for the lanterns/sky */
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px; padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  }
+  /* 1. Reset the container to a clean, frosted glass box */
+  #activitiesSection {
+    position: relative;
+    padding-top: 60px;
+    border-radius: 24px;
+    border-top: none; /* Removing the flat top border */
+    background: rgba(18, 8, 33, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    margin-top: 30px; /* Gives the heart arc room to breathe */
+  }
+
+  /* 2. The Golden Heart-Shaped Arc */
+  #activitiesSection::before {
+    content: '';
+    position: absolute;
+    top: -25px; /* Pulls the arc up above the box */
+    left: 0;
+    width: 100%;
+    height: 80px;
+    /* This SVG draws the perfect top half of a golden heart */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50' preserveAspectRatio='none'%3E%3Cpath d='M0,50 C0,15 25,-15 50,35 C75,-15 100,15 100,50' fill='none' stroke='%23f2c14e' stroke-width='1.5' stroke-opacity='0.8'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    border: none;
+    border-radius: 0;
+    pointer-events: none;
   }
   .section-header {
     display: flex; justify-content: space-between; align-items: flex-end;
@@ -1227,8 +1292,6 @@
 </div>
 
 <div class="sky" id="sky">
-  <div class="stars"></div>
-  <div class="moon"></div>
 
   <!-- Floating Love Quotes -->
   <div class="affirmations-layer">
@@ -1259,9 +1322,21 @@
   </div>
 </div>
 
-<!-- MAGICAL ENTRANCE OVERLAY (Only shows for first-time users) -->
+<!-- CINEMATIC ENTRANCE SEQUENCE (Only shows for first-time users) -->
 <div id="entrance-magic" class="entrance-magic">
-  <div class="entrance-spark"></div>
+  <div class="heart-container">
+    <!-- Glowing SVG Heart -->
+    <svg class="cinematic-heart" viewBox="0 0 24 24" fill="rgba(217, 79, 140, 0.15)" stroke="url(#goldRoseGlow)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+      <defs>
+        <linearGradient id="goldRoseGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#f2c14e" /> <!-- Gold -->
+          <stop offset="100%" stop-color="#d94f8c" /> <!-- Rose -->
+        </linearGradient>
+      </defs>
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+    </svg>
+    <div class="shatter-ring"></div>
+  </div>
 </div>
 
 <!-- COMBINED WELCOME & CHECK-IN -->
