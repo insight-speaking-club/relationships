@@ -1113,10 +1113,16 @@
           <!-- HOST ONLY: Minimal Pairs Controls -->
           <div id="hostControlsGarden" class="host-inline-controls" style="display:none; justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightGarden">Toggle "Happening Now"</button>
-            <button class="host-inline-btn" id="btnToggleLockGarden" style="display:flex; align-items:center; gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>Unlock & Set Timer</span>
-            </button>
+            <div style="display:flex; gap:6px;">
+              <button class="host-inline-btn" id="btnTimerGarden" style="display:none; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                <span>Timer</span>
+              </button>
+              <button class="host-inline-btn" id="btnToggleLockGarden" style="display:flex; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Unlock</span>
+              </button>
+            </div>
           </div>
 
           <!-- Connector line -->
@@ -1137,10 +1143,16 @@
           <!-- HOST ONLY: Minimal Court Controls -->
           <div id="hostControlsAita" class="host-inline-controls" style="display:none; justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightCourt">Toggle "Happening Now"</button>
-            <button class="host-inline-btn" id="btnToggleLockCourt" style="display:flex; align-items:center; gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>Unlock & Set Timer</span>
-            </button>
+            <div style="display:flex; gap:6px;">
+              <button class="host-inline-btn" id="btnTimerCourt" style="display:none; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                <span>Timer</span>
+              </button>
+              <button class="host-inline-btn" id="btnToggleLockCourt" style="display:flex; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Unlock</span>
+              </button>
+            </div>
           </div>
 
           <!-- HOST ONLY: AITA Tally (Displays during court) -->
@@ -1312,7 +1324,22 @@ const QUESTIONS = [
   "What helps you feel safe enough to be vulnerable with someone?",
   "Describe the difference between being alone and being lonely, for you.",
   "What's one thing you're still learning about connection?",
-  "If tonight's conversation could plant one seed, what would you want it to be?"
+  "If tonight's conversation could plant one seed, what would you want it to be?",
+  "What would you do if a partner asked you to keep your relationship hidden from their family, even for a while?",
+  "A friend admits they're falling for someone but too scared to say it out loud — what would you tell them?",
+  "Imagine a friend says their partner reads their messages \"just to check in.\" What advice would you give them?",
+  "What would you do if you realized you'd been softening yourself just to feel safer around certain people?",
+  "A friend is thinking about coming out to their parents and asks what you'd want them to know first — what do you say?",
+  "Name a green flag in a partner that made you trust them faster than you expected to.",
+  "What's a red flag in a friend that's easy to excuse as \"they're just like that\"?",
+  "What's a green flag in a friendship that has nothing to do with how much fun you have together?",
+  "Name a red flag in a partner that shows up in how they talk about their exes.",
+  "A friend says they feel more like themselves around strangers than around family — what would you say to them?",
+  "If a friend asked how to tell the difference between being cautious and being closed off, what would you say?",
+  "What's one thing you'd want a new partner to understand about your community before meeting them?",
+  "Imagine someone tells you they stayed in a relationship out of fear of being alone — what would you say to them?",
+  "Name a green flag in someone that shows up in how they treat people who can't do anything for them.",
+  "What's a red flag that can feel like love at first but is actually control?"
 ];
 
 const CLUSTERS = [
@@ -1569,8 +1596,15 @@ function listenHubs() {
       cardAita.classList.toggle('is-current', hubs.current === 'aita');
     }
 
-    setLockButtonState(document.getElementById('btnToggleLockGarden'), !!hubs.garden, 'Lock Activity', 'Unlock & Set Timer');
-    setLockButtonState(document.getElementById('btnToggleLockCourt'), !!hubs.aita, 'Lock Court', 'Unlock & Set Timer');
+    setLockButtonState(document.getElementById('btnToggleLockGarden'), !!hubs.garden, 'Lock', 'Unlock');
+    setLockButtonState(document.getElementById('btnToggleLockCourt'), !!hubs.aita, 'Lock', 'Unlock');
+
+    // The Timer button only makes sense once a section is unlocked —
+    // setting a timer is always optional, so it's just a standalone extra.
+    const timerBtnGarden = document.getElementById('btnTimerGarden');
+    if(timerBtnGarden) timerBtnGarden.style.display = hubs.garden ? 'flex' : 'none';
+    const timerBtnCourt = document.getElementById('btnTimerCourt');
+    if(timerBtnCourt) timerBtnCourt.style.display = hubs.aita ? 'flex' : 'none';
   });
 }
 
@@ -2063,23 +2097,17 @@ function setLockButtonState(btn, isUnlocked, unlockedLabel, lockedLabel){
     : `${LOCK_ICON_SVG} <span>${lockedLabel}</span>`;
 }
 
-// --- UNLOCK WITH TIMER PROMPT & LOCK ---
+// --- UNLOCK / LOCK (instant, no prompts — timer is a separate, optional action) ---
 document.getElementById('btnToggleLockGarden').addEventListener('click', async () => {
   const snap = await ref(`events/${EVENT_ID}/hubs/garden`).once('value');
   if (snap.val()) {
     // It's currently unlocked -> LOCK IT
     ref(`events/${EVENT_ID}/hubs/garden`).set(false);
     ref(`events/${EVENT_ID}/state`).set('lounge');
-    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null); // Kill timer
-    setLockButtonState(document.getElementById('btnToggleLockGarden'), false, '', 'Unlock & Set Timer');
+    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null); // Kill any timer
   } else {
-    // It's currently locked -> PROMPT TIMER & UNLOCK
-    const mins = prompt("How many minutes do you want to spend on The Bouquet?", "35");
-    if (mins !== null && mins.trim() !== "") {
-      ref(`events/${EVENT_ID}/hubs/garden`).set(true);
-      ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + parseFloat(mins) * 60000);
-      setLockButtonState(document.getElementById('btnToggleLockGarden'), true, 'Lock Activity', '');
-    }
+    // It's currently locked -> UNLOCK IT, instantly, no timer required
+    ref(`events/${EVENT_ID}/hubs/garden`).set(true);
   }
 });
 
@@ -2089,24 +2117,41 @@ document.getElementById('btnToggleLockCourt').addEventListener('click', async ()
     // It's currently unlocked -> LOCK IT
     ref(`events/${EVENT_ID}/hubs/aita`).set(false);
     ref(`events/${EVENT_ID}/state`).set('lounge');
+    ref(`events/${EVENT_ID}/aitaTimerEnd`).set(null); // Kill any timer
     document.getElementById('aitaTally').style.display = 'none';
-    setLockButtonState(document.getElementById('btnToggleLockCourt'), false, '', 'Unlock & Set Timer');
   } else {
-    // It's currently locked -> PROMPT TIMER & UNLOCK (timer is optional for the court)
-    const mins = prompt("How many minutes for Relationships Court?", "25");
-    if (mins !== null) {
-      const round = String(Date.now());
-      ref(`events/${EVENT_ID}/aita/round`).set(round);
-      ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
-      ref(`events/${EVENT_ID}/hubs/aita`).set(true);
-      ref(`events/${EVENT_ID}/state`).set('aita');
-      if(mins.trim() !== "") ref(`events/${EVENT_ID}/aitaTimerEnd`).set(Date.now() + parseFloat(mins) * 60000);
+    // It's currently locked -> UNLOCK IT, instantly, no timer required
+    const round = String(Date.now());
+    ref(`events/${EVENT_ID}/aita/round`).set(round);
+    ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
+    ref(`events/${EVENT_ID}/hubs/aita`).set(true);
+    ref(`events/${EVENT_ID}/state`).set('aita');
 
-      document.getElementById('aitaPicked').textContent = '';
-      document.getElementById('aitaTally').style.display = 'flex';
-      listenAitaTally(round);
-      setLockButtonState(document.getElementById('btnToggleLockCourt'), true, 'Lock Court', '');
-    }
+    document.getElementById('aitaPicked').textContent = '';
+    document.getElementById('aitaTally').style.display = 'flex';
+    listenAitaTally(round);
+  }
+});
+
+// --- OPTIONAL TIMER (set it right after unlocking, later, or never — your call) ---
+// Clicking prompts for minutes; leaving it blank or hitting Cancel clears/skips the timer.
+document.getElementById('btnTimerGarden').addEventListener('click', () => {
+  const mins = prompt("Set a timer for The Bouquet (in minutes). Leave blank to clear/skip.", "35");
+  if (mins === null) return; // Cancelled — leave everything as-is
+  if (mins.trim() === "") {
+    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null); // Cleared
+  } else {
+    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + parseFloat(mins) * 60000);
+  }
+});
+
+document.getElementById('btnTimerCourt').addEventListener('click', () => {
+  const mins = prompt("Set a timer for Relationships Court (in minutes). Leave blank to clear/skip.", "25");
+  if (mins === null) return;
+  if (mins.trim() === "") {
+    ref(`events/${EVENT_ID}/aitaTimerEnd`).set(null);
+  } else {
+    ref(`events/${EVENT_ID}/aitaTimerEnd`).set(Date.now() + parseFloat(mins) * 60000);
   }
 });
 
@@ -2119,6 +2164,7 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
   ref(`events/${EVENT_ID}/aita/round`).set(null);
   ref(`events/${EVENT_ID}/aita/rounds`).set(null);
   ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
+  ref(`events/${EVENT_ID}/aitaTimerEnd`).set(null);
   document.getElementById('aitaTally').style.display='none';
   document.getElementById('aitaPicked').textContent='';
   ref(`events/${EVENT_ID}/state`).set('lounge');
