@@ -343,13 +343,22 @@
     width:100%; max-width:420px; margin:10px auto 6px;
     display:grid; grid-template-columns:1fr; gap:12px;
   }
-  .activity-connector{
-    display:flex; justify-content:center; align-items:center;
-    height:22px; margin:-6px 0;
+  /* --- ROADMAP CONNECTORS --- */
+  .activity-connector {
+    position: relative;
+    display: flex; justify-content: center; align-items: center;
+    height: 32px; margin: -6px 0;
   }
-  .activity-connector .connector-line{
-    width:2px; height:100%; border-radius:2px;
-    background:linear-gradient(180deg, rgba(242,193,78,.7), rgba(242,193,78,.15));
+  .activity-connector .connector-line {
+    width: 2px; height: 100%; border-radius: 2px;
+    background: var(--gold); opacity: 0.4;
+  }
+  .activity-connector::after {
+    content: ''; position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--ink); border: 2px solid var(--gold);
+    box-shadow: 0 0 10px rgba(242, 193, 78, 0.4);
   }
   .hub-card{
     display:flex; align-items:center; gap:14px; text-align:left;
@@ -414,14 +423,17 @@
     position:absolute; inset:0; bottom:auto; height:50px;
     background:linear-gradient(180deg, rgba(18,8,33,0), rgba(15,10,25,.3));
   }
-  .ground-grass{
-    position:absolute; left:0; right:0; bottom:0; height:120px;
-    background:linear-gradient(180deg, #2d5f3c 0%, #20492c 55%, #163420 100%); pointer-events:auto;
+  /* --- MIDNIGHT HIGHWAY --- */
+  .ground-grass {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 120px;
+    background: #1a1a24; /* Dark asphalt */
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    pointer-events: auto;
   }
-  .ground-grass::after{
-    content:''; position:absolute; inset:0; top:auto; height:16px;
-    background-image:repeating-linear-gradient(100deg, rgba(90,180,110,.4) 0 2px, transparent 2px 8px);
-    opacity:.5;
+  .ground-grass::after {
+    content: ''; position: absolute; inset: 0; top: 40px; height: 4px;
+    background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.6) 0, rgba(255, 255, 255, 0.6) 30px, transparent 30px, transparent 70px);
+    opacity: 0.8;
   }
   .lounge-game{
     position:absolute; left:0; right:0; bottom:0; height:190px; z-index:11;
@@ -511,7 +523,7 @@
     animation: wisp-pulse 1s ease-in-out infinite alternate;
   }
   @keyframes wisp-pulse { from { transform: scale(0.9); } to { transform: scale(1.1); } }
-  /* --- SASHA'S FASHION NIGHTMARES --- */
+  /* --- PINK CAR HIGHWAY OBSTACLES --- */
   .obs-basic {
     position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
     filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none;
@@ -1024,9 +1036,12 @@
     filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none;
   }
   .obs-iconic {
-    position: absolute; bottom: 52px; font-size: 28px; z-index: 2;
+    position: absolute; bottom: 52px; width: 28px; height: 28px; z-index: 2;
     filter: drop-shadow(0 0 10px rgba(242,193,78,.8)); pointer-events: none;
     animation: float-icon 2s ease-in-out infinite;
+  }
+  .obs-iconic img {
+    width: 100%; height: 100%; object-fit: contain; display: block;
   }
   @keyframes float-icon { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
 
@@ -1074,13 +1089,11 @@
   <div class="stars"></div>
   <div class="moon"></div>
 
-  <!-- Floating Affirmations (Now Full Screen) -->
+  <!-- Floating Love Quotes -->
   <div class="affirmations-layer">
-    <div class="affirmation" style="left: 10%; animation-delay: 0s; font-size: 20px;">her hand found mine before the streetlights did</div>
-    <div class="affirmation" style="left: 60%; animation-delay: 6s; font-size: 24px;">we stopped whispering this love out loud</div>
-    <div class="affirmation" style="left: 20%; animation-delay: 12s; font-size: 18px;">he said "mine" like a quiet vow</div>
-    <div class="affirmation" style="left: 70%; animation-delay: 18s; font-size: 22px;">no one taught us this dance, we made it ours</div>
-    <div class="affirmation" style="left: 35%; animation-delay: 24s; font-size: 20px;">two names, one rhythm</div>
+    <div class="affirmation" style="left: 15%; animation-delay: 0s; font-size: 20px;">"Love does not begin and end the way we seem to think it does." — James Baldwin</div>
+    <div class="affirmation" style="left: 55%; animation-delay: 9s; font-size: 20px;">"Caring for myself is not self-indulgence, it is self-preservation." — Audre Lorde</div>
+    <div class="affirmation" style="left: 25%; animation-delay: 19s; font-size: 20px;">"I am reduced to a thing that wants Virginia." — Vita Sackville-West</div>
   </div>
 </div>
 <div class="glow-ring" id="glowRing"></div>
@@ -1107,7 +1120,9 @@
 <div class="screen" id="screen-welcome">
   <div class="eyebrow stagger-1">RELΛTIONSHIPS · Speaking Club</div>
 
-  <div class="host-frame stagger-2" style="margin-top: 24px;"><div class="host-frame-inner">S</div></div>
+  <div class="host-frame stagger-2" style="margin-top: 24px; padding: 3px; background: conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));">
+    <img src="sasha.png" alt="Sasha" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 2px solid var(--ink);">
+  </div>
   <h1 class="display stagger-2" style="font-size:34px; margin-bottom: 8px;">Welcome to the club.</h1>
 
   <div class="greeting-bubble stagger-3" style="margin-bottom: 24px; text-align: center;">
@@ -1260,15 +1275,15 @@
         </div>
 
         <div class="lounge-game" id="loungeGame">
-          <div class="game-instructions">jump the basics • catch the bows</div>
+          <div class="game-instructions">jump the pets • run over the red flags</div>
           <div class="game-score" id="gameScore">0</div>
           <div class="game-track" id="gameTrack">
             <div class="game-bunny" id="gameBunny">
-              <img src="sasha-doll.png" alt="Sasha" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <img src="sasha-car.png" alt="Sasha in Car" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
               <span class="game-wisp-fallback"></span>
             </div>
             <div class="game-overlay" id="gameOverlay">
-              <div>Help Sasha jump over basic T-shirts and jeans and catch cute pink bows!</div>
+              <div>Help Sasha jump over the bunnies and cats to keep them safe, and run over the red flags!</div>
               <button class="btn" id="gameStartBtn">Play</button>
             </div>
           </div>
@@ -1508,7 +1523,7 @@ function enterLounge(){
 let tourIdx = 0;
 const TOUR_STEPS = [
   { selector: '#activitiesSection', title: 'Welcome!', desc: 'First, we wait for everyone to arrive and settle. Keep an eye on today\'s activities here.', pad: 10 },
-  { selector: '#hubCardGarden', title: 'The Bouquet', desc: 'Find a seat with someone new. This card will unlock and glow when it is time to open the bouquet.', pad: 8 },
+  { selector: '#hubCardGarden', title: 'The Bouquet', desc: 'The host will pair you with someone later. This card will unlock and glow when it is time to open the bouquet.', pad: 8 },
   { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'Afterwards, we will all regroup here to participate in the Relationships Court. Get ready to cast your verdicts.', pad: 8 },
   { selector: '#hubCardCloser', title: 'Closing Ritual', desc: 'At the end of the night, we will build a shared digital archive of the things we love before we say goodbye.', pad: 8 }
 ];
@@ -1810,14 +1825,17 @@ function startBunnyGame(){
     if(parallaxMid) parallaxMid.style.backgroundPosition = `${bg.scrollMid}px bottom`;
     if(parallaxFront) parallaxFront.style.backgroundPosition = `${bg.scrollFront}px bottom`;
 
-    // SPAWN LOGIC (Bows vs Basics)
-    const BAD_ITEMS = ['👕', '👖'];
-    const GOOD_ITEMS = ['🎀'];
+    // SPAWN LOGIC (Protect the pets, run over the red flags)
+    const BAD_ITEMS = ['🐈', '🐇']; // Pets: Jump over them so you don't crash!
     if(bg.frame >= bg.nextSpawn){
-      const isBad = Math.random() < 0.6; // 60% bad, 40% good
+      const isBad = Math.random() < 0.6; // 60% pet, 40% red flag
       const el = document.createElement('div');
       el.className = isBad ? 'obs-basic' : 'obs-iconic';
-      el.textContent = isBad ? BAD_ITEMS[Math.floor(Math.random()*BAD_ITEMS.length)] : GOOD_ITEMS[Math.floor(Math.random()*GOOD_ITEMS.length)];
+      if(isBad){
+        el.textContent = BAD_ITEMS[Math.floor(Math.random()*BAD_ITEMS.length)];
+      } else {
+        el.innerHTML = '<img src="red-flag.png" alt="red flag">';
+      }
       el.dataset.type = isBad ? 'bad' : 'good';
 
       const w = track.clientWidth;
@@ -1842,10 +1860,10 @@ function startBunnyGame(){
 
       if (overlapX && isGrounded) {
         if (o.el.dataset.type === 'bad') {
-          // Hit a basic t-shirt = LOSE
+          // Crashed into a pet = LOSE
           gameOver(); return;
         } else {
-          // Collected an icon = +50 POINTS!
+          // Ran over a red flag/clown/trash = +50 POINTS!
           bg.score += 50;
           o.el.remove();
           bg.obstacles.splice(idx, 1);
@@ -1854,10 +1872,10 @@ function startBunnyGame(){
       } else if (o.x + 28 < bunnyLeft) {
         // Passed the item!
         if (o.el.dataset.type === 'good') {
-          // Jumped over a good item = LOSE
+          // Missed a hater target = LOSE
           gameOver(); return;
         } else {
-          // Jumped over a bad item successfully
+          // Jumped over a pet safely
           o.el.remove();
           bg.obstacles.splice(idx, 1);
           continue;
