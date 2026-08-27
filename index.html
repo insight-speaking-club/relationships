@@ -868,55 +868,77 @@
     transform: var(--base-transform) translateY(-80px) scale(1.15) !important;
   }
 
-  /* --- THE ELEGANT FOLDED WRAP --- */
+  /* --- THE ELEGANT FOLDED WRAP (dark paper, like a bouquet shop wrap) --- */
   .bouquet-wrap-back {
     position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
     width: 240px; height: 280px;
-    background: rgba(244, 233, 255, 0.1); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    background: linear-gradient(160deg, #2b2733, #14111a 70%);
     clip-path: polygon(0 0, 100% 0, 75% 100%, 25% 100%);
-    z-index: 0; border: 1px solid rgba(255,255,255,0.2);
+    z-index: 0; border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
   }
   .bouquet-wrap-left-fold {
     position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
     width: 240px; height: 160px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05));
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(135deg, #3a3444, #17141d);
     clip-path: polygon(0 0, 65% 100%, 25% 100%);
-    z-index: 90; border-right: 1px solid rgba(255,255,255,0.4);
+    z-index: 90; border-right: 1px solid rgba(255,255,255,0.12);
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.6);
   }
   .bouquet-wrap-right-fold {
     position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
     width: 240px; height: 160px;
-    background: linear-gradient(225deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    background: linear-gradient(225deg, #423b4d, #1a1620);
     clip-path: polygon(100% 0, 75% 100%, 35% 100%);
-    z-index: 91; border-left: 1px solid rgba(255,255,255,0.5);
+    z-index: 91; border-left: 1px solid rgba(255,255,255,0.16);
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.6);
   }
 
-  /* --- THE SILK BOW --- */
+  /* --- THE RED SATIN BOW (classic ribbon-wing shape) --- */
   .bouquet-ribbon-base {
     position: absolute; bottom: 135px; left: 50%; transform: translateX(-50%);
-    width: 70px; height: 100px; z-index: 95;
+    width: 90px; height: 120px; z-index: 95;
   }
+
+  /* Wings: wide satin flags that taper to a point at the knot, pinched at the waist */
   .ribbon-loop {
-    position: absolute; top: 0; width: 45px; height: 35px;
-    background: var(--gold); border-radius: 40px;
-    box-shadow: inset 0 4px 10px rgba(255,255,255,0.5), 0 4px 10px rgba(0,0,0,0.3);
+    position: absolute; top: -6px; width: 66px; height: 82px;
+    background: linear-gradient(135deg, #ff7086 0%, #e0334f 38%, #9c1730 72%, #6e0e1f 100%);
   }
-  .ribbon-loop.left { left: -10px; transform: rotate(-15deg); }
-  .ribbon-loop.right { right: -10px; transform: rotate(15deg); }
+  .ribbon-loop::after {
+    content: ''; position: absolute; top: 12%; width: 34%; height: 50%;
+    background: linear-gradient(160deg, rgba(255,255,255,0.55), rgba(255,255,255,0) 70%);
+    filter: blur(1.5px); pointer-events: none;
+  }
+  .ribbon-loop.left {
+    left: -40px; transform: rotate(-6deg);
+    clip-path: polygon(100% 48%, 78% 36%, 42% 0%, 0% 6%, 0% 94%, 42% 100%, 78% 64%);
+  }
+  .ribbon-loop.left::after { left: 40%; }
+  .ribbon-loop.right {
+    right: -40px; transform: rotate(6deg);
+    clip-path: polygon(0% 48%, 22% 36%, 58% 0%, 100% 6%, 100% 94%, 58% 100%, 22% 64%);
+  }
+  .ribbon-loop.right::after { left: 26%; }
+
+  /* Center knot, wrapped tight over the wing points */
   .ribbon-knot {
-    position: absolute; top: 8px; left: 22px; width: 26px; height: 26px;
-    background: #ffdf94; border-radius: 8px; z-index: 10;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    position: absolute; top: 32px; left: 30px; width: 30px; height: 26px;
+    background: linear-gradient(160deg, #f0475f, #d92e49 45%, #8f1428 100%);
+    border-radius: 6px; z-index: 10;
+    box-shadow: inset 0 3px 6px rgba(255,255,255,0.35), inset 0 -4px 8px rgba(0,0,0,0.4), 0 4px 15px rgba(0,0,0,0.5);
   }
+
+  /* Long tails, tapering to a single sharp point like real satin ribbon */
   .ribbon-tail {
-    position: absolute; top: 20px; width: 18px; height: 75px;
-    background: linear-gradient(180deg, var(--gold), #c99818);
-    border-radius: 0 0 10px 10px; z-index: 5;
+    position: absolute; top: 48px; width: 26px; height: 92px;
+    background: linear-gradient(160deg, #f0475f 0%, #c92844 45%, #6e0e1f 100%);
+    clip-path: polygon(18% 0%, 82% 0%, 55% 100%, 45% 100%);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    z-index: 5;
   }
-  .ribbon-tail.left { left: 8px; transform: rotate(15deg); }
-  .ribbon-tail.right { right: 8px; transform: rotate(-15deg); }
+  .ribbon-tail.left { left: 6px; transform: rotate(14deg); }
+  .ribbon-tail.right { right: 6px; transform: rotate(-14deg); }
 
   #bouquetFlowers { position: absolute; inset: 0; z-index: 10; }
 
@@ -1029,6 +1051,63 @@
   .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
   .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
   .host-meta{font-size:12px; color:var(--dim);}
+
+  /* ---------- host: send a message ---------- */
+  .msg-composer{ margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,.1); }
+  .msg-target-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .msg-chip{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.04em;
+    padding:8px 14px; border-radius:999px; border:1px solid rgba(244,233,255,.25);
+    background:rgba(255,255,255,.05); color:var(--mist); cursor:pointer;
+    transition:background .2s ease, color .2s ease, border-color .2s ease; white-space:nowrap;
+  }
+  .msg-chip.active{ background:var(--gold); color:var(--ink); border-color:var(--gold); font-weight:600; }
+  .msg-row{ display:flex; gap:8px; margin-top:12px; }
+  .msg-row input{
+    flex:1; padding:12px 14px; border-radius:12px; border:1px solid rgba(244,233,255,.25);
+    background:rgba(255,255,255,.06); color:var(--mist); font-family:'Jost',sans-serif; font-size:14px; outline:none;
+  }
+  .msg-row input:focus{ border-color:var(--gold); background:rgba(255,255,255,.1); }
+  .msg-send-btn{
+    background:var(--gold); color:var(--ink); border:none; border-radius:12px; padding:0 18px;
+    font-family:'Jost',sans-serif; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap;
+  }
+  .msg-send-btn:active{ transform:scale(.95); }
+
+  /* ---------- pop-over-everything iMessage-style notification ---------- */
+  #toastStack{
+    position:fixed; top:max(14px, env(safe-area-inset-top)); left:50%; transform:translateX(-50%);
+    width:calc(100% - 24px); max-width:400px; z-index:999999;
+    display:flex; flex-direction:column; gap:8px; pointer-events:none;
+  }
+  .imessage-toast{
+    pointer-events:auto; cursor:pointer;
+    background:rgba(30,20,45,.72); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+    border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:12px 14px;
+    box-shadow:0 14px 40px rgba(0,0,0,.45);
+    opacity:0; transform:translateY(-130%) scale(.96);
+    transition:transform .45s cubic-bezier(.2,1.3,.3,1), opacity .3s ease;
+  }
+  .imessage-toast.show{ opacity:1; transform:translateY(0) scale(1); }
+  .toast-top{ display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+  .toast-icon{ width:16px; height:16px; border-radius:5px; object-fit:cover; }
+  .toast-appname{
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--dim);
+  }
+  .toast-time{ font-family:'Space Mono',monospace; font-size:10px; color:var(--dim); margin-left:auto; }
+  .toast-title{ font-family:'Jost',sans-serif; font-weight:600; font-size:14px; color:var(--mist); margin-bottom:2px; }
+  .toast-body{
+    font-family:'Jost',sans-serif; font-size:13.5px; line-height:1.4; color:var(--mist);
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  #btnEnableAlerts{
+    position:fixed; top:14px; left:14px; z-index:80;
+    background:rgba(255,255,255,.08); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.15); color:var(--mist);
+    padding:8px 14px; border-radius:999px; font-family:'Space Mono',monospace; font-size:11px;
+    letter-spacing:.04em; cursor:pointer;
+  }
 
   .host-section-label{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
@@ -1164,6 +1243,10 @@
 <div class="glow-ring" id="glowRing"></div>
 <div id="offlineBadge" class="offline-badge" style="display:none;">preview mode · connect firebase for live sync</div>
 
+<!-- Messages pop in here, over absolutely everything -->
+<div id="toastStack"></div>
+<button type="button" id="btnEnableAlerts" style="display:none;">🔔 Enable alerts</button>
+
 <!-- Timer Overlays -->
 <!-- Elegant, small Garden Timer -->
 <div id="timerWarning" style="position:fixed; top:20px; right:20px; z-index:90; background:rgba(255,255,255,0.08); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); color:var(--gold); padding:8px 16px; border-radius:999px; font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.05em; opacity:0; pointer-events:none; transition: opacity 0.5s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">00:00</div>
@@ -1219,6 +1302,17 @@
       <div id="hostRosterContainer" class="dashboard-section" style="display:none; border-color: var(--gold);">
         <div class="section-header"><div class="eyebrow" style="color:var(--gold);">Host Roster</div></div>
         <div class="host-list" id="hostList" style="max-height: 200px; overflow-y: auto;"></div>
+
+        <div class="msg-composer">
+          <div class="eyebrow" style="color:var(--gold); margin-bottom:10px; text-align:left;">Send a Message</div>
+          <div class="msg-target-chips" id="msgTargetChips">
+            <button type="button" class="msg-chip active" data-target="all" onclick="selectMsgTarget('all', this)">Everyone</button>
+          </div>
+          <div class="msg-row">
+            <input type="text" id="msgTextInput" placeholder="Pops on their screen instantly..." maxlength="140">
+            <button type="button" class="msg-send-btn" id="btnSendMsg">Send</button>
+          </div>
+        </div>
       </div>
 
       <!-- TODAY'S ACTIVITIES -->
@@ -1495,11 +1589,11 @@ const QUESTIONS = [
 ];
 
 const CLUSTERS = [
-  ['#ff9ee6','#ffd76e'],   /* candy pink - honey gold */
-  ['#9ad8ff','#c9a4ff'],   /* sky blue - lavender */
-  ['#ff8fae','#8effc1'],   /* rose - mint */
-  ['#ffe66d','#ff6fae'],   /* sunshine - fuchsia */
-  ['#c9a4ff','#6ee7ff']    /* amethyst - aqua */
+  ['#d94f8c','#f2c14e'],   /* rose - gold */
+  ['#c9a4ff','#f2c14e'],   /* amethyst - gold */
+  ['#d94f8c','#e8b4d8'],   /* rose - blush */
+  ['#f2c14e','#e8b4d8'],   /* gold - blush */
+  ['#c9a4ff','#d94f8c']    /* amethyst - rose */
 ];
 const FIREFLY_COLORS = ['#fff4c9','#ffc9f0','#c9f0ff','#e6c9ff','#c9ffdf'];
 function seeded(n){ const x = Math.sin(n*12.9898)*43758.5453; return x - Math.floor(x); }
@@ -1581,6 +1675,7 @@ function enterLounge(){
   listenRoster();
   listenPhase();
   listenHubs();
+  listenMessages();
   startBunnyGame();
 
   // Auto-start the spotlight tour the first time a guest arrives
@@ -2266,7 +2361,151 @@ function renderHostList(guests){
     `;
     list.appendChild(row);
   });
+  renderMsgChips(guests);
 }
+
+/* ---------- Host: Send a Message (pops as a banner on guest screens) ---------- */
+let msgTarget = 'all';
+window.selectMsgTarget = function(target, el){
+  msgTarget = target;
+  document.querySelectorAll('.msg-chip').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+};
+
+function renderMsgChips(guests){
+  const wrap = document.getElementById('msgTargetChips');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+
+  const everyone = document.createElement('button');
+  everyone.type = 'button';
+  everyone.className = 'msg-chip' + (msgTarget === 'all' ? ' active' : '');
+  everyone.dataset.target = 'all';
+  everyone.textContent = 'Everyone';
+  everyone.onclick = () => selectMsgTarget('all', everyone);
+  wrap.appendChild(everyone);
+
+  let targetStillExists = msgTarget === 'all';
+  guests.forEach(g => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'msg-chip' + (msgTarget === g.id ? ' active' : '');
+    chip.dataset.target = g.id;
+    chip.textContent = g.name;
+    chip.onclick = () => selectMsgTarget(g.id, chip);
+    wrap.appendChild(chip);
+    if(msgTarget === g.id) targetStillExists = true;
+  });
+
+  // If the guest we had targeted left the event, fall back to Everyone
+  if(!targetStillExists){
+    msgTarget = 'all';
+    everyone.classList.add('active');
+  }
+}
+
+function sendHostMessage(){
+  const input = document.getElementById('msgTextInput');
+  const text = input.value.trim();
+  if(!text) return;
+
+  const id = 'm_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+  const msg = {
+    text,
+    target: msgTarget,
+    from: (me && me.name) || 'Sasha',
+    avatar: (me && me.avatar) || '👑',
+    senderId: me && me.id,
+    ts: Date.now()
+  };
+  ref(`events/${EVENT_ID}/messages/${id}`).set(msg);
+
+  input.value = '';
+  const btn = document.getElementById('btnSendMsg');
+  if(btn){
+    const original = btn.textContent;
+    btn.textContent = 'Sent ✓';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1000);
+  }
+}
+document.getElementById('btnSendMsg').addEventListener('click', sendHostMessage);
+document.getElementById('msgTextInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ e.preventDefault(); sendHostMessage(); }
+});
+
+/* ---------- Everyone: receive messages & pop them over everything ---------- */
+let msgListenStarted = false;
+const shownMsgIds = new Set();
+function listenMessages(){
+  if(msgListenStarted || !me) return;
+  msgListenStarted = true;
+  const startCursor = Date.now(); // ignore anything sent before we started listening
+  ref(`events/${EVENT_ID}/messages`).on('value', snap => {
+    const all = snap.val() || {};
+    Object.entries(all).forEach(([id, msg]) => {
+      if(!msg || shownMsgIds.has(id)) return;
+      if(!msg.ts || msg.ts <= startCursor) return;
+      if(msg.senderId === me.id) return; // don't pop your own broadcast back at you
+      if(msg.target !== 'all' && msg.target !== me.id) return; // not addressed to us
+      shownMsgIds.add(id);
+      showMessageToast(msg);
+    });
+  });
+}
+
+function showMessageToast(msg){
+  const stack = document.getElementById('toastStack');
+  if(!stack) return;
+
+  const el = document.createElement('div');
+  el.className = 'imessage-toast';
+  el.innerHTML = `
+    <div class="toast-top">
+      <img class="toast-icon" src="sasha.png" alt="">
+      <span class="toast-appname">Speaking Club</span>
+      <span class="toast-time">now</span>
+    </div>
+    <div class="toast-title">${escapeHtml(msg.from || 'Sasha')}</div>
+    <div class="toast-body">${escapeHtml(msg.text || '')}</div>
+  `;
+  stack.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  if(navigator.vibrate) navigator.vibrate(60);
+
+  // If a browser tab is backgrounded and alerts were enabled, also fire a real OS notification.
+  try{
+    if(document.hidden && window.Notification && Notification.permission === 'granted'){
+      new Notification(msg.from || 'Speaking Club', { body: msg.text || '', icon: 'sasha.png' });
+    }
+  }catch(e){ /* ignore */ }
+
+  let dismissed = false;
+  const dismiss = () => {
+    if(dismissed) return;
+    dismissed = true;
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 400);
+  };
+  el.addEventListener('click', dismiss);
+  setTimeout(dismiss, 5000);
+}
+
+/* ---------- Optional: real OS-level notifications when the tab is backgrounded ---------- */
+(function setupAlertsButton(){
+  const btn = document.getElementById('btnEnableAlerts');
+  if(!btn || !window.Notification) return;
+  function refresh(){
+    if(Notification.permission === 'granted'){ btn.style.display = 'none'; return; }
+    if(Notification.permission === 'denied'){ btn.style.display = 'none'; return; }
+    btn.style.display = 'block';
+  }
+  btn.addEventListener('click', async () => {
+    try{ await Notification.requestPermission(); }catch(e){}
+    refresh();
+  });
+  window.addEventListener('load', () => setTimeout(refresh, 800));
+})();
 
 /* ---------- Host Controls: Inline Per-Activity Controls ---------- */
 
