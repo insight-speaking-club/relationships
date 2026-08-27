@@ -56,19 +56,37 @@
     background-repeat:repeat; background-size:280px 280px;
     opacity:.8;
   }
-  .lantern{
-    position:absolute; bottom:-40px;
-    width:26px; height:34px; border-radius:50% 50% 42% 42%;
-    background:radial-gradient(circle at 50% 35%, #ffe6a8, var(--gold) 60%, rgba(242,193,78,0) 75%);
-    box-shadow:0 0 18px 6px rgba(242,193,78,.55);
-    opacity:0; animation:float-up linear infinite;
+  .lantern {
+    position: absolute; bottom: -60px;
+    width: 26px; height: 38px;
+    background: rgba(255, 215, 120, 0.7);
+    border-radius: 8px 8px 12px 12px;
+    box-shadow:
+      inset 0 -12px 15px rgba(255, 80, 0, 0.8), /* glowing inner fire */
+      0 0 20px 6px rgba(242, 193, 78, 0.4); /* ambient outer glow */
+    opacity: 0;
+    animation: float-up-sway linear infinite;
   }
-  .lantern::after{content:'';position:absolute; top:-8px; left:50%; transform:translateX(-50%); width:2px; height:8px; background:rgba(255,230,168,.6);}
-  @keyframes float-up{
-    0%{opacity:0; transform:translateY(0) translateX(0);}
-    8%{opacity:.85;}
-    92%{opacity:.6;}
-    100%{opacity:0; transform:translateY(-115vh) translateX(18px);}
+  /* The dark wire opening at the bottom */
+  .lantern::before {
+    content: ''; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
+    width: 14px; height: 6px; border-radius: 50%;
+    background: rgba(255, 100, 0, 0.9);
+    box-shadow: 0 0 8px rgba(255, 80, 0, 0.9);
+  }
+  /* The delicate wire handle at the top */
+  .lantern::after {
+    content: ''; position: absolute; top: -7px; left: 50%; transform: translateX(-50%);
+    width: 12px; height: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%; border-bottom: none;
+  }
+  @keyframes float-up-sway {
+    0% { opacity: 0; transform: translateY(0) translateX(0) rotate(-5deg); }
+    10% { opacity: 0.85; }
+    50% { transform: translateY(-55vh) translateX(30px) rotate(5deg); }
+    90% { opacity: 0.85; }
+    100% { opacity: 0; transform: translateY(-115vh) translateX(-20px) rotate(-5deg); }
   }
 
   .screen{
@@ -409,6 +427,23 @@
   }
   .lounge-game{
     position:absolute; left:0; right:0; bottom:0; height:190px; z-index:11;
+  }
+  .while-you-wait{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--dim); text-align:center; margin:34px 0 12px;
+  }
+  .affirmations-layer{
+    position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden;
+  }
+  .affirmation{
+    position:absolute; font-family:'Cormorant Garamond',serif; font-style:italic;
+    color:rgba(244,233,255,.15); white-space:nowrap; animation:float-up-aff 18s linear infinite;
+  }
+  @keyframes float-up-aff{
+    0%{transform:translateY(200px); opacity:0;}
+    15%{opacity:1;}
+    85%{opacity:1;}
+    100%{transform:translateY(-200px); opacity:0;}
   }
   .game-instructions{
     position:absolute; top:6px; left:16px; z-index:3; max-width:60%;
@@ -759,15 +794,57 @@
     transform: var(--base-transform) translateY(-80px) scale(1.15) !important;
   }
 
-  /* The Ribbon / Base */
-  .bouquet-ribbon {
-    position: absolute; bottom: 145px; left: 50%; transform: translateX(-50%);
-    width: 40px; height: 12px; border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 10px 40px rgba(242, 193, 78, 0.4), inset 0 2px 10px rgba(255,255,255,0.2);
-    z-index: 100;
+  /* --- THE ELEGANT FOLDED WRAP --- */
+  .bouquet-wrap-back {
+    position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
+    width: 240px; height: 280px;
+    background: rgba(244, 233, 255, 0.1); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    clip-path: polygon(0 0, 100% 0, 75% 100%, 25% 100%);
+    z-index: 0; border: 1px solid rgba(255,255,255,0.2);
   }
+  .bouquet-wrap-left-fold {
+    position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
+    width: 240px; height: 160px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05));
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    clip-path: polygon(0 0, 65% 100%, 25% 100%);
+    z-index: 90; border-right: 1px solid rgba(255,255,255,0.4);
+  }
+  .bouquet-wrap-right-fold {
+    position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
+    width: 240px; height: 160px;
+    background: linear-gradient(225deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    clip-path: polygon(100% 0, 75% 100%, 35% 100%);
+    z-index: 91; border-left: 1px solid rgba(255,255,255,0.5);
+  }
+
+  /* --- THE SILK BOW --- */
+  .bouquet-ribbon-base {
+    position: absolute; bottom: 135px; left: 50%; transform: translateX(-50%);
+    width: 70px; height: 100px; z-index: 95;
+  }
+  .ribbon-loop {
+    position: absolute; top: 0; width: 45px; height: 35px;
+    background: var(--gold); border-radius: 40px;
+    box-shadow: inset 0 4px 10px rgba(255,255,255,0.5), 0 4px 10px rgba(0,0,0,0.3);
+  }
+  .ribbon-loop.left { left: -10px; transform: rotate(-15deg); }
+  .ribbon-loop.right { right: -10px; transform: rotate(15deg); }
+  .ribbon-knot {
+    position: absolute; top: 8px; left: 22px; width: 26px; height: 26px;
+    background: #ffdf94; border-radius: 8px; z-index: 10;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  }
+  .ribbon-tail {
+    position: absolute; top: 20px; width: 18px; height: 75px;
+    background: linear-gradient(180deg, var(--gold), #c99818);
+    border-radius: 0 0 10px 10px; z-index: 5;
+  }
+  .ribbon-tail.left { left: 8px; transform: rotate(15deg); }
+  .ribbon-tail.right { right: 8px; transform: rotate(-15deg); }
+
+  #bouquetFlowers { position: absolute; inset: 0; z-index: 10; }
 
   /* The End Message */
   .empty-bouquet-msg {
@@ -810,31 +887,44 @@
   .question-text.swap{opacity:0;}
 
   /* -- State 3: The Relationships Committee™ (AITA) -- */
-  #state-aita { padding: 40px 26px; justify-content: center; }
+  #state-aita { padding: 40px 26px; justify-content: center; height: auto; overflow: visible; }
+  #state-aita .eyebrow, #state-aita h1.display, #state-aita p.sub { display: block; }
   .aita-buttons{
-    display:flex; flex-direction:column; gap:16px; width:100%; max-width:340px; margin-top:34px;
+    display:flex; flex-direction:column; gap:16px; width:100%; max-width:340px; margin-top:24px; height:auto;
   }
   .aita-btn{
-    border:none; border-radius:22px; padding:34px 18px; cursor:pointer;
-    font-family:'Jost',sans-serif; font-weight:600; font-size:19px; letter-spacing:.04em; color:#fff;
-    transition:transform .2s ease, box-shadow .2s ease;
+    flex:none; border:none; border-radius:22px; cursor:pointer;
+    font-family:'Jost',sans-serif; font-weight:700; padding:34px 18px; font-size:19px; letter-spacing:.04em; color:#fff;
+    transition:filter .2s ease;
     box-shadow:0 10px 30px rgba(0,0,0,.35);
+    display:block;
   }
-  .aita-btn:active{transform:scale(.97);}
+  .aita-btn:active{filter:brightness(0.8); transform:none;}
+  #state-aita .back-btn{ z-index:100; background:rgba(0,0,0,0.6); border:none; }
   .aita-btn-red{background:linear-gradient(135deg,#b31f47,#750e2a); box-shadow:0 10px 30px rgba(179,31,71,.4);}
   .aita-btn-green{background:linear-gradient(135deg,#1b8c5e,#0d4d32); box-shadow:0 10px 30px rgba(27,140,94,.4);}
   .aita-btn-label{display:block; line-height:1.3;}
 
   .aita-verdict-card{
-    position:fixed; inset:0; z-index:60; display:none;
+    position:fixed !important;
+    top:0 !important; bottom:0 !important;
+    left:0 !important; right:0 !important;
+    width:100vw !important; height:100dvh !important;
+    z-index:2147483647 !important; display:none;
     flex-direction:column; align-items:center; justify-content:center; gap:26px;
+    padding:20px; text-align:center;
   }
   .aita-verdict-card.aita-red{background:linear-gradient(160deg,#b31f47,#4a0618);}
   .aita-verdict-card.aita-green{background:linear-gradient(160deg,#1b8c5e,#062b1a);}
   .aita-verdict-text{
-    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
-    font-size:14vw; line-height:1.1; color:#fff; text-align:center; white-space:pre-line;
-    text-shadow:0 8px 30px rgba(0,0,0,.35);
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:800 !important;
+    font-size:18vw !important; line-height:1; color:#fff !important; text-align:center; white-space:pre-line;
+    text-shadow:0 8px 30px rgba(0,0,0,.35); margin-bottom:20px; text-transform:uppercase;
+  }
+  .aita-verdict-card .sub{ font-size:18px !important; color:#fff !important; opacity:0.9; margin-bottom:40px; }
+  .aita-verdict-card .btn.ghost{
+    border:2px solid rgba(255,255,255,0.6) !important; padding:15px 35px !important;
+    font-size:16px !important; position:absolute !important; bottom:50px !important;
   }
   
   .back-btn{
@@ -1098,11 +1188,21 @@
         </div>
       </div>
 
+      <div class="while-you-wait">While you wait...</div>
       <div class="game-section">
         <div class="lounge-ground" aria-hidden="true" id="loungeGround">
           <div class="ground-sky-fade"></div>
           <div class="parallax-layer layer-back" id="parallaxBack"></div>
           <div class="parallax-layer layer-mid" id="parallaxMid"></div>
+
+          <!-- Floating Affirmations -->
+          <div class="affirmations-layer">
+            <div class="affirmation" style="left: 10%; animation-delay: 0s; font-size: 20px;">Your boundaries are beautiful</div>
+            <div class="affirmation" style="left: 50%; animation-delay: 7s; font-size: 24px;">Queer joy is resistance</div>
+            <div class="affirmation" style="left: 15%; animation-delay: 12s; font-size: 18px;">You are entirely enough</div>
+            <div class="affirmation" style="left: 65%; animation-delay: 18s; font-size: 22px;">Take up space</div>
+          </div>
+
           <div class="ground-grass" id="parallaxFront"></div>
         </div>
 
@@ -1152,7 +1252,7 @@
     </div>
 
     <div class="question-panel" id="questionPanel">
-      <div class="question-eyebrow" id="questionCounter">A gift of conversation</div>
+      <div class="question-eyebrow" id="questionCounter">Conversation Starter</div>
       <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
     </div>
   </div>
@@ -1192,7 +1292,6 @@
 </div>
 
 <!-- HOST DASHBOARD (drawer, opens on top of the normal guest view) -->
-<button class="host-toggle-btn" id="hostToggleBtn" aria-label="Host Controls">👑</button>
 <div class="host-drawer-overlay" id="hostDrawerOverlay">
 <div id="screen-host" style="position:relative;">
   <div class="host-drawer-handle"></div>
@@ -1200,39 +1299,15 @@
   <div class="eyebrow">Host Console</div>
 
   <!-- Mini Roster -->
-  <div class="host-list" id="hostList" style="margin-top: 10px; margin-bottom: 30px; max-height: 160px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; background: rgba(0,0,0,0.2);"></div>
+  <div class="host-list" id="hostList" style="margin-top: 10px; margin-bottom: 24px; max-height: 160px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; background: rgba(0,0,0,0.2);"></div>
 
-  <div class="host-section-label">1. Matchmaking</div>
-  <div style="display:flex; gap:10px; width:100%; margin-bottom: 30px;">
-    <button class="btn" id="btnMatch" style="flex:2; margin-top:0;">Match People</button>
-    <button class="btn ghost" id="btnUnpair" style="flex:1; margin-top:0; border-color:var(--rose); color:var(--rose);">Unpair</button>
-  </div>
+  <div class="host-section-label">Master Modes</div>
+  <button class="btn" id="btnPairsMode" style="width:100%; margin-bottom:12px; margin-top:0;">🌸 PAIRS ACTIVITY MODE</button>
+  <button class="btn" id="btnGroupMode" style="width:100%; margin-bottom:24px; margin-top:0; background:linear-gradient(135deg,#ff4d5e,#c81f3a); color:#fff; box-shadow:none;">⚖️ GROUP ACTIVITY MODE</button>
 
-  <div class="host-section-label">Quick Actions</div>
-  <div style="display:flex; gap:10px; width:100%; margin-bottom: 30px;">
-    <button class="btn ghost" id="btnUnlockAll" style="flex:1; margin-top:0; border-color:var(--gold); color:var(--gold);">Open All Sections</button>
-    <button class="btn ghost" id="btnLockAll" style="flex:1; margin-top:0;">Lock All</button>
-  </div>
+  <button class="btn ghost" id="btnForceLounge" style="width:100%; margin-bottom:24px;">Return Everyone to Lounge</button>
 
-  <div class="host-section-label">2. The Bouquet (Pairs)</div>
-  <div style="display:flex; gap:10px; width:100%; margin-bottom: 12px;">
-    <button class="btn ghost" id="btnUnlockBouquet" style="flex:1; margin-top:0; border-color:var(--gold); color:var(--gold);">Unlock</button>
-    <button class="btn ghost" id="btnLockBouquet" style="flex:1; margin-top:0;">Lock</button>
-  </div>
-  <!-- Independent Timer -->
-  <div style="display:flex; gap:10px; width:100%; margin-bottom: 30px; align-items:center;">
-    <input type="number" id="inputTimerMinutes" placeholder="Mins" style="width: 70px; padding:10px; text-align: center; border-radius: 12px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
-    <button class="btn" id="btnSetTimer" style="flex:1; margin-top:0; padding:10px; font-size:13px;">Set Timer</button>
-    <button class="btn ghost" id="btnClearTimer" style="margin-top:0; padding:10px; font-size:13px; border-color:#ff4d5e; color:#ff4d5e;">Clear</button>
-  </div>
-
-  <div class="host-section-label">3. Relationships Court (Group)</div>
-  <div style="display:flex; gap:10px; width:100%; margin-bottom: 12px;">
-    <button class="btn ghost" id="btnUnlockCourt" style="flex:1; margin-top:0; border-color:#3ddc84; color:#3ddc84;">Unlock</button>
-    <button class="btn ghost" id="btnLockCourt" style="flex:1; margin-top:0;">Lock</button>
-  </div>
-
-  <div class="aita-tally" id="aitaTally" style="margin-top: 12px;">
+  <div class="aita-tally" id="aitaTally" style="margin-top: 12px; margin-bottom: 24px;">
     <div class="aita-tally-bar">
       <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
       <div class="aita-tally-fill aita-tally-green" id="aitaTallyGreen"></div>
@@ -1245,8 +1320,13 @@
     <div class="aita-picked" id="aitaPicked"></div>
   </div>
 
+  <div style="display:none;">
+    <button id="btnMatch"></button>
+    <button id="btnUnpair"></button>
+  </div>
+
   <!-- Hidden Reset -->
-  <button class="btn ghost" id="btnResetEvent" style="margin-top: 40px; margin-bottom: 20px; width: 100%; font-size: 11px; border-color: rgba(255,0,0,0.3); color: rgba(255,255,255,0.4);">Reset Event (Danger)</button>
+  <button class="btn ghost" id="btnResetEvent" style="margin-top: 8px; margin-bottom: 20px; width: 100%; font-size: 11px; border-color: rgba(255,0,0,0.3); color: rgba(255,255,255,0.4);">Reset Event (Danger)</button>
 </div>
 </div>
 
@@ -1297,7 +1377,11 @@ if(!usingFirebase){ document.getElementById('offlineBadge').style.display='block
 
 /* ---------- state & data ---------- */
 const AVATARS = ['✦','🏮','🌸','🌙','✧','🪻'];
-const PAIR_COLORS = ['#00f0ff','#39ff8f','#ffb347','#ff4fd8','#faff00','#7dff3f','#ff5f6d','#8f6bff'];
+const PAIR_COLORS = [
+  '#00f0ff','#39ff8f','#ffb347','#ff4fd8','#faff00','#7dff3f','#ff5f6d','#8f6bff',
+  '#00ffcc','#ff3366','#a200ff','#ff9900','#00ff66','#ff0099','#ccff00','#0066ff',
+  '#ffcc00','#ff00cc','#66ff00','#ff6600', '#00ffaa', '#e600ff', '#aaff00', '#0088ff'
+];
 const QUESTIONS = [
   "What does feeling truly heard by someone look like for you?",
   "Describe a moment when a small gesture meant more than any words could.",
@@ -1363,7 +1447,6 @@ window.addEventListener('load', ()=>{
       me = { id: 'host_'+Math.random().toString(36).slice(2,9), name:'Sasha', avatar:'👑' };
       localStorage.setItem('fsc_guest', JSON.stringify(me));
     }
-    document.getElementById('hostToggleBtn').style.display = 'flex';
     initHost();
   }
 
@@ -1393,7 +1476,6 @@ function openHostDrawer(){
 function closeHostDrawer(){
   document.getElementById('hostDrawerOverlay').classList.remove('show');
 }
-document.getElementById('hostToggleBtn').addEventListener('click', openHostDrawer);
 document.getElementById('hostDrawerClose').addEventListener('click', closeHostDrawer);
 document.getElementById('hostDrawerOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'hostDrawerOverlay') closeHostDrawer();
@@ -1610,7 +1692,7 @@ function listenPhase(){
       // Only (re)start the game on an actual transition into the lounge, or
       // if no game exists yet — otherwise a resync mid-run was silently
       // wiping the player's progress and dumping them back to "Start".
-      if(prevState !== 'lounge' || !bg){
+      if(prevState !== 'lounge' || !bg || !bg.running){
         startBunnyGame();
       }
     }
@@ -1678,7 +1760,10 @@ function applyPair([pairId, pair]){
   // Firebase can re-fire this whole flow on reconnect, and we don't want
   // to spam the reveal every time that happens.
   if (isNewPairing) {
-    showPartnerImessage(partnerText);
+    if(!localStorage.getItem('fsc_match_' + pairId)) {
+      localStorage.setItem('fsc_match_' + pairId, '1');
+      showPartnerImessage(partnerText);
+    }
   }
 }
 
@@ -1975,8 +2060,19 @@ window.addEventListener('keydown', (e)=>{
 function buildGarden(){
   const bed = document.getElementById('gardenBed');
   if(!bed) return;
-  // Preserve the ribbon and end message, clear the rest
-  bed.innerHTML = '<div class="bouquet-ribbon"></div><div class="empty-bouquet-msg">The bouquet has been shared.</div>';
+  // Layered paper folds
+  bed.innerHTML = `
+    <div class="bouquet-wrap-back"></div>
+    <div id="bouquetFlowers"></div>
+    <div class="bouquet-wrap-left-fold"></div>
+    <div class="bouquet-wrap-right-fold"></div>
+    <div class="bouquet-ribbon-base">
+       <div class="ribbon-tail left"></div><div class="ribbon-tail right"></div>
+       <div class="ribbon-loop left"></div><div class="ribbon-loop right"></div>
+       <div class="ribbon-knot"></div>
+    </div>
+  `;
+  const flowersContainer = document.getElementById('bouquetFlowers');
 
   const pairId = window.currentPairId || 'solo';
   const items = QUESTIONS.length;
@@ -1987,14 +2083,17 @@ function buildGarden(){
   QUESTIONS.forEach((q, originalIndex) => {
     const displayPos = shuffledIndices.indexOf(originalIndex);
 
-    // Fan Math: Spread flowers between -60 and +60 degrees
-    const spread = 120;
-    const angle = -60 + (displayPos / (items - 1)) * spread + (Math.random() * 6 - 3);
+    // TIGHT CLUSTER: Confined inside the paper wrap
+    const spread = 55;
+    const angle = -27.5 + (displayPos / (items - 1)) * spread + (Math.random() * 8 - 4);
 
-    // Taller stems for the middle, shorter for the edges
+    // COMPACT STEMS
     const centerProximity = 1 - Math.abs((displayPos / (items - 1)) - 0.5) * 2;
-    const stemH = 140 + (centerProximity * 90) + (Math.random() * 20);
-    const scale = (0.75 + Math.random() * 0.25).toFixed(2);
+    const stemH = 140 + (centerProximity * 50) + (Math.random() * 20);
+    const scale = (0.7 + Math.random() * 0.25).toFixed(2);
+
+    // ANCHOR INSIDE THE WRAP
+    const bottom = 175;
 
     const cluster = CLUSTERS[originalIndex % CLUSTERS.length];
     const color = cluster[originalIndex % 2];
@@ -2019,6 +2118,7 @@ function buildGarden(){
     plant.dataset.i = originalIndex;
     plant.style.color = color;
     plant.style.setProperty('--fscale', scale);
+    plant.style.bottom = bottom + 'px';
 
     // Set the base rotation and height
     plant.style.setProperty('--base-transform', `rotate(${angle}deg) scale(${scale})`);
@@ -2035,7 +2135,7 @@ function buildGarden(){
       </div>`;
 
     plant.addEventListener('click', () => pickFlower(originalIndex, pairId, plant, color));
-    bed.appendChild(plant);
+    flowersContainer.appendChild(plant);
   });
 
   // Listen for picked flowers
@@ -2088,7 +2188,7 @@ function pickFlower(i, pairId, plant, color){
     textEl.classList.add('swap');
     setTimeout(() => {
       textEl.textContent = QUESTIONS[i];
-      counterEl.textContent = `A gift of conversation`;
+      counterEl.textContent = `Conversation Starter`;
       textEl.classList.remove('swap');
     }, 220);
 
@@ -2158,9 +2258,36 @@ function initHost(){
   ref(`events/${EVENT_ID}/state`).set('lounge');
   ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
     const round = snap.val();
-    if(round){ listenAitaTally(round); document.getElementById('aitaTally').style.display='flex'; }
+    const tally = document.getElementById('aitaTally');
+    if(round && tally){ listenAitaTally(round); tally.style.display='flex'; }
   });
 }
+
+// Kick Guest Logic
+window.removeGuest = async function(id) {
+  if(confirm("Remove this guest from the roster? (This will also un-pair them if they are currently matched.)")) {
+    // 1. Remove from roster
+    await ref(`events/${EVENT_ID}/attendees/${id}`).set(null);
+
+    // 2. Scrub from pairs
+    const snap = await ref(`events/${EVENT_ID}/pairs`).once('value');
+    const pairs = snap.val() || {};
+    for (const [pid, p] of Object.entries(pairs)) {
+      const initialLen = (p.members || []).length;
+      const newMembers = (p.members || []).filter(m => m.id !== id);
+
+      if (newMembers.length < initialLen) {
+        if (newMembers.length <= 1) {
+          // Destroy the pair so the remaining person goes back to the unmatched waiting room
+          await ref(`events/${EVENT_ID}/pairs/${pid}`).set(null);
+        } else {
+          // It was a trio, now it's a duo. Just update the members.
+          await ref(`events/${EVENT_ID}/pairs/${pid}/members`).set(newMembers);
+        }
+      }
+    }
+  }
+};
 
 function renderHostList(guests){
   hostGuestsCache = guests;
@@ -2169,66 +2296,66 @@ function renderHostList(guests){
   guests.forEach(g=>{
     const row = document.createElement('div');
     row.className='host-row';
-    row.innerHTML = `<div class="guest-avatar">${g.avatar}</div>
-      <div><div>${escapeHtml(g.name)}</div></div>`;
+    row.innerHTML = `
+      <div class="guest-avatar">${g.avatar}</div>
+      <div style="flex:1;"><div>${escapeHtml(g.name)}</div></div>
+      <button class="btn ghost" onclick="removeGuest('${g.id}')" style="margin:0; padding:6px 12px; font-size:11px; border-color:#ff4d5e; color:#ff4d5e;">Kick</button>
+    `;
     list.appendChild(row);
   });
 }
 
-/* ---------- Host Controls ---------- */
+/* ---------- Secret 5-Tap Host Door ---------- */
+let titleTaps = 0;
+let titleTapTimer = null;
+document.querySelector('.lounge-header h1').addEventListener('click', () => {
+  if(!isHost) return;
+  titleTaps++;
+  clearTimeout(titleTapTimer);
+  if(titleTaps >= 5) {
+    openHostDrawer();
+    titleTaps = 0;
+  } else {
+    titleTapTimer = setTimeout(() => { titleTaps = 0; }, 2000);
+  }
+});
 
-// --- HUB LOCK/UNLOCK CONTROLS ---
+/* ---------- Host Controls: Master Modes ---------- */
 
-document.getElementById('btnUnlockBouquet').addEventListener('click', () => {
+document.getElementById('btnPairsMode').addEventListener('click', async () => {
+  // 1. Match people
+  const matched = await runMatch();
+  if(!matched) return;
+  // 2. Unlock the Bouquet
   ref(`events/${EVENT_ID}/hubs/garden`).set(true);
-});
-document.getElementById('btnLockBouquet').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/hubs/garden`).set(false);
+  // 3. Give the pairs a 35-minute window
+  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + 35 * 60000);
+  closeHostDrawer();
 });
 
-document.getElementById('btnUnlockCourt').addEventListener('click', () => {
+document.getElementById('btnGroupMode').addEventListener('click', () => {
   const round = String(Date.now());
   ref(`events/${EVENT_ID}/aita/round`).set(round);
   ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
-
   ref(`events/${EVENT_ID}/hubs/aita`).set(true);
+  ref(`events/${EVENT_ID}/state`).set('aita');
 
   document.getElementById('aitaPicked').textContent = '';
   document.getElementById('aitaTally').style.display = 'flex';
   listenAitaTally(round);
+  closeHostDrawer();
 });
-document.getElementById('btnLockCourt').addEventListener('click', () => {
+
+document.getElementById('btnForceLounge').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/hubs/garden`).set(false);
   ref(`events/${EVENT_ID}/hubs/aita`).set(false);
+  ref(`events/${EVENT_ID}/state`).set('lounge');
+  closeHostDrawer();
 });
 
-// --- QUICK ACTIONS: OPEN ALL / LOCK ALL ---
-// Reuses the exact same logic as the individual Unlock/Lock buttons above
-// (including the Court's round-reset) by simply triggering their clicks,
-// so "Open All" never falls out of sync with what each button does.
-document.getElementById('btnUnlockAll').addEventListener('click', () => {
-  document.getElementById('btnUnlockBouquet').click();
-  document.getElementById('btnUnlockCourt').click();
-});
-document.getElementById('btnLockAll').addEventListener('click', () => {
-  document.getElementById('btnLockBouquet').click();
-  document.getElementById('btnLockCourt').click();
-});
+document.getElementById('btnMatch').addEventListener('click', runMatch);
 
-// --- INDEPENDENT TIMER CONTROLS ---
-
-document.getElementById('btnSetTimer').addEventListener('click', () => {
-  const mins = parseFloat(document.getElementById('inputTimerMinutes').value) || 0;
-  if (mins > 0) {
-    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(Date.now() + mins * 60000);
-    document.getElementById('btnSetTimer').textContent = "Set!";
-    setTimeout(() => document.getElementById('btnSetTimer').textContent = "Set Timer", 2000);
-  }
-});
-document.getElementById('btnClearTimer').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
-});
-
-document.getElementById('btnMatch').addEventListener('click', async ()=>{
+async function runMatch(){
   const guests = [...hostGuestsCache];
 
   // Fetch existing pairs so a re-match doesn't scramble people who are already paired
@@ -2242,11 +2369,11 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
 
   if(existingPairsArr.length === 0 && guests.length < 2){
     alert('Need at least two guests checked in to form a pair.');
-    return;
+    return false;
   }
   if(existingPairsArr.length > 0 && unassigned.length === 0){
     alert('Everyone on the roster is already matched!');
-    return;
+    return false;
   }
 
   const btn = document.getElementById('btnMatch');
@@ -2256,6 +2383,11 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
 
   try{
     if(unassigned.length === 1 && existingPairsArr.length > 0) {
+      if(!confirm('There is only 1 unmatched person right now.\n\nClick OK to add them as a third person to an existing pair.\nClick CANCEL to leave them in the waiting room until another guest arrives.')) {
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+        return;
+      }
       // Exactly one latecomer: fold them into an existing group as a trio
       let targetPairEntry = existingPairsArr.find(([pid, p]) => p.members.length < 3) || existingPairsArr[0];
       targetPairEntry[1].members.push(unassigned[0]);
@@ -2288,14 +2420,16 @@ document.getElementById('btnMatch').addEventListener('click', async ()=>{
       await ref(`events/${EVENT_ID}/pairs`).set(existingPairs);
     }
     await ref(`events/${EVENT_ID}/state`).set('matched');
+    return true;
   } catch(err){
     console.error('Failed to set pairs/state:', err);
     alert('Something went wrong matching pairs.');
+    return false;
   } finally {
     btn.disabled = false;
     btn.textContent = originalLabel;
   }
-});
+}
 
 // HOST: UNPAIR BUTTON
 document.getElementById('btnUnpair').addEventListener('click', async () => {
