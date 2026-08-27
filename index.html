@@ -848,8 +848,40 @@
   .back-btn:active{transform:scale(.9);}
   .back-btn:hover{background:rgba(18,8,33,.75);}
 
-  /* ---------- host dashboard ---------- */
-  #screen-host{align-items:stretch; text-align:left; padding:26px 22px; overflow-y:auto;}
+  /* ---------- host dashboard (drawer, not a full screen) ---------- */
+  .host-toggle-btn{
+    position:fixed; bottom:22px; right:18px; z-index:500;
+    width:52px; height:52px; border-radius:50%; border:none; cursor:pointer;
+    display:none; align-items:center; justify-content:center; font-size:22px;
+    background:conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
+    box-shadow:0 8px 24px rgba(0,0,0,.5);
+  }
+  .host-toggle-btn:active{transform:scale(.92);}
+
+  .host-drawer-overlay{
+    position:fixed; inset:0; z-index:950; display:none;
+    align-items:flex-end; justify-content:center;
+    background:rgba(10,4,20,.6); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  }
+  .host-drawer-overlay.show{ display:flex; }
+  #screen-host{
+    display:flex; flex-direction:column;
+    width:100%; max-width:480px; max-height:82vh; margin:0;
+    background:var(--ink); border-radius:24px 24px 0 0;
+    padding:18px 22px calc(28px + env(safe-area-inset-bottom));
+    box-shadow:0 -10px 50px rgba(0,0,0,.5);
+    align-items:stretch; text-align:left; overflow-y:auto;
+    animation: imessage-slide-up .4s cubic-bezier(.2,.9,.25,1) both;
+  }
+  .host-drawer-handle{
+    width:36px; height:4px; border-radius:2px; background:rgba(244,233,255,.25);
+    margin:0 auto 14px;
+  }
+  .host-drawer-close{
+    position:absolute; top:14px; right:16px; z-index:5;
+    width:32px; height:32px; border-radius:50%; border:1px solid rgba(244,233,255,.25);
+    background:rgba(255,255,255,.05); color:var(--mist); font-size:15px; cursor:pointer;
+  }
   .host-list{width:100%; max-width:440px; margin:0 auto; }
   .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
   .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
@@ -1159,8 +1191,12 @@
   </div>
 </div>
 
-<!-- HOST DASHBOARD -->
-<div class="screen" id="screen-host">
+<!-- HOST DASHBOARD (drawer, opens on top of the normal guest view) -->
+<button class="host-toggle-btn" id="hostToggleBtn" aria-label="Host Controls">👑</button>
+<div class="host-drawer-overlay" id="hostDrawerOverlay">
+<div id="screen-host" style="position:relative;">
+  <div class="host-drawer-handle"></div>
+  <button class="host-drawer-close" id="hostDrawerClose" aria-label="Close">✕</button>
   <div class="eyebrow">Host Console</div>
 
   <!-- Mini Roster -->
@@ -1211,6 +1247,7 @@
 
   <!-- Hidden Reset -->
   <button class="btn ghost" id="btnResetEvent" style="margin-top: 40px; margin-bottom: 20px; width: 100%; font-size: 11px; border-color: rgba(255,0,0,0.3); color: rgba(255,255,255,0.4);">Reset Event (Danger)</button>
+</div>
 </div>
 
 
@@ -1320,10 +1357,18 @@ spawnLanterns();
 /* ---------- application routing & VIP bypass ---------- */
 window.addEventListener('load', ()=>{
   if(isHost){
-    show('screen-host');
+    // The host sees the exact same lounge experience as everyone else,
+    // plus a floating control button that opens the admin drawer.
+    if(!me){
+      me = { id: 'host_'+Math.random().toString(36).slice(2,9), name:'Sasha', avatar:'👑' };
+      localStorage.setItem('fsc_guest', JSON.stringify(me));
+    }
+    document.getElementById('hostToggleBtn').style.display = 'flex';
     initHost();
-  } else if(me){
-    // RETURNING VIP
+  }
+
+  if(me){
+    // RETURNING VIP (or the host, auto-identified above)
     ref(`events/${EVENT_ID}/attendees/${me.id}`).update({...me, joinedAt: Date.now()});
     enterLounge();
   } else {
@@ -1337,10 +1382,21 @@ window.addEventListener('load', ()=>{
     document.getElementById('screen-title').addEventListener('click', advanceToWelcome, {once:true});
     setTimeout(advanceToWelcome, 4000);
   }
-  
-  if(!isHost) {
-    listenTimer();
-  }
+
+  listenTimer();
+});
+
+/* ---------- host drawer open/close ---------- */
+function openHostDrawer(){
+  document.getElementById('hostDrawerOverlay').classList.add('show');
+}
+function closeHostDrawer(){
+  document.getElementById('hostDrawerOverlay').classList.remove('show');
+}
+document.getElementById('hostToggleBtn').addEventListener('click', openHostDrawer);
+document.getElementById('hostDrawerClose').addEventListener('click', closeHostDrawer);
+document.getElementById('hostDrawerOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'hostDrawerOverlay') closeHostDrawer();
 });
 
 document.getElementById('btnToCheckin').addEventListener('click', ()=>{ show('screen-checkin'); });
@@ -2085,7 +2141,7 @@ function listenTimer() {
            clearInterval(timerInterval);
            overlayEl.style.opacity = '0';
            overlayEl.style.pointerEvents = 'none';
-           if (!isHost && document.getElementById('state-garden').classList.contains('active')) {
+           if (document.getElementById('state-garden').classList.contains('active')) {
              setLoungeState('state-gathering');
            }
         }
@@ -2097,8 +2153,8 @@ function listenTimer() {
 /* ---------- host console ---------- */
 let hostGuestsCache = [];
 function initHost(){
-  listenRoster();
-  listenHubs();
+  // listenRoster() and listenHubs() are already started by enterLounge(),
+  // which now also runs for the host — no need to attach them twice here.
   ref(`events/${EVENT_ID}/state`).set('lounge');
   ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
     const round = snap.val();
