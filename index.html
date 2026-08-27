@@ -1155,7 +1155,7 @@
       <button class="imessage-close" id="imessageClose" aria-label="Close">✕</button>
     </div>
     <div class="imessage-thread" id="imessageThread"></div>
-    <button class="imessage-cta" id="imessageCta">Got it</button>
+    <button class="imessage-cta" id="imessageCta">Let's go</button>
   </div>
 </div>
 
@@ -1379,7 +1379,7 @@ function enterLounge(){
 /* --- SPOTLIGHT TOUR LOGIC --- */
 let tourIdx = 0;
 const TOUR_STEPS = [
-  { selector: '#rosterGrid', title: 'The Gathering', desc: 'First, we wait for everyone to arrive and settle into the lounge. Keep an eye on the roster.', pad: 10 },
+  { selector: '#activitiesSection', title: 'The Gathering', desc: 'First, we wait for everyone to arrive and settle into the lounge. Keep an eye on today\'s activities.', pad: 10 },
   { selector: '#hubCardGarden', title: 'The Bouquet', desc: 'Once everyone is here, I will divide you into pairs. This card will unlock and glow when it is time to open the bouquet.', pad: 8 },
   { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'Afterwards, we will all regroup here to participate in the Relationships Court. Get ready to cast your verdicts.', pad: 8 }
 ];
@@ -1406,9 +1406,7 @@ function showTourStep() {
   document.getElementById('tour-step-label').textContent = `Step ${tourIdx + 1} of ${TOUR_STEPS.length}`;
   document.getElementById('tour-title').textContent = step.title;
   document.getElementById('tour-desc').textContent = step.desc;
-
-  // Changed "Got it" to "Let's go"
-  document.getElementById('tour-next').textContent = tourIdx === TOUR_STEPS.length - 1 ? "Let's go" : 'Next';
+  document.getElementById('tour-next').textContent = tourIdx === TOUR_STEPS.length - 1 ? 'Got it' : 'Next';
   document.querySelectorAll('#tour-dots span').forEach((d, i) => d.classList.toggle('tour-dot-done', i <= tourIdx));
 
   const tooltip = document.getElementById('tour-tooltip');
@@ -1423,12 +1421,8 @@ function showTourStep() {
 }
 
 function tourNext() {
-  if (tourIdx >= TOUR_STEPS.length - 1) {
-    endTour();
-    setLoungeState('state-garden'); // Sends them to bouquet!
-    return;
-  }
   tourIdx++;
+  if (tourIdx >= TOUR_STEPS.length) { endTour(); return; }
   showTourStep();
 }
 
@@ -1646,7 +1640,7 @@ function showPartnerImessage(partnerText){
   const messages = [
     { text: `Your partner for today is&hellip;`, gold:false },
     { text: `${escapeHtml(partnerText)} 💛`, gold:true },
-    { text: `Tap "The Bouquet" to find the questions.`, gold:false },
+    { text: `Tap "Let's go" to find the questions.`, gold:false },
   ];
 
   let i = 0;
@@ -1683,8 +1677,12 @@ function showPartnerImessage(partnerText){
 function closeImessagePopup(){
   document.getElementById('imessageOverlay').classList.remove('show');
 }
+function goToBouquet(){
+  closeImessagePopup();
+  setLoungeState('state-garden');
+}
 document.getElementById('imessageClose').addEventListener('click', closeImessagePopup);
-document.getElementById('imessageCta').addEventListener('click', closeImessagePopup);
+document.getElementById('imessageCta').addEventListener('click', goToBouquet);
 document.getElementById('imessageOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'imessageOverlay') closeImessagePopup();
 });
