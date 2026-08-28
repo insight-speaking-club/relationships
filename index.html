@@ -516,6 +516,12 @@
     position: relative;
   }
   .hub-card.locked{ opacity:.4; pointer-events:none; cursor:default; filter: grayscale(80%); }
+  /* Give the host click-access to locked cards */
+  .host-mode .hub-card.locked { pointer-events:auto !important; opacity:.7; cursor:pointer; }
+  /* Kill the 300ms mobile tap delay for instant response */
+  button, .btn, .host-inline-btn, .hub-card, .msg-chip, .back-btn {
+    touch-action: manipulation;
+  }
   .hub-card:not(.locked){
     box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 15px rgba(242, 193, 78, 0.05);
   }
@@ -1414,6 +1420,56 @@
   .lb-rank.rank-1 { color: var(--gold); font-size: 14px; font-weight: bold; }
   .lb-name { flex: 1; font-weight: 500; font-size: 15px; color: var(--mist); }
   .lb-score { font-family: 'Space Mono', monospace; color: var(--gold); }
+
+  /* =========================================
+     NUCLEAR PERFORMANCE PATCH
+     Eliminates all GPU-heavy blur math
+     ========================================= */
+  
+  /* 1. Stop blurring the whole screen when it transitions */
+  .screen { filter: none !important; transform: none !important; transition: opacity 0.4s ease !important; }
+  .screen.active { filter: none !important; transform: none !important; }
+
+  /* 2. Replace heavy frosted glass with rich, opaque colors */
+  .dashboard-section, #activitiesSection {
+    background: rgba(30, 12, 45, 0.98) !important; 
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
+  }
+  .hub-card {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+  .glass-table {
+    background: radial-gradient(circle at 50% 50%, rgba(45, 20, 70, 0.9) 0%, rgba(18, 8, 33, 0.98) 100%) !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+  .greeting-bubble, .partner-card {
+    background: rgba(40, 18, 55, 0.95) !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+  .question-panel, #toastStack .imessage-toast {
+    background: rgba(18, 8, 33, 0.98) !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  }
+
+  /* 3. Stop animating box-shadows (massive lag culprit) */
+  .hub-card.is-current { 
+    animation: none !important; 
+    border-color: var(--gold) !important; 
+    box-shadow: none !important;
+  }
+  /* Instead, we animate opacity on a pseudo-element, which phones handle easily */
+  .hub-card.is-current::after {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit;
+    box-shadow: 0 0 20px rgba(242, 193, 78, 0.4);
+    pointer-events: none; z-index: -1;
+    animation: cheap-glow 3s ease-in-out infinite alternate !important;
+  }
+  @keyframes cheap-glow { 
+    from { opacity: 0.2; } 
+    to { opacity: 1; } 
+  }
 </style>
 </head>
 <body>
@@ -1574,6 +1630,7 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 <span>Unlock</span>
               </button>
+              <button class="host-inline-btn" onclick="setLoungeState('state-table')" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
             </div>
           </div>
 
@@ -1604,6 +1661,7 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 <span>Unlock</span>
               </button>
+              <button class="host-inline-btn" onclick="setLoungeState('state-garden'); const bed=document.getElementById('gardenBed'); if(bed && !bed.querySelector('.flower-plant')) buildGarden();" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
             </div>
           </div>
 
@@ -1634,6 +1692,7 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 <span>Unlock</span>
               </button>
+              <button class="host-inline-btn" onclick="setLoungeState('state-aita')" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
             </div>
           </div>
 
@@ -2158,7 +2217,8 @@ function listenPhase(){
 
 function listenHubs() {
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
-    const hubs = snap.val() || {};
+    window.currentHubsState = snap.val() || {};
+    const hubs = window.currentHubsState;
     const cardGarden = document.getElementById('hubCardGarden');
     const cardAita = document.getElementById('hubCardAita');
 
@@ -2660,6 +2720,7 @@ function listenTimer() {
 /* ---------- host console ---------- */
 let hostGuestsCache = [];
 function initHost(){
+  document.body.classList.add('host-mode'); // Turns on master key CSS for locked cards
   // listenRoster() and listenHubs() are already started by enterLounge(),
   // which now also runs for the host — no need to attach them twice here.
   ref(`events/${EVENT_ID}/state`).set('lounge');
@@ -2832,27 +2893,25 @@ function showMessageToast(msg){
 /* ---------- Host Controls: Inline Per-Activity Controls ---------- */
 
 // --- TOGGLE "HAPPENING NOW" ---
-document.getElementById('btnHighlightGarden').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-  if (snap.val() === 'garden') ref(`events/${EVENT_ID}/hubs/current`).set(null); // Turn off
-  else ref(`events/${EVENT_ID}/hubs/current`).set('garden'); // Turn on
+// --- INSTANT TOGGLE "HAPPENING NOW" ---
+document.getElementById('btnHighlightGarden').addEventListener('click', () => {
+  const current = window.currentHubsState?.current;
+  ref(`events/${EVENT_ID}/hubs/current`).set(current === 'garden' ? null : 'garden');
 });
 
-document.getElementById('btnHighlightCourt').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-  if (snap.val() === 'aita') ref(`events/${EVENT_ID}/hubs/current`).set(null);
-  else ref(`events/${EVENT_ID}/hubs/current`).set('aita');
+document.getElementById('btnHighlightCourt').addEventListener('click', () => {
+  const current = window.currentHubsState?.current;
+  ref(`events/${EVENT_ID}/hubs/current`).set(current === 'aita' ? null : 'aita');
 });
 
-document.getElementById('btnHighlightCloser').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-  if (snap.val() === 'closer') ref(`events/${EVENT_ID}/hubs/current`).set(null);
-  else ref(`events/${EVENT_ID}/hubs/current`).set('closer');
+document.getElementById('btnHighlightCloser').addEventListener('click', () => {
+  const current = window.currentHubsState?.current;
+  ref(`events/${EVENT_ID}/hubs/current`).set(current === 'closer' ? null : 'closer');
 });
 
-document.getElementById('btnHighlightTable').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-  ref(`events/${EVENT_ID}/hubs/current`).set(snap.val() === 'table' ? null : 'table');
+document.getElementById('btnHighlightTable').addEventListener('click', () => {
+  const current = window.currentHubsState?.current;
+  ref(`events/${EVENT_ID}/hubs/current`).set(current === 'table' ? null : 'table');
 });
 
 // --- SYNC LOCK BUTTON LABEL/ICON TO CURRENT STATE ---
@@ -2864,10 +2923,9 @@ function setLockButtonState(btn, isUnlocked, unlockedLabel, lockedLabel){
     : `${LOCK_ICON_SVG} <span>${lockedLabel}</span>`;
 }
 
-// --- UNLOCK / LOCK (instant, no prompts — timer is a separate, optional action) ---
-document.getElementById('btnToggleLockGarden').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/garden`).once('value');
-  if (snap.val()) {
+// --- INSTANT UNLOCK / LOCK (no prompts — timer is a separate, optional action) ---
+document.getElementById('btnToggleLockGarden').addEventListener('click', () => {
+  if (window.currentHubsState?.garden) {
     // It's currently unlocked -> LOCK IT
     ref(`events/${EVENT_ID}/hubs/garden`).set(false);
     ref(`events/${EVENT_ID}/state`).set('lounge');
@@ -2878,9 +2936,8 @@ document.getElementById('btnToggleLockGarden').addEventListener('click', async (
   }
 });
 
-document.getElementById('btnToggleLockCourt').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/aita`).once('value');
-  if (snap.val()) {
+document.getElementById('btnToggleLockCourt').addEventListener('click', () => {
+  if (window.currentHubsState?.aita) {
     // It's currently unlocked -> LOCK IT
     ref(`events/${EVENT_ID}/hubs/aita`).set(false);
     ref(`events/${EVENT_ID}/state`).set('lounge');
@@ -2901,19 +2958,13 @@ document.getElementById('btnToggleLockCourt').addEventListener('click', async ()
 });
 
 // Unlock toggle for Closer
-document.getElementById('btnToggleLockCloser').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/closer`).once('value');
-  if (snap.val()) {
-    ref(`events/${EVENT_ID}/hubs/closer`).set(false);
-  } else {
-    ref(`events/${EVENT_ID}/hubs/closer`).set(true);
-  }
+document.getElementById('btnToggleLockCloser').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/hubs/closer`).set(!window.currentHubsState?.closer);
 });
 
 // Unlock toggle for Table (Spin-the-Bottle)
-document.getElementById('btnToggleLockTable').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/table`).once('value');
-  ref(`events/${EVENT_ID}/hubs/table`).set(!snap.val());
+document.getElementById('btnToggleLockTable').addEventListener('click', () => {
+  ref(`events/${EVENT_ID}/hubs/table`).set(!window.currentHubsState?.table);
 });
 
 // --- OTHER TABLE ACTIONS ---
