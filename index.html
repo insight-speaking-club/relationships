@@ -42,10 +42,23 @@
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(120% 90% at 50% -10%, #4a1a63 0%, transparent 55%),
-      linear-gradient(200deg, #2a0e3f 0%, #401450 35%, #7c2f6e 68%, #b8447e 100%);
+      radial-gradient(150% 100% at 50% 0%, rgba(242, 193, 78, 0.12) 0%, transparent 35%), /* Soft gold top glow */
+      radial-gradient(120% 90% at 50% -10%, #5a1c7a 0%, transparent 55%), /* Brighter purple peak */
+      linear-gradient(200deg, #180624 0%, #2a0e3f 25%, #60185b 60%, #b8447e 100%); /* Deep space fading to rose */
     overflow: hidden;
     z-index: 0;
+  }
+  /* Delicate starry texture for the top portion of the sky */
+  .sky::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 15% 8%, rgba(255,255,255,0.9) 100%, transparent),
+      radial-gradient(1.5px 1.5px at 65% 12%, rgba(255,255,255,0.8) 100%, transparent),
+      radial-gradient(1px 1px at 35% 20%, rgba(242, 193, 78, 0.7) 100%, transparent),
+      radial-gradient(2px 2px at 85% 6%, rgba(255,255,255,0.6) 100%, transparent),
+      radial-gradient(1px 1px at 50% 3%, rgba(244, 233, 255, 0.8) 100%, transparent);
+    opacity: 0.75;
   }
   .lantern {
     position: absolute; bottom: -60px;
@@ -78,6 +91,22 @@
     50% { transform: translateY(-55vh) translateX(30px) rotate(5deg); }
     90% { opacity: 0.85; }
     100% { opacity: 0; transform: translateY(-115vh) translateX(-20px) rotate(-5deg); }
+  }
+
+  .stardust-mote {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.6);
+    opacity: 0;
+    animation: drift-mote linear infinite;
+  }
+  @keyframes drift-mote {
+    0% { transform: translateY(110vh) translateX(0); opacity: 0; }
+    15% { opacity: 0.6; }
+    85% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
   }
 
   .screen{
@@ -254,6 +283,22 @@
     text-shadow: 0 1px 0 rgba(255,255,255,0.4);
     transition:transform .25s ease, box-shadow .25s ease;
     margin-top:22px;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Liquid Sweep Reflection */
+  .btn::after {
+    content: ''; 
+    position: absolute; top: 0; left: -150%; 
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-20deg); 
+    animation: liquid-sweep 5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+  @keyframes liquid-sweep {
+    0%, 60% { left: -150%; }
+    100% { left: 200%; }
   }
   .btn:active{
     transform:scale(.96);
@@ -335,29 +380,34 @@
   .lounge-header {
     text-align: center; margin-bottom: 24px;
   }
-  .dashboard-section {
-    width: 100%; max-width: 420px; margin-bottom: 24px;
-    background: rgba(18, 8, 33, 0.75); /* Much darker, less transparent */
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px); /* Heavy blur for the lanterns/sky */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px; padding: 20px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-  }
-  /* Clean, Frosted Container */
-  #activitiesSection {
+  .dashboard-section, #activitiesSection {
     position: relative;
-    width: 100%;
-    max-width: 420px;
-    margin: 18px auto 24px;
-    background: rgba(18, 8, 33, 0.82); /* Darker to prevent text collision */
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
-    border: 1px solid rgba(242, 193, 78, 0.25); /* Subtle gold rim */
-    border-radius: 24px;
+    width: 100%; max-width: 420px;
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.02); /* Barely-there background */
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border-radius: 24px; 
     padding: 24px 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    border: 1px solid transparent;
+    background-clip: padding-box;
   }
+
+  /* The glowing crystal edge */
+  .dashboard-section::before, #activitiesSection::before, .hub-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.02) 40%, rgba(242,193,78,0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  #activitiesSection { margin: 18px auto 24px; }
 
   /* Elegant Center Emblem Divider */
   #activitiesSection .section-header {
@@ -371,15 +421,7 @@
   }
 
   #activitiesSection .section-header::after {
-    content: '♡';
-    position: absolute;
-    bottom: -9px;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 15px;
-    line-height: 1;
-    color: var(--gold);
-    background: #190a2e;
-    padding: 0 8px;
+    content: none;
   }
 
   #activitiesSection .section-header::before {
@@ -474,19 +516,16 @@
     display:flex; align-items:center; gap:14px; text-align:left;
     padding:16px 18px; border-radius:18px; cursor:pointer;
     opacity:1; pointer-events:auto;
-    transition:opacity .3s ease, transform .15s ease, border-color .3s ease, box-shadow .3s ease;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    border-right: 1px solid rgba(255, 255, 255, 0.02);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    transition:opacity .3s ease, transform .15s ease, box-shadow .3s ease;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    position: relative;
   }
   .hub-card.locked{ opacity:.4; pointer-events:none; cursor:default; filter: grayscale(80%); }
   .hub-card:not(.locked){
-    border-bottom-color: rgba(242, 193, 78, 0.6);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 15px rgba(242, 193, 78, 0.15);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 15px rgba(242, 193, 78, 0.05);
   }
   .hub-card:not(.locked):active{ transform:scale(.97); }
   .hub-card-icon{
@@ -504,12 +543,12 @@
   /* --- CURRENT ACTIVITY HIGHLIGHT --- */
   .hub-card.is-current {
     border-color: var(--gold);
-    box-shadow: 0 0 25px rgba(242, 193, 78, 0.3), inset 0 0 10px rgba(242, 193, 78, 0.1);
-    animation: current-pulse 3s infinite alternate;
+    box-shadow: 0 0 25px rgba(242, 193, 78, 0.2), inset 0 0 10px rgba(242, 193, 78, 0.1);
+    animation: current-pulse 4.5s ease-in-out infinite alternate;
   }
   @keyframes current-pulse {
-    0% { box-shadow: 0 0 25px rgba(242, 193, 78, 0.3); }
-    100% { box-shadow: 0 0 40px rgba(242, 193, 78, 0.6); }
+    0% { box-shadow: 0 0 20px rgba(242, 193, 78, 0.2); }
+    100% { box-shadow: 0 0 45px rgba(242, 193, 78, 0.5); }
   }
   .current-badge {
     display: none; font-family: 'Space Mono', monospace; font-size: 9px;
@@ -737,10 +776,42 @@
   }
   .moonglow{position:absolute; top:-50px; left:50%; transform:translateX(-50%); width:260px; height:260px; border-radius:50%;
     background:radial-gradient(circle, rgba(255,225,190,.24), rgba(255,190,235,.1) 45%, rgba(244,233,255,0) 72%);
-    pointer-events:none; z-index:1; transition:all 3s ease;}
+    pointer-events:none; z-index:1; transition:all 3s ease;
+    animation: moon-breathe 8s ease-in-out infinite alternate;}
+  @keyframes moon-breathe {
+    from { opacity: 0.85; transform: translateX(-50%) scale(1); }
+    to { opacity: 1; transform: translateX(-50%) scale(1.05); }
+  }
   .moonglow.full-bloom{
     background:radial-gradient(circle, rgba(255,255,255,0.7), rgba(255,255,255,0.3) 55%, transparent 80%);
     transform:translateX(-50%) scale(1.6);
+  }
+  .shooting-star {
+    position: absolute; top: -10px; right: 10%; 
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), #fff);
+    transform: rotate(-35deg); 
+    opacity: 0;
+    z-index: 2;
+    animation: star-shoot 22s linear infinite 10s;
+  }
+  @keyframes star-shoot {
+    0% { transform: rotate(-35deg) translateX(200px); opacity: 1; }
+    4% { transform: rotate(-35deg) translateX(-800px); opacity: 0; }
+    100% { opacity: 0; }
+  }
+  .ripple-effect {
+    position: absolute; 
+    border-radius: 50%; 
+    border: 2px solid rgba(255,255,255,0.7);
+    pointer-events: none; 
+    z-index: 100;
+    transform: translate(-50%, -50%);
+    animation: ripple-out 0.7s ease-out forwards;
+  }
+  @keyframes ripple-out {
+    0% { width: 0; height: 0; opacity: 1; border-width: 3px; }
+    100% { width: 160px; height: 160px; opacity: 0; border-width: 0px; }
   }
   .hill{
     position:absolute; left:-15%; right:-15%; bottom:-20px; height:150px;
@@ -984,51 +1055,17 @@
     box-shadow: inset 0 0 25px rgba(0,0,0,0.6);
   }
 
-  /* --- THE RED SATIN BOW (classic ribbon-wing shape) --- */
-  .bouquet-ribbon-base {
-    position: absolute; bottom: 135px; left: 50%; transform: translateX(-50%);
-    width: 90px; height: 120px; z-index: 95;
+  /* --- THE PINK WATERCOLOR BOW --- */
+  .bouquet-ribbon-img {
+    position: absolute; 
+    bottom: 110px; /* Adjust this to slide it up or down the bouquet */
+    left: 50%; 
+    transform: translateX(-50%);
+    width: 150px; /* Adjust this to scale the bow */
+    height: auto;
+    z-index: 95;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.5));
   }
-
-  /* Wings: wide satin flags that taper to a point at the knot, pinched at the waist */
-  .ribbon-loop {
-    position: absolute; top: -6px; width: 66px; height: 82px;
-    background: linear-gradient(135deg, #ff7086 0%, #e0334f 38%, #9c1730 72%, #6e0e1f 100%);
-  }
-  .ribbon-loop::after {
-    content: ''; position: absolute; top: 12%; width: 34%; height: 50%;
-    background: linear-gradient(160deg, rgba(255,255,255,0.55), rgba(255,255,255,0) 70%);
-    filter: blur(1.5px); pointer-events: none;
-  }
-  .ribbon-loop.left {
-    left: -40px; transform: rotate(-6deg);
-    clip-path: polygon(100% 48%, 78% 36%, 42% 0%, 0% 6%, 0% 94%, 42% 100%, 78% 64%);
-  }
-  .ribbon-loop.left::after { left: 40%; }
-  .ribbon-loop.right {
-    right: -40px; transform: rotate(6deg);
-    clip-path: polygon(0% 48%, 22% 36%, 58% 0%, 100% 6%, 100% 94%, 58% 100%, 22% 64%);
-  }
-  .ribbon-loop.right::after { left: 26%; }
-
-  /* Center knot, wrapped tight over the wing points */
-  .ribbon-knot {
-    position: absolute; top: 32px; left: 30px; width: 30px; height: 26px;
-    background: linear-gradient(160deg, #f0475f, #d92e49 45%, #8f1428 100%);
-    border-radius: 6px; z-index: 10;
-    box-shadow: inset 0 3px 6px rgba(255,255,255,0.35), inset 0 -4px 8px rgba(0,0,0,0.4), 0 4px 15px rgba(0,0,0,0.5);
-  }
-
-  /* Long tails, tapering to a single sharp point like real satin ribbon */
-  .ribbon-tail {
-    position: absolute; top: 48px; width: 26px; height: 92px;
-    background: linear-gradient(160deg, #f0475f 0%, #c92844 45%, #6e0e1f 100%);
-    clip-path: polygon(18% 0%, 82% 0%, 55% 100%, 45% 100%);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-    z-index: 5;
-  }
-  .ribbon-tail.left { left: 6px; transform: rotate(14deg); }
-  .ribbon-tail.right { right: 6px; transform: rotate(-14deg); }
 
   #bouquetFlowers { position: absolute; inset: 0; z-index: 10; }
 
@@ -1137,6 +1174,73 @@
   }
   .host-inline-btn:active { transform: scale(0.95); }
   .host-inline-btn.action { background: var(--gold); color: var(--ink); border: none; font-weight: 600; }
+
+  /* --- STATE: ROUND TABLE --- */
+  #state-table { padding: 0 26px; justify-content: flex-start; align-items: center; overflow: hidden; }
+  
+  .table-arena {
+    position: relative; width: 320px; height: 320px;
+    margin: 20px auto 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  
+  .glass-table {
+    position: absolute; inset: 20px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, rgba(18,8,33,0.4) 100%);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 0 20px 50px rgba(0,0,0,0.6);
+  }
+
+  .glass-table::after {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent 40%, rgba(242,193,78,0.1));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+
+  .crystal-pointer-container {
+    position: absolute; width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(0deg);
+    transition: transform 5s cubic-bezier(0.1, 0.9, 0.15, 1);
+    z-index: 10; pointer-events: none;
+  }
+
+  /* The actual crystal shard pointing UP (0 degrees) */
+  .crystal-shard {
+    position: absolute; top: 15%; width: 14px; height: 80px;
+    background: linear-gradient(180deg, #fff 0%, rgba(242,193,78,0.8) 40%, transparent 100%);
+    clip-path: polygon(50% 0%, 100% 20%, 50% 100%, 0% 20%);
+    filter: drop-shadow(0 0 15px rgba(242,193,78,0.8));
+  }
+
+  /* Center pivot glow */
+  .crystal-pointer-container::after {
+    content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 20px 8px var(--gold);
+  }
+
+  .table-seat {
+    position: absolute; width: 48px; height: 48px;
+    top: 50%; left: 50%; margin: -24px 0 0 -24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: filter 0.5s ease, opacity 0.5s ease, transform 0.3s ease;
+    z-index: 20;
+  }
+  
+  .table-seat .guest-avatar { margin: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+  .table-seat .guest-name { 
+    position: absolute; top: 52px; font-size: 10px; color: var(--mist); 
+    background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px;
+    white-space: nowrap; pointer-events: none;
+  }
+
+  /* Eliminated state */
+  .table-seat.done { filter: grayscale(100%) brightness(0.5); opacity: 0.5; }
+  .table-seat.active-target { transform: scale(1.2); }
+  .table-seat.active-target .guest-avatar { border-color: var(--gold); box-shadow: 0 0 20px rgba(242,193,78,0.8); }
+
   .host-list{width:100%; max-width:440px; margin:0 auto; }
   .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
   .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
@@ -1191,14 +1295,6 @@
     font-family:'Jost',sans-serif; font-size:13.5px; line-height:1.4; color:var(--mist);
     display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
   }
-  #btnEnableAlerts{
-    position:fixed; top:14px; left:14px; z-index:80;
-    background:rgba(255,255,255,.08); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,.15); color:var(--mist);
-    padding:8px 14px; border-radius:999px; font-family:'Space Mono',monospace; font-size:11px;
-    letter-spacing:.04em; cursor:pointer;
-  }
-
   .host-section-label{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
     color:var(--dim); margin:30px 0 12px; text-align:center;
@@ -1336,13 +1432,12 @@
     <div class="affirmation" style="left: 58%; animation-delay: 18s; font-size: 19px;">"Love is composed of a single soul inhabiting two bodies."</div>
     <div class="affirmation" style="left: 50%; animation-delay: 23s; font-size: 19px;">"Whatever our souls are made of, his and mine are the same."</div>
   </div>
+  <div id="stardust-container" style="position: absolute; inset: 0; pointer-events: none; z-index: 1;"></div>
 </div>
-<div class="glow-ring" id="glowRing"></div>
 <div id="offlineBadge" class="offline-badge" style="display:none;">preview mode · connect firebase for live sync</div>
 
 <!-- Messages pop in here, over absolutely everything -->
 <div id="toastStack"></div>
-<button type="button" id="btnEnableAlerts" style="display:none;">🔔 Enable alerts</button>
 
 <!-- Timer Overlays -->
 <!-- Elegant, small Garden Timer -->
@@ -1380,7 +1475,7 @@
   <div class="host-frame stagger-2" style="margin-top: 24px; padding: 3px; background: conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));">
     <img src="sasha.png" alt="Sasha" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 2px solid var(--ink);">
   </div>
-  <h1 class="display stagger-2" style="font-size:34px; margin-bottom: 8px;">Welcome to the club.</h1>
+  <h1 class="display stagger-2" style="font-size:52px; margin-bottom: 16px; font-style: italic; background: linear-gradient(to right, #ffffff, var(--mist)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 25px rgba(255,255,255,0.25);">Welcome.</h1>
 
   <div class="greeting-bubble stagger-3" style="margin-bottom: 24px; text-align: center;">
     <p>I'm Sasha, and I'll be your host tonight. Pop your name on the roster below, find a comfortable seat, and get ready for a beautiful evening.</p>
@@ -1402,9 +1497,10 @@
     <div class="lounge-content">
 
       <!-- CLEAN HEADER -->
-      <div class="lounge-header">
-        <h1 class="display" style="font-size:38px; margin:0 0 4px; background:linear-gradient(120deg, var(--gold), #ffdf94, var(--rose)); -webkit-background-clip:text; color:transparent;">RELATIONSHIPS</h1>
-        <div class="eyebrow" style="color:var(--mist); letter-spacing:.4em;">Speaking Club</div>
+      <div class="lounge-header" style="position: relative; padding-bottom: 12px;">
+        <h1 class="display" style="font-size:42px; margin:0 0 -2px; background:linear-gradient(120deg, var(--gold) 20%, #ffdf94 50%, var(--rose) 80%); -webkit-background-clip:text; background-clip:text; color:transparent; filter: drop-shadow(0 4px 12px rgba(217, 79, 140, 0.4)); letter-spacing: 0.02em;">RELATIONSHIPS</h1>
+        <div class="eyebrow" style="color:var(--mist); letter-spacing:.45em; font-weight: bold; text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);">Speaking Club</div>
+        <div style="position: absolute; bottom: 0; left: 20%; right: 20%; height: 1px; background: linear-gradient(90deg, transparent, rgba(242, 193, 78, 0.6), transparent);"></div>
       </div>
 
       <!-- HOST ONLY: Roster -->
@@ -1435,6 +1531,30 @@
         </p>
 
         <div class="hub-sections">
+
+          <!-- Warm Up Activity -->
+          <div class="hub-card locked" id="hubCardTable">
+            <div class="current-badge">Happening Now</div>
+            <div class="hub-card-icon">🔮</div>
+            <div>
+              <div class="hub-card-sub" style="color:var(--gold);">Warm Up Activity</div>
+              <div class="hub-card-title">Spin-the-Bottle</div>
+              <div class="hub-card-desc">Gather around the table. The crystal chooses who speaks next.</div>
+              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
+            </div>
+          </div>
+
+          <!-- HOST ONLY: Minimal Table Controls -->
+          <div id="hostControlsTable" class="host-inline-controls" style="display:none; justify-content: space-between;">
+            <button class="host-inline-btn action" id="btnHighlightTable">Toggle "Happening Now"</button>
+            <button class="host-inline-btn" id="btnToggleLockTable" style="display:flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Unlock</span>
+            </button>
+          </div>
+
+          <!-- Connector line -->
+          <div class="activity-connector"><div class="connector-line"></div></div>
 
           <!-- Pairs Activity -->
           <div class="hub-card locked" id="hubCardGarden">
@@ -1577,6 +1697,7 @@
   <div id="state-garden" class="lounge-state">
     <button class="back-btn" id="btnBackToGathering" onclick="setLoungeState('state-gathering')">‹</button>
     <div class="garden-bg-layer"></div>
+    <div class="shooting-star"></div>
 
     <div class="match-header" style="padding-top: 30px; position: relative; z-index: 10;">
       <div class="eyebrow">Pairs Activity</div>
@@ -1594,6 +1715,37 @@
     <div class="question-panel" id="questionPanel">
       <div class="question-eyebrow" id="questionCounter">Conversation Starter</div>
       <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
+    </div>
+  </div>
+
+  <!-- STATE: THE ROUND TABLE (SPIN THE BOTTLE) -->
+  <div id="state-table" class="lounge-state">
+    <button class="back-btn" onclick="setLoungeState('state-gathering')">‹</button>
+    <div class="eyebrow" style="margin-top: 40px;">Group Ritual</div>
+    <h1 class="display" style="font-size:32px; margin-bottom: 24px;">The Round Table</h1>
+    
+    <div class="table-arena" id="tableArena">
+      <!-- The frosted glass table -->
+      <div class="glass-table"></div>
+      
+      <!-- The glowing crystal pointer -->
+      <div class="crystal-pointer-container" id="crystalPointer">
+        <div class="crystal-shard"></div>
+      </div>
+      
+      <!-- Avatars injected here via JS -->
+      <div id="tableSeats"></div>
+    </div>
+
+    <div class="question-panel" id="tableQuestionPanel" style="transform: translateY(120%); transition: transform 0.6s cubic-bezier(0.2, 1, 0.3, 1);">
+      <div class="question-eyebrow" id="tableTargetName" style="color:var(--rose);">Waiting for the spin...</div>
+      <div class="question-text" id="tableQuestionText">The crystal will reveal your question.</div>
+      
+      <!-- Host Controls for the Table -->
+      <div id="hostTableActions" style="display:none; margin-top: 16px;">
+        <button class="btn" id="btnSpinPointer" style="padding: 10px 24px; font-size: 13px;">Spin Crystal</button>
+        <button class="btn ghost" id="btnMarkTurnDone" style="padding: 10px 24px; font-size: 13px; display:none;">Mark Done</button>
+      </div>
     </div>
   </div>
 
@@ -1735,6 +1887,22 @@ function spawnLanterns(){
 }
 spawnLanterns();
 
+/* ---------- ambient stardust ---------- */
+function spawnStardust(){
+  const container = document.getElementById('stardust-container');
+  if(!container) return;
+  // Create 20 motes with randomized positions and animation durations
+  for(let i=0; i<20; i++){
+    const mote = document.createElement('div');
+    mote.className = 'stardust-mote';
+    mote.style.left = Math.random() * 100 + '%';
+    mote.style.animationDuration = (20 + Math.random() * 25) + 's';
+    mote.style.animationDelay = (Math.random() * 20) + 's';
+    container.appendChild(mote);
+  }
+}
+spawnStardust();
+
 /* ---------- application routing & VIP bypass ---------- */
 window.addEventListener('load', ()=>{
   if(isHost){
@@ -1763,11 +1931,15 @@ window.addEventListener('load', ()=>{
 });
 
 /* ---------- join ---------- */
-document.getElementById('btnJoin').addEventListener('click', ()=>{
+document.getElementById('btnJoin').addEventListener('click', async ()=>{
   const name = document.getElementById('inputName').value.trim();
   if(!name){ alert('Standards require a name to enter.'); return; }
-  
-  // Auto-assign random avatar
+
+  // Request notification permission as part of entering (native browser prompt handles disclosure)
+  if(window.Notification && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+    try { await Notification.requestPermission(); } catch(e) {}
+  }
+
   const randomAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
   const id = 'g_'+Math.random().toString(36).slice(2,10);
   
@@ -1798,6 +1970,7 @@ function enterLounge(){
 let tourIdx = 0;
 const TOUR_STEPS = [
   { selector: '#activitiesSection', title: 'Welcome!', desc: 'First, we wait for everyone to arrive and settle. Keep an eye on today\'s activities here.', pad: 10 },
+  { selector: '#hubCardTable', title: 'Spin-the-Bottle', desc: 'Our warm up. We will gather around the table and the crystal will choose who speaks next.', pad: 8 },
   { selector: '#hubCardGarden', title: 'The Bouquet', desc: 'The host will pair you with someone later. This card will unlock and glow when it is time to open the bouquet.', pad: 8 },
   { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'Afterwards, we will all regroup here to participate in the Relationships Court. Get ready to cast your verdicts.', pad: 8 },
   { selector: '#hubCardCloser', title: 'Closing Ritual', desc: 'At the end of the night, we will build a shared digital archive of the things we love before we say goodbye.', pad: 8 }
@@ -2244,11 +2417,7 @@ function buildGarden(){
     <div id="bouquetFlowers"></div>
     <div class="bouquet-wrap-left-fold"></div>
     <div class="bouquet-wrap-right-fold"></div>
-    <div class="bouquet-ribbon-base">
-       <div class="ribbon-tail left"></div><div class="ribbon-tail right"></div>
-       <div class="ribbon-loop left"></div><div class="ribbon-loop right"></div>
-       <div class="ribbon-knot"></div>
-    </div>
+    <img src="bow.png" class="bouquet-ribbon-img" alt="Bow">
   `;
   const flowersContainer = document.getElementById('bouquetFlowers');
 
@@ -2353,6 +2522,15 @@ function pickFlower(i, pairId, plant, color){
   spark.style.setProperty('--ty', targetY + 'px');
 
   document.body.appendChild(spark);
+
+  // 1.5 Ethereal Water Ripple
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple-effect';
+  ripple.style.left = (rect.left + rect.width / 2) + 'px';
+  ripple.style.top = (rect.top + 30) + 'px';
+  ripple.style.borderColor = color;
+  document.body.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 700);
 
   // 2. Flash panel and show text on impact
   setTimeout(() => {
@@ -2600,22 +2778,6 @@ function showMessageToast(msg){
   setTimeout(dismiss, 5000);
 }
 
-/* ---------- Optional: real OS-level notifications when the tab is backgrounded ---------- */
-(function setupAlertsButton(){
-  const btn = document.getElementById('btnEnableAlerts');
-  if(!btn || !window.Notification) return;
-  function refresh(){
-    if(Notification.permission === 'granted'){ btn.style.display = 'none'; return; }
-    if(Notification.permission === 'denied'){ btn.style.display = 'none'; return; }
-    btn.style.display = 'block';
-  }
-  btn.addEventListener('click', async () => {
-    try{ await Notification.requestPermission(); }catch(e){}
-    refresh();
-  });
-  window.addEventListener('load', () => setTimeout(refresh, 800));
-})();
-
 /* ---------- Host Controls: Inline Per-Activity Controls ---------- */
 
 // --- TOGGLE "HAPPENING NOW" ---
@@ -2747,6 +2909,159 @@ document.getElementById('btnPickElaborate').addEventListener('click', ()=>{
   if(hostGuestsCache.length === 0){ alert('No guests checked in yet.'); return; }
   const pick = hostGuestsCache[Math.floor(Math.random()*hostGuestsCache.length)];
   document.getElementById('aitaPicked').textContent = `🎙️ ${pick.name}, tell us why!`;
+});
+
+/* =========================================================
+   THE ROUND TABLE (SPIN THE CRYSTAL)
+   ========================================================= */
+let currentPointerAngle = 0;
+let tableGuests = [];
+
+function initTableEngine() {
+  if (isHost) document.getElementById('hostTableActions').style.display = 'block';
+
+  // Hub card unlock listener
+  document.getElementById('btnToggleLockTable').addEventListener('click', async () => {
+    const snap = await ref(`events/${EVENT_ID}/hubs/table`).once('value');
+    ref(`events/${EVENT_ID}/hubs/table`).set(!snap.val());
+  });
+
+  document.getElementById('btnHighlightTable').addEventListener('click', async () => {
+    const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
+    ref(`events/${EVENT_ID}/hubs/current`).set(snap.val() === 'table' ? null : 'table');
+  });
+
+  document.getElementById('hubCardTable').addEventListener('click', () => {
+    if (!document.getElementById('hubCardTable').classList.contains('locked')) {
+      setLoungeState('state-table');
+    }
+  });
+
+  // Hub lock visual sync
+  ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
+    const hubs = snap.val() || {};
+    const card = document.getElementById('hubCardTable');
+    if (card) {
+      card.classList.toggle('locked', !hubs.table);
+      card.classList.toggle('is-current', hubs.current === 'table');
+    }
+    setLockButtonState(document.getElementById('btnToggleLockTable'), !!hubs.table, 'Lock', 'Unlock');
+  });
+
+  // Listen to the shared bottle state
+  ref(`events/${EVENT_ID}/bottle`).on('value', snap => {
+    const data = snap.val() || { completed: [] };
+    const completed = data.completed || [];
+    
+    // 1. Draw the seats dynamically based on current attendees
+    tableGuests = stateGuests; // from the global listener
+    const seatsContainer = document.getElementById('tableSeats');
+    seatsContainer.innerHTML = '';
+    
+    const radius = 135; // Distance from center
+    
+    tableGuests.forEach((g, index) => {
+      // Calculate angle in degrees (0 is top/12 o'clock)
+      const angleDeg = (360 / tableGuests.length) * index;
+      const angleRad = (angleDeg - 90) * (Math.PI / 180);
+      
+      const x = Math.cos(angleRad) * radius;
+      const y = Math.sin(angleRad) * radius;
+      
+      const seat = document.createElement('div');
+      seat.className = `table-seat ${completed.includes(g.id) ? 'done' : ''} ${data.targetId === g.id && data.spinTs ? 'active-target' : ''}`;
+      seat.dataset.id = g.id;
+      seat.style.transform = `translate(${x}px, ${y}px)`;
+      
+      seat.innerHTML = `
+        <div class="guest-avatar ${me && g.id === me.id ? 'is-me' : ''}">${g.avatar}</div>
+        <div class="guest-name">${escapeHtml(g.name)}</div>
+      `;
+      seatsContainer.appendChild(seat);
+    });
+
+    // 2. Animate the Pointer
+    if (data.spinTs) {
+      const pointer = document.getElementById('crystalPointer');
+      const panel = document.getElementById('tableQuestionPanel');
+      
+      // Calculate the absolute angle to reach the target smoothly without spinning backwards
+      const targetBaseAngle = (360 / tableGuests.length) * tableGuests.findIndex(g => g.id === data.targetId);
+      const spins = 360 * 6; // Spin 6 times
+      
+      // Calculate shortest path forward
+      let offset = targetBaseAngle - (currentPointerAngle % 360);
+      if (offset <= 0) offset += 360; 
+      
+      currentPointerAngle = currentPointerAngle + spins + offset;
+      pointer.style.transform = `rotate(${currentPointerAngle}deg)`;
+
+      // Hide question panel during spin, show after 5s transition
+      panel.style.transform = 'translateY(120%)';
+      if (isHost) {
+        document.getElementById('btnSpinPointer').style.display = 'none';
+        document.getElementById('btnMarkTurnDone').style.display = 'none';
+      }
+
+      setTimeout(() => {
+        document.getElementById('tableTargetName').textContent = `Ask ${escapeHtml(data.targetName)}:`;
+        document.getElementById('tableQuestionText').textContent = data.question;
+        panel.style.transform = 'translateY(0)';
+        
+        if (isHost) {
+           document.getElementById('btnMarkTurnDone').style.display = 'inline-block';
+        }
+      }, 5000);
+    } else {
+      // Reset state (panel hidden)
+      document.getElementById('tableQuestionPanel').style.transform = 'translateY(120%)';
+      if (isHost) {
+        document.getElementById('btnSpinPointer').style.display = 'inline-block';
+        document.getElementById('btnMarkTurnDone').style.display = 'none';
+      }
+    }
+  });
+
+  // Host Actions
+  document.getElementById('btnSpinPointer').addEventListener('click', async () => {
+    const snap = await ref(`events/${EVENT_ID}/bottle`).once('value');
+    const data = snap.val() || {};
+    const completed = data.completed || [];
+    
+    const available = tableGuests.filter(g => !completed.includes(g.id));
+    if (available.length === 0) { alert('Everyone has taken a turn!'); return; }
+    
+    const target = available[Math.floor(Math.random() * available.length)];
+    const randomQuestion = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+    
+    ref(`events/${EVENT_ID}/bottle`).update({
+      targetId: target.id,
+      targetName: target.name,
+      question: randomQuestion,
+      spinTs: Date.now()
+    });
+  });
+
+  document.getElementById('btnMarkTurnDone').addEventListener('click', async () => {
+    const snap = await ref(`events/${EVENT_ID}/bottle`).once('value');
+    const data = snap.val() || {};
+    let completed = data.completed || [];
+    if (data.targetId && !completed.includes(data.targetId)) {
+      completed.push(data.targetId);
+    }
+    
+    // Reset for next spin
+    ref(`events/${EVENT_ID}/bottle`).set({
+      completed: completed,
+      targetId: null,
+      spinTs: null
+    });
+  });
+}
+
+// Call this function at the bottom of window load (where enterLounge and initHost run)
+window.addEventListener('load', () => {
+  setTimeout(initTableEngine, 500); 
 });
 </script>
 </body>
