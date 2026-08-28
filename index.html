@@ -396,21 +396,7 @@
     border-radius: 24px; 
     padding: 24px 20px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-    border: 1px solid transparent;
-    background-clip: padding-box;
-  }
-
-  /* The glowing crystal edge */
-  .dashboard-section::before, #activitiesSection::before, .hub-card::before {
-    content: '';
-    position: absolute; inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.02) 40%, rgba(242,193,78,0.2));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   #activitiesSection { margin: 18px auto 24px; }
@@ -525,8 +511,8 @@
     transition:opacity .3s ease, transform .15s ease, box-shadow .3s ease;
     background: rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 1px solid transparent;
-    background-clip: padding-box;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom-color: rgba(242, 193, 78, 0.4);
     position: relative;
   }
   .hub-card.locked{ opacity:.4; pointer-events:none; cursor:default; filter: grayscale(80%); }
@@ -1765,7 +1751,7 @@
   <!-- STATE: THE ROUND TABLE (SPIN THE BOTTLE) -->
   <div id="state-table" class="lounge-state">
     <button class="back-btn" onclick="setLoungeState('state-gathering')">‹</button>
-    <div class="eyebrow" style="margin-top: 40px;">Group Ritual</div>
+    <div class="eyebrow" style="margin-top: 40px;">Warm-Up Activity</div>
     <h1 class="display" style="font-size:32px; margin-bottom: 24px;">The Round Table</h1>
     
     <div class="table-arena" id="tableArena">
@@ -2150,7 +2136,6 @@ function listenPhase(){
       show('screen-lounge');
       setLoungeState('state-gathering');
       document.getElementById('aitaVerdictCard').style.display = 'none';
-      document.getElementById('glowRing').style.boxShadow = `none`;
 
       // Always restart the game engine when entering the lounge
       startBunnyGame();
@@ -2158,7 +2143,6 @@ function listenPhase(){
     else if(state === 'aita'){
       show('screen-lounge');
       stopBunnyGame();
-      document.getElementById('glowRing').style.boxShadow = `none`;
       ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
         const round = snap.val();
         if(!round) return;
