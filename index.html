@@ -1881,6 +1881,24 @@ const QUESTIONS = [
   "What's a red flag that can feel like love at first but is actually control?"
 ];
 
+const WARMUP_QUESTIONS = [
+  "They're a 10, but they clap when the airplane lands.",
+  "Would you rather your partner have terrible fashion sense or terrible taste in music?",
+  "They're a 10, but they talk to their pets in a baby voice in front of company.",
+  "Would you rather date someone obsessed with astrology or obsessed with crypto?",
+  "They're a 10, but they use 2-in-1 shampoo and conditioner.",
+  "Would you rather go on a first date to a chaotic amusement park or a completely silent meditation retreat?",
+  "They're a 10, but they text in perfectly punctuated, formal paragraphs for every minor thing.",
+  "Would you rather have a partner who is always 30 minutes early or 30 minutes late?",
+  "They're a 10, but their ex is their 'best friend' and they text daily.",
+  "They're a 10, but they refuse to eat any vegetables, ever.",
+  "Would you rather always have to share your phone location with your partner, or never be able to see theirs?",
+  "They're a 10, but they chew with their mouth open when they're really enjoying the food.",
+  "Would you rather your partner be entirely off all social media, or be a wannabe influencer?",
+  "They're a 10, but their ideal weekend involves absolutely zero plans or leaving the house.",
+  "Would you rather date someone who talks during movies or someone who falls asleep 10 minutes in?"
+];
+
 const CLUSTERS = [
   ['#d94f8c','#f2c14e'],   /* rose - gold */
   ['#c9a4ff','#f2c14e'],   /* amethyst - gold */
@@ -3085,7 +3103,7 @@ function initTableEngine() {
     if (available.length === 0) { alert('Everyone has taken a turn!'); return; }
     
     const target = available[Math.floor(Math.random() * available.length)];
-    const randomQuestion = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+    const randomQuestion = WARMUP_QUESTIONS[Math.floor(Math.random() * WARMUP_QUESTIONS.length)];
     
     ref(`events/${EVENT_ID}/bottle`).update({
       targetId: target.id,
