@@ -1492,30 +1492,36 @@
       <!-- TODAY'S ACTIVITIES -->
       <div class="dashboard-section" id="activitiesSection">
         <div class="section-header">
-          <div class="eyebrow">Today's Activities</div>
+          <div class="eyebrow">The Roadmap</div>
         </div>
         
         <p class="sub" style="margin-bottom: 20px; text-align: center; font-size: 14px;">
-          A roadmap for the evening. Settle in, grab a drink, and wait for the host to guide the way.
+          The route for the evening. Buckle up, grab a drink, and wait for the host to start the ignition.
         </p>
 
         <div class="hub-sections">
 
-          <!-- Pairs Activity -->
+          <!-- Stop 1 -->
           <div class="hub-card locked" id="hubCardGarden">
-            <div class="current-badge">Happening Now</div>
-            <div class="hub-card-icon">💐</div>
+            <div class="current-badge">We're here</div>
+            <div class="hub-card-icon">
+              <!-- Minimalist Gate/Greenhouse SVG -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 22V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v17"/>
+                <path d="M4 12h16"/><path d="M9 22v-9"/><path d="M15 22v-9"/>
+              </svg>
+            </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Pairs Activity</div>
-              <div class="hub-card-title">The Bouquet</div>
-              <div class="hub-card-desc">Pick flowers together to spark deep conversation.</div>
-              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
+              <div class="hub-card-title">The Flower Shop</div>
+              <div class="hub-card-desc">We’ve pulled up. Step inside, find your partner, and pick your flowers.</div>
+              <div class="hub-card-lock-note">The host will unlock the doors when the time is right.</div>
             </div>
           </div>
 
           <!-- HOST ONLY: Minimal Pairs Controls -->
           <div id="hostControlsGarden" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightGarden">Toggle "Happening Now"</button>
+            <button class="host-inline-btn action" id="btnHighlightGarden">Toggle "We're here"</button>
             <div style="display:flex; gap:6px;">
               <button class="host-inline-btn" id="btnTimerGarden" style="display:none; align-items:center; gap:6px;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
@@ -1531,21 +1537,26 @@
           <!-- Connector line -->
           <div class="activity-connector"><div class="connector-line"></div></div>
 
-          <!-- Group Activity -->
+          <!-- Stop 2 -->
           <div class="hub-card locked" id="hubCardAita">
-            <div class="current-badge">Happening Now</div>
-            <div class="hub-card-icon">⚖️</div>
+            <div class="current-badge">We're here</div>
+            <div class="hub-card-icon">
+              <!-- Minimalist Courthouse Pillars SVG -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21h18"/><path d="M4 21v-4"/><path d="M20 21v-4"/><path d="M3 7v4h18V7"/><path d="M12 21v-9"/><path d="M8 21v-9"/><path d="M16 21v-9"/><polygon points="12,2 22,7 2,7"/>
+              </svg>
+            </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Group Activity</div>
               <div class="hub-card-title">Relationships Court™</div>
-              <div class="hub-card-desc">Evaluate real-life relationship dilemmas, cross-examinations, and cast your official verdicts.</div>
-              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
+              <div class="hub-card-desc">We're parked. Step inside, take your seat, and prepare to cast your vote.</div>
+              <div class="hub-card-lock-note">The doors are currently closed.</div>
             </div>
           </div>
 
           <!-- HOST ONLY: Minimal Court Controls -->
           <div id="hostControlsAita" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightCourt">Toggle "Happening Now"</button>
+            <button class="host-inline-btn action" id="btnHighlightCourt">Toggle "We're here"</button>
             <div style="display:flex; gap:6px;">
               <button class="host-inline-btn" id="btnTimerCourt" style="display:none; align-items:center; gap:6px;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
@@ -1575,21 +1586,27 @@
           <!-- Connector line -->
           <div class="activity-connector"><div class="connector-line"></div></div>
 
-          <!-- Closer Activity -->
+          <!-- Stop 3 -->
           <div class="hub-card locked" id="hubCardCloser">
-            <div class="current-badge">Happening Now</div>
-            <div class="hub-card-icon">💌</div>
+            <div class="current-badge">We're here</div>
+            <div class="hub-card-icon">
+              <!-- Minimalist Open Book SVG -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 4.5C2 4.5 5 3 8.5 3s6.5 1.5 6.5 1.5v15S12 18 8.5 18 2 19.5 2 19.5v-15Z"/>
+                <path d="M22 4.5C22 4.5 19 3 15.5 3S9 4.5 9 4.5v15S12 18 15.5 18s6.5 1.5 6.5 1.5v-15Z"/>
+              </svg>
+            </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--gold);">Closing Ritual</div>
-              <div class="hub-card-title">Things We Love</div>
-              <div class="hub-card-desc">Leave a piece of yourself behind on our shared archive.</div>
-              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
+              <div class="hub-card-sub" style="color:var(--gold);">Closer Activity</div>
+              <div class="hub-card-title">The Library</div>
+              <div class="hub-card-desc">The final stop. The vault is open—leave your mark in the archive before we head home.</div>
+              <div class="hub-card-lock-note">The vault remains sealed for now.</div>
             </div>
           </div>
 
           <!-- HOST ONLY: Closer Controls -->
           <div id="hostControlsCloser" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightCloser">Toggle "Happening Now"</button>
+            <button class="host-inline-btn action" id="btnHighlightCloser">Toggle "We're here"</button>
             <button class="host-inline-btn" id="btnToggleLockCloser" style="display:flex; align-items:center; gap:6px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
               <span>Unlock</span>
@@ -1883,10 +1900,10 @@ function enterLounge(){
 /* --- SPOTLIGHT TOUR LOGIC --- */
 let tourIdx = 0;
 const TOUR_STEPS = [
-  { selector: '#activitiesSection', title: 'Welcome!', desc: 'First, we wait for everyone to arrive and settle. Keep an eye on today\'s activities here.', pad: 10 },
-  { selector: '#hubCardGarden', title: 'The Bouquet', desc: 'The host will pair you with someone later. This card will unlock and glow when it is time to open the bouquet.', pad: 8 },
-  { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'Afterwards, we will all regroup here to participate in the Relationships Court. Get ready to cast your verdicts.', pad: 8 },
-  { selector: '#hubCardCloser', title: 'Closing Ritual', desc: 'At the end of the night, we will build a shared digital archive of the things we love before we say goodbye.', pad: 8 }
+  { selector: '#activitiesSection', title: 'Welcome to the route.', desc: 'This is our itinerary for the night. We all travel together, so sit tight until we arrive at the first stop.', pad: 10 },
+  { selector: '#hubCardGarden', title: 'The Flower Shop', desc: 'Our first stop. The host is driving, so this stays locked until we officially pull up and step inside.', pad: 8 },
+  { selector: '#hubCardAita', title: 'Relationships Court', desc: 'Afterwards, we will all regroup at the courthouse. Get ready to cast your verdicts.', pad: 8 },
+  { selector: '#hubCardCloser', title: 'The Final Stop', desc: 'At the end of the night, the vault opens—leave your mark in the archive before we head home.', pad: 8 }
 ];
 
 function startTour() {
