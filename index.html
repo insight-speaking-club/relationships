@@ -1661,7 +1661,7 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 <span>Unlock</span>
               </button>
-              <button class="host-inline-btn" onclick="setLoungeState('state-garden'); const bed=document.getElementById('gardenBed'); if(bed && !bed.querySelector('.flower-plant')) buildGarden();" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
+              <button class="host-inline-btn" onclick="setLoungeState('state-garden'); if(!document.querySelector('#gardenBed .flower-plant')) buildGarden();" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
             </div>
           </div>
 
@@ -1728,10 +1728,13 @@
           <!-- HOST ONLY: Closer Controls -->
           <div id="hostControlsCloser" class="host-inline-controls" style="display:none; justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightCloser">Toggle "Happening Now"</button>
-            <button class="host-inline-btn" id="btnToggleLockCloser" style="display:flex; align-items:center; gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>Unlock</span>
-            </button>
+            <div style="display:flex; gap:6px;">
+              <button class="host-inline-btn" id="btnToggleLockCloser" style="display:flex; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Unlock</span>
+              </button>
+              <button class="host-inline-btn" onclick="window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank')" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
+            </div>
           </div>
 
         </div>
@@ -2206,10 +2209,12 @@ function listenPhase(){
     else if(state === 'aita'){
       show('screen-lounge');
       stopBunnyGame();
+      setLoungeState('state-aita'); // Opens the screen instantly no matter what
+
+      // Safely load the round data if it exists
       ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
         const round = snap.val();
-        if(!round) return;
-        enterAitaRound(round);
+        if(round) enterAitaRound(round);
       });
     }
   });
