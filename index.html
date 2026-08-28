@@ -2256,7 +2256,7 @@ function listenHubs() {
 
 // Bind the hub cards!
 document.getElementById('hubCardGarden').addEventListener('click', () => {
-  if (document.getElementById('hubCardGarden').classList.contains('locked')) return;
+  if (!isHost && document.getElementById('hubCardGarden').classList.contains('locked')) return;
   setLoungeState('state-garden');
   // Failsafe: if no pairing event has built the bouquet yet, build it now
   // so the flowers are always visible the moment the guest enters.
@@ -2266,11 +2266,11 @@ document.getElementById('hubCardGarden').addEventListener('click', () => {
   }
 });
 document.getElementById('hubCardAita').addEventListener('click', () => {
-  if (document.getElementById('hubCardAita').classList.contains('locked')) return;
+  if (!isHost && document.getElementById('hubCardAita').classList.contains('locked')) return;
   setLoungeState('state-aita');
 });
 document.getElementById('hubCardCloser').addEventListener('click', () => {
-  if (document.getElementById('hubCardCloser').classList.contains('locked')) return;
+  if (!isHost && document.getElementById('hubCardCloser').classList.contains('locked')) return;
   // Open Padlet in a new tab/window
   window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank');
 });
@@ -2979,9 +2979,8 @@ document.getElementById('btnResetTable').addEventListener('click', () => {
 });
 
 document.getElementById('hubCardTable').addEventListener('click', () => {
-  if (!document.getElementById('hubCardTable').classList.contains('locked')) {
-    setLoungeState('state-table');
-  }
+  if (!isHost && document.getElementById('hubCardTable').classList.contains('locked')) return;
+  setLoungeState('state-table');
 });
 
 // --- OPTIONAL TIMER (set it right after unlocking, later, or never — your call) ---
