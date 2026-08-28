@@ -1883,7 +1883,7 @@ function spawnLanterns(){
     l.style.width = l.style.height = (18+Math.random()*16)+'px';
     sky.appendChild(l);
     setTimeout(()=>l.remove(), 26000);
-  }, 1400);
+  }, 4500); /* Increased from 1400 to 4500 to reduce frequency */
 }
 spawnLanterns();
 
@@ -2615,6 +2615,7 @@ function initHost(){
 
   // Unhide the inline host controls
   document.getElementById('hostRosterContainer').style.display = 'block';
+  document.getElementById('hostControlsTable').style.display = 'flex';
   document.getElementById('hostControlsGarden').style.display = 'flex';
   document.getElementById('hostControlsAita').style.display = 'flex';
   document.getElementById('hostControlsCloser').style.display = 'flex';
