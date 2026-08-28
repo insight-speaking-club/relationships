@@ -294,13 +294,14 @@
     position: absolute; top: 0; left: -150%; 
     width: 50%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: skewX(-20deg); 
+    transform: skewX(-20deg) translateX(0%); 
     animation: liquid-sweep 5s infinite cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
+    will-change: transform;
   }
   @keyframes liquid-sweep {
-    0%, 60% { left: -150%; }
-    100% { left: 200%; }
+    0%, 60% { transform: skewX(-20deg) translateX(0%); }
+    100% { transform: skewX(-20deg) translateX(700%); }
   }
   .btn:active{
     transform:scale(.96);
@@ -800,16 +801,18 @@
   }
   .ripple-effect {
     position: absolute; 
+    width: 160px; height: 160px;
     border-radius: 50%; 
     border: 2px solid rgba(255,255,255,0.7);
     pointer-events: none; 
     z-index: 100;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0);
     animation: ripple-out 0.7s ease-out forwards;
+    will-change: transform, opacity;
   }
   @keyframes ripple-out {
-    0% { width: 0; height: 0; opacity: 1; border-width: 3px; }
-    100% { width: 160px; height: 160px; opacity: 0; border-width: 0px; }
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
   }
   .hill{
     position:absolute; left:-15%; right:-15%; bottom:-20px; height:150px;
@@ -1515,10 +1518,10 @@
 
 <!-- Timer Overlays -->
 <!-- Elegant, small Garden Timer -->
-<div id="timerWarning" style="position:fixed; top:20px; right:20px; z-index:90; background:rgba(255,255,255,0.08); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); color:var(--gold); padding:8px 16px; border-radius:999px; font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.05em; opacity:0; pointer-events:none; transition: opacity 0.5s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">00:00</div>
+<div id="timerWarning" style="position:fixed; top:20px; right:20px; z-index:90; background:rgba(18,8,33,0.85); border:1px solid rgba(255,255,255,0.15); color:var(--gold); padding:8px 16px; border-radius:999px; font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.05em; opacity:0; pointer-events:none; transition: opacity 0.5s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">00:00</div>
 
 <!-- Time's Up Screen -->
-<div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.3s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+<div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.98); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.3s ease;">
   <div style="font-family:'Cormorant Garamond', serif; font-size:46px; font-style:italic; color:var(--gold); text-align: center; line-height: 1.1; text-shadow: 0 0 30px rgba(242,193,78,0.3);">
     Time's up.<br>
     <span style="color:var(--mist); font-family:'Jost', sans-serif; font-size:22px; font-style:normal; display:block; margin-top:16px;">Please come to the table.</span>
@@ -2240,10 +2243,16 @@ function listenHubs() {
       cardCloser.classList.toggle('locked', !hubs.closer);
       cardCloser.classList.toggle('is-current', hubs.current === 'closer');
     }
+    const cardTable = document.getElementById('hubCardTable');
+    if(cardTable) {
+      cardTable.classList.toggle('locked', !hubs.table);
+      cardTable.classList.toggle('is-current', hubs.current === 'table');
+    }
 
     setLockButtonState(document.getElementById('btnToggleLockGarden'), !!hubs.garden, 'Lock', 'Unlock');
     setLockButtonState(document.getElementById('btnToggleLockCourt'), !!hubs.aita, 'Lock', 'Unlock');
     setLockButtonState(document.getElementById('btnToggleLockCloser'), !!hubs.closer, 'Lock', 'Unlock');
+    setLockButtonState(document.getElementById('btnToggleLockTable'), !!hubs.table, 'Lock', 'Unlock');
 
     // The Timer button only makes sense once a section is unlocked —
     // setting a timer is always optional, so it's just a standalone extra.
@@ -2718,7 +2727,7 @@ function listenTimer() {
            }
         }
       }
-    }, 100);
+    }, 500);
   });
 }
 
@@ -3059,17 +3068,6 @@ function initTableEngine() {
       }
     });
   }
-
-  // Hub lock visual sync
-  ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
-    const hubs = snap.val() || {};
-    const card = document.getElementById('hubCardTable');
-    if (card) {
-      card.classList.toggle('locked', !hubs.table);
-      card.classList.toggle('is-current', hubs.current === 'table');
-    }
-    setLockButtonState(document.getElementById('btnToggleLockTable'), !!hubs.table, 'Lock', 'Unlock');
-  });
 
   // Listen to the shared bottle state
   ref(`events/${EVENT_ID}/bottle`).on('value', snap => {
