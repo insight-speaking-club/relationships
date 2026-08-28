@@ -1184,12 +1184,6 @@
     box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 0 20px 50px rgba(0,0,0,0.6);
   }
 
-  .glass-table::after {
-    content: ''; position: absolute; inset: -1px; border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent 40%, rgba(242,193,78,0.1));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
-  }
 
   .crystal-pointer-container {
     position: absolute; width: 100%; height: 100%;
@@ -1530,7 +1524,7 @@
       <!-- HOST ONLY: Roster -->
       <div id="hostRosterContainer" class="dashboard-section" style="display:none; border-color: var(--gold);">
         <div class="section-header"><div class="eyebrow" style="color:var(--gold);">Host Roster</div></div>
-        <div class="host-list" id="hostList" style="max-height: 200px; overflow-y: auto;"></div>
+        <div class="host-list" id="hostList" style="margin-bottom: 16px;"></div>
 
         <div class="msg-composer">
           <div class="eyebrow" style="color:var(--gold); margin-bottom:10px; text-align:left;">Send a Message</div>
@@ -2012,6 +2006,16 @@ function enterLounge(){
   if(!isHost && !localStorage.getItem('fsc_tour_seen')){
     localStorage.setItem('fsc_tour_seen', '1');
     setTimeout(startTour, 600);
+  }
+
+  // If the host kicks me (deletes my record), boot me out immediately
+  if (!isHost) {
+    ref(`events/${EVENT_ID}/attendees/${me.id}`).on('value', snap => {
+      if(!snap.val()) {
+        localStorage.removeItem('fsc_guest'); // Wipe their saved login
+        location.reload(); // Refresh the page to boot them to the welcome screen
+      }
+    });
   }
 }
 
@@ -2781,7 +2785,6 @@ function listenMessages(){
     Object.entries(all).forEach(([id, msg]) => {
       if(!msg || shownMsgIds.has(id)) return;
       if(!msg.ts || msg.ts <= startCursor) return;
-      if(msg.senderId === me.id) return; // don't pop your own broadcast back at you
       if(msg.target !== 'all' && msg.target !== me.id) return; // not addressed to us
       shownMsgIds.add(id);
       showMessageToast(msg);
@@ -2847,6 +2850,11 @@ document.getElementById('btnHighlightCloser').addEventListener('click', async ()
   else ref(`events/${EVENT_ID}/hubs/current`).set('closer');
 });
 
+document.getElementById('btnHighlightTable').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
+  ref(`events/${EVENT_ID}/hubs/current`).set(snap.val() === 'table' ? null : 'table');
+});
+
 // --- SYNC LOCK BUTTON LABEL/ICON TO CURRENT STATE ---
 const LOCK_ICON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
 function setLockButtonState(btn, isUnlocked, unlockedLabel, lockedLabel){
@@ -2899,6 +2907,24 @@ document.getElementById('btnToggleLockCloser').addEventListener('click', async (
     ref(`events/${EVENT_ID}/hubs/closer`).set(false);
   } else {
     ref(`events/${EVENT_ID}/hubs/closer`).set(true);
+  }
+});
+
+// Unlock toggle for Table (Spin-the-Bottle)
+document.getElementById('btnToggleLockTable').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/table`).once('value');
+  ref(`events/${EVENT_ID}/hubs/table`).set(!snap.val());
+});
+
+// --- OTHER TABLE ACTIONS ---
+document.getElementById('btnResetTable').addEventListener('click', () => {
+  if (!confirm('Reset Spin-the-Bottle so everyone can go again?')) return;
+  ref(`events/${EVENT_ID}/bottle`).set(null);
+});
+
+document.getElementById('hubCardTable').addEventListener('click', () => {
+  if (!document.getElementById('hubCardTable').classList.contains('locked')) {
+    setLoungeState('state-table');
   }
 });
 
@@ -2978,28 +3004,6 @@ function initTableEngine() {
       }
     });
   }
-
-  // Hub card unlock listener
-  document.getElementById('btnToggleLockTable').addEventListener('click', async () => {
-    const snap = await ref(`events/${EVENT_ID}/hubs/table`).once('value');
-    ref(`events/${EVENT_ID}/hubs/table`).set(!snap.val());
-  });
-
-  document.getElementById('btnHighlightTable').addEventListener('click', async () => {
-    const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-    ref(`events/${EVENT_ID}/hubs/current`).set(snap.val() === 'table' ? null : 'table');
-  });
-
-  document.getElementById('btnResetTable').addEventListener('click', () => {
-    if (!confirm('Reset Spin-the-Bottle so everyone can go again?')) return;
-    ref(`events/${EVENT_ID}/bottle`).set(null);
-  });
-
-  document.getElementById('hubCardTable').addEventListener('click', () => {
-    if (!document.getElementById('hubCardTable').classList.contains('locked')) {
-      setLoungeState('state-table');
-    }
-  });
 
   // Hub lock visual sync
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
