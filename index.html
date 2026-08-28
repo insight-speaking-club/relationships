@@ -1365,6 +1365,66 @@
   .lb-rank.rank-1 { color: var(--gold); font-size: 14px; font-weight: bold; }
   .lb-name { flex: 1; font-weight: 500; font-size: 15px; color: var(--mist); }
   .lb-score { font-family: 'Space Mono', monospace; color: var(--gold); }
+/* --- PARISIAN SKYLINE HORIZON --- */
+.paris-horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 240px;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.paris-skyline-svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 -4px 15px rgba(242, 193, 78, 0.15));
+}
+
+/* Eiffel Tower rotating beacon ray */
+.eiffel-beacon {
+  position: absolute;
+  bottom: 222px;
+  left: 50%;
+  width: 400px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(242, 193, 78, 0.8) 0%, rgba(242, 193, 78, 0) 100%);
+  transform-origin: left center;
+  filter: blur(1px);
+  animation: beacon-sweep 12s linear infinite;
+}
+
+@keyframes beacon-sweep {
+  0% { transform: rotate(-25deg) scaleX(0.7); opacity: 0.2; }
+  50% { transform: rotate(35deg) scaleX(1.2); opacity: 0.85; }
+  100% { transform: rotate(-25deg) scaleX(0.7); opacity: 0.2; }
+}
+
+.eiffel-tower-icon {
+  position: absolute;
+  left: 50%;
+  bottom: 35px;
+  transform: translateX(-50%);
+  width: 68px;
+  height: 188px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 14px rgba(242, 193, 78, 0.3));
+}
+
+/* Warm, romantic city lights glow behind the buildings */
+.paris-city-glow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background: radial-gradient(ellipse at 50% 100%, rgba(242, 193, 78, 0.25) 0%, rgba(217, 79, 140, 0.12) 50%, transparent 80%);
+}
 </style>
 </head>
 <body>
@@ -1391,6 +1451,37 @@
 </div>
 
 <div class="sky" id="sky">
+
+  <!-- PARIS SKYLINE HORIZON -->
+  <div class="paris-horizon">
+    <!-- Sweeping Eiffel Tower Beacon Light -->
+    <div class="eiffel-beacon"></div>
+
+    <!-- Eiffel Tower image (host eiffel-tower.png alongside this file) -->
+    <img class="eiffel-tower-icon" src="eiffel-tower.png" alt="">
+
+    <!-- Silhouette SVG (Parisian Rooftops) -->
+    <svg class="paris-skyline-svg" viewBox="0 0 1200 320" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="parisSilhouetteGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#2a0e3f" stop-opacity="0.9" />
+          <stop offset="100%" stop-color="#120821" stop-opacity="1" />
+        </linearGradient>
+      </defs>
+      <!-- Haussmannian chimneys, rooftops & Eiffel Tower silhouette -->
+      <path fill="url(#parisSilhouetteGrad)" d="
+        M0,320 L0,270
+        L60,270 L60,250 L80,250 L80,270 L140,270 L140,235 L150,235 L150,270
+        L230,270 L260,240 L290,270 L380,270 L380,260 L400,260 L400,270
+        L520,270
+        L780,270 L780,245 L790,245 L790,270 L870,270 L910,230 L950,270
+        L1030,270 L1030,255 L1050,255 L1050,270 L1120,270 L1120,240 L1140,240 L1140,270 L1200,270
+        L1200,320 Z" />
+    </svg>
+
+    <!-- Warm amber street-level haze -->
+    <div class="paris-city-glow"></div>
+  </div>
 
   <!-- Floating Love Quotes -->
   <div class="affirmations-layer">
