@@ -70,7 +70,6 @@
       0 0 20px 6px rgba(242, 193, 78, 0.4); /* ambient outer glow */
     opacity: 0;
     animation: float-up-sway linear infinite;
-    will-change: transform;
   }
   /* The dark wire opening at the bottom */
   .lantern::before {
@@ -102,7 +101,6 @@
     box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.6);
     opacity: 0;
     animation: drift-mote linear infinite;
-    will-change: transform;
   }
   @keyframes drift-mote {
     0% { transform: translateY(110vh) translateX(0); opacity: 0; }
@@ -294,14 +292,13 @@
     position: absolute; top: 0; left: -150%; 
     width: 50%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: skewX(-20deg) translateX(0%); 
+    transform: skewX(-20deg); 
     animation: liquid-sweep 5s infinite cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
-    will-change: transform;
   }
   @keyframes liquid-sweep {
-    0%, 60% { transform: skewX(-20deg) translateX(0%); }
-    100% { transform: skewX(-20deg) translateX(700%); }
+    0%, 60% { left: -150%; }
+    100% { left: 200%; }
   }
   .btn:active{
     transform:scale(.96);
@@ -333,10 +330,6 @@
     overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   }
   .lounge-state.active { opacity: 1; pointer-events: auto; }
-  /* Pause decorative animations (moon glow, shooting star, liquid sweep, pulses, etc.)
-     on screens the guest isn't currently looking at, so they don't keep burning
-     battery/GPU in the background and causing scroll jank. */
-  .lounge-state:not(.active) * { animation-play-state: paused !important; }
 
   /* -- State 1: The Gathering (Roster & Game) -- */
   .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:50px; padding-left: 26px; padding-right: 26px;}
@@ -391,13 +384,27 @@
     position: relative;
     width: 100%; max-width: 420px;
     margin-bottom: 24px;
-    background: rgba(18, 8, 33, 0.55); /* Slightly more opaque so a lighter blur still reads as frosted */
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, 0.02); /* Barely-there background */
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
     border-radius: 24px; 
     padding: 24px 20px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid transparent;
+    background-clip: padding-box;
+  }
+
+  /* The glowing crystal edge */
+  .dashboard-section::before, #activitiesSection::before, .hub-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.02) 40%, rgba(242,193,78,0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
   }
 
   #activitiesSection { margin: 18px auto 24px; }
@@ -510,19 +517,13 @@
     padding:16px 18px; border-radius:18px; cursor:pointer;
     opacity:1; pointer-events:auto;
     transition:opacity .3s ease, transform .15s ease, box-shadow .3s ease;
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom-color: rgba(242, 193, 78, 0.4);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+    border: 1px solid transparent;
+    background-clip: padding-box;
     position: relative;
   }
   .hub-card.locked{ opacity:.4; pointer-events:none; cursor:default; filter: grayscale(80%); }
-  /* Give the host click-access to locked cards */
-  .host-mode .hub-card.locked { pointer-events:auto !important; opacity:.7; cursor:pointer; }
-  /* Kill the 300ms mobile tap delay for instant response */
-  button, .btn, .host-inline-btn, .hub-card, .msg-chip, .back-btn {
-    touch-action: manipulation;
-  }
   .hub-card:not(.locked){
     box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 15px rgba(242, 193, 78, 0.05);
   }
@@ -801,18 +802,16 @@
   }
   .ripple-effect {
     position: absolute; 
-    width: 160px; height: 160px;
     border-radius: 50%; 
     border: 2px solid rgba(255,255,255,0.7);
     pointer-events: none; 
     z-index: 100;
-    transform: translate(-50%, -50%) scale(0);
+    transform: translate(-50%, -50%);
     animation: ripple-out 0.7s ease-out forwards;
-    will-change: transform, opacity;
   }
   @keyframes ripple-out {
-    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+    0% { width: 0; height: 0; opacity: 1; border-width: 3px; }
+    100% { width: 160px; height: 160px; opacity: 0; border-width: 0px; }
   }
   .hill{
     position:absolute; left:-15%; right:-15%; bottom:-20px; height:150px;
@@ -1056,17 +1055,51 @@
     box-shadow: inset 0 0 25px rgba(0,0,0,0.6);
   }
 
-  /* --- THE PINK WATERCOLOR BOW --- */
-  .bouquet-ribbon-img {
-    position: absolute; 
-    bottom: 110px; /* Adjust this to slide it up or down the bouquet */
-    left: 50%; 
-    transform: translateX(-50%);
-    width: 150px; /* Adjust this to scale the bow */
-    height: auto;
-    z-index: 95;
-    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.5));
+  /* --- THE RED SATIN BOW (classic ribbon-wing shape) --- */
+  .bouquet-ribbon-base {
+    position: absolute; bottom: 135px; left: 50%; transform: translateX(-50%);
+    width: 90px; height: 120px; z-index: 95;
   }
+
+  /* Wings: wide satin flags that taper to a point at the knot, pinched at the waist */
+  .ribbon-loop {
+    position: absolute; top: -6px; width: 66px; height: 82px;
+    background: linear-gradient(135deg, #ff7086 0%, #e0334f 38%, #9c1730 72%, #6e0e1f 100%);
+  }
+  .ribbon-loop::after {
+    content: ''; position: absolute; top: 12%; width: 34%; height: 50%;
+    background: linear-gradient(160deg, rgba(255,255,255,0.55), rgba(255,255,255,0) 70%);
+    filter: blur(1.5px); pointer-events: none;
+  }
+  .ribbon-loop.left {
+    left: -40px; transform: rotate(-6deg);
+    clip-path: polygon(100% 48%, 78% 36%, 42% 0%, 0% 6%, 0% 94%, 42% 100%, 78% 64%);
+  }
+  .ribbon-loop.left::after { left: 40%; }
+  .ribbon-loop.right {
+    right: -40px; transform: rotate(6deg);
+    clip-path: polygon(0% 48%, 22% 36%, 58% 0%, 100% 6%, 100% 94%, 58% 100%, 22% 64%);
+  }
+  .ribbon-loop.right::after { left: 26%; }
+
+  /* Center knot, wrapped tight over the wing points */
+  .ribbon-knot {
+    position: absolute; top: 32px; left: 30px; width: 30px; height: 26px;
+    background: linear-gradient(160deg, #f0475f, #d92e49 45%, #8f1428 100%);
+    border-radius: 6px; z-index: 10;
+    box-shadow: inset 0 3px 6px rgba(255,255,255,0.35), inset 0 -4px 8px rgba(0,0,0,0.4), 0 4px 15px rgba(0,0,0,0.5);
+  }
+
+  /* Long tails, tapering to a single sharp point like real satin ribbon */
+  .ribbon-tail {
+    position: absolute; top: 48px; width: 26px; height: 92px;
+    background: linear-gradient(160deg, #f0475f 0%, #c92844 45%, #6e0e1f 100%);
+    clip-path: polygon(18% 0%, 82% 0%, 55% 100%, 45% 100%);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    z-index: 5;
+  }
+  .ribbon-tail.left { left: 6px; transform: rotate(14deg); }
+  .ribbon-tail.right { right: 6px; transform: rotate(-14deg); }
 
   #bouquetFlowers { position: absolute; inset: 0; z-index: 10; }
 
@@ -1175,99 +1208,6 @@
   }
   .host-inline-btn:active { transform: scale(0.95); }
   .host-inline-btn.action { background: var(--gold); color: var(--ink); border: none; font-weight: 600; }
-
-  /* --- STATE: ROUND TABLE --- */
-  #state-table { padding: 0 26px; justify-content: flex-start; align-items: center; overflow: hidden; }
-  
-  .table-arena {
-    position: relative; width: 320px; height: 320px;
-    margin: 20px auto 0;
-    display: flex; align-items: center; justify-content: center;
-  }
-  
-  .glass-table {
-    position: absolute; inset: 20px; border-radius: 50%;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, rgba(18,8,33,0.4) 100%);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.05);
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 0 20px 50px rgba(0,0,0,0.6);
-  }
-
-
-  .crystal-pointer-container {
-    position: absolute; width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    transform: rotate(0deg);
-    transition: transform 5s cubic-bezier(0.1, 0.9, 0.15, 1);
-    z-index: 10; pointer-events: none;
-  }
-
-  /* The actual crystal shard pointing UP (0 degrees) */
-  .crystal-shard {
-    position: absolute; top: 15%; width: 14px; height: 80px;
-    background: linear-gradient(180deg, #fff 0%, rgba(242,193,78,0.8) 40%, transparent 100%);
-    clip-path: polygon(50% 0%, 100% 20%, 50% 100%, 0% 20%);
-    filter: drop-shadow(0 0 15px rgba(242,193,78,0.8));
-  }
-
-  /* Center pivot glow */
-  .crystal-pointer-container::after {
-    content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%;
-    background: #fff; box-shadow: 0 0 20px 8px var(--gold);
-  }
-
-  /* Default (Small) view for the audience */
-  #tableQuestionPanel:not(.is-target) .question-text {
-    font-size: 16px;
-    color: var(--dim);
-  }
-  #tableQuestionPanel:not(.is-target) .question-eyebrow {
-    color: var(--dim);
-  }
-
-  /* Massive view for the chosen person */
-  #tableQuestionPanel.is-target {
-    background: linear-gradient(180deg, rgba(242,193,78,0.25) 0%, rgba(18,8,33,0.95) 40%, rgba(18,8,33,1) 100%);
-    box-shadow: 0 -10px 50px rgba(242, 193, 78, 0.2);
-  }
-  #tableQuestionPanel.is-target .question-eyebrow {
-    color: var(--gold);
-    font-size: 14px;
-  }
-  #tableQuestionPanel.is-target .question-text {
-    font-size: 34px;
-    line-height: 1.15;
-    color: var(--gold);
-    text-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    margin-top: 12px;
-  }
-
-  /* Make the crystal look clickable for the host */
-  .host-mode #crystalPointer {
-    cursor: pointer;
-    pointer-events: auto; /* .crystal-pointer-container is pointer-events:none by default so clicks reach the crystal */
-  }
-
-  .table-seat {
-    position: absolute; width: 48px; height: 48px;
-    top: 50%; left: 50%; margin: -24px 0 0 -24px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    transition: filter 0.5s ease, opacity 0.5s ease, transform 0.3s ease;
-    z-index: 20;
-  }
-  
-  .table-seat .guest-avatar { margin: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-  .table-seat .guest-name { 
-    position: absolute; top: 52px; font-size: 10px; color: var(--mist); 
-    background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px;
-    white-space: nowrap; pointer-events: none;
-  }
-
-  /* Eliminated state */
-  .table-seat.done { filter: grayscale(100%) brightness(0.5); opacity: 0.5; }
-  .table-seat.active-target { transform: scale(1.2); }
-  .table-seat.active-target .guest-avatar { border-color: var(--gold); box-shadow: 0 0 20px rgba(242,193,78,0.8); }
-
   .host-list{width:100%; max-width:440px; margin:0 auto; }
   .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
   .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
@@ -1408,8 +1348,8 @@
     margin: 20px auto 0;
     padding: 20px;
     background: rgba(18, 8, 33, 0.82);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
     border-radius: 22px;
     border: 1px solid rgba(244, 233, 255, 0.12);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
@@ -1423,56 +1363,6 @@
   .lb-rank.rank-1 { color: var(--gold); font-size: 14px; font-weight: bold; }
   .lb-name { flex: 1; font-weight: 500; font-size: 15px; color: var(--mist); }
   .lb-score { font-family: 'Space Mono', monospace; color: var(--gold); }
-
-  /* =========================================
-     NUCLEAR PERFORMANCE PATCH
-     Eliminates all GPU-heavy blur math
-     ========================================= */
-  
-  /* 1. Stop blurring the whole screen when it transitions */
-  .screen { filter: none !important; transform: none !important; transition: opacity 0.4s ease !important; }
-  .screen.active { filter: none !important; transform: none !important; }
-
-  /* 2. Replace heavy frosted glass with rich, opaque colors */
-  .dashboard-section, #activitiesSection {
-    background: rgba(30, 12, 45, 0.98) !important; 
-    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
-  }
-  .hub-card {
-    background: rgba(255, 255, 255, 0.08) !important;
-    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-  }
-  .glass-table {
-    background: radial-gradient(circle at 50% 50%, rgba(45, 20, 70, 0.9) 0%, rgba(18, 8, 33, 0.98) 100%) !important;
-    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-  }
-  .greeting-bubble, .partner-card {
-    background: rgba(40, 18, 55, 0.95) !important;
-    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-  }
-  .question-panel, #toastStack .imessage-toast {
-    background: rgba(18, 8, 33, 0.98) !important;
-    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-  }
-
-  /* 3. Stop animating box-shadows (massive lag culprit) */
-  .hub-card.is-current { 
-    animation: none !important; 
-    border-color: var(--gold) !important; 
-    box-shadow: none !important;
-  }
-  /* Instead, we animate opacity on a pseudo-element, which phones handle easily */
-  .hub-card.is-current::after {
-    content: ''; position: absolute; inset: -1px; border-radius: inherit;
-    box-shadow: 0 0 20px rgba(242, 193, 78, 0.4);
-    pointer-events: none; z-index: -1;
-    animation: cheap-glow 3s ease-in-out infinite alternate !important;
-  }
-  @keyframes cheap-glow { 
-    from { opacity: 0.2; } 
-    to { opacity: 1; } 
-  }
 </style>
 </head>
 <body>
@@ -1518,10 +1408,10 @@
 
 <!-- Timer Overlays -->
 <!-- Elegant, small Garden Timer -->
-<div id="timerWarning" style="position:fixed; top:20px; right:20px; z-index:90; background:rgba(18,8,33,0.85); border:1px solid rgba(255,255,255,0.15); color:var(--gold); padding:8px 16px; border-radius:999px; font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.05em; opacity:0; pointer-events:none; transition: opacity 0.5s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">00:00</div>
+<div id="timerWarning" style="position:fixed; top:20px; right:20px; z-index:90; background:rgba(255,255,255,0.08); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); color:var(--gold); padding:8px 16px; border-radius:999px; font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.05em; opacity:0; pointer-events:none; transition: opacity 0.5s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">00:00</div>
 
 <!-- Time's Up Screen -->
-<div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.98); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.3s ease;">
+<div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.3s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
   <div style="font-family:'Cormorant Garamond', serif; font-size:46px; font-style:italic; color:var(--gold); text-align: center; line-height: 1.1; text-shadow: 0 0 30px rgba(242,193,78,0.3);">
     Time's up.<br>
     <span style="color:var(--mist); font-family:'Jost', sans-serif; font-size:22px; font-style:normal; display:block; margin-top:16px;">Please come to the table.</span>
@@ -1583,7 +1473,7 @@
       <!-- HOST ONLY: Roster -->
       <div id="hostRosterContainer" class="dashboard-section" style="display:none; border-color: var(--gold);">
         <div class="section-header"><div class="eyebrow" style="color:var(--gold);">Host Roster</div></div>
-        <div class="host-list" id="hostList" style="margin-bottom: 16px;"></div>
+        <div class="host-list" id="hostList" style="max-height: 200px; overflow-y: auto;"></div>
 
         <div class="msg-composer">
           <div class="eyebrow" style="color:var(--gold); margin-bottom:10px; text-align:left;">Send a Message</div>
@@ -1609,37 +1499,6 @@
 
         <div class="hub-sections">
 
-          <!-- Warm Up Activity -->
-          <div class="hub-card locked" id="hubCardTable">
-            <div class="current-badge">Happening Now</div>
-            <div class="hub-card-icon">🔮</div>
-            <div>
-              <div class="hub-card-sub" style="color:var(--gold);">Warm Up Activity</div>
-              <div class="hub-card-title">Spin-the-Bottle</div>
-              <div class="hub-card-desc">Gather around the table. The crystal chooses who speaks next.</div>
-              <div class="hub-card-lock-note">The host will unlock this when the time is right.</div>
-            </div>
-          </div>
-
-          <!-- HOST ONLY: Minimal Table Controls -->
-          <div id="hostControlsTable" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightTable">Toggle "Happening Now"</button>
-            <div style="display:flex; gap:6px;">
-              <button class="host-inline-btn" id="btnResetTable" style="display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                <span>Reset Turns</span>
-              </button>
-              <button class="host-inline-btn" id="btnToggleLockTable" style="display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <span>Unlock</span>
-              </button>
-              <button class="host-inline-btn" onclick="setLoungeState('state-table')" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
-            </div>
-          </div>
-
-          <!-- Connector line -->
-          <div class="activity-connector"><div class="connector-line"></div></div>
-
           <!-- Pairs Activity -->
           <div class="hub-card locked" id="hubCardGarden">
             <div class="current-badge">Happening Now</div>
@@ -1664,7 +1523,6 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 <span>Unlock</span>
               </button>
-              <button class="host-inline-btn" onclick="setLoungeState('state-garden'); if(!document.querySelector('#gardenBed .flower-plant')) buildGarden();" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
             </div>
           </div>
 
@@ -1695,7 +1553,6 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 <span>Unlock</span>
               </button>
-              <button class="host-inline-btn" onclick="setLoungeState('state-aita')" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
             </div>
           </div>
 
@@ -1731,13 +1588,10 @@
           <!-- HOST ONLY: Closer Controls -->
           <div id="hostControlsCloser" class="host-inline-controls" style="display:none; justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightCloser">Toggle "Happening Now"</button>
-            <div style="display:flex; gap:6px;">
-              <button class="host-inline-btn" id="btnToggleLockCloser" style="display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <span>Unlock</span>
-              </button>
-              <button class="host-inline-btn" onclick="window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank')" style="background:var(--rose); color:#fff; border:none; font-weight:bold;">Enter ➔</button>
-            </div>
+            <button class="host-inline-btn" id="btnToggleLockCloser" style="display:flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Unlock</span>
+            </button>
           </div>
 
         </div>
@@ -1804,37 +1658,6 @@
     <div class="question-panel" id="questionPanel">
       <div class="question-eyebrow" id="questionCounter">Conversation Starter</div>
       <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
-    </div>
-  </div>
-
-  <!-- STATE: THE ROUND TABLE (SPIN THE BOTTLE) -->
-  <div id="state-table" class="lounge-state">
-    <button class="back-btn" onclick="setLoungeState('state-gathering')">‹</button>
-    <div class="eyebrow" style="margin-top: 40px;">Warm-Up Activity</div>
-    <h1 class="display" style="font-size:32px; margin-bottom: 24px;">The Round Table</h1>
-    
-    <div class="table-arena" id="tableArena">
-      <!-- The frosted glass table -->
-      <div class="glass-table"></div>
-      
-      <!-- The glowing crystal pointer -->
-      <div class="crystal-pointer-container" id="crystalPointer">
-        <div class="crystal-shard"></div>
-      </div>
-      
-      <!-- Avatars injected here via JS -->
-      <div id="tableSeats"></div>
-    </div>
-
-    <div class="question-panel" id="tableQuestionPanel" style="transform: translateY(120%); transition: transform 0.6s cubic-bezier(0.2, 1, 0.3, 1);">
-      <div class="question-eyebrow" id="tableTargetName" style="color:var(--rose);">Waiting for the spin...</div>
-      <div class="question-text" id="tableQuestionText">The crystal will reveal your question.</div>
-      
-      <!-- Host Controls for the Table -->
-      <div id="hostTableActions" style="display:none; margin-top: 16px;">
-        <button class="btn" id="btnSpinPointer" style="padding: 10px 24px; font-size: 13px;">Spin Crystal</button>
-        <button class="btn ghost" id="btnMarkTurnDone" style="padding: 10px 24px; font-size: 13px; display:none;">Mark Done</button>
-      </div>
     </div>
   </div>
 
@@ -1938,24 +1761,6 @@ const QUESTIONS = [
   "What's a red flag that can feel like love at first but is actually control?"
 ];
 
-const WARMUP_QUESTIONS = [
-  "They're a 10, but they clap when the airplane lands.",
-  "Would you rather your partner have terrible fashion sense or terrible taste in music?",
-  "They're a 10, but they talk to their pets in a baby voice in front of company.",
-  "Would you rather date someone obsessed with astrology or obsessed with crypto?",
-  "They're a 10, but they use 2-in-1 shampoo and conditioner.",
-  "Would you rather go on a first date to a chaotic amusement park or a completely silent meditation retreat?",
-  "They're a 10, but they text in perfectly punctuated, formal paragraphs for every minor thing.",
-  "Would you rather have a partner who is always 30 minutes early or 30 minutes late?",
-  "They're a 10, but their ex is their 'best friend' and they text daily.",
-  "They're a 10, but they refuse to eat any vegetables, ever.",
-  "Would you rather always have to share your phone location with your partner, or never be able to see theirs?",
-  "They're a 10, but they chew with their mouth open when they're really enjoying the food.",
-  "Would you rather your partner be entirely off all social media, or be a wannabe influencer?",
-  "They're a 10, but their ideal weekend involves absolutely zero plans or leaving the house.",
-  "Would you rather date someone who talks during movies or someone who falls asleep 10 minutes in?"
-];
-
 const CLUSTERS = [
   ['#d94f8c','#f2c14e'],   /* rose - gold */
   ['#c9a4ff','#f2c14e'],   /* amethyst - gold */
@@ -1990,7 +1795,7 @@ function spawnLanterns(){
     l.style.width = l.style.height = (18+Math.random()*16)+'px';
     sky.appendChild(l);
     setTimeout(()=>l.remove(), 26000);
-  }, 4500); /* Increased from 1400 to 4500 to reduce frequency */
+  }, 1400);
 }
 spawnLanterns();
 
@@ -1998,9 +1803,8 @@ spawnLanterns();
 function spawnStardust(){
   const container = document.getElementById('stardust-container');
   if(!container) return;
-  // Create 10 motes with randomized positions and animation durations
-  // (kept low since each is an independently-animating, glow-shadowed layer)
-  for(let i=0; i<10; i++){
+  // Create 20 motes with randomized positions and animation durations
+  for(let i=0; i<20; i++){
     const mote = document.createElement('div');
     mote.className = 'stardust-mote';
     mote.style.left = Math.random() * 100 + '%';
@@ -2072,23 +1876,12 @@ function enterLounge(){
     localStorage.setItem('fsc_tour_seen', '1');
     setTimeout(startTour, 600);
   }
-
-  // If the host kicks me (deletes my record), boot me out immediately
-  if (!isHost) {
-    ref(`events/${EVENT_ID}/attendees/${me.id}`).on('value', snap => {
-      if(!snap.val()) {
-        localStorage.removeItem('fsc_guest'); // Wipe their saved login
-        location.reload(); // Refresh the page to boot them to the welcome screen
-      }
-    });
-  }
 }
 
 /* --- SPOTLIGHT TOUR LOGIC --- */
 let tourIdx = 0;
 const TOUR_STEPS = [
   { selector: '#activitiesSection', title: 'Welcome!', desc: 'First, we wait for everyone to arrive and settle. Keep an eye on today\'s activities here.', pad: 10 },
-  { selector: '#hubCardTable', title: 'Spin-the-Bottle', desc: 'Our warm up. We will gather around the table and the crystal will choose who speaks next.', pad: 8 },
   { selector: '#hubCardGarden', title: 'The Bouquet', desc: 'The host will pair you with someone later. This card will unlock and glow when it is time to open the bouquet.', pad: 8 },
   { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'Afterwards, we will all regroup here to participate in the Relationships Court. Get ready to cast your verdicts.', pad: 8 },
   { selector: '#hubCardCloser', title: 'Closing Ritual', desc: 'At the end of the night, we will build a shared digital archive of the things we love before we say goodbye.', pad: 8 }
@@ -2205,6 +1998,7 @@ function listenPhase(){
       show('screen-lounge');
       setLoungeState('state-gathering');
       document.getElementById('aitaVerdictCard').style.display = 'none';
+      document.getElementById('glowRing').style.boxShadow = `none`;
 
       // Always restart the game engine when entering the lounge
       startBunnyGame();
@@ -2212,12 +2006,11 @@ function listenPhase(){
     else if(state === 'aita'){
       show('screen-lounge');
       stopBunnyGame();
-      setLoungeState('state-aita'); // Opens the screen instantly no matter what
-
-      // Safely load the round data if it exists
+      document.getElementById('glowRing').style.boxShadow = `none`;
       ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
         const round = snap.val();
-        if(round) enterAitaRound(round);
+        if(!round) return;
+        enterAitaRound(round);
       });
     }
   });
@@ -2225,8 +2018,7 @@ function listenPhase(){
 
 function listenHubs() {
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
-    window.currentHubsState = snap.val() || {};
-    const hubs = window.currentHubsState;
+    const hubs = snap.val() || {};
     const cardGarden = document.getElementById('hubCardGarden');
     const cardAita = document.getElementById('hubCardAita');
 
@@ -2243,16 +2035,10 @@ function listenHubs() {
       cardCloser.classList.toggle('locked', !hubs.closer);
       cardCloser.classList.toggle('is-current', hubs.current === 'closer');
     }
-    const cardTable = document.getElementById('hubCardTable');
-    if(cardTable) {
-      cardTable.classList.toggle('locked', !hubs.table);
-      cardTable.classList.toggle('is-current', hubs.current === 'table');
-    }
 
     setLockButtonState(document.getElementById('btnToggleLockGarden'), !!hubs.garden, 'Lock', 'Unlock');
     setLockButtonState(document.getElementById('btnToggleLockCourt'), !!hubs.aita, 'Lock', 'Unlock');
     setLockButtonState(document.getElementById('btnToggleLockCloser'), !!hubs.closer, 'Lock', 'Unlock');
-    setLockButtonState(document.getElementById('btnToggleLockTable'), !!hubs.table, 'Lock', 'Unlock');
 
     // The Timer button only makes sense once a section is unlocked —
     // setting a timer is always optional, so it's just a standalone extra.
@@ -2265,7 +2051,7 @@ function listenHubs() {
 
 // Bind the hub cards!
 document.getElementById('hubCardGarden').addEventListener('click', () => {
-  if (!isHost && document.getElementById('hubCardGarden').classList.contains('locked')) return;
+  if (document.getElementById('hubCardGarden').classList.contains('locked')) return;
   setLoungeState('state-garden');
   // Failsafe: if no pairing event has built the bouquet yet, build it now
   // so the flowers are always visible the moment the guest enters.
@@ -2275,11 +2061,11 @@ document.getElementById('hubCardGarden').addEventListener('click', () => {
   }
 });
 document.getElementById('hubCardAita').addEventListener('click', () => {
-  if (!isHost && document.getElementById('hubCardAita').classList.contains('locked')) return;
+  if (document.getElementById('hubCardAita').classList.contains('locked')) return;
   setLoungeState('state-aita');
 });
 document.getElementById('hubCardCloser').addEventListener('click', () => {
-  if (!isHost && document.getElementById('hubCardCloser').classList.contains('locked')) return;
+  if (document.getElementById('hubCardCloser').classList.contains('locked')) return;
   // Open Padlet in a new tab/window
   window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank');
 });
@@ -2542,7 +2328,11 @@ function buildGarden(){
     <div id="bouquetFlowers"></div>
     <div class="bouquet-wrap-left-fold"></div>
     <div class="bouquet-wrap-right-fold"></div>
-    <img src="bow.png" class="bouquet-ribbon-img" alt="Bow">
+    <div class="bouquet-ribbon-base">
+       <div class="ribbon-tail left"></div><div class="ribbon-tail right"></div>
+       <div class="ribbon-loop left"></div><div class="ribbon-loop right"></div>
+       <div class="ribbon-knot"></div>
+    </div>
   `;
   const flowersContainer = document.getElementById('bouquetFlowers');
 
@@ -2727,21 +2517,19 @@ function listenTimer() {
            }
         }
       }
-    }, 500);
+    }, 100);
   });
 }
 
 /* ---------- host console ---------- */
 let hostGuestsCache = [];
 function initHost(){
-  document.body.classList.add('host-mode'); // Turns on master key CSS for locked cards
   // listenRoster() and listenHubs() are already started by enterLounge(),
   // which now also runs for the host — no need to attach them twice here.
   ref(`events/${EVENT_ID}/state`).set('lounge');
 
   // Unhide the inline host controls
   document.getElementById('hostRosterContainer').style.display = 'block';
-  document.getElementById('hostControlsTable').style.display = 'flex';
   document.getElementById('hostControlsGarden').style.display = 'flex';
   document.getElementById('hostControlsAita').style.display = 'flex';
   document.getElementById('hostControlsCloser').style.display = 'flex';
@@ -2860,6 +2648,7 @@ function listenMessages(){
     Object.entries(all).forEach(([id, msg]) => {
       if(!msg || shownMsgIds.has(id)) return;
       if(!msg.ts || msg.ts <= startCursor) return;
+      if(msg.senderId === me.id) return; // don't pop your own broadcast back at you
       if(msg.target !== 'all' && msg.target !== me.id) return; // not addressed to us
       shownMsgIds.add(id);
       showMessageToast(msg);
@@ -2907,25 +2696,22 @@ function showMessageToast(msg){
 /* ---------- Host Controls: Inline Per-Activity Controls ---------- */
 
 // --- TOGGLE "HAPPENING NOW" ---
-// --- INSTANT TOGGLE "HAPPENING NOW" ---
-document.getElementById('btnHighlightGarden').addEventListener('click', () => {
-  const current = window.currentHubsState?.current;
-  ref(`events/${EVENT_ID}/hubs/current`).set(current === 'garden' ? null : 'garden');
+document.getElementById('btnHighlightGarden').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
+  if (snap.val() === 'garden') ref(`events/${EVENT_ID}/hubs/current`).set(null); // Turn off
+  else ref(`events/${EVENT_ID}/hubs/current`).set('garden'); // Turn on
 });
 
-document.getElementById('btnHighlightCourt').addEventListener('click', () => {
-  const current = window.currentHubsState?.current;
-  ref(`events/${EVENT_ID}/hubs/current`).set(current === 'aita' ? null : 'aita');
+document.getElementById('btnHighlightCourt').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
+  if (snap.val() === 'aita') ref(`events/${EVENT_ID}/hubs/current`).set(null);
+  else ref(`events/${EVENT_ID}/hubs/current`).set('aita');
 });
 
-document.getElementById('btnHighlightCloser').addEventListener('click', () => {
-  const current = window.currentHubsState?.current;
-  ref(`events/${EVENT_ID}/hubs/current`).set(current === 'closer' ? null : 'closer');
-});
-
-document.getElementById('btnHighlightTable').addEventListener('click', () => {
-  const current = window.currentHubsState?.current;
-  ref(`events/${EVENT_ID}/hubs/current`).set(current === 'table' ? null : 'table');
+document.getElementById('btnHighlightCloser').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
+  if (snap.val() === 'closer') ref(`events/${EVENT_ID}/hubs/current`).set(null);
+  else ref(`events/${EVENT_ID}/hubs/current`).set('closer');
 });
 
 // --- SYNC LOCK BUTTON LABEL/ICON TO CURRENT STATE ---
@@ -2937,9 +2723,10 @@ function setLockButtonState(btn, isUnlocked, unlockedLabel, lockedLabel){
     : `${LOCK_ICON_SVG} <span>${lockedLabel}</span>`;
 }
 
-// --- INSTANT UNLOCK / LOCK (no prompts — timer is a separate, optional action) ---
-document.getElementById('btnToggleLockGarden').addEventListener('click', () => {
-  if (window.currentHubsState?.garden) {
+// --- UNLOCK / LOCK (instant, no prompts — timer is a separate, optional action) ---
+document.getElementById('btnToggleLockGarden').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/garden`).once('value');
+  if (snap.val()) {
     // It's currently unlocked -> LOCK IT
     ref(`events/${EVENT_ID}/hubs/garden`).set(false);
     ref(`events/${EVENT_ID}/state`).set('lounge');
@@ -2950,8 +2737,9 @@ document.getElementById('btnToggleLockGarden').addEventListener('click', () => {
   }
 });
 
-document.getElementById('btnToggleLockCourt').addEventListener('click', () => {
-  if (window.currentHubsState?.aita) {
+document.getElementById('btnToggleLockCourt').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/aita`).once('value');
+  if (snap.val()) {
     // It's currently unlocked -> LOCK IT
     ref(`events/${EVENT_ID}/hubs/aita`).set(false);
     ref(`events/${EVENT_ID}/state`).set('lounge');
@@ -2972,24 +2760,13 @@ document.getElementById('btnToggleLockCourt').addEventListener('click', () => {
 });
 
 // Unlock toggle for Closer
-document.getElementById('btnToggleLockCloser').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/hubs/closer`).set(!window.currentHubsState?.closer);
-});
-
-// Unlock toggle for Table (Spin-the-Bottle)
-document.getElementById('btnToggleLockTable').addEventListener('click', () => {
-  ref(`events/${EVENT_ID}/hubs/table`).set(!window.currentHubsState?.table);
-});
-
-// --- OTHER TABLE ACTIONS ---
-document.getElementById('btnResetTable').addEventListener('click', () => {
-  if (!confirm('Reset Spin-the-Bottle so everyone can go again?')) return;
-  ref(`events/${EVENT_ID}/bottle`).set(null);
-});
-
-document.getElementById('hubCardTable').addEventListener('click', () => {
-  if (!isHost && document.getElementById('hubCardTable').classList.contains('locked')) return;
-  setLoungeState('state-table');
+document.getElementById('btnToggleLockCloser').addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/closer`).once('value');
+  if (snap.val()) {
+    ref(`events/${EVENT_ID}/hubs/closer`).set(false);
+  } else {
+    ref(`events/${EVENT_ID}/hubs/closer`).set(true);
+  }
 });
 
 // --- OPTIONAL TIMER (set it right after unlocking, later, or never — your call) ---
@@ -3020,7 +2797,6 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
   ref(`events/${EVENT_ID}/attendees`).set(null);
   ref(`events/${EVENT_ID}/pairs`).set(null);
   ref(`events/${EVENT_ID}/hubs`).set(null); // Lock all hubs
-  ref(`events/${EVENT_ID}/bottle`).set(null); // Clear Spin-the-Bottle turns
   ref(`events/${EVENT_ID}/aita/round`).set(null);
   ref(`events/${EVENT_ID}/aita/rounds`).set(null);
   ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
@@ -3048,151 +2824,6 @@ document.getElementById('btnPickElaborate').addEventListener('click', ()=>{
   if(hostGuestsCache.length === 0){ alert('No guests checked in yet.'); return; }
   const pick = hostGuestsCache[Math.floor(Math.random()*hostGuestsCache.length)];
   document.getElementById('aitaPicked').textContent = `🎙️ ${pick.name}, tell us why!`;
-});
-
-/* =========================================================
-   THE ROUND TABLE (SPIN THE CRYSTAL)
-   ========================================================= */
-let currentPointerAngle = 0;
-let tableGuests = [];
-
-function initTableEngine() {
-  if (isHost) {
-    document.getElementById('hostTableActions').style.display = 'block';
-    document.body.classList.add('host-mode'); // Adds cursor pointer to crystal
-
-    // Let the host tap the crystal directly to spin it
-    document.getElementById('crystalPointer').addEventListener('click', () => {
-      if (document.getElementById('btnSpinPointer').style.display !== 'none') {
-        document.getElementById('btnSpinPointer').click();
-      }
-    });
-  }
-
-  // Listen to the shared bottle state
-  ref(`events/${EVENT_ID}/bottle`).on('value', snap => {
-    const data = snap.val() || { completed: [] };
-    const completed = data.completed || [];
-    
-    // 1. Draw the seats dynamically based on current attendees
-    tableGuests = stateGuests; // from the global listener
-    const seatsContainer = document.getElementById('tableSeats');
-    seatsContainer.innerHTML = '';
-    
-    const radius = 135; // Distance from center
-    
-    tableGuests.forEach((g, index) => {
-      // Calculate angle in degrees (0 is top/12 o'clock)
-      const angleDeg = (360 / tableGuests.length) * index;
-      const angleRad = (angleDeg - 90) * (Math.PI / 180);
-      
-      const x = Math.cos(angleRad) * radius;
-      const y = Math.sin(angleRad) * radius;
-      
-      const seat = document.createElement('div');
-      seat.className = `table-seat ${completed.includes(g.id) ? 'done' : ''} ${data.targetId === g.id && data.spinTs ? 'active-target' : ''}`;
-      seat.dataset.id = g.id;
-      seat.style.transform = `translate(${x}px, ${y}px)`;
-      
-      seat.innerHTML = `
-        <div class="guest-avatar ${me && g.id === me.id ? 'is-me' : ''}">${g.avatar}</div>
-        <div class="guest-name">${escapeHtml(g.name)}</div>
-      `;
-      seatsContainer.appendChild(seat);
-    });
-
-    // 2. Animate the Pointer
-    if (data.spinTs) {
-      const pointer = document.getElementById('crystalPointer');
-      const panel = document.getElementById('tableQuestionPanel');
-      
-      // Calculate the absolute angle to reach the target smoothly without spinning backwards
-      const targetBaseAngle = (360 / tableGuests.length) * tableGuests.findIndex(g => g.id === data.targetId);
-      const spins = 360 * 6; // Spin 6 times
-      
-      // Calculate shortest path forward
-      let offset = targetBaseAngle - (currentPointerAngle % 360);
-      if (offset <= 0) offset += 360; 
-      
-      currentPointerAngle = currentPointerAngle + spins + offset;
-      pointer.style.transform = `rotate(${currentPointerAngle}deg)`;
-
-      // Hide question panel during spin, show after 5s transition
-      panel.style.transform = 'translateY(120%)';
-      if (isHost) {
-        document.getElementById('btnSpinPointer').style.display = 'none';
-        document.getElementById('btnMarkTurnDone').style.display = 'none';
-      }
-
-      setTimeout(() => {
-        const isMe = (me && data.targetId === me.id);
-        
-        // Change text and size based on who is looking
-        if (isMe) {
-          panel.classList.add('is-target');
-          document.getElementById('tableTargetName').textContent = "It is your turn:";
-        } else {
-          panel.classList.remove('is-target');
-          document.getElementById('tableTargetName').textContent = `Ask ${escapeHtml(data.targetName)}:`;
-        }
-        
-        document.getElementById('tableQuestionText').textContent = data.question;
-        panel.style.transform = 'translateY(0)';
-        
-        if (isHost) {
-           document.getElementById('btnMarkTurnDone').style.display = 'inline-block';
-        }
-      }, 5000);
-    } else {
-      // Reset state (panel hidden)
-      document.getElementById('tableQuestionPanel').style.transform = 'translateY(120%)';
-      if (isHost) {
-        document.getElementById('btnSpinPointer').style.display = 'inline-block';
-        document.getElementById('btnMarkTurnDone').style.display = 'none';
-      }
-    }
-  });
-
-  // Host Actions
-  document.getElementById('btnSpinPointer').addEventListener('click', async () => {
-    const snap = await ref(`events/${EVENT_ID}/bottle`).once('value');
-    const data = snap.val() || {};
-    const completed = data.completed || [];
-    
-    const available = tableGuests.filter(g => !completed.includes(g.id));
-    if (available.length === 0) { alert('Everyone has taken a turn!'); return; }
-    
-    const target = available[Math.floor(Math.random() * available.length)];
-    const randomQuestion = WARMUP_QUESTIONS[Math.floor(Math.random() * WARMUP_QUESTIONS.length)];
-    
-    ref(`events/${EVENT_ID}/bottle`).update({
-      targetId: target.id,
-      targetName: target.name,
-      question: randomQuestion,
-      spinTs: Date.now()
-    });
-  });
-
-  document.getElementById('btnMarkTurnDone').addEventListener('click', async () => {
-    const snap = await ref(`events/${EVENT_ID}/bottle`).once('value');
-    const data = snap.val() || {};
-    let completed = data.completed || [];
-    if (data.targetId && !completed.includes(data.targetId)) {
-      completed.push(data.targetId);
-    }
-    
-    // Reset for next spin
-    ref(`events/${EVENT_ID}/bottle`).set({
-      completed: completed,
-      targetId: null,
-      spinTs: null
-    });
-  });
-}
-
-// Call this function at the bottom of window load (where enterLounge and initHost run)
-window.addEventListener('load', () => {
-  setTimeout(initTableEngine, 500); 
 });
 </script>
 </body>
