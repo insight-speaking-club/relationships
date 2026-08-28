@@ -111,6 +111,27 @@
     100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
   }
 
+  /* ---------- glowing moon (cycles new -> full -> new) ---------- */
+  .moon-wrap{
+    position:absolute; top:30px; right:30px;
+    width:34px; height:34px; z-index:1; pointer-events:none;
+  }
+  .moon-svg{
+    width:100%; height:100%; overflow:visible;
+    animation: moon-glow-pulse 240s ease-in-out infinite;
+  }
+  .moon-shadow{ animation: moon-phase 240s ease-in-out infinite; }
+  @keyframes moon-phase{
+    0%   { transform: translateX(0); }      /* new moon: fully shadowed */
+    50%  { transform: translateX(62px); }   /* full moon: fully lit */
+    100% { transform: translateX(0); }      /* back to new moon */
+  }
+  @keyframes moon-glow-pulse{
+    0%   { filter: drop-shadow(0 0 4px rgba(242,193,78,.25)) drop-shadow(0 0 10px rgba(242,193,78,.15)); }
+    50%  { filter: drop-shadow(0 0 14px rgba(242,193,78,.8)) drop-shadow(0 0 32px rgba(242,193,78,.45)); }
+    100% { filter: drop-shadow(0 0 4px rgba(242,193,78,.25)) drop-shadow(0 0 10px rgba(242,193,78,.15)); }
+  }
+
   .screen{
     position:fixed; inset:0; z-index:2;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -175,50 +196,52 @@
     position: fixed; inset: 0; z-index: 99999;
     background: var(--ink);
     display: flex; align-items: center; justify-content: center;
-    /* The black screen fades out right after the explosion */
-    animation: fade-out-world 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 2.5s;
+    /* The black screen fades out right after the light bloom */
+    animation: fade-out-world 1s cubic-bezier(0.4, 0, 0.2, 1) forwards 2.8s;
     pointer-events: none;
   }
 
   .heart-container {
     position: relative;
     display: flex; align-items: center; justify-content: center;
-    /* The camera pushes THROUGH the heart */
-    animation: camera-push-through 2.5s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+    animation: camera-push-through 3s cubic-bezier(0.8, 0, 0.2, 1) forwards;
   }
 
   .cinematic-heart {
-    width: 60px; height: auto;
-    filter: drop-shadow(0 0 20px rgba(217, 46, 73, 0.8));
-    /* Beating, then exploding */
+    width: 75px; height: auto;
+    filter: drop-shadow(0 0 20px rgba(217, 46, 73, 0.6));
+    /* Double-beat rhythm, followed by a massive light bloom */
     animation:
-      heartbeat 0.8s ease-in-out 2,
-      heart-explode 0.6s cubic-bezier(0.1, 1, 0.3, 1) forwards 1.8s;
+      heartbeat-double 1.2s ease-in-out 2,
+      heart-bloom 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 2.2s;
   }
 
   .shatter-ring {
-    position: absolute; width: 10px; height: 10px; border-radius: 50%;
-    border: 2px solid var(--rose);
+    position: absolute; width: 2px; height: 2px; border-radius: 50%;
+    border: 2px solid var(--gold);
     opacity: 0;
-    /* The shockwave when it bursts */
-    animation: shockwave 0.8s cubic-bezier(0.1, 1, 0.3, 1) forwards 1.8s;
+    /* A golden shockwave when it blooms */
+    animation: shockwave 0.8s cubic-bezier(0.1, 1, 0.3, 1) forwards 2.2s;
   }
 
-  /* --- THE KEYFRAMES --- */
-  @keyframes heartbeat {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(217,46,73,0.8)); }
-    50% { transform: scale(1.3); filter: drop-shadow(0 0 40px rgba(255,112,134,1)); }
+  /* --- THE ORGANIC KEYFRAMES --- */
+  @keyframes heartbeat-double {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(217,46,73,0.6)); }
+    15% { transform: scale(1.15); filter: drop-shadow(0 0 35px rgba(255,112,134,0.8)); }
+    30% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(217,46,73,0.6)); }
+    45% { transform: scale(1.35); filter: drop-shadow(0 0 60px rgba(255,112,134,1)) drop-shadow(0 0 20px var(--gold)); }
+    70% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(217,46,73,0.6)); }
   }
 
-  @keyframes heart-explode {
-    0% { transform: scale(1.3); opacity: 1; }
-    40% { transform: scale(0.8); opacity: 1; } /* Anticipation squash */
-    100% { transform: scale(25); opacity: 0; filter: blur(10px); } /* Massive burst */
+  @keyframes heart-bloom {
+    0% { transform: scale(1.35); opacity: 1; }
+    30% { transform: scale(0.85); opacity: 1; filter: brightness(2); } /* Deep inhale before burst */
+    100% { transform: scale(45); opacity: 0; filter: blur(15px) brightness(4); } /* Blinding light wash */
   }
 
   @keyframes shockwave {
-    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 100px 50px rgba(255,112,134,0.8); }
-    100% { transform: scale(60); opacity: 0; box-shadow: 0 0 0 0 rgba(255,112,134,0); }
+    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 40px 20px rgba(242,193,78,0.6); }
+    100% { transform: scale(80); opacity: 0; box-shadow: 0 0 0 0 rgba(242,193,78,0); }
   }
 
   @keyframes fade-out-world {
@@ -226,8 +249,7 @@
   }
 
   @keyframes camera-push-through {
-    0% { transform: scale(1); }
-    100% { transform: scale(1); }
+    0%, 100% { transform: scale(1); }
   }
 
   /* --- THE CAMERA PULL-BACK ON THE WELCOME SCREEN --- */
@@ -525,7 +547,28 @@
     background-clip: padding-box;
     position: relative;
   }
-  .hub-card.locked{ opacity:.4; pointer-events:none; cursor:default; filter: grayscale(80%); }
+  /* --- BREATHING UI --- */
+  @keyframes ui-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.015); }
+  }
+  .dashboard-section, #activitiesSection, .question-panel {
+    animation: ui-breathe 7s ease-in-out infinite;
+    will-change: transform; /* Smooths out the animation */
+  }
+
+  /* --- LOCKED HUB PULSE (REJECTION) --- */
+  .hub-card.locked{ opacity:.5; cursor:pointer; filter: grayscale(80%); }
+  .hub-card.shake-reject {
+    animation: hub-reject 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    border-color: rgba(255, 77, 94, 0.4);
+    box-shadow: 0 0 20px rgba(217, 79, 140, 0.3);
+  }
+  @keyframes hub-reject {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
   .hub-card:not(.locked){
     box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 15px rgba(242, 193, 78, 0.05);
   }
@@ -1289,9 +1332,9 @@
     border:1px solid rgba(242,193,78,.3);
   }
   /* --- DYNAMIC SPOTLIGHT TOUR --- */
-  #tour-overlay { display: none; position: fixed; inset: 0; z-index: 100010; }
+  #tour-overlay { display: none; position: fixed; inset: 0; z-index: 100010; pointer-events: none; }
   #tour-overlay.show { display: block; }
-  #tour-backdrop { position: fixed; inset: 0; background: transparent; cursor: pointer; }
+  #tour-backdrop { position: fixed; inset: 0; background: transparent; pointer-events: none; }
 
   #tour-spotlight {
     position: fixed; pointer-events: none; border-radius: 14px;
@@ -1307,6 +1350,7 @@
     border: 1px solid rgba(244,233,255,0.2); border-radius: 16px;
     padding: 18px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
   }
 
   #tour-tooltip .tt-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
@@ -1425,6 +1469,372 @@
   height: 90px;
   background: radial-gradient(ellipse at 50% 100%, rgba(242, 193, 78, 0.25) 0%, rgba(217, 79, 140, 0.12) 50%, transparent 80%);
 }
+
+/* --- ATMOSPHERIC PHASE TRANSITIONS --- */
+body { transition: background-color 2s ease; }
+.sky { transition: background 3s ease, opacity 3s ease; }
+.paris-city-glow { transition: opacity 2s ease, background 2s ease; }
+
+/* Phase: Garden (Deep Violet) */
+body[data-phase="garden"] .sky {
+  background: linear-gradient(200deg, #10041a 0%, #1e0a2d 25%, #421144 60%, #852f5b 100%);
+}
+body[data-phase="garden"] .paris-city-glow { opacity: 0.8; }
+
+/* Phase: Court (True Midnight) */
+body[data-phase="aita"] .sky {
+  background: linear-gradient(200deg, #0a0311 0%, #120821 25%, #230c33 60%, #4a1949 100%);
+}
+body[data-phase="aita"] .paris-city-glow { opacity: 0.5; }
+body[data-phase="aita"] .stardust-mote { animation-duration: 40s !important; }
+
+/* Phase: Closer (Pre-Dawn Blush) */
+body[data-phase="closer"] .sky {
+  background: linear-gradient(200deg, #120821 0%, #2a0e3f 25%, #4a2157 60%, #90486c 100%);
+}
+
+/* --- THE GLASS CLOSET EASTER EGG --- */
+.glass-closet-egg {
+  position: absolute;
+  right: 8%;
+  bottom: 110px;
+  width: 32px;
+  height: 48px;
+  z-index: 10;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 0 15px rgba(244, 233, 255, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  pointer-events: auto;
+}
+.glass-closet-egg:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 20px rgba(242, 193, 78, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2);
+  border-color: rgba(242, 193, 78, 0.6);
+}
+.glass-closet-egg::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  width: 16px;
+  height: 6px;
+  border: 1px solid rgba(255,255,255,0.6);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  opacity: 0.8;
+}
+.glass-closet-tooltip {
+  position: absolute;
+  top: -30px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  color: var(--gold);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.glass-closet-egg:hover .glass-closet-tooltip {
+  opacity: 1;
+}
+/* --- TYPEWRITER CURSOR --- */
+#tour-desc.typing::after {
+  content: '|';
+  color: var(--gold);
+  opacity: 1;
+  animation: cursor-blink 0.8s infinite;
+  margin-left: 2px;
+  display: inline-block;
+}
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+/* --- PAST EVENTS / MEMORY LANE --- */
+.memory-lane-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 32px auto 20px;
+  padding: 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 0 15px rgba(244, 233, 255, 0.05);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+  text-align: left;
+}
+
+/* Holographic glass sheen sweeping across */
+.memory-glass-sheen {
+  position: absolute;
+  top: 0; left: -150%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), rgba(220, 180, 255, 0.15), transparent);
+  transform: skewX(-20deg);
+  animation: memory-sweep 8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+@keyframes memory-sweep {
+  0%, 75% { left: -150%; }
+  100% { left: 200%; }
+}
+
+.memory-lane-text {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+/* The August 14 Timestamp */
+.memory-date {
+  font-family: 'Space Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: #e8b4d8; /* Soft blush */
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* A tiny gold spark next to the date */
+.memory-date::before {
+  content: '✦';
+  font-size: 12px;
+  color: var(--gold);
+  animation: pulse-fade 3s ease-in-out infinite;
+}
+
+.memory-lane-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 26px;
+  color: var(--mist);
+  margin: 0 0 4px;
+  text-shadow: 0 2px 10px rgba(255,255,255,0.2);
+}
+
+.memory-lane-desc {
+  font-family: 'Jost', sans-serif;
+  font-size: 13.5px;
+  color: rgba(244, 233, 255, 0.7);
+  line-height: 1.45;
+}
+
+.memory-lane-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-left: 18px;
+  position: relative;
+  z-index: 2;
+  transition: background 0.3s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.memory-lane-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(244, 233, 255, 0.35);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.5), inset 0 0 25px rgba(255,255,255,0.08);
+}
+
+.memory-lane-card:hover .memory-lane-icon {
+  background: rgba(255,255,255,0.1);
+  transform: scale(1.08) translateX(2px);
+}
+
+.memory-lane-card:active {
+  transform: scale(0.98);
+}
+/* --- CATCHING WHISPERS --- */
+.wisp {
+  position: absolute;
+  width: 12px; height: 12px;
+  background: #fff4c9;
+  border-radius: 50%;
+  box-shadow: 0 0 15px 4px rgba(255, 244, 201, 0.6), inset 0 0 4px #fff;
+  cursor: pointer;
+  pointer-events: auto;
+  animation: wisp-float 20s linear infinite;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50;
+}
+.wisp-text {
+  opacity: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink);
+  text-align: center;
+  white-space: normal;
+  line-height: 1.4;
+  width: 0; height: 0; overflow: hidden;
+  transition: opacity 0.4s ease;
+}
+.wisp.revealed {
+  width: max(60vw, 260px);
+  height: auto;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 18px 24px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 30px rgba(255,244,201,0.4);
+  animation-play-state: paused; /* Stops floating when clicked */
+}
+.wisp.revealed .wisp-text {
+  opacity: 1; width: auto; height: auto;
+}
+@keyframes wisp-float {
+  0% { transform: translate(0, 110vh) scale(0.8); opacity: 0; }
+  10% { opacity: 0.9; transform: translate(-30px, 80vh) scale(1.2); }
+  50% { transform: translate(40px, 40vh) scale(0.9); }
+  90% { opacity: 0.9; transform: translate(-20px, 10vh) scale(1.1); }
+  100% { transform: translate(0, -10vh) scale(0.8); opacity: 0; }
+}
+
+/* --- THE BURNING QUESTION --- */
+.ember-line {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), #ff4d5e);
+  width: 0%;
+  opacity: 0;
+  box-shadow: 0 0 15px #ff4d5e, 0 0 8px var(--gold);
+}
+.question-panel.burning .ember-line {
+  opacity: 1;
+  animation: burn-across 300s linear forwards; /* 300s = 5 minutes */
+}
+@keyframes burn-across {
+  0% { width: 0%; }
+  100% { width: 100%; opacity: 0; }
+}
+.question-panel.ashes .question-text {
+  animation: fade-to-ashes 4s ease forwards;
+}
+@keyframes fade-to-ashes {
+  0% { opacity: 1; filter: blur(0); color: var(--mist); }
+  100% { opacity: 0; filter: blur(6px); color: rgba(244, 233, 255, 0.2); }
+}
+/* --- BRANDING & SIGNATURE --- */
+.brand-signature {
+  position: absolute;
+  top: -20px;  /* As high as possible */
+  left: 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  color: var(--gold);
+  opacity: 0.9;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* --- THE BLACK ARCHIVE WRAPPER --- */
+.archive-footer-section {
+  width: 100%;
+  background: #05020a; /* Stark, dark background separation */
+  padding: 50px 26px 80px;
+  margin-top: 40px;
+  border-top: 1px solid rgba(242, 193, 78, 0.15); /* A subtle gold boundary line */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 -15px 40px rgba(0,0,0,0.4);
+}
+
+/* Adjust spacing for the single card */
+.memory-lane-card { margin: 0 auto; }
+
+/* --- EVENT FOOTER --- */
+.event-footer {
+  text-align: center;
+  margin-top: 70px;
+  width: 100%;
+}
+
+.footer-logo {
+  width: 44px;
+  height: auto;
+  margin: 0 auto 12px;
+  display: block;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 10px rgba(242, 193, 78, 0.2));
+}
+
+.footer-credit {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  color: var(--dim);
+  opacity: 0.6;
+  margin-bottom: 24px;
+}
+
+.footer-message {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--mist);
+  line-height: 1.4;
+  opacity: 0.8;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+/* --- ETHEREAL SCROLL REVEALS --- */
+.reveal-mist {
+  opacity: 0;
+  transform: translateY(35px) scale(0.96);
+  filter: blur(12px);
+  transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              filter 1s ease;
+  will-change: opacity, transform, filter;
+}
+
+.reveal-mist.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* The connector line draws itself downward */
+.reveal-line {
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+}
+
+.reveal-line.is-visible {
+  opacity: 1;
+  transform: scaleY(1);
+}
 </style>
 </head>
 <body>
@@ -1451,6 +1861,24 @@
 </div>
 
 <div class="sky" id="sky">
+
+  <!-- Glowing phase-cycling moon -->
+  <div class="moon-wrap">
+    <svg class="moon-svg" viewBox="0 0 60 60">
+      <defs>
+        <radialGradient id="moonBodyGrad" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#fffdf2"/>
+          <stop offset="55%" stop-color="#f2c14e"/>
+          <stop offset="100%" stop-color="#e2a53a"/>
+        </radialGradient>
+        <clipPath id="moonClip"><circle cx="30" cy="30" r="28"/></clipPath>
+      </defs>
+      <circle cx="30" cy="30" r="28" fill="url(#moonBodyGrad)"/>
+      <g clip-path="url(#moonClip)">
+        <circle class="moon-shadow" cx="30" cy="30" r="28" fill="#180624" opacity="0.94"/>
+      </g>
+    </svg>
+  </div>
 
   <!-- PARIS SKYLINE HORIZON -->
   <div class="paris-horizon">
@@ -1481,17 +1909,15 @@
 
     <!-- Warm amber street-level haze -->
     <div class="paris-city-glow"></div>
+
+    <!-- The Glass Closet Callback -->
+    <a href="https://insight-speaking-club.github.io/glass-closet/" target="_blank" class="glass-closet-egg">
+      <div class="glass-closet-tooltip">The Glass Closet</div>
+    </a>
   </div>
 
-  <!-- Floating Love Quotes -->
-  <div class="affirmations-layer">
-    <div class="affirmation" style="left: 50%; animation-delay: 0s; font-size: 18px;">"It is better to be hated for what you are than to be loved for what you are not."</div>
-    <div class="affirmation" style="left: 38%; animation-delay: 5s; font-size: 19px;">"We accept the love we think we deserve."</div>
-    <div class="affirmation" style="left: 62%; animation-delay: 9s; font-size: 17px;">"Being deeply loved by someone gives you strength, while loving someone deeply gives you courage."</div>
-    <div class="affirmation" style="left: 45%; animation-delay: 14s; font-size: 18px;">"You know you're in love when you can't fall asleep because reality is finally better than your dreams."</div>
-    <div class="affirmation" style="left: 58%; animation-delay: 18s; font-size: 19px;">"Love is composed of a single soul inhabiting two bodies."</div>
-    <div class="affirmation" style="left: 50%; animation-delay: 23s; font-size: 19px;">"Whatever our souls are made of, his and mine are the same."</div>
-  </div>
+  <!-- Catching Whispers -->
+  <div class="affirmations-layer" id="whisperLayer"></div>
   <div id="stardust-container" style="position: absolute; inset: 0; pointer-events: none; z-index: 1;"></div>
 </div>
 <div id="offlineBadge" class="offline-badge" style="display:none;">preview mode · connect firebase for live sync</div>
@@ -1530,15 +1956,17 @@
 
 <!-- COMBINED WELCOME & CHECK-IN -->
 <div class="screen" id="screen-welcome">
-  <div class="eyebrow stagger-1">RELΛTIONSHIPS · Speaking Club</div>
+  <div class="brand-signature">𝒪𝐵</div>
+  <div class="eyebrow stagger-1">THE ENGINE IS RUNNING</div>
 
   <div class="host-frame stagger-2" style="margin-top: 24px; padding: 3px; background: conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));">
     <img src="sasha.png" alt="Sasha" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 2px solid var(--ink);">
   </div>
-  <h1 class="display stagger-2" style="font-size:52px; margin-bottom: 16px; font-style: italic; background: linear-gradient(to right, #ffffff, var(--mist)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 25px rgba(255,255,255,0.25);">Welcome.</h1>
+  
+  <h1 class="display stagger-2" style="font-size:46px; margin-bottom: 16px; font-style: italic; background: linear-gradient(to right, #ffffff, var(--mist)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 25px rgba(255,255,255,0.25);">Step into the night.</h1>
 
   <div class="greeting-bubble stagger-3" style="margin-bottom: 24px; text-align: center;">
-    <p>I'm Sasha, and I'll be your host tonight. Pop your name on the roster below, find a comfortable seat, and get ready for a beautiful evening.</p>
+    <p>I'm Sasha. The city is quiet, the tank is full, and we have a lot to talk about. Tell me your name, get comfortable in the passenger seat, and let's begin.</p>
   </div>
 
   <div class="field stagger-4" style="margin-top: 0;">
@@ -1546,8 +1974,9 @@
     <input type="text" id="inputName" placeholder="What should we call you?" maxlength="24">
   </div>
 
-  <button class="btn stagger-4" id="btnJoin" style="width: 100%; max-width: 320px;">Enter the Lounge</button>
+  <button class="btn stagger-4" id="btnJoin" style="width: 100%; max-width: 320px;">Get In</button>
 </div>
+
 
 <!-- MASTER LOUNGE (Handles all dynamic guest states) -->
 <div class="screen" id="screen-lounge">
@@ -1555,11 +1984,12 @@
   <!-- STATE 1: THE GATHERING -->
   <div id="state-gathering" class="lounge-state active">
     <div class="lounge-content">
+      <div class="brand-signature">𝒪𝐵</div>
 
       <!-- CLEAN HEADER -->
       <div class="lounge-header" style="position: relative; padding-bottom: 12px;">
         <h1 class="display" style="font-size:42px; margin:0 0 -2px; background:linear-gradient(120deg, var(--gold) 20%, #ffdf94 50%, var(--rose) 80%); -webkit-background-clip:text; background-clip:text; color:transparent; filter: drop-shadow(0 4px 12px rgba(217, 79, 140, 0.4)); letter-spacing: 0.02em;">RELATIONSHIPS</h1>
-        <div class="eyebrow" style="color:var(--mist); letter-spacing:.45em; font-weight: bold; text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);">Speaking Club</div>
+        <div class="eyebrow" style="color:var(--mist); letter-spacing:.45em; font-weight: bold; text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);">A Midnight Drive</div>
         <div style="position: absolute; bottom: 0; left: 20%; right: 20%; height: 1px; background: linear-gradient(90deg, transparent, rgba(242, 193, 78, 0.6), transparent);"></div>
       </div>
 
@@ -1583,7 +2013,7 @@
       <!-- TODAY'S ACTIVITIES -->
       <div class="dashboard-section" id="activitiesSection">
         <div class="section-header">
-          <div class="eyebrow">The Roadmap</div>
+          <div class="eyebrow">The Itinerary</div>
         </div>
         
         <p class="sub" style="margin-bottom: 20px; text-align: center; font-size: 14px;">
@@ -1604,8 +2034,8 @@
             </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Pairs Activity</div>
-              <div class="hub-card-title">The Flower Shop</div>
-              <div class="hub-card-desc">We’ve pulled up. Step inside, find your partner, and pick your flowers.</div>
+              <div class="hub-card-title">The Midnight Florist</div>
+              <div class="hub-card-desc">We’ve pulled up. When the doors open, step out and pick a flower with your partner.</div>
               <div class="hub-card-lock-note">The host will unlock the doors when the time is right.</div>
             </div>
           </div>
@@ -1689,7 +2119,7 @@
             </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Closer Activity</div>
-              <div class="hub-card-title">The Library</div>
+              <div class="hub-card-title">The Archive</div>
               <div class="hub-card-desc">The final stop. The vault is open—leave your mark in the archive before we head home.</div>
               <div class="hub-card-lock-note">The vault remains sealed for now.</div>
             </div>
@@ -1743,8 +2173,34 @@
         <div id="gameLeaderboard" class="leaderboard-list"></div>
       </div>
 
+    </div> <!-- CLOSES .lounge-content so the next part is full-width -->
+
+    <!-- VISUALLY SEPARATED ARCHIVE & FOOTER -->
+    <div class="archive-footer-section">
+      <div class="eyebrow" style="margin: 0 0 16px; text-align: left; width: 100%; max-width: 420px; color: var(--dim);">In the Rearview</div>
+
+      <!-- THE SINGLE DEBUT ARCHIVE CARD -->
+      <div class="memory-lane-card" onclick="window.open('https://insight-speaking-club.github.io/queerfashion/', '_blank')" style="margin: 0 auto;">
+        <div class="memory-glass-sheen"></div>
+        <div class="memory-lane-text">
+          <div class="memory-date">August 14</div>
+          <div class="memory-lane-title" style="font-size: 24px;">Fashion Speaking Club</div>
+          <div class="memory-lane-desc">Where it all began. Take a trip down memory lane to our debut archive.</div>
+        </div>
+        <div class="memory-lane-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <!-- EVENT FOOTER -->
+      <div class="event-footer">
+        <img src="logo.png" alt="Logo" class="footer-logo" onerror="this.style.display='none'">
+        <div class="footer-credit">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
+        <div class="footer-message">Thank you for coming.<br>See you next time ♡</div>
+      </div>
     </div>
-  </div>
+
+  </div> <!-- CLOSES #state-gathering -->
 
   <!-- STATE 2: THE BOUQUET -->
   <div id="state-garden" class="lounge-state">
@@ -1768,6 +2224,7 @@
     <div class="question-panel" id="questionPanel">
       <div class="question-eyebrow" id="questionCounter">Conversation Starter</div>
       <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
+      <div class="ember-line"></div>
     </div>
   </div>
 
@@ -1950,6 +2407,7 @@ window.addEventListener('load', ()=>{
   }
 
   listenTimer();
+  spawnWhispers();
 });
 
 /* ---------- join ---------- */
@@ -1972,8 +2430,45 @@ document.getElementById('btnJoin').addEventListener('click', async ()=>{
 });
 
 /* ---------- single room logic ---------- */
+
+function initScrollMagic() {
+  const scroller = document.getElementById('state-gathering');
+  if (!scroller) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      // When the element enters the viewport, add the visible class
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        // Un-observe it so the animation only happens once (feels more permanent)
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    root: scroller, // We watch the scrolling container
+    threshold: 0.15, // Triggers when 15% of the element is visible
+    rootMargin: "0px 0px -40px 0px" // Triggers slightly before hitting the absolute bottom
+  });
+
+  // Attach the mist reveal to the main blocks
+  scroller.querySelectorAll('.dashboard-section, .hub-card, .game-section, .leaderboard-container, .memory-lane-card, .event-footer').forEach(el => {
+    el.classList.add('reveal-mist');
+    observer.observe(el);
+  });
+
+  // Attach the unrolling road reveal to the connector lines
+  scroller.querySelectorAll('.activity-connector').forEach(el => {
+    el.classList.add('reveal-line');
+    observer.observe(el);
+  });
+}
+
 function enterLounge(){
   show('screen-lounge');
+
+  // Initialize the scroll magic right before we show the lounge
+  initScrollMagic();
+
   setLoungeState('state-gathering');
   listenRoster();
   listenPhase();
@@ -1988,13 +2483,16 @@ function enterLounge(){
   }
 }
 
-/* --- SPOTLIGHT TOUR LOGIC --- */
+/* --- DYNAMIC SPOTLIGHT TOUR --- */
 let tourIdx = 0;
+let typeInterval;
+let isTyping = false;
+
 const TOUR_STEPS = [
-  { selector: '#activitiesSection', title: 'Welcome to the route.', desc: 'This is our itinerary for the night. We all travel together, so sit tight until we arrive at the first stop.', pad: 10 },
-  { selector: '#hubCardGarden', title: 'The Flower Shop', desc: 'Our first stop. The host is driving, so this stays locked until we officially pull up and step inside.', pad: 8 },
-  { selector: '#hubCardAita', title: 'Relationships Court', desc: 'Afterwards, we will all regroup at the courthouse. Get ready to cast your verdicts.', pad: 8 },
-  { selector: '#hubCardCloser', title: 'The Final Stop', desc: 'At the end of the night, the vault opens—leave your mark in the archive before we head home.', pad: 8 }
+  { selector: '#activitiesSection', title: 'The Itinerary', desc: 'The route for the evening. We travel together, so sit tight until we pull up to the first stop.', pad: 10 },
+  { selector: '#hubCardGarden', title: 'The Midnight Florist', desc: 'Our first stop. This stays locked until we actually pull up and the doors open.', pad: 8 },
+  { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'After the florist, we regroup here. Locked until we arrive—get ready to cast your verdicts.', pad: 8 },
+  { selector: '#hubCardCloser', title: 'The Archive', desc: 'Our final stop. The vault stays sealed until the very end of the night.', pad: 8 }
 ];
 
 function startTour() {
@@ -2017,10 +2515,39 @@ function showTourStep() {
   spot.style.height = (rect.height + step.pad * 2) + 'px';
 
   document.getElementById('tour-step-label').textContent = `Step ${tourIdx + 1} of ${TOUR_STEPS.length}`;
-  document.getElementById('tour-title').textContent = step.title;
-  document.getElementById('tour-desc').textContent = step.desc;
-  document.getElementById('tour-next').textContent = tourIdx === TOUR_STEPS.length - 1 ? 'Got it' : 'Next';
   document.querySelectorAll('#tour-dots span').forEach((d, i) => d.classList.toggle('tour-dot-done', i <= tourIdx));
+
+  // Typewriter Setup
+  const titleEl = document.getElementById('tour-title');
+  const descEl = document.getElementById('tour-desc');
+  const nextBtn = document.getElementById('tour-next');
+  
+  if (typeInterval) clearInterval(typeInterval);
+  titleEl.textContent = '';
+  descEl.textContent = '';
+  isTyping = true;
+  nextBtn.textContent = 'Skip'; // Let impatient users skip the typing animation
+  descEl.classList.add('typing');
+  
+  let titleIdx = 0;
+  let descIdx = 0;
+  
+  // The Typing Engine (25ms per letter)
+  typeInterval = setInterval(() => {
+    if (titleIdx < step.title.length) {
+      titleEl.textContent += step.title.charAt(titleIdx);
+      titleIdx++;
+    } else if (descIdx < step.desc.length) {
+      descEl.textContent += step.desc.charAt(descIdx);
+      descIdx++;
+    } else {
+      // Finished typing
+      clearInterval(typeInterval);
+      isTyping = false;
+      descEl.classList.remove('typing');
+      nextBtn.textContent = tourIdx === TOUR_STEPS.length - 1 ? 'Got it' : 'Next';
+    }
+  }, 25);
 
   const tooltip = document.getElementById('tour-tooltip');
   requestAnimationFrame(() => {
@@ -2034,6 +2561,18 @@ function showTourStep() {
 }
 
 function tourNext() {
+  // If the text is still typing, clicking the button just fast-forwards to the end
+  if (isTyping) {
+    clearInterval(typeInterval);
+    isTyping = false;
+    const step = TOUR_STEPS[tourIdx];
+    document.getElementById('tour-title').textContent = step.title;
+    document.getElementById('tour-desc').textContent = step.desc;
+    document.getElementById('tour-desc').classList.remove('typing');
+    document.getElementById('tour-next').textContent = tourIdx === TOUR_STEPS.length - 1 ? 'Got it' : 'Next';
+    return;
+  }
+  
   tourIdx++;
   if (tourIdx >= TOUR_STEPS.length) { endTour(); return; }
   showTourStep();
@@ -2041,6 +2580,7 @@ function tourNext() {
 
 function endTour() {
   document.getElementById('tour-overlay').classList.remove('show');
+  if (typeInterval) clearInterval(typeInterval);
 }
 
 let stateGuests = [];
@@ -2108,7 +2648,8 @@ function listenPhase(){
       show('screen-lounge');
       setLoungeState('state-gathering');
       document.getElementById('aitaVerdictCard').style.display = 'none';
-      document.getElementById('glowRing').style.boxShadow = `none`;
+      const glowRingEl1 = document.getElementById('glowRing');
+      if(glowRingEl1) glowRingEl1.style.boxShadow = `none`;
 
       // Always restart the game engine when entering the lounge
       startBunnyGame();
@@ -2116,7 +2657,8 @@ function listenPhase(){
     else if(state === 'aita'){
       show('screen-lounge');
       stopBunnyGame();
-      document.getElementById('glowRing').style.boxShadow = `none`;
+      const glowRingEl2 = document.getElementById('glowRing');
+      if(glowRingEl2) glowRingEl2.style.boxShadow = `none`;
       ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
         const round = snap.val();
         if(!round) return;
@@ -2140,6 +2682,8 @@ function listenHubs() {
       cardAita.classList.toggle('locked', !hubs.aita);
       cardAita.classList.toggle('is-current', hubs.current === 'aita');
     }
+    // Update the environment phase based on the current activity
+    document.body.setAttribute('data-phase', hubs.current || 'gathering');
     const cardCloser = document.getElementById('hubCardCloser');
     if(cardCloser) {
       cardCloser.classList.toggle('locked', !hubs.closer);
@@ -2160,8 +2704,68 @@ function listenHubs() {
 }
 
 // Bind the hub cards!
-document.getElementById('hubCardGarden').addEventListener('click', () => {
-  if (document.getElementById('hubCardGarden').classList.contains('locked')) return;
+const WHISPERS = [
+  "It is better to be hated for what you are than to be loved for what you are not.",
+  "We accept the love we think we deserve.",
+  "Being deeply loved by someone gives you strength, while loving someone deeply gives you courage.",
+  "You know you're in love when you can't fall asleep because reality is finally better than your dreams.",
+  "Love is composed of a single soul inhabiting two bodies.",
+  "Whatever our souls are made of, his and mine are the same."
+];
+
+function spawnWhispers() {
+  const layer = document.getElementById('whisperLayer');
+  if (!layer) return;
+
+  setInterval(() => {
+    // Don't clutter the screen; max 4 fireflies at a time
+    if (document.querySelectorAll('.wisp').length >= 4) return;
+
+    const wisp = document.createElement('div');
+    wisp.className = 'wisp';
+    wisp.style.left = (10 + Math.random() * 80) + '%';
+    wisp.style.animationDuration = (18 + Math.random() * 12) + 's';
+
+    const text = document.createElement('div');
+    text.className = 'wisp-text';
+    text.textContent = WHISPERS[Math.floor(Math.random() * WHISPERS.length)];
+    wisp.appendChild(text);
+
+    wisp.addEventListener('click', () => {
+      if (wisp.classList.contains('revealed')) return;
+      wisp.classList.add('revealed');
+
+      // Let them read it for 5 seconds, then dissolve it
+      setTimeout(() => {
+        wisp.style.opacity = '0';
+        wisp.style.transform = 'scale(0.8) translateY(-20px)';
+        setTimeout(() => wisp.remove(), 600);
+      }, 5000);
+    });
+
+    layer.appendChild(wisp);
+
+    // Auto-remove if it floats off-screen without being tapped
+    setTimeout(() => {
+      if (!wisp.classList.contains('revealed')) wisp.remove();
+    }, 30000);
+  }, 4000); // Try spawning a new one every 4 seconds
+}
+
+function handleLockedHubClick(el) {
+  if (el.classList.contains('locked')) {
+    // Reset animation if tapped repeatedly
+    el.classList.remove('shake-reject');
+    void el.offsetWidth; // Trigger DOM reflow
+    el.classList.add('shake-reject');
+    setTimeout(() => el.classList.remove('shake-reject'), 400);
+    return true; // Indicates it was locked
+  }
+  return false; // Indicates it was unlocked
+}
+
+document.getElementById('hubCardGarden').addEventListener('click', function() {
+  if (handleLockedHubClick(this)) return;
   setLoungeState('state-garden');
   // Failsafe: if no pairing event has built the bouquet yet, build it now
   // so the flowers are always visible the moment the guest enters.
@@ -2170,12 +2774,12 @@ document.getElementById('hubCardGarden').addEventListener('click', () => {
     buildGarden();
   }
 });
-document.getElementById('hubCardAita').addEventListener('click', () => {
-  if (document.getElementById('hubCardAita').classList.contains('locked')) return;
+document.getElementById('hubCardAita').addEventListener('click', function() {
+  if (handleLockedHubClick(this)) return;
   setLoungeState('state-aita');
 });
-document.getElementById('hubCardCloser').addEventListener('click', () => {
-  if (document.getElementById('hubCardCloser').classList.contains('locked')) return;
+document.getElementById('hubCardCloser').addEventListener('click', function() {
+  if (handleLockedHubClick(this)) return;
   // Open Padlet in a new tab/window
   window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank');
 });
@@ -2571,6 +3175,27 @@ function pickFlower(i, pairId, plant, color){
       textEl.textContent = QUESTIONS[i];
       counterEl.textContent = `Conversation Starter`;
       textEl.classList.remove('swap');
+
+      // Reset any previous burns
+      panel.classList.remove('burning', 'ashes');
+      void panel.offsetWidth; // Force DOM reflow
+
+      // Start the 5-minute burn
+      panel.classList.add('burning');
+
+      // Set the burnout timer (300,000ms = 5 minutes)
+      setTimeout(() => {
+        if (textEl.textContent === QUESTIONS[i]) { // Only ash if they haven't picked a new flower
+          panel.classList.remove('burning');
+          panel.classList.add('ashes');
+
+          setTimeout(() => {
+            textEl.textContent = "The moment has passed. Pick another flower.";
+            panel.classList.remove('ashes');
+          }, 4000); // Wait for the fade-to-ashes CSS animation to finish
+        }
+      }, 300000);
+
     }, 220);
 
     setTimeout(() => panel.classList.remove('flash'), 600);
