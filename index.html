@@ -1968,6 +1968,19 @@ body[data-phase="closer"] .sky {
   .spin-q-text.is-victim { font-size: 26px; color: var(--gold); font-weight: 600; line-height: 1.2; }
   .spin-q-text.is-audience { font-size: 16px; color: var(--dim); }
   .spin-q-target-name { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; color: var(--gold); }
+
+  /* --- ROULETTE COMPLETED STATE --- */
+  .spin-avatar.is-completed {
+    opacity: 0.3;
+    filter: grayscale(100%);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+    pointer-events: none;
+  }
+  .spin-avatar.is-completed .spin-name {
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.3);
+  }
 </style>
 </head>
 <body>
@@ -2719,6 +2732,11 @@ const TOUR_STEPS = [
 
 function startTour() {
   tourIdx = 0;
+
+  // Dynamically set the Welcome Step
+  TOUR_STEPS[0].title = `Welcome, ${me.name.split(' ')[0]}`;
+  TOUR_STEPS[0].desc = `This is our itinerary for the night. We travel together, so sit tight until we pull up to the first stop.`;
+
   document.getElementById('tour-overlay').classList.add('show');
   document.getElementById('tour-dots').innerHTML = TOUR_STEPS.map(() => '<span></span>').join('');
   showTourStep();
@@ -2729,12 +2747,8 @@ function showTourStep() {
   const target = document.querySelector(step.selector);
   if (!target) { tourNext(); return; }
 
-  const rect = target.getBoundingClientRect();
-  const spot = document.getElementById('tour-spotlight');
-  spot.style.top = (rect.top - step.pad) + 'px';
-  spot.style.left = (rect.left - step.pad) + 'px';
-  spot.style.width = (rect.width + step.pad * 2) + 'px';
-  spot.style.height = (rect.height + step.pad * 2) + 'px';
+  // Scroll the targeted element into the center of the screen
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   document.getElementById('tour-step-label').textContent = `Step ${tourIdx + 1} of ${TOUR_STEPS.length}`;
   document.querySelectorAll('#tour-dots span').forEach((d, i) => d.classList.toggle('tour-dot-done', i <= tourIdx));
@@ -2771,15 +2785,28 @@ function showTourStep() {
     }
   }, 25);
 
-  const tooltip = document.getElementById('tour-tooltip');
-  requestAnimationFrame(() => {
+  // Smooth Spotlight Tracking Loop (Follows the element while the page scrolls)
+  if (window.tourTrackInterval) clearInterval(window.tourTrackInterval);
+
+  const updateSpotlight = () => {
+    const rect = target.getBoundingClientRect();
+    const spot = document.getElementById('tour-spotlight');
+    spot.style.top = (rect.top - step.pad) + 'px';
+    spot.style.left = (rect.left - step.pad) + 'px';
+    spot.style.width = (rect.width + step.pad * 2) + 'px';
+    spot.style.height = (rect.height + step.pad * 2) + 'px';
+
+    const tooltip = document.getElementById('tour-tooltip');
     const spaceBelow = window.innerHeight - (rect.bottom + step.pad);
     const top = spaceBelow > tooltip.offsetHeight + 20 ? rect.bottom + step.pad + 16 : Math.max(16, rect.top - step.pad - tooltip.offsetHeight - 16);
     let left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
     left = Math.max(16, Math.min(left, window.innerWidth - tooltip.offsetWidth - 16));
     tooltip.style.top = top + 'px';
     tooltip.style.left = left + 'px';
-  });
+  };
+
+  updateSpotlight();
+  window.tourTrackInterval = setInterval(updateSpotlight, 16); // 60fps track
 }
 
 function tourNext() {
@@ -2803,6 +2830,7 @@ function tourNext() {
 function endTour() {
   document.getElementById('tour-overlay').classList.remove('show');
   if (typeInterval) clearInterval(typeInterval);
+  if (window.tourTrackInterval) clearInterval(window.tourTrackInterval);
 }
 
 let stateGuests = [];
@@ -3861,6 +3889,13 @@ const ICEBREAKER_QUESTIONS = [
 
 let currentNeedleRotation = 0;
 let spinGuestsCache = [];
+let completedRouletteIds = [];
+
+// Listen for who has already been picked
+ref(`events/${EVENT_ID}/gpsRoulette/completed`).on('value', snap => {
+  completedRouletteIds = snap.val() || [];
+  if (spinGuestsCache.length > 0) renderSpinCircle(spinGuestsCache);
+});
 
 function renderSpinCircle(guests) {
   spinGuestsCache = guests;
@@ -3883,6 +3918,8 @@ function renderSpinCircle(guests) {
     
     const avatar = document.createElement('div');
     avatar.className = 'spin-avatar';
+    if (completedRouletteIds.includes(g.id)) avatar.classList.add('is-completed'); // Gray out completed guests
+
     avatar.id = `spin-avatar-${g.id}`;
     avatar.style.left = `${x}px`;
     avatar.style.top = `${y}px`;
@@ -3891,12 +3928,37 @@ function renderSpinCircle(guests) {
   });
 }
 
+const originalListenRoster = listenRoster;
+listenRoster = function() {
+  ref(`events/${EVENT_ID}/attendees`).on('value', snap => {
+    stateGuests = Object.values(snap.val() || {}).sort((a,b) => a.joinedAt - b.joinedAt);
+    const countEl = document.getElementById('loungeCount');
+    if(countEl) countEl.textContent = stateGuests.length;
+    renderRoster();
+    renderLeaderboard(stateGuests);
+    renderSpinCircle(stateGuests);
+    if(isHost) renderHostList(stateGuests);
+  });
+};
+
 // Host action: Pick a target, calculate angle, sync to Firebase
 document.getElementById('btnSpinNeedle').addEventListener('click', () => {
   if (spinGuestsCache.length === 0) return;
-  
-  const targetIndex = Math.floor(Math.random() * spinGuestsCache.length);
-  const target = spinGuestsCache[targetIndex];
+
+  // Filter out the completed guests
+  let availableGuests = spinGuestsCache.filter(g => !completedRouletteIds.includes(g.id));
+
+  // If everyone has gone, reset the board
+  if (availableGuests.length === 0) {
+    if (confirm("Everyone has been picked! Reset the circle?")) {
+      ref(`events/${EVENT_ID}/gpsRoulette/completed`).set([]);
+    }
+    return;
+  }
+
+  // Pick ONLY from the available guests
+  const target = availableGuests[Math.floor(Math.random() * availableGuests.length)];
+  const targetIndex = spinGuestsCache.findIndex(g => g.id === target.id); // Need their physical index for the angle
   const question = ICEBREAKER_QUESTIONS[Math.floor(Math.random() * ICEBREAKER_QUESTIONS.length)];
   
   // Calculate angle. 360 / total gives degrees per slice.
@@ -3950,6 +4012,12 @@ ref(`events/${EVENT_ID}/gpsRoulette`).on('value', snap => {
       `;
     }
     display.classList.add('show');
+
+    // Now that the reveal has landed, lock this guest out of future spins for the round
+    if (isHost && !completedRouletteIds.includes(data.targetId)) {
+      completedRouletteIds.push(data.targetId);
+      ref(`events/${EVENT_ID}/gpsRoulette/completed`).set(completedRouletteIds);
+    }
   }, 3500); // Matches the 3.5s CSS transition exactly
 });
 
