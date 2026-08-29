@@ -1652,6 +1652,19 @@ body[data-phase="closer"] .sky {
   line-height: 1.45;
 }
 
+.memory-lane-thumb {
+  width: 64px; height: 80px;
+  object-fit: contain;
+  background: rgba(0,0,0,0.25);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  flex-shrink: 0;
+  margin-right: 16px;
+  position: relative;
+  z-index: 2;
+}
+
 .memory-lane-icon {
   width: 44px; height: 44px;
   border-radius: 50%;
@@ -2193,6 +2206,7 @@ body[data-phase="closer"] .sky {
       <!-- THE SINGLE DEBUT ARCHIVE CARD -->
       <div class="memory-lane-card" onclick="window.open('https://insight-speaking-club.github.io/queerfashion/', '_blank')" style="margin: 0 auto;">
         <div class="memory-glass-sheen"></div>
+        <img src="fashion-speaking-club.png" alt="Fashion Speaking Club promo" class="memory-lane-thumb" onerror="this.style.display='none'">
         <div class="memory-lane-text">
           <div class="memory-date">August 14</div>
           <div class="memory-lane-title" style="font-size: 24px;">Fashion Speaking Club</div>
