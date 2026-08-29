@@ -1354,7 +1354,7 @@
     /* The massive shadow that dims the background */
     box-shadow: 0 0 0 9999px rgba(18,8,33,0.85);
     outline: 2px solid var(--gold); outline-offset: 4px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* No transition here — position is driven every frame by JS while tracking. */
   }
 
   #tour-tooltip {
@@ -1362,7 +1362,7 @@
     background: rgba(30,15,45,0.95); backdrop-filter: blur(10px);
     border: 1px solid rgba(244,233,255,0.2); border-radius: 16px;
     padding: 18px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* No transition here — position is driven every frame by JS while tracking. */
     pointer-events: auto;
   }
 
@@ -2100,13 +2100,13 @@ body[data-phase="closer"] .sky {
   <div class="eyebrow stagger-1">THE ENGINE IS RUNNING</div>
 
   <div class="host-frame stagger-2" style="margin-top: 24px; padding: 3px; background: conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));">
-    <img src="sasha.png" alt="Sasha" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 2px solid var(--ink);">
+    <img src="sasha-car.png" alt="Sasha" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 2px solid var(--ink);">
   </div>
   
-  <h1 class="display stagger-2" style="font-size:46px; margin-bottom: 16px; font-style: italic; background: linear-gradient(to right, #ffffff, var(--mist)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 25px rgba(255,255,255,0.25);">Step into the night.</h1>
+  <h1 class="display stagger-2" style="font-size:46px; margin-bottom: 16px; font-style: italic; background: linear-gradient(to right, #ffffff, var(--mist)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 25px rgba(255,255,255,0.25);">Let's hit the road.</h1>
 
   <div class="greeting-bubble stagger-3" style="margin-bottom: 24px; text-align: center;">
-    <p>I'm Sasha. The city is quiet, the tank is full, and we have a lot to talk about. Tell me your name, get comfortable in the passenger seat, and let's begin.</p>
+    <p>Hello, my name is Sasha. I will be your host today. Tell me your name and get in. We've got somewhere to be.</p>
   </div>
 
   <div class="field stagger-4" style="margin-top: 0;">
@@ -2165,7 +2165,7 @@ body[data-phase="closer"] .sky {
 
         <div class="hub-sections">
 
-          <!-- Stop 0: The Starting Point -->
+          <!-- Stop 0: Home -->
           <div class="hub-card locked" id="hubCardRoulette">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
@@ -2180,8 +2180,8 @@ body[data-phase="closer"] .sky {
             </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Icebreaker Activity</div>
-              <div class="hub-card-title">The Starting Point</div>
-              <div class="hub-card-desc">We're idling at Insight. The GPS is recalibrating—step out and let's break the ice.</div>
+              <div class="hub-card-title">Home</div>
+              <div class="hub-card-desc">We're idling right here at Home. The GPS is recalibrating—step out and let's break the ice.</div>
               <div class="hub-card-lock-note">The host will start the engine soon.</div>
             </div>
           </div>
@@ -2216,7 +2216,7 @@ body[data-phase="closer"] .sky {
             </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Pairs Activity</div>
-              <div class="hub-card-title">The Midnight Shop</div>
+              <div class="hub-card-title">The Night Garden</div>
               <div class="hub-card-desc">We’ve pulled up. When the doors open, step out and pick a flower with your partner.</div>
               <div class="hub-card-lock-note">The host will unlock the doors when the time is right.</div>
             </div>
@@ -2309,9 +2309,9 @@ body[data-phase="closer"] .sky {
             </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Closer Activity</div>
-              <div class="hub-card-title">The Library</div>
-              <div class="hub-card-desc">The final stop. The library is open—leave a page of yourself before we head home.</div>
-              <div class="hub-card-lock-note">The library remains sealed for now.</div>
+              <div class="hub-card-title">The Keepsake</div>
+              <div class="hub-card-desc">Last stop of the night. The Keepsake's open—pin something you love before we head home.</div>
+              <div class="hub-card-lock-note">The Keepsake remains sealed for now.</div>
             </div>
           </div>
 
@@ -2400,7 +2400,7 @@ body[data-phase="closer"] .sky {
   <!-- STATE 1.5: THE STARTING POINT (GPS ROULETTE) -->
   <div id="state-roulette" class="lounge-state">
     <button class="back-btn" id="btnBackToGatheringRoulette" onclick="setLoungeState('state-gathering')">‹</button>
-    <div class="eyebrow" style="margin-top: 40px;">The Starting Point</div>
+    <div class="eyebrow" style="margin-top: 40px;">Home</div>
     <h1 class="display" style="font-size:32px;">GPS Recalibration</h1>
     <p class="sub" style="margin-bottom: 40px; padding: 0 20px;">The engine is running, but we aren't leaving just yet. When the needle locks onto you, answer honestly. We are all listening.</p>
     
@@ -2723,19 +2723,19 @@ let typeInterval;
 let isTyping = false;
 
 const TOUR_STEPS = [
-  { selector: '#hubCardRoulette', title: 'The Starting Point', desc: 'Our first stop before we hit the road. The host will trigger the GPS to recalibrate. If it locks onto you, answer honestly.', pad: 8 },
-  { selector: '#activitiesSection', title: 'The Itinerary', desc: 'The route for the evening. We travel together, so sit tight until we pull up to the first stop.', pad: 10 },
-  { selector: '#hubCardGarden', title: 'The Midnight Shop', desc: 'Our first stop. Sasha will pair you with someone for a one-on-one conversation.', pad: 8 },
-  { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'After the shop, we regroup here. Locked until we arrive—get ready to cast your verdicts.', pad: 8 },
-  { selector: '#hubCardCloser', title: 'The Library', desc: 'Our final stop. We\'ll leave a bit of ourselves before we head back home.', pad: 8 }
+  { selector: '#hubCardRoulette', title: 'Home', desc: 'Before we hit the road, we idle here. The host will trigger the GPS to recalibrate—if it locks onto you, answer honestly.', pad: 8 },
+  { selector: '#activitiesSection', title: 'The Itinerary', desc: 'Here\'s the full route for the night. Watch it light up as we go—we travel together, so sit tight until we pull up to the first stop.', pad: 10 },
+  { selector: '#hubCardGarden', title: 'The Night Garden', desc: 'First stop. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
+  { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
+  { selector: '#hubCardCloser', title: 'The Keepsake', desc: 'Last stop of the night. We\'ll each pin something we love before we head home.', pad: 8 }
 ];
 
 function startTour() {
   tourIdx = 0;
 
   // Dynamically set the Welcome Step
-  TOUR_STEPS[0].title = `Welcome, ${me.name.split(' ')[0]}`;
-  TOUR_STEPS[0].desc = `This is our itinerary for the night. We travel together, so sit tight until we pull up to the first stop.`;
+  TOUR_STEPS[0].title = `Welcome aboard, ${me.name.split(' ')[0]}`;
+  TOUR_STEPS[0].desc = `Tonight's a journey with a few stops, no set roads—just us. We're idling right here at Home: when the GPS locks onto you, answer honestly.`;
 
   document.getElementById('tour-overlay').classList.add('show');
   document.getElementById('tour-dots').innerHTML = TOUR_STEPS.map(() => '<span></span>').join('');
@@ -2786,27 +2786,29 @@ function showTourStep() {
   }, 25);
 
   // Smooth Spotlight Tracking Loop (Follows the element while the page scrolls)
-  if (window.tourTrackInterval) clearInterval(window.tourTrackInterval);
+  if (window.tourTrackRAF) cancelAnimationFrame(window.tourTrackRAF);
+
+  const spot = document.getElementById('tour-spotlight');
+  const tooltip = document.getElementById('tour-tooltip');
 
   const updateSpotlight = () => {
     const rect = target.getBoundingClientRect();
-    const spot = document.getElementById('tour-spotlight');
     spot.style.top = (rect.top - step.pad) + 'px';
     spot.style.left = (rect.left - step.pad) + 'px';
     spot.style.width = (rect.width + step.pad * 2) + 'px';
     spot.style.height = (rect.height + step.pad * 2) + 'px';
 
-    const tooltip = document.getElementById('tour-tooltip');
     const spaceBelow = window.innerHeight - (rect.bottom + step.pad);
     const top = spaceBelow > tooltip.offsetHeight + 20 ? rect.bottom + step.pad + 16 : Math.max(16, rect.top - step.pad - tooltip.offsetHeight - 16);
     let left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
     left = Math.max(16, Math.min(left, window.innerWidth - tooltip.offsetWidth - 16));
     tooltip.style.top = top + 'px';
     tooltip.style.left = left + 'px';
+
+    window.tourTrackRAF = requestAnimationFrame(updateSpotlight);
   };
 
   updateSpotlight();
-  window.tourTrackInterval = setInterval(updateSpotlight, 16); // 60fps track
 }
 
 function tourNext() {
@@ -2830,7 +2832,7 @@ function tourNext() {
 function endTour() {
   document.getElementById('tour-overlay').classList.remove('show');
   if (typeInterval) clearInterval(typeInterval);
-  if (window.tourTrackInterval) clearInterval(window.tourTrackInterval);
+  if (window.tourTrackRAF) cancelAnimationFrame(window.tourTrackRAF);
 }
 
 let stateGuests = [];
@@ -3731,7 +3733,7 @@ document.getElementById('btnHighlightCloser').addEventListener('click', async ()
   else ref(`events/${EVENT_ID}/hubs/current`).set('closer');
 });
 
-// Host Highlights and Unlocks for The Starting Point (GPS Roulette)
+// Host Highlights and Unlocks for Home (GPS Roulette)
 document.getElementById('btnHighlightRoulette').addEventListener('click', async () => {
   const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
   if (snap.val() === 'roulette') ref(`events/${EVENT_ID}/hubs/current`).set(null);
@@ -3793,7 +3795,7 @@ document.getElementById('btnToggleLockCloser').addEventListener('click', async (
   }
 });
 
-// Unlock toggle for The Starting Point (GPS Roulette)
+// Unlock toggle for Home (GPS Roulette)
 document.getElementById('btnToggleLockRoulette').addEventListener('click', async () => {
   const snap = await ref(`events/${EVENT_ID}/hubs/roulette`).once('value');
   if (snap.val()) {
@@ -3884,7 +3886,23 @@ const ICEBREAKER_QUESTIONS = [
   "They're a 10 but they text exclusively in lowercase.",
   "Would you rather your partner have a terrible fashion sense or terrible music taste?",
   "They're a 10 but they refuse to use GPS and always get lost.",
-  "Would you rather find true love today or win the lottery next year?"
+  "Would you rather find true love today or win the lottery next year?",
+  "They're a 10 but they chew with their mouth open.",
+  "Would you rather your partner always be 20 minutes late or always leave 20 minutes early?",
+  "They're a 10 but they still use Internet Explorer.",
+  "Would you rather date someone who can't cook or someone who won't do dishes?",
+  "They're a 10 but they've never watched a single movie all the way through.",
+  "Would you rather your partner sing off-key in public or dance badly on purpose?",
+  "They're a 10 but they say 'no offense' right before something offensive.",
+  "Would you rather split the bill every time or never be allowed to?",
+  "They're a 10 but they have 47 unread group chats.",
+  "Would you rather your partner have terrible handwriting or terrible driving?",
+  "They're a 10 but they think ketchup belongs on everything.",
+  "Would you rather know how your love story ends or be surprised the whole way?",
+  "They're a 10 but they refuse to watch anything without subtitles, even in English.",
+  "Would you rather date your celebrity crush for a week or your actual crush forever?",
+  "They're a 10 but they narrate what they're doing while they do it.",
+  "Would you rather have a partner who never remembers your birthday or one who over-celebrates it?"
 ];
 
 let currentNeedleRotation = 0;
