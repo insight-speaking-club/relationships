@@ -402,8 +402,15 @@
   }
   /* --- CLEAN LOUNGE DASHBOARD --- */
   .lounge-header {
-    text-align: center; margin-bottom: 24px;
+    text-align: center; margin-bottom: 32px; padding: 24px 0; position: relative;
   }
+  .lounge-header h1.display {
+    font-size: 38px; margin: 0 0 6px; letter-spacing: 0.12em; text-transform: uppercase;
+    background: linear-gradient(to bottom, #ffffff, #d1c5df);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+  }
+  .lounge-header .eyebrow { color: var(--gold); letter-spacing: 0.3em; }
   .dashboard-section, #activitiesSection {
     position: relative;
     width: 100%; max-width: 420px;
@@ -558,7 +565,11 @@
   }
 
   /* --- LOCKED HUB PULSE (REJECTION) --- */
-  .hub-card.locked{ opacity:.5; cursor:pointer; filter: grayscale(80%); }
+  .hub-card.locked{ opacity:.35; cursor:pointer; filter: grayscale(100%) brightness(.7); background: rgba(0,0,0,0.25); border: 1px dashed rgba(255, 255, 255, 0.15); box-shadow: none; }
+  .hub-card-icon .icon-lock{ display:none; }
+  .hub-card.locked .hub-card-icon{ background: rgba(0,0,0,0.3); }
+  .hub-card.locked .hub-card-icon .icon-normal{ display:none; }
+  .hub-card.locked .hub-card-icon .icon-lock{ display:block; }
   .hub-card.shake-reject {
     animation: hub-reject 0.4s cubic-bezier(.36,.07,.19,.97) both;
     border-color: rgba(255, 77, 94, 0.4);
@@ -576,12 +587,13 @@
   .hub-card-icon{
     width:44px; height:44px; border-radius:50%; flex:none;
     display:flex; align-items:center; justify-content:center; font-size:20px;
-    background:conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
   .hub-card-title{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:19px; color:var(--mist);}
   .hub-card-sub{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; text-transform:uppercase;}
   .hub-card-desc{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; font-weight:500; color:var(--dim); margin-top:4px; line-height:1.35; text-transform:none; letter-spacing:.01em;}
-  .hub-card-lock-note{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; font-weight:500; color:var(--gold); margin-top:4px; line-height:1.35; opacity:.85; display:none;}
+  .hub-card-lock-note{font-family:'Jost',sans-serif; font-style:normal; font-size:13px; font-weight:400; color:rgba(244, 233, 255, 0.5); margin-top:6px; line-height:1.35; display:none;}
   .hub-card.locked .hub-card-desc{display:none;}
   .hub-card.locked .hub-card-lock-note{display:block;}
 
@@ -1033,8 +1045,12 @@
 
   .flower-plant:not(.bloomed) .flower-head{ animation:bud-sway 4.5s ease-in-out infinite; }
   @keyframes bud-sway{0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);}}
-  .flower-plant.bloomed .flower-head{ animation:bloom-sway 6s ease-in-out infinite; }
+  .flower-plant.bloomed .flower-head{ animation:bloom-sway 6s ease-in-out infinite, bioluminescence 3s ease-in-out infinite alternate; }
   @keyframes bloom-sway{0%,100%{transform:rotate(-1.5deg);}50%{transform:rotate(1.5deg);}}
+  @keyframes bioluminescence {
+    0% { filter: drop-shadow(0 0 8px currentColor) brightness(1); }
+    100% { filter: drop-shadow(0 0 20px currentColor) brightness(1.25); }
+  }
   .flower-plant:active{ transform:translateX(-50%) scale(var(--fscale,1)) translateY(2px); }
   .flower-plant::after{
     content:''; position:absolute; bottom:-4px; left:50%;
@@ -1059,7 +1075,7 @@
 
   /* The Flowers */
   .flower-plant {
-    position: absolute; left: 50%; bottom: 160px;
+    position: absolute; left: 50%; bottom: 70px;
     margin-left: -32px; width: 64px;
     display: flex; flex-direction: column; align-items: center; /* THIS WAS MISSING! */
     cursor: pointer;
@@ -1069,41 +1085,38 @@
   }
 
   .flower-plant.picked {
-    opacity: 0 !important;
+    opacity: 1 !important; /* Keep visible so we can animate the pieces */
     pointer-events: none;
-    transform: var(--base-transform) translateY(-80px) scale(1.15) !important;
+    transform: var(--base-transform) !important;
+  }
+  .flower-plant.picked .bloom {
+    animation: petals-blow-away 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  @keyframes petals-blow-away {
+    0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0); }
+    100% { transform: scale(1.8) translate(30px, -120px) rotate(45deg); opacity: 0; filter: blur(6px); }
+  }
+  .flower-plant.picked .stem {
+    transition: opacity 1.5s ease 0.5s, filter 1.5s ease 0.5s;
+    opacity: 0.15;
+    filter: grayscale(100%);
   }
 
-  /* --- THE ELEGANT FOLDED WRAP (dark paper, like a bouquet shop wrap) --- */
-  .bouquet-wrap-back {
-    position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
-    width: 240px; height: 280px;
-    background: linear-gradient(160deg, #2b2733, #14111a 70%);
-    clip-path: polygon(0 0, 100% 0, 75% 100%, 25% 100%);
-    z-index: 0; border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
-  }
-  .bouquet-wrap-left-fold {
-    position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
-    width: 240px; height: 160px;
-    background: linear-gradient(135deg, #3a3444, #17141d);
-    clip-path: polygon(0 0, 65% 100%, 25% 100%);
-    z-index: 90; border-right: 1px solid rgba(255,255,255,0.12);
-    box-shadow: inset 0 0 25px rgba(0,0,0,0.6);
-  }
-  .bouquet-wrap-right-fold {
-    position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
-    width: 240px; height: 160px;
-    background: linear-gradient(225deg, #423b4d, #1a1620);
-    clip-path: polygon(100% 0, 75% 100%, 35% 100%);
-    z-index: 91; border-left: 1px solid rgba(255,255,255,0.16);
-    box-shadow: inset 0 0 25px rgba(0,0,0,0.6);
+  .bouquet-wrap-left-fold, .bouquet-wrap-right-fold {
+    display: none;
   }
 
-  /* --- THE RED SATIN BOW (classic ribbon-wing shape) --- */
+  /* --- THE BOW: drop your own bow.png next to this file and it renders here --- */
+  .bouquet-bow-img {
+    position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+    width: 100px; height: auto;
+    z-index: 1; /* below the flowers (z-index 10) */
+    pointer-events: none;
+  }
+
+  /* --- OLD SATIN BOW: retired, the vase artwork has its own bow painted in --- */
   .bouquet-ribbon-base {
-    position: absolute; bottom: 135px; left: 50%; transform: translateX(-50%);
-    width: 90px; height: 120px; z-index: 95;
+    display: none;
   }
 
   /* Wings: wide satin flags that taper to a point at the knot, pinched at the waist */
@@ -1740,19 +1753,6 @@ body[data-phase="closer"] .sky {
   0% { opacity: 1; filter: blur(0); color: var(--mist); }
   100% { opacity: 0; filter: blur(6px); color: rgba(244, 233, 255, 0.2); }
 }
-/* --- BRANDING & SIGNATURE --- */
-.brand-signature {
-  position: absolute;
-  top: -20px;  /* As high as possible */
-  left: 16px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 15px;
-  color: var(--gold);
-  opacity: 0.9;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-  pointer-events: none;
-  z-index: 100;
-}
 
 /* --- THE BLACK ARCHIVE WRAPPER --- */
 .archive-footer-section {
@@ -1956,7 +1956,6 @@ body[data-phase="closer"] .sky {
 
 <!-- COMBINED WELCOME & CHECK-IN -->
 <div class="screen" id="screen-welcome">
-  <div class="brand-signature">𝒪𝐵</div>
   <div class="eyebrow stagger-1">THE ENGINE IS RUNNING</div>
 
   <div class="host-frame stagger-2" style="margin-top: 24px; padding: 3px; background: conic-gradient(from 180deg, var(--gold), var(--rose), var(--magenta), var(--gold));">
@@ -1984,12 +1983,10 @@ body[data-phase="closer"] .sky {
   <!-- STATE 1: THE GATHERING -->
   <div id="state-gathering" class="lounge-state active">
     <div class="lounge-content">
-      <div class="brand-signature">𝒪𝐵</div>
-
-      <!-- CLEAN HEADER -->
+          <!-- CLEAN HEADER -->
       <div class="lounge-header" style="position: relative; padding-bottom: 12px;">
-        <h1 class="display" style="font-size:42px; margin:0 0 -2px; background:linear-gradient(120deg, var(--gold) 20%, #ffdf94 50%, var(--rose) 80%); -webkit-background-clip:text; background-clip:text; color:transparent; filter: drop-shadow(0 4px 12px rgba(217, 79, 140, 0.4)); letter-spacing: 0.02em;">RELATIONSHIPS</h1>
-        <div class="eyebrow" style="color:var(--mist); letter-spacing:.45em; font-weight: bold; text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);">A Midnight Drive</div>
+        <h1 class="display">RELATIONSHIPS</h1>
+        <div class="eyebrow">A Midnight Drive</div>
         <div style="position: absolute; bottom: 0; left: 20%; right: 20%; height: 1px; background: linear-gradient(90deg, transparent, rgba(242, 193, 78, 0.6), transparent);"></div>
       </div>
 
@@ -2026,15 +2023,21 @@ body[data-phase="closer"] .sky {
           <div class="hub-card locked" id="hubCardGarden">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
-              <!-- Minimalist Gate/Greenhouse SVG -->
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 22V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v17"/>
-                <path d="M4 12h16"/><path d="M9 22v-9"/><path d="M15 22v-9"/>
+              <!-- Minimalist Storefront SVG -->
+              <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l1.5-5.5A1 1 0 0 1 5.46 3h13.08a1 1 0 0 1 .96 1.5L21 9"/>
+                <path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"/>
+                <path d="M9 20v-5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5"/>
+                <path d="M3 9h18"/>
+              </svg>
+              <svg class="icon-lock" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="11" width="16" height="10" rx="2"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
               </svg>
             </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Pairs Activity</div>
-              <div class="hub-card-title">The Midnight Florist</div>
+              <div class="hub-card-title">The Midnight Shop</div>
               <div class="hub-card-desc">We’ve pulled up. When the doors open, step out and pick a flower with your partner.</div>
               <div class="hub-card-lock-note">The host will unlock the doors when the time is right.</div>
             </div>
@@ -2063,8 +2066,12 @@ body[data-phase="closer"] .sky {
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
               <!-- Minimalist Courthouse Pillars SVG -->
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 21h18"/><path d="M4 21v-4"/><path d="M20 21v-4"/><path d="M3 7v4h18V7"/><path d="M12 21v-9"/><path d="M8 21v-9"/><path d="M16 21v-9"/><polygon points="12,2 22,7 2,7"/>
+              </svg>
+              <svg class="icon-lock" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="11" width="16" height="10" rx="2"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
               </svg>
             </div>
             <div>
@@ -2112,16 +2119,20 @@ body[data-phase="closer"] .sky {
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
               <!-- Minimalist Open Book SVG -->
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 4.5C2 4.5 5 3 8.5 3s6.5 1.5 6.5 1.5v15S12 18 8.5 18 2 19.5 2 19.5v-15Z"/>
                 <path d="M22 4.5C22 4.5 19 3 15.5 3S9 4.5 9 4.5v15S12 18 15.5 18s6.5 1.5 6.5 1.5v-15Z"/>
+              </svg>
+              <svg class="icon-lock" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="11" width="16" height="10" rx="2"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
               </svg>
             </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Closer Activity</div>
-              <div class="hub-card-title">The Archive</div>
-              <div class="hub-card-desc">The final stop. The vault is open—leave your mark in the archive before we head home.</div>
-              <div class="hub-card-lock-note">The vault remains sealed for now.</div>
+              <div class="hub-card-title">The Library</div>
+              <div class="hub-card-desc">The final stop. The library is open—leave a page of yourself before we head home.</div>
+              <div class="hub-card-lock-note">The library remains sealed for now.</div>
             </div>
           </div>
 
@@ -2325,7 +2336,17 @@ const QUESTIONS = [
   "What's one thing you'd want a new partner to understand about your community before meeting them?",
   "Imagine someone tells you they stayed in a relationship out of fear of being alone — what would you say to them?",
   "Name a green flag in someone that shows up in how they treat people who can't do anything for them.",
-  "What's a red flag that can feel like love at first but is actually control?"
+  "What's a red flag that can feel like love at first but is actually control?",
+  "What's a green flag that only shows up once things get hard, not at the start?",
+  "A friend says they're scared their partner will leave once they really know them — what would you say?",
+  "What's something you had to unlearn about what love is supposed to look like?",
+  "If a friend asked you how to tell someone they need space without hurting them, what would you say?",
+  "What's a way you show love that doesn't get talked about enough?",
+  "Imagine a friend keeps apologizing for taking up space in a relationship — what would you tell them?",
+  "What's one thing you wish someone had told you before your first real relationship?",
+  "A friend says they don't know how to trust again after being hurt — what would you say to them?",
+  "What's a sign that someone actually listens to you, versus just waiting to talk?",
+  "What would you do if you found out a friend's partner was talking badly about them to others?"
 ];
 
 const CLUSTERS = [
@@ -2490,9 +2511,9 @@ let isTyping = false;
 
 const TOUR_STEPS = [
   { selector: '#activitiesSection', title: 'The Itinerary', desc: 'The route for the evening. We travel together, so sit tight until we pull up to the first stop.', pad: 10 },
-  { selector: '#hubCardGarden', title: 'The Midnight Florist', desc: 'Our first stop. This stays locked until we actually pull up and the doors open.', pad: 8 },
-  { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'After the florist, we regroup here. Locked until we arrive—get ready to cast your verdicts.', pad: 8 },
-  { selector: '#hubCardCloser', title: 'The Archive', desc: 'Our final stop. The vault stays sealed until the very end of the night.', pad: 8 }
+  { selector: '#hubCardGarden', title: 'The Midnight Shop', desc: 'Our first stop. Sasha will pair you with someone for a one-on-one conversation.', pad: 8 },
+  { selector: '#hubCardAita', title: 'Relationships Court™', desc: 'After the shop, we regroup here. Locked until we arrive—get ready to cast your verdicts.', pad: 8 },
+  { selector: '#hubCardCloser', title: 'The Library', desc: 'Our final stop. We\'ll leave a bit of ourselves before we head back home.', pad: 8 }
 ];
 
 function startTour() {
@@ -3038,7 +3059,7 @@ function buildGarden(){
   if(!bed) return;
   // Layered paper folds
   bed.innerHTML = `
-    <div class="bouquet-wrap-back"></div>
+    <img class="bouquet-bow-img" src="bow.png" alt="" onerror="this.style.display='none'">
     <div id="bouquetFlowers"></div>
     <div class="bouquet-wrap-left-fold"></div>
     <div class="bouquet-wrap-right-fold"></div>
@@ -3051,13 +3072,18 @@ function buildGarden(){
   const flowersContainer = document.getElementById('bouquetFlowers');
 
   const pairId = window.currentPairId || 'solo';
-  const items = QUESTIONS.length;
 
-  // Scramble the array indices so the questions aren't just left-to-right
+  // THE MAGIC TRICK: shuffle the full pool, but only render 12 for a beautiful bouquet
+  const shuffledPool = QUESTIONS.map((q, i) => i).sort(() => Math.random() - 0.5);
+  const selectedIndices = shuffledPool.slice(0, 12);
+  const items = selectedIndices.length;
+
+  // Scramble the display order so the questions aren't just left-to-right
   const shuffledIndices = Array.from({length: items}, (_, i) => i).sort(() => Math.random() - 0.5);
 
-  QUESTIONS.forEach((q, originalIndex) => {
-    const displayPos = shuffledIndices.indexOf(originalIndex);
+  selectedIndices.forEach((originalIndex, idx) => {
+    const q = QUESTIONS[originalIndex];
+    const displayPos = shuffledIndices.indexOf(idx);
 
     // TIGHT CLUSTER: Confined inside the paper wrap
     const spread = 55;
@@ -3068,8 +3094,8 @@ function buildGarden(){
     const stemH = 140 + (centerProximity * 50) + (Math.random() * 20);
     const scale = (0.7 + Math.random() * 0.25).toFixed(2);
 
-    // ANCHOR INSIDE THE WRAP
-    const bottom = 175;
+    // ANCHOR — filling the gap under the subtitle, well clear of the title
+    const bottom = 240;
 
     const cluster = CLUSTERS[originalIndex % CLUSTERS.length];
     const color = cluster[originalIndex % 2];
@@ -3101,7 +3127,7 @@ function buildGarden(){
     plant.style.transform = `rotate(${angle}deg) scale(${scale})`;
 
     // Mix up the z-index so stems overlap naturally
-    plant.style.zIndex = Math.floor(Math.random() * 50);
+    plant.style.zIndex = 1 + Math.floor(Math.random() * 50);
 
     plant.innerHTML = `
       <div class="flower-head">${bloomHtml}</div>
