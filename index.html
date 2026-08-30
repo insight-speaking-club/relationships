@@ -2034,6 +2034,15 @@ body[data-phase="closer"] .sky {
     transition: color 0.3s ease;
     white-space: normal;
   }
+  .spin-pronouns {
+    display: block;
+    font-size: 7.5px;
+    color: var(--gold);
+    opacity: 0.7;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
   .spin-avatar.is-target {
     border-color: var(--gold);
     box-shadow: 0 0 20px rgba(242, 193, 78, 0.6);
@@ -2067,7 +2076,7 @@ body[data-phase="closer"] .sky {
   .spin-q-text { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--mist); }
   .spin-q-text.is-victim { font-size: 26px; color: var(--gold); font-weight: 600; line-height: 1.2; }
   .spin-q-text.is-audience { font-size: 16px; color: var(--dim); }
-  .spin-q-target-name { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; color: var(--gold); }
+  .spin-q-target-name { font-family: 'Space Mono', monospace; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; color: var(--gold); font-weight: 700; }
 
   /* --- ROULETTE COMPLETED STATE --- */
   .spin-avatar.is-completed {
@@ -4081,7 +4090,8 @@ function renderSpinCircle(guests) {
     avatar.id = `spin-avatar-${g.id}`;
     avatar.style.left = `${x}px`;
     avatar.style.top = `${y}px`;
-    avatar.innerHTML = `${g.avatar}<div class="spin-name">${escapeHtml(g.name)}</div>`;
+    const pronounsHtml = g.pronouns ? `<span class="spin-pronouns">${escapeHtml(g.pronouns)}</span>` : '';
+    avatar.innerHTML = `${g.avatar}<div class="spin-name">${escapeHtml(g.name)}${pronounsHtml}</div>`;
     circle.appendChild(avatar);
   });
 }
@@ -4163,8 +4173,8 @@ ref(`events/${EVENT_ID}/gpsRoulette`).on('value', snap => {
     `;
   } else {
     display.innerHTML = `
-      <div class="spin-q-target-name">Recalibrating for ${escapeHtml(data.targetName.split(' ')[0])}...</div>
-      <div class="spin-q-text is-audience">${data.question}</div>
+      <div class="spin-q-target-name">${escapeHtml(data.targetName)} answers</div>
+      <div class="spin-q-text is-victim">${data.question}</div>
     `;
   }
   display.classList.add('show');
