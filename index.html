@@ -2578,7 +2578,7 @@ body[data-phase="closer"] .sky {
       <div class="question-eyebrow" id="questionCounter">Conversation Starter</div>
       <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
       <div class="ember-line"></div>
-      <p class="sub" style="margin-top:10px; font-size: 12px; opacity: 0.65; font-style: italic;">Can't answer this one, darling? Simply pick another flower 💋</p>
+      <p class="sub" id="questionHint" style="margin-top:10px; font-size: 12px; opacity: 0.65; font-style: italic;">If a question doesn't feel comfortable, feel free to pick another one.</p>
     </div>
   </div>
 
@@ -2657,20 +2657,17 @@ const QUESTIONS = [
   "What does trust get built from, in your experience?",
   "Share a way you like to be comforted when you're struggling.",
   "What's a disagreement that ended up teaching you something about yourself?",
-  "If love had a language only you spoke, what would one word in it mean?",
   "Describe what \"showing up\" for someone looks like to you.",
   "What's something you wish people asked before assuming?",
   "Tell your partner about a compliment that changed how you saw yourself.",
   "What helps you feel safe enough to be vulnerable with someone?",
   "Describe the difference between being alone and being lonely, for you.",
   "What's one thing you're still learning about connection?",
-  "If tonight's conversation could plant one seed, what would you want it to be?",
   "What would you do if a partner asked you to keep your relationship hidden from their family, even for a while?",
   "A friend admits they're falling for someone but too scared to say it out loud — what would you tell them?",
   "Imagine a friend says their partner reads their messages \"just to check in.\" What advice would you give them?",
-  "What would you do if you realized you'd been softening yourself just to feel safer around certain people?",
   "A friend is thinking about coming out to their parents and asks what you'd want them to know first — what do you say?",
-  "Name a green flag in a partner that made you trust them faster than you expected to.",
+  "Name a green flag in a partner/friend that made you trust them faster than you expected to.",
   "What's a red flag in a friend that's easy to excuse as \"they're just like that\"?",
   "What's a green flag in a friendship that has nothing to do with how much fun you have together?",
   "Name a red flag in a partner that shows up in how they talk about their exes.",
@@ -2686,7 +2683,7 @@ const QUESTIONS = [
   "If a friend asked you how to tell someone they need space without hurting them, what would you say?",
   "What's a way you show love that doesn't get talked about enough?",
   "Imagine a friend keeps apologizing for taking up space in a relationship — what would you tell them?",
-  "What's one thing you wish someone had told you before your first real relationship?",
+  "What's one thing you wish someone had told you about relationships, whether you've had one yet or not?",
   "A friend says they don't know how to trust again after being hurt — what would you say to them?",
   "What's a sign that someone actually listens to you, versus just waiting to talk?",
   "What would you do if you found out a friend's partner was talking badly about them to others?",
@@ -3701,6 +3698,8 @@ function pickFlower(i, pairId, plant, color){
     // Update Text
     const textEl = document.getElementById('questionText');
     const counterEl = document.getElementById('questionCounter');
+    const hintEl = document.getElementById('questionHint');
+    if(hintEl) hintEl.style.display = 'none';
     textEl.classList.add('swap');
     setTimeout(() => {
       textEl.textContent = QUESTIONS[i];
