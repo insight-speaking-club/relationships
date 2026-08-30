@@ -3073,15 +3073,75 @@ function listenPhase(){
       ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
         const round = snap.val();
         if(!round) return;
-        enterAitaRound(round);
+        // Just remember the round so votes work once the guest opens the
+        // card themselves — don't force-navigate everyone into Court.
+        window.currentAitaRound = round;
+        const activeState = document.querySelector('.lounge-state.active');
+        if(activeState && activeState.id === 'state-aita'){
+          enterAitaRound(round);
+        }
       });
     }
   });
 }
 
+// Human-readable names + on-brand copy for the unlock toast, so it reads
+// like a text FROM that place ("Home", "The Night Garden"...) rather than
+// a generic system message.
+const HUB_SECTION_NAMES = {
+  roulette: 'Home',
+  garden: 'The Night Garden',
+  aita: 'Relationships Court™',
+  closer: 'The Post Office'
+};
+const HUB_UNLOCK_MESSAGES = {
+  roulette: [
+    "Home is open. Step out and let's break the ice 👀",
+    "We've arrived at Home — doors are open, come find me.",
+    "Home's unlocked. Tap in whenever you're ready."
+  ],
+  garden: [
+    "The Night Garden just opened. Come pick a flower 🌸",
+    "Doors are open at the Garden — go find your bouquet.",
+    "The Night Garden's unlocked. Step out with your partner."
+  ],
+  aita: [
+    "Relationships Court™ is now in session. Take your seat ⚖️",
+    "The Court doors are open — come cast your verdict.",
+    "We're parked at the Court. Step inside, it's time to judge."
+  ],
+  closer: [
+    "The Post Office is open. Come post something you love 💌",
+    "Last stop's unlocked — swing by the Post Office before we head home.",
+    "The Post Office is open. Tell me something good."
+  ]
+};
+let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
+
 function listenHubs() {
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
     const hubs = snap.val() || {};
+
+    // Announce anything that just flipped from locked -> unlocked, for
+    // everyone currently looking at the lounge. This is a message FROM
+    // Sasha telling people a section opened — not a message from the
+    // section itself. Announcement-only: it never changes anyone's screen.
+    if (hubsPrevState) {
+      Object.keys(HUB_SECTION_NAMES).forEach(key => {
+        if (!hubsPrevState[key] && hubs[key]) {
+          const options = HUB_UNLOCK_MESSAGES[key] || [`${HUB_SECTION_NAMES[key]} is now open.`];
+          const body = options[Math.floor(Math.random() * options.length)];
+          showSashaToast({ title: 'Sasha', body, vibrateMs: 50 });
+        }
+      });
+    }
+    hubsPrevState = {
+      roulette: !!hubs.roulette,
+      garden: !!hubs.garden,
+      aita: !!hubs.aita,
+      closer: !!hubs.closer
+    };
+
     const cardGarden = document.getElementById('hubCardGarden');
     const cardAita = document.getElementById('hubCardAita');
 
@@ -3169,6 +3229,28 @@ function spawnWhispers() {
   }, 4000); // Try spawning a new one every 4 seconds
 }
 
+// A little variety so tapping a locked door doesn't just feel like a dead end.
+const PATIENCE_MESSAGES = [
+  "Patience. Good things come to those who wait.",
+  "Not yet, love. The road unwinds when it's ready.",
+  "Hold that thought — this door opens soon.",
+  "Easy now. All in good time.",
+  "Still locked. Sit tight, I'll let you know.",
+  "The engine's not started yet. One sec.",
+  "Curiosity noted. Doors open when I open them.",
+  "Shh, it's not time yet. I'll tell you when.",
+  "We're not there yet. Enjoy the drive.",
+  "Locked for now — I promise it's worth the wait."
+];
+let lastPatienceIndex = -1;
+function showPatienceToast(){
+  let i;
+  do { i = Math.floor(Math.random() * PATIENCE_MESSAGES.length); }
+  while (i === lastPatienceIndex && PATIENCE_MESSAGES.length > 1);
+  lastPatienceIndex = i;
+  showSashaToast({ title: 'Sasha', body: PATIENCE_MESSAGES[i], vibrateMs: 40, holdMs: 3200 });
+}
+
 function handleLockedHubClick(el) {
   if (el.classList.contains('locked')) {
     // Reset animation if tapped repeatedly
@@ -3176,6 +3258,7 @@ function handleLockedHubClick(el) {
     void el.offsetWidth; // Trigger DOM reflow
     el.classList.add('shake-reject');
     setTimeout(() => el.classList.remove('shake-reject'), 400);
+    showPatienceToast();
     return true; // Indicates it was locked
   }
   return false; // Indicates it was unlocked
@@ -3197,7 +3280,11 @@ document.getElementById('hubCardGarden').addEventListener('click', function() {
 });
 document.getElementById('hubCardAita').addEventListener('click', function() {
   if (handleLockedHubClick(this)) return;
-  setLoungeState('state-aita');
+  ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
+    const round = snap.val();
+    if(round) enterAitaRound(round);
+    else setLoungeState('state-aita');
+  });
 });
 document.getElementById('hubCardCloser').addEventListener('click', function() {
   if (handleLockedHubClick(this)) return;
@@ -3818,7 +3905,9 @@ function listenMessages(){
   });
 }
 
-function showMessageToast(msg){
+// Shared little "text from Sasha" popup — used for host messages, locked-card
+// nudges, and unlock announcements so they all look/feel the same.
+function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5000 } = {}){
   const stack = document.getElementById('toastStack');
   if(!stack) return;
 
@@ -3830,19 +3919,12 @@ function showMessageToast(msg){
       <span class="toast-appname">Speaking Club</span>
       <span class="toast-time">now</span>
     </div>
-    <div class="toast-title">${escapeHtml(msg.from || 'Sasha')}</div>
-    <div class="toast-body">${escapeHtml(msg.text || '')}</div>
+    <div class="toast-title">${escapeHtml(title)}</div>
+    <div class="toast-body">${escapeHtml(body)}</div>
   `;
   stack.appendChild(el);
   requestAnimationFrame(() => el.classList.add('show'));
-  if(navigator.vibrate) navigator.vibrate(60);
-
-  // If a browser tab is backgrounded and alerts were enabled, also fire a real OS notification.
-  try{
-    if(document.hidden && window.Notification && Notification.permission === 'granted'){
-      new Notification(msg.from || 'Speaking Club', { body: msg.text || '', icon: 'sasha.png' });
-    }
-  }catch(e){ /* ignore */ }
+  if(navigator.vibrate) navigator.vibrate(vibrateMs);
 
   let dismissed = false;
   const dismiss = () => {
@@ -3852,7 +3934,19 @@ function showMessageToast(msg){
     setTimeout(() => el.remove(), 400);
   };
   el.addEventListener('click', dismiss);
-  setTimeout(dismiss, 5000);
+  setTimeout(dismiss, holdMs);
+  return { dismiss };
+}
+
+function showMessageToast(msg){
+  showSashaToast({ title: msg.from || 'Sasha', body: msg.text || '', vibrateMs: 60 });
+
+  // If a browser tab is backgrounded and alerts were enabled, also fire a real OS notification.
+  try{
+    if(document.hidden && window.Notification && Notification.permission === 'granted'){
+      new Notification(msg.from || 'Speaking Club', { body: msg.text || '', icon: 'sasha.png' });
+    }
+  }catch(e){ /* ignore */ }
 }
 
 /* ---------- Host Controls: Inline Per-Activity Controls ---------- */
