@@ -2108,6 +2108,208 @@ body[data-phase="closer"] .sky {
     text-decoration: line-through;
     color: rgba(255, 255, 255, 0.3);
   }
+  /* ==========================================================
+     ITINERARY MAP VIEW OVERRIDE
+     Reuses the existing .hub-sections / .hub-card selectors —
+     no HTML changes needed. Because these rules load after the
+     original definitions above, they win on source order (plus
+     !important on a few properties that need to beat backdrop-
+     filter / border / box-shadow set elsewhere).
+     ========================================================== */
+
+  /* 1. Turn the container into a literal map canvas.
+     No picture needed — the scene below (stars/moon/hills) is drawn
+     with an inline SVG, this is just the fallback base color. */
+  .hub-sections {
+    position: relative;
+    width: 100%;
+    height: 500px; /* Adjust height based on your map image */
+    background: #2a0e3f;
+    border-radius: 20px;
+    display: block; /* Overrides the original grid layout */
+    border: 4px solid var(--rose); /* Chunky retro border */
+    overflow: hidden; /* clips anything that would spill past the map's edge */
+  }
+
+  /* 2. Hide the original heartbeat connector lines */
+  .activity-connector {
+    display: none !important;
+  }
+
+  /* 3. Turn the cards into floating map pins.
+     top/left below mark each pin's CENTER point (not its corner) —
+     the translate keeps every pin centered on that spot regardless
+     of card size, so nothing hangs off an edge. */
+  .hub-card {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    flex-direction: column; /* Stacks the icon above the title */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100px; /* Keeps the click target compact */
+    padding: 0;
+
+    /* Strip away the glassmorphism */
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  /* 4. Hide the long paragraphs to keep the map clean */
+  .hub-card-desc,
+  .hub-card-lock-note,
+  .hub-card-sub {
+    display: none !important;
+  }
+
+  /* 5. Style the title like a physical paper label */
+  .hub-card-title {
+    background: #fff;
+    color: var(--ink);
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 2px solid var(--ink);
+    font-size: 13px;
+    font-style: normal;
+    font-weight: bold;
+    margin-top: -6px; /* Pulls the label up slightly over the icon */
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.2); /* Hard, chunky shadow */
+    white-space: nowrap; /* keeps the label from wrapping/spilling out */
+  }
+
+  /* 6. Turn the icon into an actual map-pin marker — a gradient
+     teardrop shape (not just a plain circle), so every stop looks
+     like a finished place icon whether or not you add a real photo. */
+  .hub-card-icon {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    background: linear-gradient(135deg, var(--gold), var(--rose)) !important;
+    border: 2px solid rgba(255,255,255,0.85) !important;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.45), inset 0 0 10px rgba(255,255,255,0.15);
+    filter: none;
+  }
+  /* Counter-rotate the contents so the icon/photo stays upright */
+  .hub-card-icon svg,
+  .hub-card-icon img {
+    transform: rotate(45deg);
+  }
+  /* Until you have custom picture icons per stop, scale up the existing
+     built-in SVGs so they fill the pin instead of looking lost/tiny */
+  .hub-card-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+  /* Photo placeholders: sit centered inside the pin, cropped into a
+     circle. Recommended source images: square, at least 200x200px. */
+  .hub-card-photo {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  /* While locked, always show the lock glyph instead of the photo */
+  .hub-card.locked .hub-card-icon .hub-card-photo { display: none !important; }
+
+  /* 7. Position each stop on the map — these are CENTER points now.
+     Post Office pulled in from the corner so it can't run past the edge. */
+  #hubCardRoulette { top: 14%; left: 20%; }
+  #hubCardGarden   { top: 35%; left: 62%; }
+  #hubCardAita     { top: 60%; left: 22%; }
+  #hubCardCloser   { top: 76%; left: 60%; }
+
+  /* 8. S-shaped route line connecting the stops — waypoints are offset
+     to the side of each pin so the line runs BESIDE the icons, not
+     through them. */
+  .hub-map-bg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+  }
+  .hub-road-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0; /* sits under the pins/car/guests, above the backdrop */
+    pointer-events: none;
+  }
+  .hub-route-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0; /* sits under the pins/car/guests */
+    pointer-events: none;
+  }
+  .hub-route-path {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 0.8;
+    stroke-linecap: round;
+    stroke-dasharray: 3 2.4;
+    opacity: 0.7;
+    animation: hub-route-flow 1.6s linear infinite;
+    vector-effect: non-scaling-stroke;
+  }
+  @keyframes hub-route-flow {
+    to { stroke-dashoffset: -10.8; }
+  }
+
+  /* 9. Sasha's car, parked next to Home */
+  .hub-home-car {
+    position: absolute;
+    top: -2%; left: -4%;
+    width: 92px;
+    z-index: 2;
+    filter: drop-shadow(0 8px 14px rgba(0,0,0,0.55));
+    pointer-events: none;
+  }
+  .hub-home-car img { width: 100%; display: block; }
+  .hub-home-car .hub-home-car-fallback { font-size: 46px; text-align: center; display: none; }
+
+  /* 10. New guests, queued beside the car (not stacked on top of Home) */
+  .hub-waiting-guests {
+    position: absolute;
+    top: -6%; left: 34%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 5px;
+    width: 80px;
+    z-index: 2;
+  }
+  .hub-waiting-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(242, 193, 78, 0.15);
+    border: 1px solid rgba(242, 193, 78, 0.5);
+    box-shadow: 0 0 8px rgba(242, 193, 78, 0.35);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    color: var(--mist);
+    overflow: hidden; /* keeps a broken/oversized avatar image from spilling out */
+    animation: hub-waiting-bob 3s ease-in-out infinite alternate;
+  }
+  .hub-waiting-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .hub-waiting-avatar:nth-child(odd) { animation-delay: -1.1s; }
+  .hub-waiting-avatar:nth-child(3n) { animation-delay: -2s; }
+  .hub-waiting-avatar.is-me { border-color: var(--rose); box-shadow: 0 0 10px rgba(217, 79, 140, 0.5); }
+  @keyframes hub-waiting-bob {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-4px); }
+  }
+
+  /* Replaced by the parked car + waiting guests on the map above */
+  .magical-gathering-section { display: none !important; }
 </style>
 </head>
 <body>
@@ -2307,10 +2509,85 @@ body[data-phase="closer"] .sky {
 
         <div class="hub-sections">
 
+          <!-- Soft romantic night-map backdrop: no picture file needed.
+               A gentle gradient wash + glowing light blobs + scattered
+               stars, matching the app's existing palette. Uses a
+               real-proportioned viewBox + "slice" so circles stay
+               round instead of stretching to fill the container. -->
+          <svg class="hub-map-bg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="hubMapGround" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1c0a2c"/>
+                <stop offset="40%" stop-color="#341251"/>
+                <stop offset="70%" stop-color="#7c2f6e"/>
+                <stop offset="100%" stop-color="#c24d84"/>
+              </linearGradient>
+              <radialGradient id="hubGlowGold" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#f2c14e" stop-opacity="0.55"/>
+                <stop offset="100%" stop-color="#f2c14e" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="hubGlowRose" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#d94f8c" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#d94f8c" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- ground wash -->
+            <rect x="0" y="0" width="400" height="500" fill="url(#hubMapGround)"/>
+
+            <!-- soft ambient glow blobs -->
+            <circle cx="80" cy="110" r="150" fill="url(#hubGlowGold)"/>
+            <circle cx="340" cy="150" r="120" fill="url(#hubGlowRose)"/>
+            <circle cx="90" cy="430" r="140" fill="url(#hubGlowRose)"/>
+            <circle cx="330" cy="400" r="130" fill="url(#hubGlowGold)"/>
+
+            <!-- scattered stars -->
+            <circle cx="40" cy="40" r="1.6" fill="#ffffff" opacity="0.8"/>
+            <circle cx="120" cy="25" r="1.2" fill="#f4e9ff" opacity="0.7"/>
+            <circle cx="220" cy="45" r="1.4" fill="#f2c14e" opacity="0.75"/>
+            <circle cx="300" cy="30" r="1.2" fill="#ffffff" opacity="0.7"/>
+            <circle cx="370" cy="70" r="1.6" fill="#ffffff" opacity="0.75"/>
+            <circle cx="60" cy="220" r="1.2" fill="#f4e9ff" opacity="0.55"/>
+            <circle cx="350" cy="260" r="1.4" fill="#ffffff" opacity="0.6"/>
+            <circle cx="200" cy="470" r="1.3" fill="#f2c14e" opacity="0.6"/>
+            <circle cx="30" cy="480" r="1.4" fill="#ffffff" opacity="0.55"/>
+          </svg>
+
+          <!-- The road: a dark asphalt ribbon that loops around every
+               stop instead of cutting through it. Drawn in its own
+               0–100 / "none" layer so it shares the exact coordinate
+               space as the pins' top/left percentages and lines up
+               with them regardless of the container's real size. -->
+          <svg class="hub-road-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M6,24 C16,30 28,26 38,18 C46,14 54,22 50,40 C58,50 68,46 76,40 C70,52 50,50 38,58 C28,50 12,52 8,66 C10,78 30,80 40,72 C50,64 66,64 76,72"
+                  fill="none" stroke="#0d0712" stroke-width="6.5" stroke-linecap="round" opacity="0.92"/>
+            <path d="M6,24 C16,30 28,26 38,18 C46,14 54,22 50,40 C58,50 68,46 76,40 C70,52 50,50 38,58 C28,50 12,52 8,66 C10,78 30,80 40,72 C50,64 66,64 76,72"
+                  fill="none" stroke="#241a2e" stroke-width="4.5" stroke-linecap="round" opacity="0.85"/>
+          </svg>
+
+          <!-- S-shaped route connecting the stops, drawn using the same
+               top/left percentages as the pins below — loops around
+               each stop instead of cutting across it -->
+          <svg class="hub-route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path class="hub-route-path" d="M6,24 C16,30 28,26 38,18 C46,14 54,22 50,40 C58,50 68,46 76,40 C70,52 50,50 38,58 C28,50 12,52 8,66 C10,78 30,80 40,72 C50,64 66,64 76,72" />
+          </svg>
+
+          <!-- Sasha's car, parked next to Home -->
+          <div class="hub-home-car" aria-hidden="true">
+            <img src="car-waiting.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="hub-home-car-fallback">🚗</div>
+          </div>
+
+          <!-- New guests queue up next to the car, waiting to get in -->
+          <div class="hub-waiting-guests" id="hubWaitingGuests"></div>
+
           <!-- Stop 0: Home -->
           <div class="hub-card locked" id="hubCardRoulette">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
+              <!-- Drop a real photo here named exactly this, or leave it
+                   missing — it'll quietly fall back to the compass icon -->
+              <img class="hub-card-photo" src="home-icon.png" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Compass / Location SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="3 11 22 2 13 21 11 13 3 11"/>
@@ -2344,6 +2621,9 @@ body[data-phase="closer"] .sky {
           <div class="hub-card locked" id="hubCardGarden">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
+              <!-- Drop a real photo here named exactly this, or leave it
+                   missing — it'll quietly fall back to the storefront icon -->
+              <img class="hub-card-photo" src="night-garden-icon.png" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Storefront SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l1.5-5.5A1 1 0 0 1 5.46 3h13.08a1 1 0 0 1 .96 1.5L21 9"/>
@@ -2386,6 +2666,9 @@ body[data-phase="closer"] .sky {
           <div class="hub-card locked" id="hubCardAita">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
+              <!-- Drop a real photo here named exactly this, or leave it
+                   missing — it'll quietly fall back to the courthouse icon -->
+              <img class="hub-card-photo" src="relationships-court-icon.png" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Courthouse Pillars SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 21h18"/><path d="M4 21v-4"/><path d="M20 21v-4"/><path d="M3 7v4h18V7"/><path d="M12 21v-9"/><path d="M8 21v-9"/><path d="M16 21v-9"/><polygon points="12,2 22,7 2,7"/>
@@ -2439,6 +2722,9 @@ body[data-phase="closer"] .sky {
           <div class="hub-card locked" id="hubCardCloser">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
+              <!-- Drop a real photo here named exactly this, or leave it
+                   missing — it'll quietly fall back to the book icon -->
+              <img class="hub-card-photo" src="post-office-icon.png" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Open Book SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 4.5C2 4.5 5 3 8.5 3s6.5 1.5 6.5 1.5v15S12 18 8.5 18 2 19.5 2 19.5v-15Z"/>
@@ -3113,6 +3399,16 @@ function renderRoster(){
     </div>
   `;
   grid.innerHTML = html;
+
+  // New guests wait next to Sasha's parked car on the itinerary map,
+  // replacing the old standalone "Crew" section above.
+  const waitingGrid = document.getElementById('hubWaitingGuests');
+  if (waitingGrid) {
+    waitingGrid.innerHTML = stateGuests.map(m => {
+      const isYou = !!(me && m.id === me.id);
+      return `<div class="hub-waiting-avatar${isYou ? ' is-me' : ''}" title="${escapeHtml(m.name)}${m.pronouns ? ' (' + escapeHtml(m.pronouns) + ')' : ''}">${m.avatar}</div>`;
+    }).join('');
+  }
 }
 
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
