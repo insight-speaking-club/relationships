@@ -2288,13 +2288,20 @@ body[data-phase="closer"] .sky {
   /* 10. New guests, queued beside the car (not stacked on top of Home) */
   .hub-waiting-guests {
     position: absolute;
-    top: -6%; left: 34%;
+    top: -8%; left: 33%;
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    gap: 5px;
-    width: 80px;
+    gap: 6px 4px;
+    width: 130px;
     z-index: 2;
+  }
+  .hub-waiting-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 38px;
   }
   .hub-waiting-avatar {
     width: 26px; height: 26px;
@@ -2313,9 +2320,22 @@ body[data-phase="closer"] .sky {
     object-fit: cover;
     border-radius: 50%;
   }
-  .hub-waiting-avatar:nth-child(odd) { animation-delay: -1.1s; }
-  .hub-waiting-avatar:nth-child(3n) { animation-delay: -2s; }
+  .hub-waiting-chip:nth-child(odd) .hub-waiting-avatar { animation-delay: -1.1s; }
+  .hub-waiting-chip:nth-child(3n) .hub-waiting-avatar { animation-delay: -2s; }
   .hub-waiting-avatar.is-me { border-color: var(--rose); box-shadow: 0 0 10px rgba(217, 79, 140, 0.5); }
+  .hub-waiting-name {
+    font-family: 'Jost', sans-serif;
+    font-size: 8.5px;
+    line-height: 1.1;
+    color: var(--mist);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 38px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+  }
+  .hub-waiting-name.is-me { color: var(--rose); font-weight: 600; }
   @keyframes hub-waiting-bob {
     0% { transform: translateY(0); }
     100% { transform: translateY(-4px); }
@@ -2543,10 +2563,76 @@ body[data-phase="closer"] .sky {
                 <stop offset="0%" stop-color="#d94f8c" stop-opacity="0.5"/>
                 <stop offset="100%" stop-color="#d94f8c" stop-opacity="0"/>
               </radialGradient>
+
+              <!-- Little illustrated map landmarks, drawn once and reused
+                   via <use> below — same silhouette ink as the Paris
+                   skyline, with warm gold accents, so they read as part
+                   of the same night-map world instead of random shapes. -->
+              <g id="mapTree">
+                <line x1="0" y1="6" x2="0" y2="16" stroke="#2a0e3f" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+                <circle cx="-4" cy="2" r="5" fill="#2a0e3f" opacity="0.7"/>
+                <circle cx="4" cy="1" r="5.5" fill="#341251" opacity="0.7"/>
+                <circle cx="0" cy="-3.5" r="6" fill="#2a0e3f" opacity="0.75"/>
+              </g>
+              <g id="mapLamp">
+                <line x1="0" y1="0" x2="0" y2="18" stroke="#2a0e3f" stroke-width="1.5" opacity="0.75"/>
+                <circle cx="0" cy="-3" r="5" fill="url(#hubGlowGold)"/>
+                <circle cx="0" cy="-3" r="1.6" fill="#f2c14e" opacity="0.9"/>
+              </g>
+              <g id="mapHouse">
+                <rect x="-8" y="-2" width="16" height="12" fill="#2a0e3f" opacity="0.75" rx="1"/>
+                <polygon points="-10,-2 0,-11 10,-2" fill="#341251" opacity="0.8"/>
+                <rect x="-2.2" y="2" width="4.4" height="4.4" fill="#f2c14e" opacity="0.85"/>
+              </g>
+              <g id="mapCourt">
+                <rect x="-13" y="4" width="26" height="2.4" fill="#2a0e3f" opacity="0.8"/>
+                <polygon points="-14,4 0,-9 14,4" fill="#341251" opacity="0.85"/>
+                <rect x="-9" y="-2" width="2.4" height="6" fill="#2a0e3f" opacity="0.85"/>
+                <rect x="-1.2" y="-2" width="2.4" height="6" fill="#2a0e3f" opacity="0.85"/>
+                <rect x="6.6" y="-2" width="2.4" height="6" fill="#2a0e3f" opacity="0.85"/>
+                <circle cx="0" cy="-9" r="1.6" fill="#f2c14e" opacity="0.85"/>
+              </g>
+              <g id="mapPost">
+                <rect x="-7" y="-8" width="14" height="16" rx="3" fill="#2a0e3f" opacity="0.8"/>
+                <rect x="-4.5" y="-2.5" width="9" height="1.6" fill="#f2c14e" opacity="0.85"/>
+                <circle cx="6" cy="-9" r="1.4" fill="#d94f8c" opacity="0.85"/>
+              </g>
+              <g id="mapPark">
+                <ellipse cx="0" cy="10" rx="22" ry="9" fill="#341251" opacity="0.45"/>
+                <use href="#mapTree" transform="translate(-10,-1) scale(1.1)"/>
+                <use href="#mapTree" transform="translate(9,1) scale(0.95)"/>
+                <use href="#mapTree" transform="translate(0,-7) scale(1.3)"/>
+              </g>
+              <g id="mapCompass">
+                <circle cx="0" cy="0" r="15" fill="none" stroke="#f2c14e" stroke-width="0.8" opacity="0.5"/>
+                <line x1="0" y1="-13" x2="0" y2="13" stroke="#f2c14e" stroke-width="0.6" opacity="0.5"/>
+                <line x1="-13" y1="0" x2="13" y2="0" stroke="#f2c14e" stroke-width="0.6" opacity="0.5"/>
+                <polygon points="0,-11 3,0 0,4 -3,0" fill="#f2c14e" opacity="0.8"/>
+                <text x="0" y="-18" text-anchor="middle" font-family="'Space Mono', monospace" font-size="7" fill="#f2c14e" opacity="0.75">N</text>
+              </g>
+              <g id="mapBush">
+                <ellipse cx="-4" cy="0" rx="5" ry="4" fill="#2a0e3f" opacity="0.65"/>
+                <ellipse cx="4" cy="1" rx="5.5" ry="4.5" fill="#341251" opacity="0.65"/>
+                <ellipse cx="0" cy="-2" rx="5" ry="4" fill="#2a0e3f" opacity="0.7"/>
+              </g>
+              <g id="mapGrass">
+                <path d="M-4,4 Q-5,-3 -3,3" stroke="#3d1a52" stroke-width="1.1" fill="none" opacity="0.6" stroke-linecap="round"/>
+                <path d="M0,4 Q0,-5 1,3" stroke="#4a2160" stroke-width="1.1" fill="none" opacity="0.6" stroke-linecap="round"/>
+                <path d="M4,4 Q6,-2 4,3" stroke="#3d1a52" stroke-width="1.1" fill="none" opacity="0.6" stroke-linecap="round"/>
+              </g>
             </defs>
 
             <!-- ground wash -->
             <rect x="0" y="0" width="400" height="500" fill="url(#hubMapGround)"/>
+
+            <!-- irregular earthy terrain patches — organic blobs (not
+                 circles/rects) so the ground reads as real uneven land,
+                 like patches of grass and dirt catching moonlight -->
+            <path d="M-30,60 C40,20 110,50 90,110 C70,170 -20,150 -40,100 Z" fill="#3d1a52" opacity="0.4"/>
+            <path d="M250,90 C330,60 410,100 395,160 C380,215 280,210 250,160 Z" fill="#4a2160" opacity="0.35"/>
+            <path d="M-20,240 C70,210 140,250 120,310 C100,365 0,360 -30,310 Z" fill="#3d1a52" opacity="0.38"/>
+            <path d="M220,320 C310,290 400,320 390,390 C380,450 260,455 230,400 Z" fill="#4a2160" opacity="0.38"/>
+            <path d="M60,380 C140,360 190,400 170,440 C150,478 40,480 20,440 Z" fill="#3d1a52" opacity="0.3"/>
 
             <!-- soft ambient glow blobs -->
             <circle cx="80" cy="110" r="150" fill="url(#hubGlowGold)"/>
@@ -2564,6 +2650,54 @@ body[data-phase="closer"] .sky {
             <circle cx="350" cy="260" r="1.4" fill="#ffffff" opacity="0.6"/>
             <circle cx="200" cy="470" r="1.3" fill="#f2c14e" opacity="0.6"/>
             <circle cx="30" cy="480" r="1.4" fill="#ffffff" opacity="0.55"/>
+
+            <!-- Soft moonlit river along the bottom, so the ground reads
+                 like a real riverside town rather than a flat gradient -->
+            <path d="M-20,472 C60,452 120,492 200,468 C280,444 340,484 420,462" stroke="#f2c14e" stroke-width="16" fill="none" opacity="0.07"/>
+            <path d="M-20,472 C60,452 120,492 200,468 C280,444 340,484 420,462" stroke="#ffffff" stroke-width="1.1" stroke-dasharray="2 7" fill="none" opacity="0.35"/>
+
+            <!-- Little landmarks scattered around the route, so each stop
+                 sits in its own "neighborhood" instead of empty space -->
+            <use href="#mapCompass" transform="translate(355,42)"/>
+
+            <!-- near Home -->
+            <use href="#mapHouse" transform="translate(38,118) scale(0.9)"/>
+            <use href="#mapHouse" transform="translate(128,58) scale(0.75)"/>
+            <use href="#mapLamp" transform="translate(112,102)"/>
+
+            <!-- near The Night Garden -->
+            <use href="#mapPark" transform="translate(302,138) scale(1.15)"/>
+
+            <!-- near Relationships Court -->
+            <use href="#mapCourt" transform="translate(38,262) scale(1.05)"/>
+
+            <!-- near The Post Office -->
+            <use href="#mapPost" transform="translate(300,422) scale(1.05)"/>
+            <use href="#mapLamp" transform="translate(268,352) scale(0.9)"/>
+
+            <!-- ambient trees/lamps along the road for scenery -->
+            <use href="#mapTree" transform="translate(182,228) scale(1.1)"/>
+            <use href="#mapTree" transform="translate(332,300) scale(0.85)"/>
+            <use href="#mapLamp" transform="translate(58,382) scale(0.85)"/>
+
+            <!-- extra scattered greenery so the ground feels like continuous
+                 terrain rather than four isolated icons -->
+            <use href="#mapBush" transform="translate(20,150) scale(1)"/>
+            <use href="#mapBush" transform="translate(150,90) scale(0.85)"/>
+            <use href="#mapBush" transform="translate(360,220) scale(0.9)"/>
+            <use href="#mapBush" transform="translate(140,340) scale(1)"/>
+            <use href="#mapBush" transform="translate(220,440) scale(0.9)"/>
+            <use href="#mapTree" transform="translate(60,180) scale(0.8)"/>
+            <use href="#mapTree" transform="translate(280,250) scale(0.95)"/>
+            <use href="#mapTree" transform="translate(170,410) scale(0.9)"/>
+            <use href="#mapTree" transform="translate(370,440) scale(0.75)"/>
+            <use href="#mapGrass" transform="translate(100,150) scale(1.4)"/>
+            <use href="#mapGrass" transform="translate(200,90) scale(1.2)"/>
+            <use href="#mapGrass" transform="translate(320,240) scale(1.3)"/>
+            <use href="#mapGrass" transform="translate(50,260) scale(1.2)"/>
+            <use href="#mapGrass" transform="translate(260,360) scale(1.3)"/>
+            <use href="#mapGrass" transform="translate(120,430) scale(1.2)"/>
+            <use href="#mapGrass" transform="translate(350,150) scale(1.1)"/>
           </svg>
 
           <!-- The road: a smooth asphalt path with a dashed centerline,
@@ -3440,7 +3574,11 @@ function renderRoster(){
   if (waitingGrid) {
     waitingGrid.innerHTML = stateGuests.map(m => {
       const isYou = !!(me && m.id === me.id);
-      return `<div class="hub-waiting-avatar${isYou ? ' is-me' : ''}" title="${escapeHtml(m.name)}${m.pronouns ? ' (' + escapeHtml(m.pronouns) + ')' : ''}">${m.avatar}</div>`;
+      const shortName = m.name && m.name.length > 9 ? m.name.slice(0, 8) + '…' : m.name;
+      return `<div class="hub-waiting-chip">
+        <div class="hub-waiting-avatar${isYou ? ' is-me' : ''}" title="${escapeHtml(m.name)}${m.pronouns ? ' (' + escapeHtml(m.pronouns) + ')' : ''}">${m.avatar}</div>
+        <div class="hub-waiting-name${isYou ? ' is-me' : ''}">${escapeHtml(isYou ? 'You' : shortName)}</div>
+      </div>`;
     }).join('');
   }
 }
