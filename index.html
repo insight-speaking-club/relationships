@@ -2553,23 +2553,25 @@ body[data-phase="closer"] .sky {
             <circle cx="30" cy="480" r="1.4" fill="#ffffff" opacity="0.55"/>
           </svg>
 
-          <!-- The road: a dark asphalt ribbon that loops around every
+          <!-- The road: a smooth asphalt path with a dashed centerline,
+               like an ordinary road on a map. It swings around every
                stop instead of cutting through it. Drawn in its own
                0–100 / "none" layer so it shares the exact coordinate
                space as the pins' top/left percentages and lines up
                with them regardless of the container's real size. -->
           <svg class="hub-road-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M6,24 C16,30 28,26 38,18 C46,14 54,22 50,40 C58,50 68,46 76,40 C70,52 50,50 38,58 C28,50 12,52 8,66 C10,78 30,80 40,72 C50,64 66,64 76,72"
-                  fill="none" stroke="#0d0712" stroke-width="6.5" stroke-linecap="round" opacity="0.92"/>
-            <path d="M6,24 C16,30 28,26 38,18 C46,14 54,22 50,40 C58,50 68,46 76,40 C70,52 50,50 38,58 C28,50 12,52 8,66 C10,78 30,80 40,72 C50,64 66,64 76,72"
-                  fill="none" stroke="#241a2e" stroke-width="4.5" stroke-linecap="round" opacity="0.85"/>
+            <path d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,72.8 74,72"
+                  fill="none" stroke="#4a4256" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+            <path d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,72.8 74,72"
+                  fill="none" stroke="#f2c14e" stroke-width="0.8" stroke-linecap="round" stroke-dasharray="2.4 2" opacity="0.8"/>
           </svg>
 
-          <!-- S-shaped route connecting the stops, drawn using the same
-               top/left percentages as the pins below — loops around
-               each stop instead of cutting across it -->
+          <!-- Traveling glow that follows the same road, so it looks
+               like light is moving along it toward the next stop —
+               drawn using the same top/left percentages as the pins
+               below -->
           <svg class="hub-route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path class="hub-route-path" d="M6,24 C16,30 28,26 38,18 C46,14 54,22 50,40 C58,50 68,46 76,40 C70,52 50,50 38,58 C28,50 12,52 8,66 C10,78 30,80 40,72 C50,64 66,64 76,72" />
+            <path class="hub-route-path" d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,72.8 74,72" />
           </svg>
 
           <!-- Sasha's car, parked next to Home -->
@@ -2587,7 +2589,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the compass icon -->
-              <img class="hub-card-photo" src="home-icon.png" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" src="home-icon.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Compass / Location SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="3 11 22 2 13 21 11 13 3 11"/>
@@ -2623,7 +2625,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the storefront icon -->
-              <img class="hub-card-photo" src="night-garden-icon.png" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" src="night-garden-icon.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Storefront SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l1.5-5.5A1 1 0 0 1 5.46 3h13.08a1 1 0 0 1 .96 1.5L21 9"/>
@@ -2668,7 +2670,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the courthouse icon -->
-              <img class="hub-card-photo" src="relationships-court-icon.png" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" src="relationships-court-icon.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Courthouse Pillars SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 21h18"/><path d="M4 21v-4"/><path d="M20 21v-4"/><path d="M3 7v4h18V7"/><path d="M12 21v-9"/><path d="M8 21v-9"/><path d="M16 21v-9"/><polygon points="12,2 22,7 2,7"/>
@@ -2724,7 +2726,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the book icon -->
-              <img class="hub-card-photo" src="post-office-icon.png" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" src="post-office-icon.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Open Book SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 4.5C2 4.5 5 3 8.5 3s6.5 1.5 6.5 1.5v15S12 18 8.5 18 2 19.5 2 19.5v-15Z"/>
