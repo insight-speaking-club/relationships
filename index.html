@@ -18,6 +18,17 @@
     --vh:100vh;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  /* Organic film-grain overlay — zero network requests, inline SVG noise */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+  }
   html,body{margin:0;padding:0;height:100%;background:var(--ink);overflow:hidden;}
   body{
     font-family:'Jost',sans-serif;
@@ -1931,14 +1942,19 @@ body[data-phase="closer"] .sky {
     background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(242,193,78,0.08) 100%);
     border: 1px solid rgba(242, 193, 78, 0.25);
     box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 0 40px rgba(242,193,78,0.1);
+    /* Thermal glow defaults — JS overrides these as the roster grows */
+    --glow-alpha: 0.2;
+    --glow-spread: 70%;
+    --glow-color: 242, 193, 78; /* Gold base */
   }
   
   /* The Glowing Platform */
   .magical-gathering-section::before {
     content: ''; position: absolute;
     bottom: -10px; left: 10%; right: 10%; height: 60px;
-    background: radial-gradient(ellipse at center, rgba(242,193,78,0.2) 0%, transparent 70%);
+    background: radial-gradient(ellipse at center, rgba(var(--glow-color), var(--glow-alpha)) 0%, transparent var(--glow-spread));
     filter: blur(12px); pointer-events: none;
+    transition: background 2s ease, filter 2s ease;
   }
 
   /* The Car */
@@ -1952,6 +1968,7 @@ body[data-phase="closer"] .sky {
     animation: float-car 4s ease-in-out infinite;
     pointer-events: none;
     z-index: 1;
+    will-change: transform;
   }
 
   .gathering-car-img {
@@ -1977,6 +1994,7 @@ body[data-phase="closer"] .sky {
   .passenger-orb {
     display: flex; flex-direction: column; align-items: center; gap: 8px;
     animation: float-orb 3.5s ease-in-out infinite alternate;
+    will-change: transform;
   }
   
   /* Organic staggered floating */
@@ -2714,6 +2732,32 @@ const CLUSTERS = [
   ['#c9a4ff','#d94f8c']    /* amethyst - rose */
 ];
 const FIREFLY_COLORS = ['#fff4c9','#ffc9f0','#c9f0ff','#e6c9ff','#c9ffdf'];
+let currentFireflyCount = 0;
+
+// Spawns persistent fireflies into the garden bed as global blooms accumulate
+// across every pair, so the space visibly comes alive as more flowers are picked.
+function updateGardenAtmosphere(globalBloomCount) {
+  const bed = document.getElementById('gardenBed');
+  if (!bed) return;
+
+  // Every 2 flowers picked (across all pairs) spawns 1 firefly, capped at 12.
+  const targetFireflies = Math.floor(globalBloomCount / 2);
+
+  while (currentFireflyCount < targetFireflies && currentFireflyCount < 12) {
+    const firefly = document.createElement('div');
+    firefly.className = 'firefly';
+
+    firefly.style.left = (10 + Math.random() * 80) + '%';
+    firefly.style.bottom = (20 + Math.random() * 60) + '%';
+    firefly.style.color = FIREFLY_COLORS[Math.floor(Math.random() * FIREFLY_COLORS.length)];
+
+    firefly.style.animationDuration = (4 + Math.random() * 4) + 's';
+    firefly.style.animationDelay = '-' + (Math.random() * 5) + 's';
+
+    bed.appendChild(firefly);
+    currentFireflyCount++;
+  }
+}
 function seeded(n){ const x = Math.sin(n*12.9898)*43758.5453; return x - Math.floor(x); }
 
 let me = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
@@ -2862,6 +2906,16 @@ function enterLounge(){
   listenHubs();
   listenMessages();
   startBunnyGame();
+
+  // Aggregate blooms across every pair to drive the garden's ambient fireflies
+  ref(`events/${EVENT_ID}/pairs`).on('value', snap => {
+    const pairsData = snap.val() || {};
+    let totalBlooms = 0;
+    Object.values(pairsData).forEach(pair => {
+      if (pair.bloomed) totalBlooms += Object.keys(pair.bloomed).length;
+    });
+    updateGardenAtmosphere(totalBlooms);
+  });
 
   // Auto-start the spotlight tour the first time a guest arrives
   if(!isHost && !localStorage.getItem('fsc_tour_seen')){
@@ -3132,10 +3186,22 @@ const HUB_UNLOCK_MESSAGES = {
   ]
 };
 let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
+let previousActiveHub = null; // tracks hubs.current so we can fire a synchronized haptic pulse on room changes
 
 function listenHubs() {
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
     const hubs = snap.val() || {};
+
+    // --- SYNCHRONIZED ROOM HAPTICS ---
+    // When the host flips the active room, every phone buzzes at once.
+    const newActiveHub = hubs.current;
+    if (previousActiveHub !== null && previousActiveHub !== newActiveHub) {
+      if (newActiveHub && navigator.vibrate && !document.hidden) {
+        // A heavy, authoritative double-strike
+        navigator.vibrate([150, 80, 250]);
+      }
+    }
+    previousActiveHub = newActiveHub;
 
     // Announce anything that just flipped from locked -> unlocked, for
     // everyone currently looking at the lounge. This is a message FROM
@@ -4213,6 +4279,26 @@ listenRoster = function() {
     stateGuests = Object.values(snap.val() || {}).sort((a,b) => a.joinedAt - b.joinedAt);
     const countEl = document.getElementById('loungeCount');
     if(countEl) countEl.textContent = stateGuests.length;
+
+    // --- DYNAMIC THERMAL GLOW ---
+    // Maps live guest count to the intensity and warmth of the car's underglow.
+    const section = document.querySelector('.magical-gathering-section');
+    if (section) {
+      const intensity = Math.min(stateGuests.length / 15, 1);
+
+      const alpha = 0.15 + (intensity * 0.40);
+      const spread = 60 + (intensity * 25);
+
+      // As the room fills up, shift the glow from gold toward rose.
+      const r = 242 - (intensity * 25);
+      const g = 193 - (intensity * 114);
+      const b = 78 + (intensity * 62);
+
+      section.style.setProperty('--glow-alpha', alpha.toFixed(2));
+      section.style.setProperty('--glow-spread', spread.toFixed(0) + '%');
+      section.style.setProperty('--glow-color', `${r.toFixed(0)}, ${g.toFixed(0)}, ${b.toFixed(0)}`);
+    }
+
     renderRoster();
     renderLeaderboard(stateGuests);
     renderSpinCircle(stateGuests);
@@ -4301,6 +4387,33 @@ ref(`events/${EVENT_ID}/gpsRoulette`).on('value', snap => {
 if (isHost) {
   document.getElementById('hostControlsSpin').style.display = 'flex';
 }
+
+/* ---------- MAGNETIC TOUCH-RESPONSE ---------- */
+// Applies a physical "pull" to primary interactive elements as a thumb
+// drags across them, snapping back with a spring on release.
+document.querySelectorAll('.hub-card:not(.locked), .btn, .aita-btn').forEach(el => {
+  el.style.transition = 'transform 0.4s cubic-bezier(0.22, 1.6, 0.4, 1)';
+
+  el.addEventListener('pointermove', (e) => {
+    if (!e.isPrimary) return; // avoid multi-touch glitches
+
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    el.style.transition = 'none'; // 1:1 mapping while dragging
+    el.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px) scale(0.98)`;
+  });
+
+  const resetTransform = () => {
+    el.style.transition = 'transform 0.4s cubic-bezier(0.22, 1.6, 0.4, 1)';
+    el.style.transform = '';
+  };
+
+  el.addEventListener('pointerleave', resetTransform);
+  el.addEventListener('pointerup', resetTransform);
+  el.addEventListener('pointercancel', resetTransform);
+});
 </script>
 </body>
 </html>
