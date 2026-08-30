@@ -1340,6 +1340,19 @@
   }
   .host-inline-btn:active { transform: scale(0.95); }
   .host-inline-btn.action { background: var(--gold); color: var(--ink); border: none; font-weight: 600; }
+  .host-map-deck {
+    width: 100%; max-width: 440px; margin: 14px auto 0; padding: 14px;
+    background: rgba(0,0,0,0.25); border: 1px solid rgba(244,233,255,0.15); border-radius: 14px;
+  }
+  .host-map-deck-title {
+    font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); text-align: center; margin-bottom: 10px;
+  }
+  .host-map-deck-row { margin-bottom: 10px; }
+  .host-map-deck-row:last-child { margin-bottom: 0; }
+  .host-map-deck-label {
+    display: block; font-family: 'Jost', sans-serif; font-size: 12px; color: var(--dim); margin-bottom: 4px;
+  }
   .host-list{width:100%; max-width:440px; margin:0 auto; }
   .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
   .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
@@ -2607,15 +2620,6 @@ body[data-phase="closer"] .sky {
             </div>
           </div>
 
-          <!-- HOST ONLY: Roulette Controls -->
-          <div id="hostControlsRoulette" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightRoulette">Toggle "We're here"</button>
-            <button class="host-inline-btn" id="btnToggleLockRoulette" style="display:flex; align-items:center; gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>Unlock</span>
-            </button>
-          </div>
-
           <!-- Connector line -->
           <div class="activity-connector"><div class="connector-line"></div></div>
 
@@ -2646,21 +2650,6 @@ body[data-phase="closer"] .sky {
             </div>
           </div>
 
-          <!-- HOST ONLY: Minimal Pairs Controls -->
-          <div id="hostControlsGarden" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightGarden">Toggle "We're here"</button>
-            <div style="display:flex; gap:6px;">
-              <button class="host-inline-btn" id="btnTimerGarden" style="display:none; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
-                <span>Timer</span>
-              </button>
-              <button class="host-inline-btn" id="btnToggleLockGarden" style="display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <span>Unlock</span>
-              </button>
-            </div>
-          </div>
-
           <!-- Connector line -->
           <div class="activity-connector"><div class="connector-line"></div></div>
 
@@ -2686,35 +2675,6 @@ body[data-phase="closer"] .sky {
               <div class="hub-card-desc">We're parked. Step inside, take your seat, and prepare to cast your vote.</div>
               <div class="hub-card-lock-note">The doors are currently closed.</div>
             </div>
-          </div>
-
-          <!-- HOST ONLY: Minimal Court Controls -->
-          <div id="hostControlsAita" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightCourt">Toggle "We're here"</button>
-            <div style="display:flex; gap:6px;">
-              <button class="host-inline-btn" id="btnTimerCourt" style="display:none; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
-                <span>Timer</span>
-              </button>
-              <button class="host-inline-btn" id="btnToggleLockCourt" style="display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <span>Unlock</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- HOST ONLY: AITA Tally (Displays during court) -->
-          <div class="aita-tally" id="aitaTally" style="margin-top: 16px;">
-            <div class="aita-tally-bar">
-              <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
-              <div class="aita-tally-fill aita-tally-green" id="aitaTallyGreen"></div>
-            </div>
-            <div class="aita-tally-counts">
-              <span id="aitaCountYTA">0 asshole</span>
-              <span id="aitaCountNTA">0 not the asshole</span>
-            </div>
-            <button class="btn ghost" id="btnPickElaborate" style="align-self:center; font-size:12px; padding: 10px 20px;">🎲 Pick someone to elaborate</button>
-            <div class="aita-picked" id="aitaPicked"></div>
           </div>
 
           <!-- Connector line -->
@@ -2745,6 +2705,79 @@ body[data-phase="closer"] .sky {
             </div>
           </div>
 
+        </div>
+      </div>
+
+      <!-- HOST ONLY: Map Control Deck — pulled out of the map canvas itself
+           (which is absolutely-positioned + overflow:hidden for the pin
+           layout) so these never get clipped/crammed the way they were
+           when they lived inline inside each map pin. -->
+      <div class="host-map-deck" id="hostMapDeck" style="display:none;">
+        <div class="host-map-deck-title">Host Controls</div>
+
+        <div class="host-map-deck-row">
+          <span class="host-map-deck-label">Home</span>
+          <!-- HOST ONLY: Roulette Controls -->
+          <div id="hostControlsRoulette" class="host-inline-controls" style="display:none; justify-content: space-between;">
+            <button class="host-inline-btn action" id="btnHighlightRoulette">Toggle "We're here"</button>
+            <button class="host-inline-btn" id="btnToggleLockRoulette" style="display:flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Unlock</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="host-map-deck-row">
+          <span class="host-map-deck-label">The Night Garden</span>
+          <!-- HOST ONLY: Minimal Pairs Controls -->
+          <div id="hostControlsGarden" class="host-inline-controls" style="display:none; justify-content: space-between;">
+            <button class="host-inline-btn action" id="btnHighlightGarden">Toggle "We're here"</button>
+            <div style="display:flex; gap:6px;">
+              <button class="host-inline-btn" id="btnTimerGarden" style="display:none; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                <span>Timer</span>
+              </button>
+              <button class="host-inline-btn" id="btnToggleLockGarden" style="display:flex; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Unlock</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="host-map-deck-row">
+          <span class="host-map-deck-label">Relationships Court™</span>
+          <!-- HOST ONLY: Minimal Court Controls -->
+          <div id="hostControlsAita" class="host-inline-controls" style="display:none; justify-content: space-between;">
+            <button class="host-inline-btn action" id="btnHighlightCourt">Toggle "We're here"</button>
+            <div style="display:flex; gap:6px;">
+              <button class="host-inline-btn" id="btnTimerCourt" style="display:none; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                <span>Timer</span>
+              </button>
+              <button class="host-inline-btn" id="btnToggleLockCourt" style="display:flex; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Unlock</span>
+              </button>
+            </div>
+          </div>
+          <!-- HOST ONLY: AITA Tally (Displays during court) -->
+          <div class="aita-tally" id="aitaTally" style="margin-top: 10px;">
+            <div class="aita-tally-bar">
+              <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
+              <div class="aita-tally-fill aita-tally-green" id="aitaTallyGreen"></div>
+            </div>
+            <div class="aita-tally-counts">
+              <span id="aitaCountYTA">0 asshole</span>
+              <span id="aitaCountNTA">0 not the asshole</span>
+            </div>
+            <button class="btn ghost" id="btnPickElaborate" style="align-self:center; font-size:12px; padding: 10px 20px;">🎲 Pick someone to elaborate</button>
+            <div class="aita-picked" id="aitaPicked"></div>
+          </div>
+        </div>
+
+        <div class="host-map-deck-row">
+          <span class="host-map-deck-label">The Post Office</span>
           <!-- HOST ONLY: Closer Controls -->
           <div id="hostControlsCloser" class="host-inline-controls" style="display:none; justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightCloser">Toggle "We're here"</button>
@@ -2753,7 +2786,6 @@ body[data-phase="closer"] .sky {
               <span>Unlock</span>
             </button>
           </div>
-
         </div>
       </div>
 
@@ -4159,6 +4191,7 @@ function initHost(){
 
   // Unhide the inline host controls
   document.getElementById('hostRosterContainer').style.display = 'block';
+  document.getElementById('hostMapDeck').style.display = 'block';
   document.getElementById('hostControlsGarden').style.display = 'flex';
   document.getElementById('hostControlsAita').style.display = 'flex';
   document.getElementById('hostControlsCloser').style.display = 'flex';
