@@ -2578,6 +2578,7 @@ body[data-phase="closer"] .sky {
       <div class="question-eyebrow" id="questionCounter">Conversation Starter</div>
       <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
       <div class="ember-line"></div>
+      <p class="sub" style="margin-top:10px; font-size: 12px; opacity: 0.65; font-style: italic;">Can't answer this one, darling? Simply pick another flower 💋</p>
     </div>
   </div>
 
@@ -2688,7 +2689,24 @@ const QUESTIONS = [
   "What's one thing you wish someone had told you before your first real relationship?",
   "A friend says they don't know how to trust again after being hurt — what would you say to them?",
   "What's a sign that someone actually listens to you, versus just waiting to talk?",
-  "What would you do if you found out a friend's partner was talking badly about them to others?"
+  "What would you do if you found out a friend's partner was talking badly about them to others?",
+  "What's a way someone has made you feel chosen, not just wanted?",
+  "Tell your partner one thing you find easy to love about them and one thing you're still learning to.",
+  "What's a moment you felt proud of how you handled conflict?",
+  "Describe a time silence between you and someone said more than words would have.",
+  "What's something you needed to hear as a kid that you now try to give to the people you love?",
+  "A friend says they keep choosing partners who feel familiar but not good for them — what would you ask them?",
+  "What's a green flag that shows up in how someone handles being told 'no'?",
+  "What does it look like when someone respects your identity without making it a whole thing?",
+  "A friend just came out to you — what's the first thing you want them to know?",
+  "What's a red flag in how someone talks about their friends when those friends aren't around?",
+  "What's one way your chosen family shows up for you that biological family never did?",
+  "Describe a time you had to choose between being liked and being honest.",
+  "What's something about being loved well that took you a long time to believe you deserved?",
+  "A friend feels guilty for outgrowing an old friendship — what would you tell them?",
+  "What's a small ritual or habit that keeps a relationship (romantic or platonic) feeling alive?",
+  "Name a green flag that shows up in how someone treats service workers.",
+  "What's a boundary you're proud you finally set, even if it was hard?"
 ];
 
 const CLUSTERS = [
@@ -3560,9 +3578,9 @@ function buildGarden(){
 
   const pairId = window.currentPairId || 'solo';
 
-  // THE MAGIC TRICK: shuffle the full pool, but only render 12 for a beautiful bouquet
+  // THE MAGIC TRICK: shuffle the full pool, but only render 20 for a beautiful bouquet
   const shuffledPool = QUESTIONS.map((q, i) => i).sort(() => Math.random() - 0.5);
-  const selectedIndices = shuffledPool.slice(0, 12);
+  const selectedIndices = shuffledPool.slice(0, 20);
   const items = selectedIndices.length;
 
   // Scramble the display order so the questions aren't just left-to-right
