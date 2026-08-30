@@ -543,9 +543,16 @@
     content: '';
     position: fixed;
     inset: 0;
-    z-index: 0; /* Sits behind the content but over the sky/horizon */
+    z-index: 0; /* Sits above the sky/horizon background */
     background: rgba(18, 8, 33, 0.7); /* Deep dark purple/black overlay */
     pointer-events: none;
+  }
+
+  /* Give the actual content its own stacking context so it renders
+     above the muting overlay above, instead of getting dimmed by it. */
+  #state-roulette > *:not(.back-btn), #state-aita > *:not(.back-btn) {
+    position: relative;
+    z-index: 1;
   }
 
   .hub-section-label{
@@ -2732,7 +2739,6 @@ window.addEventListener('load', ()=>{
 
   listenTimer();
   spawnWhispers();
-  animateConstellation();
 
   // --- Archive Date Calculation ---
   const debutDate = new Date('2026-08-14T00:00:00');
@@ -2980,11 +2986,8 @@ function renderRoster(){
   if(!grid) return;
 
   let html = `
-    <!-- The Constellation Canvas -->
-    <canvas id="constellationCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none;"></canvas>
-
     <div class="eyebrow" style="color:var(--gold); margin-bottom:20px; letter-spacing:0.25em; position:relative; z-index:2;">
-      The Passengers
+      The Crew
     </div>
     <div class="passenger-cluster" style="position:relative; z-index:2;">
   `;
@@ -3009,59 +3012,6 @@ function renderRoster(){
     </div>
   `;
   grid.innerHTML = html;
-}
-
-/* --- CONSTELLATION THREADS BETWEEN PASSENGERS --- */
-function animateConstellation() {
-  const canvas = document.getElementById('constellationCanvas');
-  // If the canvas isn't on screen right now, just wait for the next frame
-  if (!canvas) {
-    requestAnimationFrame(animateConstellation);
-    return;
-  }
-
-  const ctx = canvas.getContext('2d');
-  const section = canvas.parentElement;
-
-  // Keep canvas size synced with the section size
-  canvas.width = section.offsetWidth;
-  canvas.height = section.offsetHeight;
-
-  const orbs = document.querySelectorAll('.passenger-orb');
-  const points = Array.from(orbs).map(orb => {
-    const rect = orb.getBoundingClientRect();
-    const secRect = section.getBoundingClientRect();
-    return {
-      // Find the exact center of each floating avatar
-      x: rect.left - secRect.left + (rect.width / 2),
-      y: rect.top - secRect.top + (rect.height / 2)
-    };
-  });
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (points.length > 1) {
-    ctx.strokeStyle = 'rgba(242, 193, 78, 0.35)'; // Shimmering faint gold
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 4]); // Makes the lines look like dashed starlight paths
-    ctx.beginPath();
-
-    // Draw a line connecting each passenger to the next
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-      ctx.lineTo(points[i].x, points[i].y);
-    }
-
-    // Connect the last person back to the first person to close the loop
-    if (points.length > 2) {
-      ctx.lineTo(points[0].x, points[0].y);
-    }
-
-    ctx.stroke();
-  }
-
-  // Keep looping so the lines move as the avatars float
-  requestAnimationFrame(animateConstellation);
 }
 
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -4179,31 +4129,28 @@ ref(`events/${EVENT_ID}/gpsRoulette`).on('value', snap => {
   
   // Apply CSS hardware-accelerated spin
   needle.style.transform = `translateZ(0) rotate(${currentNeedleRotation}deg)`;
-  
-  // Wait for the 3.5s CSS transition to finish before showing the question
-  setTimeout(() => {
-    const targetAvatar = document.getElementById(`spin-avatar-${data.targetId}`);
-    if (targetAvatar) targetAvatar.classList.add('is-target');
-    
-    if (data.targetId === me.id) {
-      display.innerHTML = `
-        <div class="spin-q-target-name">It landed on you</div>
-        <div class="spin-q-text is-victim">${data.question}</div>
-      `;
-    } else {
-      display.innerHTML = `
-        <div class="spin-q-target-name">Recalibrating for ${escapeHtml(data.targetName.split(' ')[0])}...</div>
-        <div class="spin-q-text is-audience">${data.question}</div>
-      `;
-    }
-    display.classList.add('show');
 
-    // Now that the reveal has landed, lock this guest out of future spins for the round
-    if (isHost && !completedRouletteIds.includes(data.targetId)) {
-      completedRouletteIds.push(data.targetId);
-      ref(`events/${EVENT_ID}/gpsRoulette/completed`).set(completedRouletteIds);
-    }
-  }, 3500); // Matches the 3.5s CSS transition exactly
+  const targetAvatar = document.getElementById(`spin-avatar-${data.targetId}`);
+  if (targetAvatar) targetAvatar.classList.add('is-target');
+
+  if (data.targetId === me.id) {
+    display.innerHTML = `
+      <div class="spin-q-target-name">It landed on you</div>
+      <div class="spin-q-text is-victim">${data.question}</div>
+    `;
+  } else {
+    display.innerHTML = `
+      <div class="spin-q-target-name">Recalibrating for ${escapeHtml(data.targetName.split(' ')[0])}...</div>
+      <div class="spin-q-text is-audience">${data.question}</div>
+    `;
+  }
+  display.classList.add('show');
+
+  // Lock this guest out of future spins for the round
+  if (isHost && !completedRouletteIds.includes(data.targetId)) {
+    completedRouletteIds.push(data.targetId);
+    ref(`events/${EVENT_ID}/gpsRoulette/completed`).set(completedRouletteIds);
+  }
 });
 
 // Show the Host control if host
