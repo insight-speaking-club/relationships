@@ -413,6 +413,13 @@
     overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   }
   .lounge-state.active { opacity: 1; pointer-events: auto; }
+  /* PERF: only the visible lounge screen should be animating. The other
+     screens stay in the DOM (for the opacity fade transition) but their
+     breathing/glow/float animations were running 24/7 in the background,
+     which is a major source of jank. Freeze them while hidden. */
+  .lounge-state:not(.active) * {
+    animation-play-state: paused !important;
+  }
 
   /* -- State 1: The Gathering (Roster & Game) -- */
   .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:50px; padding-left: 26px; padding-right: 26px;}
@@ -475,9 +482,9 @@
     width: 100%; max-width: 420px;
     margin-bottom: 24px;
     background: rgba(255, 255, 255, 0.02); /* Barely-there background */
-    backdrop-filter: blur(32px);
-    -webkit-backdrop-filter: blur(32px);
-    border-radius: 24px; 
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 24px;
     padding: 24px 20px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.6);
     border: 1px solid transparent;
@@ -624,19 +631,18 @@
     opacity:1; pointer-events:auto;
     transition:opacity .3s ease, transform .15s ease, box-shadow .3s ease;
     background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
     border: 1px solid transparent;
     background-clip: padding-box;
     position: relative;
   }
-  /* --- BREATHING UI --- */
+  /* --- BREATHING UI ---
+     Removed: animating scale on elements with a large backdrop-filter blur
+     forces that blur to be recomputed every single frame, on every card,
+     continuously — a heavy, mostly invisible cost. Not worth it. */
   @keyframes ui-breathe {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.015); }
-  }
-  .dashboard-section, #activitiesSection, .question-panel {
-    animation: ui-breathe 7s ease-in-out infinite;
-    will-change: transform; /* Smooths out the animation */
   }
 
   /* --- DIEGETIC LOCKED STATE (Unlit Buildings) --- */
@@ -1522,8 +1528,8 @@
     margin: 20px auto 0;
     padding: 20px;
     background: rgba(18, 8, 33, 0.82);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-radius: 22px;
     border: 1px solid rgba(244, 233, 255, 0.12);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
@@ -1643,8 +1649,8 @@ body[data-phase="closer"] .sky {
   padding: 24px;
   border-radius: 20px;
   background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
