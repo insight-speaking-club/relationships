@@ -2113,6 +2113,72 @@ body[data-phase="closer"] .sky {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.15); }
   }
+
+  /* --- AVATARIA CHARACTER STYLING --- */
+  /* Strip backgrounds, borders, and circular clipping from all avatar containers */
+  .guest-avatar, .spin-avatar, .hub-waiting-avatar, .toast-icon, .tt-avatar {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* The PNG Character Sprite */
+  .avatar-sprite {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6));
+  }
+
+  /* Adjust the Roster so characters have room to stand, with nameplates over them */
+  .passenger-orb {
+    position: relative;
+    justify-content: flex-end;
+    height: 130px;
+    width: 90px;
+  }
+  .passenger-orb .guest-avatar {
+    position: absolute;
+    bottom: 12px;
+    width: 100%;
+    height: 110px; /* Taller height for standing characters */
+  }
+  .passenger-orb .guest-name {
+    position: relative;
+    z-index: 2;
+    background: rgba(18, 8, 33, 0.85);
+    border: 1px solid rgba(244, 233, 255, 0.2);
+    padding: 6px 10px;
+    border-radius: 8px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    width: 100%;
+  }
+  .passenger-orb .guest-name.is-me {
+    border-color: var(--gold);
+  }
+
+  /* Adjust GPS Roulette to fit the standing sprites */
+  .spin-avatar {
+    width: 60px !important;
+    height: 80px !important;
+    margin: -40px -30px !important; /* Offset by half to center */
+  }
+  .spin-avatar.is-target .avatar-sprite {
+    filter: drop-shadow(0 0 15px rgba(242, 193, 78, 0.8));
+  }
+  .spin-name {
+    top: auto !important;
+    bottom: -15px !important;
+    background: rgba(18, 8, 33, 0.9);
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid rgba(244, 233, 255, 0.2);
+    z-index: 2;
+  }
   
   /* The Needle with Hardware Acceleration */
   .needle-wrapper {
@@ -2164,7 +2230,7 @@ body[data-phase="closer"] .sky {
   .hub-sections {
     position: relative;
     width: 100%;
-    height: 500px; /* Adjust height based on your map image */
+    height: 600px; /* Taller canvas — gives bottom pins room so toggling "We're here" doesn't clip */
     background: #2a0e3f;
     border-radius: 20px;
     display: block; /* Overrides the original grid layout */
@@ -2277,10 +2343,10 @@ body[data-phase="closer"] .sky {
 
   /* 7. Position each stop on the map — these are CENTER points now.
      Post Office pulled in from the corner so it can't run past the edge. */
-  #hubCardRoulette { top: 14%; left: 20%; }
+  #hubCardRoulette { top: 20%; left: 20%; }
   #hubCardGarden   { top: 35%; left: 62%; }
   #hubCardAita     { top: 60%; left: 22%; }
-  #hubCardCloser   { top: 76%; left: 48%; }
+  #hubCardCloser   { top: 72%; left: 48%; }
 
   /* 8. S-shaped route line connecting the stops — waypoints are offset
      to the side of each pin so the line runs BESIDE the icons, not
@@ -2320,7 +2386,7 @@ body[data-phase="closer"] .sky {
   .hub-home-car {
     position: absolute;
     top: 1%; left: 3%;
-    width: 92px;
+    width: 78px;
     z-index: 2;
     filter: drop-shadow(0 8px 14px rgba(0,0,0,0.55));
     pointer-events: none;
@@ -2331,7 +2397,7 @@ body[data-phase="closer"] .sky {
   /* 10. New guests, queued beside the car (not stacked on top of Home) */
   .hub-waiting-guests {
     position: absolute;
-    top: 4%; left: 35%;
+    top: 4%; left: 38%;
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
@@ -2517,8 +2583,13 @@ body[data-phase="closer"] .sky {
     </div>
 
     <div class="field stagger-4" style="margin-top: 12px;">
-      <label style="text-align: left;">Pronouns (Optional)</label>
-      <input type="text" id="inputPronouns" placeholder="she/her, they/them, etc." maxlength="20">
+      <label style="text-align: left;">Pronouns</label>
+      <select id="inputPronouns" required style="width: 100%; padding: 13px 15px; border-radius: 12px; border: 1px solid rgba(244,233,255,.25); background: rgba(255,255,255,.06); color: var(--mist); font-family: 'Jost', sans-serif; font-size: 15px; outline: none; text-align: center; appearance: none; cursor: pointer;">
+        <option value="" disabled selected>Select your pronouns</option>
+        <option value="she/her">she/her</option>
+        <option value="he/him">he/him</option>
+        <option value="they/them">they/them</option>
+      </select>
     </div>
 
     <button class="btn stagger-4" id="btnJoin" style="width: 100%; max-width: 320px; margin-bottom: 180px;">Get In</button>
@@ -3339,21 +3410,45 @@ window.addEventListener('load', ()=>{
   }
 });
 
+/* --- CHARACTER IMAGE POOLS --- */
+const AVATAR_IMAGES = {
+  'she/her': [
+    'avatar-she-1.png', 'avatar-she-2.png', 'avatar-she-3.png', 'avatar-she-4.png',
+    'avatar-she-5.png', 'avatar-she-6.png', 'avatar-she-7.png', 'avatar-she-8.png'
+  ],
+  'he/him': [
+    'avatar-he-1.png', 'avatar-he-2.png', 'avatar-he-3.png'
+  ],
+  'they/them': [
+    'avatar-they-1.png', 'avatar-they-2.png', 'avatar-they-3.png'
+  ]
+};
+
 /* ---------- join ---------- */
 document.getElementById('btnJoin').addEventListener('click', async ()=>{
   const name = document.getElementById('inputName').value.trim();
-  const pronouns = document.getElementById('inputPronouns').value.trim();
-  if(!name){ alert('Standards require a name to enter.'); return; }
+  const pronouns = document.getElementById('inputPronouns').value;
 
-  // Request notification permission as part of entering (native browser prompt handles disclosure)
+  // Enforce both fields
+  if(!name || !pronouns){
+    alert('Please enter your name and select your pronouns to continue.');
+    return;
+  }
+
   if(window.Notification && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
     try { await Notification.requestPermission(); } catch(e) {}
   }
 
-  const randomAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
+  // Select a random image from the specific pronoun pool
+  const pool = AVATAR_IMAGES[pronouns];
+  const randomImage = pool[Math.floor(Math.random() * pool.length)];
+
+  // Store the actual HTML image tag so it automatically renders everywhere in the app
+  const characterHtml = `<img class="avatar-sprite" src="${randomImage}" alt="${pronouns}">`;
+
   const id = 'g_'+Math.random().toString(36).slice(2,10);
-  
-  me = {id, name, pronouns, avatar:randomAvatar};
+
+  me = {id, name, pronouns, avatar: characterHtml};
   localStorage.setItem('fsc_guest', JSON.stringify(me));
   ref(`events/${EVENT_ID}/attendees/${id}`).set({...me, joinedAt: Date.now()});
   enterLounge();
