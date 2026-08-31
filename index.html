@@ -83,6 +83,7 @@
     animation: float-up-sway linear infinite;
     backdrop-filter: blur(8px); /* Blurs the sky behind the lantern */
     -webkit-backdrop-filter: blur(8px); /* Safari support */
+    z-index: 20; /* Brings lanterns in front of the moon */
   }
   /* The dark wire opening at the bottom */
   .lantern::before {
@@ -638,12 +639,18 @@
     will-change: transform; /* Smooths out the animation */
   }
 
-  /* --- LOCKED HUB PULSE (REJECTION) --- */
-  .hub-card.locked{ opacity:.35; cursor:pointer; filter: grayscale(100%) brightness(.7); background: rgba(0,0,0,0.25); border: 1px dashed rgba(255, 255, 255, 0.15); box-shadow: none; }
-  .hub-card-icon .icon-lock{ display:none; }
-  .hub-card.locked .hub-card-icon{ background: rgba(0,0,0,0.3); }
-  .hub-card.locked .hub-card-icon .icon-normal{ display:none; }
-  .hub-card.locked .hub-card-icon .icon-lock{ display:block; }
+  /* --- DIEGETIC LOCKED STATE (Unlit Buildings) --- */
+  .hub-card.locked { opacity: 0.9; cursor: pointer; background: transparent; border: none; box-shadow: none; filter: none; }
+  .hub-card-icon .icon-lock { display: none !important; }
+  .hub-card.locked .hub-card-icon {
+    background: #1c0e2c !important; /* Dark, unlit color */
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: inset 0 4px 12px rgba(0,0,0,0.8) !important;
+  }
+  .hub-card.locked .hub-card-icon .icon-normal {
+    display: block !important;
+    opacity: 0.3; /* Dim the normal icon */
+  }
   .hub-card.shake-reject {
     animation: hub-reject 0.4s cubic-bezier(.36,.07,.19,.97) both;
     border-color: rgba(255, 77, 94, 0.4);
@@ -668,6 +675,7 @@
   .hub-card-sub{font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; text-transform:uppercase;}
   .hub-card-desc{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; font-weight:500; color:var(--dim); margin-top:4px; line-height:1.35; text-transform:none; letter-spacing:.01em;}
   .hub-card-lock-note{font-family:'Jost',sans-serif; font-style:normal; font-size:13px; font-weight:400; color:rgba(244, 233, 255, 0.5); margin-top:6px; line-height:1.35; display:none;}
+  .hub-card.locked .hub-card-title { opacity: 0.6; }
   .hub-card.locked .hub-card-desc{display:none;}
   .hub-card.locked .hub-card-lock-note{display:block;}
 
@@ -1395,6 +1403,26 @@
     transition:transform .45s cubic-bezier(.2,1.3,.3,1), opacity .3s ease;
   }
   .imessage-toast.show{ opacity:1; transform:translateY(0) scale(1); }
+
+  /* --- TACTILE TOP LAYERS (Replaces Glassmorphism on overlays) --- */
+  .imessage-toast {
+    background: #120821 !important; /* Deep, opaque ink */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid var(--gold) !important;
+    box-shadow: 4px 4px 0px rgba(242, 193, 78, 0.4) !important; /* Hard drop-shadow */
+  }
+
+  /* Punch up the AITA text */
+  .aita-verdict-text {
+    text-shadow: 6px 6px 0px rgba(0,0,0,0.4) !important;
+  }
+
+  /* --- LOW-LIGHT CONTRAST FIX --- */
+  .sub, .hub-card-desc {
+    text-shadow: 0 1px 3px rgba(0,0,0,0.85) !important;
+    font-weight: 400 !important;
+  }
   .toast-top{ display:flex; align-items:center; gap:6px; margin-bottom:4px; }
   .toast-icon{ width:16px; height:16px; border-radius:5px; object-fit:cover; }
   .toast-appname{
@@ -2229,15 +2257,30 @@ body[data-phase="closer"] .sky {
     object-fit: cover;
     z-index: 1;
   }
-  /* While locked, always show the lock glyph instead of the photo */
-  .hub-card.locked .hub-card-icon .hub-card-photo { display: none !important; }
+  /* Glowing Neon State when Unlocked */
+  .hub-card:not(.locked) .hub-card-icon {
+    background: linear-gradient(135deg, var(--gold), #ff8c00) !important;
+    box-shadow: 0 0 20px 4px rgba(242, 193, 78, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.8) !important;
+    border: 2px solid #fff !important;
+    animation: pin-glow 2.5s infinite alternate;
+  }
+  @keyframes pin-glow {
+    0% { box-shadow: 0 0 15px 2px rgba(242, 193, 78, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.6); }
+    100% { box-shadow: 0 0 30px 8px rgba(242, 193, 78, 0.9), inset 0 0 20px rgba(255, 255, 255, 1); }
+  }
+
+  /* Make locked photos look like unlit windows instead of hiding them */
+  .hub-card.locked .hub-card-icon .hub-card-photo {
+    display: block !important;
+    filter: brightness(0.25) grayscale(85%);
+  }
 
   /* 7. Position each stop on the map — these are CENTER points now.
      Post Office pulled in from the corner so it can't run past the edge. */
   #hubCardRoulette { top: 14%; left: 20%; }
   #hubCardGarden   { top: 35%; left: 62%; }
   #hubCardAita     { top: 60%; left: 22%; }
-  #hubCardCloser   { top: 76%; left: 60%; }
+  #hubCardCloser   { top: 76%; left: 48%; }
 
   /* 8. S-shaped route line connecting the stops — waypoints are offset
      to the side of each pin so the line runs BESIDE the icons, not
@@ -2527,8 +2570,9 @@ body[data-phase="closer"] .sky {
       <!-- TODAY'S ACTIVITIES -->
       <div class="dashboard-section" id="activitiesSection">
         <div class="section-header" style="justify-content: center; flex-direction: column; gap: 8px;">
-          <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(242,193,78,0.1); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(242, 193, 78, 0.2);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(242,193,78,0.1); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(242, 193, 78, 0.2); position: relative; overflow: hidden;">
+            <img src="map.png" alt="Map" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <svg style="display: none; position: relative; z-index: 1;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="10" r="3"/>
               <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
             </svg>
@@ -3230,15 +3274,16 @@ function setLoungeState(stateId) {
 /* ---------- ambient lanterns ---------- */
 function spawnLanterns(){
   const sky = document.getElementById('sky');
-  setInterval(()=>{
+  const poolSize = 8; // Fixed limit
+  for (let i = 0; i < poolSize; i++) {
     const l = document.createElement('div');
-    l.className='lantern';
-    l.style.left = (Math.random()*90+3)+'%';
-    l.style.animationDuration = (14+Math.random()*10)+'s';
-    l.style.width = l.style.height = (18+Math.random()*16)+'px';
+    l.className = 'lantern';
+    l.style.left = (Math.random() * 90 + 3) + '%';
+    l.style.animationDuration = (14 + Math.random() * 10) + 's';
+    l.style.animationDelay = (Math.random() * 20) + 's'; // Stagger them
+    l.style.width = l.style.height = (18 + Math.random() * 16) + 'px';
     sky.appendChild(l);
-    setTimeout(()=>l.remove(), 26000);
-  }, 1400);
+  }
 }
 spawnLanterns();
 
@@ -3742,40 +3787,48 @@ const WHISPERS = [
 function spawnWhispers() {
   const layer = document.getElementById('whisperLayer');
   if (!layer) return;
+  const poolSize = 4; // Fixed limit
 
-  setInterval(() => {
-    // Don't clutter the screen; max 4 fireflies at a time
-    if (document.querySelectorAll('.wisp').length >= 4) return;
-
+  for (let i = 0; i < poolSize; i++) {
     const wisp = document.createElement('div');
     wisp.className = 'wisp';
     wisp.style.left = (10 + Math.random() * 80) + '%';
     wisp.style.animationDuration = (18 + Math.random() * 12) + 's';
+    wisp.style.animationDelay = (Math.random() * 15) + 's';
 
     const text = document.createElement('div');
     text.className = 'wisp-text';
     text.textContent = WHISPERS[Math.floor(Math.random() * WHISPERS.length)];
     wisp.appendChild(text);
 
+    // Reset horizontal position and text seamlessly each time it loops back to the bottom
+    wisp.addEventListener('animationiteration', () => {
+      if (!wisp.classList.contains('revealed')) {
+        wisp.style.left = (10 + Math.random() * 80) + '%';
+        text.textContent = WHISPERS[Math.floor(Math.random() * WHISPERS.length)];
+      }
+    });
+
     wisp.addEventListener('click', () => {
       if (wisp.classList.contains('revealed')) return;
       wisp.classList.add('revealed');
 
-      // Let them read it for 5 seconds, then dissolve it
       setTimeout(() => {
         wisp.style.opacity = '0';
         wisp.style.transform = 'scale(0.8) translateY(-20px)';
-        setTimeout(() => wisp.remove(), 600);
+        setTimeout(() => {
+          // Soft reset the wisp to rejoin the pool
+          wisp.classList.remove('revealed');
+          wisp.style.opacity = '';
+          wisp.style.transform = '';
+          wisp.style.left = (10 + Math.random() * 80) + '%';
+          text.textContent = WHISPERS[Math.floor(Math.random() * WHISPERS.length)];
+        }, 600);
       }, 5000);
     });
 
     layer.appendChild(wisp);
-
-    // Auto-remove if it floats off-screen without being tapped
-    setTimeout(() => {
-      if (!wisp.classList.contains('revealed')) wisp.remove();
-    }, 30000);
-  }, 4000); // Try spawning a new one every 4 seconds
+  }
 }
 
 // A little variety so tapping a locked door doesn't just feel like a dead end.
@@ -3952,9 +4005,10 @@ function startBunnyGame(){
     bg.y = 0; bg.vy = 0; bg.score = 0; bg.speed = 3.2; bg.frame = 0; bg.nextSpawn = 60;
     bg.scrollBack = 0; bg.scrollMid = 0; bg.scrollFront = 0;
     bg.over = false; bg.running = true;
+    bg.lastTime = performance.now(); // Track initial time
     bunnyEl.style.transform = 'translateY(0)';
     overlay.classList.add('hidden');
-    loop();
+    bg.raf = requestAnimationFrame(loop);
   }
   function gameOver(){
     bg.running = false; bg.over = true;
@@ -3972,18 +4026,24 @@ function startBunnyGame(){
     overlay.classList.remove('hidden');
     scoreEl.textContent = `best ${best}`;
   }
-  function loop(){
+  function loop(timestamp){
     if(!bg || !bg.running) return;
-    bg.frame++;
-    bg.y += bg.vy;
-    bg.vy -= 0.75;
+
+    // Calculate Delta Time (normalize to 60fps where 1 frame = ~16.6ms)
+    let dt = (timestamp - bg.lastTime) / (1000 / 60);
+    bg.lastTime = timestamp;
+    if (dt > 3) dt = 3; // Prevent massive jumps if the tab is backgrounded
+
+    bg.frame += dt;
+    bg.y += bg.vy * dt;
+    bg.vy -= 0.75 * dt;
     if(bg.y < 0){ bg.y = 0; bg.vy = 0; }
     bunnyEl.style.transform = `translateY(${-bg.y}px)`;
 
     // Parallax Background Scrolling
-    bg.scrollBack -= bg.speed * 0.15;
-    bg.scrollMid -= bg.speed * 0.4;
-    bg.scrollFront -= bg.speed;
+    bg.scrollBack -= bg.speed * 0.15 * dt;
+    bg.scrollMid -= bg.speed * 0.4 * dt;
+    bg.scrollFront -= bg.speed * dt;
     if(parallaxBack) parallaxBack.style.backgroundPosition = `${bg.scrollBack}px bottom`;
     if(parallaxMid) parallaxMid.style.backgroundPosition = `${bg.scrollMid}px bottom`;
     if(parallaxFront) parallaxFront.style.backgroundPosition = `${bg.scrollFront}px bottom`;
@@ -4005,7 +4065,7 @@ function startBunnyGame(){
       el.style.left = w + 'px';
       track.appendChild(el);
       bg.obstacles.push({el, x:w});
-      bg.nextSpawn = bg.frame + 60 + Math.random()*40;
+      bg.nextSpawn = bg.frame + 60 + Math.random()*40; // Frame logic relies on dt now
     }
 
     const bunnyLeft = 33, bunnyWidth = 50;
@@ -4013,7 +4073,7 @@ function startBunnyGame(){
     // COLLISION LOGIC
     for(let idx = bg.obstacles.length - 1; idx >= 0; idx--){
       const o = bg.obstacles[idx];
-      o.x -= bg.speed;
+      o.x -= bg.speed * dt; // Apply dt to obstacle speed
       o.el.style.left = o.x + 'px';
 
       // Is Sasha overlapping the item horizontally?
@@ -4046,7 +4106,7 @@ function startBunnyGame(){
       }
     }
 
-    bg.score += 0.5; // Passive survival points
+    bg.score += 0.5 * dt; // Apply dt to score ticks
     bg.speed = Math.min(8, 3.5 + bg.score * 0.005); // Speeds up slowly
     scoreEl.textContent = String(Math.floor(bg.score));
     bg.raf = requestAnimationFrame(loop);
@@ -4650,6 +4710,17 @@ document.getElementById('btnPickElaborate').addEventListener('click', ()=>{
   if(hostGuestsCache.length === 0){ alert('No guests checked in yet.'); return; }
   const pick = hostGuestsCache[Math.floor(Math.random()*hostGuestsCache.length)];
   document.getElementById('aitaPicked').textContent = `🎙️ ${pick.name}, tell us why!`;
+
+  // Push an instant toast notification specifically to the chosen user's screen
+  const id = 'm_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+  ref(`events/${EVENT_ID}/messages/${id}`).set({
+    text: `${pick.name}, please defend your position! 🎙️`,
+    target: pick.id,
+    from: 'Relationships Court™',
+    avatar: '⚖️',
+    senderId: me && me.id,
+    ts: Date.now()
+  });
 });
 
 // Toggle Archive Drawer
