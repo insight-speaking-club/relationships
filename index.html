@@ -123,27 +123,6 @@
     100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
   }
 
-  /* ---------- glowing moon (cycles new -> full -> new) ---------- */
-  .moon-wrap{
-    position:fixed; top:30px; right:30px;
-    width:34px; height:34px; z-index:10; pointer-events:none;
-  }
-  .moon-svg{
-    width:100%; height:100%; overflow:visible;
-    animation: moon-glow-pulse 240s ease-in-out infinite;
-  }
-  .moon-shadow{ animation: moon-phase 240s ease-in-out infinite; }
-  @keyframes moon-phase{
-    0%   { transform: translateX(0); }      /* new moon: fully shadowed */
-    50%  { transform: translateX(62px); }   /* full moon: fully lit */
-    100% { transform: translateX(0); }      /* back to new moon */
-  }
-  @keyframes moon-glow-pulse{
-    0%   { filter: drop-shadow(0 0 4px rgba(242,193,78,.25)) drop-shadow(0 0 10px rgba(242,193,78,.15)); }
-    50%  { filter: drop-shadow(0 0 14px rgba(242,193,78,.8)) drop-shadow(0 0 32px rgba(242,193,78,.45)); }
-    100% { filter: drop-shadow(0 0 4px rgba(242,193,78,.25)) drop-shadow(0 0 10px rgba(242,193,78,.15)); }
-  }
-
   .screen{
     position:fixed; inset:0; z-index:2;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -1640,128 +1619,145 @@ body[data-phase="closer"] .sky {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
-/* --- PAST EVENTS / MEMORY LANE --- */
+/* --- PAST EVENTS / MEMORY LANE: A POSTCARD FROM THE PLACE --- */
 .memory-lane-card {
   position: relative;
   width: 100%;
-  max-width: 420px;
-  margin: 32px auto 20px;
-  padding: 24px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  max-width: 340px;
+  margin: 36px auto 20px;
+  padding: 0 0 4px;
+  border-radius: 16px;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.01) 100%),
+    linear-gradient(200deg, #341251 0%, #4a1a49 100%);
+  border: 1px solid rgba(242, 193, 78, 0.35);
   cursor: pointer;
-  overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 0 15px rgba(244, 233, 255, 0.05);
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+  overflow: visible;
+  box-shadow:
+    0 22px 45px rgba(0,0,0,0.45),
+    0 0 0 6px rgba(5,2,10,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+  transform: rotate(-1.6deg);
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease, border-color 0.5s ease;
   text-align: left;
 }
+.memory-lane-card:hover {
+  transform: rotate(0deg) translateY(-5px) scale(1.015);
+  border-color: rgba(242, 193, 78, 0.6);
+  box-shadow:
+    0 32px 60px rgba(0,0,0,0.55),
+    0 0 0 6px rgba(5,2,10,0.5),
+    0 0 34px rgba(242, 193, 78, 0.18);
+}
+.memory-lane-card:active { transform: rotate(0deg) scale(0.985); }
 
-/* Holographic glass sheen sweeping across */
-.memory-glass-sheen {
-  position: absolute;
-  top: 0; left: -150%;
+/* The framed "window" onto the place — your photo lives here */
+.postcard-frame {
+  position: relative;
+  margin: 12px 12px 0;
+  border-radius: 11px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgba(242, 193, 78, 0.5);
+  box-shadow: inset 0 0 0 4px rgba(5,2,10,0.55), inset 0 0 34px rgba(0,0,0,0.55);
+  background: linear-gradient(160deg, #3a1550, #160726);
+}
+.postcard-photo {
   width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), rgba(220, 180, 255, 0.15), transparent);
+  object-fit: cover; display: block;
+  filter: saturate(0.92) contrast(1.02) sepia(0.08);
+}
+.postcard-photo-vignette {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 100% at 50% 30%, transparent 45%, rgba(5,2,10,0.55) 100%),
+    linear-gradient(to top, rgba(5,2,10,0.7) 0%, transparent 48%);
+  pointer-events: none;
+}
+/* Holographic sheen sweeping across the photo, like light through a windshield */
+.memory-glass-sheen {
+  position: absolute; top: 0; left: -150%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), rgba(220, 180, 255, 0.18), transparent);
   transform: skewX(-20deg);
   animation: memory-sweep 8s infinite cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+  z-index: 2;
 }
-
 @keyframes memory-sweep {
   0%, 75% { left: -150%; }
   100% { left: 200%; }
 }
+/* Viewfinder-style corner brackets, like a little frame around the destination */
+.postcard-corner { position: absolute; width: 18px; height: 18px; border-color: var(--gold); opacity: 0.85; pointer-events: none; }
+.postcard-corner.tl { top: 8px; left: 8px; border-top: 2px solid; border-left: 2px solid; border-radius: 4px 0 0 0; }
+.postcard-corner.tr { top: 8px; right: 8px; border-top: 2px solid; border-right: 2px solid; border-radius: 0 4px 0 0; }
+.postcard-corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid; border-left: 2px solid; border-radius: 0 0 0 4px; }
+.postcard-corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid; border-right: 2px solid; border-radius: 0 0 4px 0; }
 
-.memory-lane-text {
-  flex: 1;
-  position: relative;
-  z-index: 2;
+/* Wax-seal postmark stamped onto the corner of the photo */
+.postcard-postmark {
+  position: absolute; top: -14px; right: 16px; z-index: 3;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe6a8, var(--gold) 55%, #b9862c 100%);
+  border: 2px dashed rgba(5,2,10,0.55);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transform: rotate(-11deg);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.45), 0 0 0 4px rgba(5,2,10,0.35);
+}
+.postcard-postmark .pm-star { font-size: 13px; color: #2c1804; line-height: 1; animation: pulse-fade 3s ease-in-out infinite; }
+.postcard-postmark .pm-label {
+  font-family: 'Space Mono', monospace; font-size: 6.5px; font-weight: 700;
+  color: #2c1804; letter-spacing: 0.08em; margin-top: 2px;
 }
 
-/* The August 14 Timestamp */
-.memory-date {
-  font-family: 'Space Mono', monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.2em;
-  color: #e8b4d8; /* Soft blush */
-  text-transform: uppercase;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Torn ticket tag resting on the seam between photo and caption */
+.postcard-tag {
+  position: relative; z-index: 2;
+  margin: -13px 20px 0;
+  background: var(--mist); color: #2c1440;
+  padding: 7px 14px 7px 22px; border-radius: 3px;
+  font-family: 'Space Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  width: fit-content; max-width: calc(100% - 40px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.35);
+}
+.postcard-tag::before {
+  content: ''; position: absolute; left: 7px; top: 50%; transform: translateY(-50%);
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #2a0e3f; box-shadow: 0 0 0 2px var(--mist);
 }
 
-/* A tiny gold spark next to the date */
-.memory-date::before {
-  content: '✦';
-  font-size: 12px;
-  color: var(--gold);
-  animation: pulse-fade 3s ease-in-out infinite;
+.memory-lane-text { position: relative; }
+.postcard-caption { padding: 22px; position: relative; }
+.postcard-caption::before {
+  content: ''; position: absolute; top: 0; left: 22px; right: 22px; height: 0;
+  border-top: 1px dashed rgba(244, 233, 255, 0.16);
 }
-
+.memory-date, .postcard-title-row { display: flex; align-items: center; gap: 8px; }
 .memory-lane-title {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 26px;
+  font-weight: 600;
+  font-size: 25px;
   color: var(--mist);
-  margin: 0 0 4px;
-  text-shadow: 0 2px 10px rgba(255,255,255,0.2);
+  margin: 6px 0 6px;
+  text-shadow: 0 2px 10px rgba(255,255,255,0.15);
 }
-
 .memory-lane-desc {
   font-family: 'Jost', sans-serif;
   font-size: 13.5px;
-  color: rgba(244, 233, 255, 0.7);
-  line-height: 1.45;
+  color: rgba(244, 233, 255, 0.72);
+  line-height: 1.5;
+  margin-bottom: 14px;
 }
-
-.memory-lane-thumb {
-  width: 64px; height: 80px;
-  object-fit: contain;
-  background: rgba(0,0,0,0.25);
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.18);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-  flex-shrink: 0;
-  margin-right: 16px;
-  position: relative;
-  z-index: 2;
-}
-
 .memory-lane-icon {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.12);
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--gold);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  margin-left: 18px;
-  position: relative;
-  z-index: 2;
-  transition: background 0.3s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
-.memory-lane-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(244, 233, 255, 0.35);
-  box-shadow: 0 20px 45px rgba(0,0,0,0.5), inset 0 0 25px rgba(255,255,255,0.08);
-}
-
-.memory-lane-card:hover .memory-lane-icon {
-  background: rgba(255,255,255,0.1);
-  transform: scale(1.08) translateX(2px);
-}
-
-.memory-lane-card:active {
-  transform: scale(0.98);
-}
+.memory-lane-icon svg { transition: transform 0.3s ease; }
+.memory-lane-card:hover .memory-lane-icon svg { transform: translateX(4px); }
 /* --- CATCHING WHISPERS --- */
 .wisp {
   position: absolute;
@@ -1891,12 +1887,9 @@ body[data-phase="closer"] .sky {
 }
 
 .archive-content.open {
-  max-height: 800px; /* Expands to fit */
+  max-height: 1100px; /* Expands to fit the postcard + footer */
   opacity: 1; margin-top: 24px;
 }
-
-/* Adjust spacing for the single card */
-.memory-lane-card { margin: 0 auto; }
 
 /* --- EVENT FOOTER --- */
 .event-footer {
@@ -2487,24 +2480,6 @@ body[data-phase="closer"] .sky {
 
 <div class="sky" id="sky">
 
-  <!-- Glowing phase-cycling moon -->
-  <div class="moon-wrap">
-    <svg class="moon-svg" viewBox="0 0 60 60">
-      <defs>
-        <radialGradient id="moonBodyGrad" cx="35%" cy="30%" r="75%">
-          <stop offset="0%" stop-color="#fffdf2"/>
-          <stop offset="55%" stop-color="#f2c14e"/>
-          <stop offset="100%" stop-color="#e2a53a"/>
-        </radialGradient>
-        <clipPath id="moonClip"><circle cx="30" cy="30" r="28"/></clipPath>
-      </defs>
-      <circle cx="30" cy="30" r="28" fill="url(#moonBodyGrad)"/>
-      <g clip-path="url(#moonClip)">
-        <circle class="moon-shadow" cx="30" cy="30" r="28" fill="#180624" opacity="0.94"/>
-      </g>
-    </svg>
-  </div>
-
   <!-- PARIS SKYLINE HORIZON -->
   <div class="paris-horizon">
     <!-- Sweeping Eiffel Tower Beacon Light -->
@@ -2641,11 +2616,6 @@ body[data-phase="closer"] .sky {
         </div>
       </div>
 
-      <!-- MAGICAL CAR GATHERING -->
-      <div class="dashboard-section magical-gathering-section" id="rosterGrid">
-        <!-- JS will inject the glowing passenger orbs (and car) here -->
-      </div>
-
       <!-- TODAY'S ACTIVITIES -->
       <div class="dashboard-section" id="activitiesSection">
         <div class="section-header" style="justify-content: center; flex-direction: column; gap: 8px;">
@@ -2660,7 +2630,7 @@ body[data-phase="closer"] .sky {
         </div>
         
         <p class="sub" style="margin-bottom: 20px; text-align: center; font-size: 14px;">
-          The route for the evening. Buckle up, grab a drink, and wait for the host to start the ignition.
+          This is our roadmap for the night. Each stop is a different activity. We travel as a group, so sit tight—I will drive us to the next location and unlock the doors when it is time.
         </p>
 
         <div class="hub-sections">
@@ -3086,23 +3056,38 @@ body[data-phase="closer"] .sky {
 
     <!-- VISUALLY SEPARATED ARCHIVE & FOOTER (COLLAPSIBLE) -->
     <div class="archive-footer-section" id="archiveSection">
-      <button class="archive-toggle-btn" id="btnToggleArchive">
+      <button class="archive-toggle-btn open" id="btnToggleArchive" style="border-color: rgba(242, 193, 78, 0.6); background: rgba(242, 193, 78, 0.08);">
         <span>✧ In the Rearview ✧</span>
         <svg class="archive-toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       
-      <div class="archive-content" id="archiveContent">
-        <!-- THE SINGLE DEBUT ARCHIVE CARD -->
-        <div class="memory-lane-card" onclick="window.open('https://insight-speaking-club.github.io/queerfashion/', '_blank')" style="margin: 0 auto;">
-          <div class="memory-glass-sheen"></div>
-          <img src="fashion-speaking-club.png" alt="Fashion Speaking Club promo" class="memory-lane-thumb" onerror="this.style.display='none'">
-          <div class="memory-lane-text">
-            <div class="memory-date" id="memoryDateCalc">August 14</div>
-            <div class="memory-lane-title" style="font-size: 24px;">Fashion Speaking Club</div>
-            <div class="memory-lane-desc">Where it all began. Take a trip down memory lane to our debut archive.</div>
+      <div class="archive-content open" id="archiveContent">
+        <!-- THE SINGLE DEBUT ARCHIVE CARD, STYLED AS A POSTCARD FROM THE PLACE ITSELF -->
+        <!-- To use your own photo: swap the src below for your image filename. -->
+        <div class="memory-lane-card" onclick="window.open('https://insight-speaking-club.github.io/queerfashion/', '_blank')">
+          <div class="postcard-frame">
+            <img src="fashion-speaking-club.png" alt="Fashion Speaking Club promo" class="postcard-photo" onerror="this.style.display='none'">
+            <div class="memory-glass-sheen"></div>
+            <div class="postcard-photo-vignette"></div>
+            <div class="postcard-corner tl"></div>
+            <div class="postcard-corner tr"></div>
+            <div class="postcard-corner bl"></div>
+            <div class="postcard-corner br"></div>
+            <div class="postcard-postmark">
+              <span class="pm-star">✦</span>
+              <span class="pm-label">Sealed</span>
+            </div>
           </div>
-          <div class="memory-lane-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          <div class="postcard-tag">
+            <span id="memoryDateCalc">August 14</span>
+          </div>
+          <div class="memory-lane-text postcard-caption">
+            <div class="memory-lane-title">Fashion Speaking Club</div>
+            <div class="memory-lane-desc">Where it all began. Take a trip down memory lane to our debut archive.</div>
+            <div class="memory-lane-icon">
+              Revisit the place
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </div>
           </div>
         </div>
 
@@ -3366,7 +3351,7 @@ function spawnLanterns(){
 }
 spawnLanterns();
 
-/* ---------- ambient stardust ---------- */
+/* ---------- ambient stardust (disabled) ---------- */
 function spawnStardust(){
   const container = document.getElementById('stardust-container');
   if(!container) return;
@@ -3380,7 +3365,7 @@ function spawnStardust(){
     container.appendChild(mote);
   }
 }
-spawnStardust();
+// spawnStardust(); // removed: the floating white circles
 
 /* ---------- application routing & VIP bypass ---------- */
 window.addEventListener('load', ()=>{
@@ -3685,39 +3670,8 @@ function listenRoster(){
 }
 
 function renderRoster(){
-  const grid = document.getElementById('rosterGrid');
-  if(!grid) return;
-
-  let html = `
-    <div class="eyebrow" style="color:var(--gold); margin-bottom:20px; letter-spacing:0.25em; position:relative; z-index:2;">
-      The Crew
-    </div>
-    <div class="passenger-cluster" style="position:relative; z-index:2;">
-  `;
-  
-  stateGuests.forEach(m => {
-    const isYou = !!(me && m.id === me.id);
-    const pronounsHtml = m.pronouns ? `<br><span style="font-size: 8.5px; color: var(--gold); opacity: 0.7; font-family: 'Space Mono', monospace; text-transform: uppercase;">${escapeHtml(m.pronouns)}</span>` : '';
-    html += `
-      <div class="passenger-orb">
-        <div class="guest-avatar${isYou ? ' is-me' : ''}">${m.avatar}</div>
-        <div class="guest-name${isYou ? ' is-me' : ''}" style="color:var(--mist); text-shadow:0 2px 5px rgba(0,0,0,0.8);">
-          ${escapeHtml(m.name)}${pronounsHtml}${isYou ? ' <br><span class="you-tag">you</span>' : ''}
-        </div>
-      </div>`;
-  });
-  
-  html += `</div>`;
-  html += `
-    <div class="gathering-car-wrap" aria-hidden="true">
-      <img src="sashas-car.png" alt="Sasha in Car" class="gathering-car-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-      <span class="gathering-car-fallback" style="display:none;">🚗</span>
-    </div>
-  `;
-  grid.innerHTML = html;
-
-  // New guests wait next to Sasha's parked car on the itinerary map,
-  // replacing the old standalone "Crew" section above.
+  // "The Crew" box (#rosterGrid) has been removed from the page;
+  // guests now only appear waiting next to Sasha's parked car below.
   const waitingGrid = document.getElementById('hubWaitingGuests');
   if (waitingGrid) {
     waitingGrid.innerHTML = stateGuests.map(m => {
@@ -3781,24 +3735,24 @@ const HUB_SECTION_NAMES = {
 };
 const HUB_UNLOCK_MESSAGES = {
   roulette: [
-    "Darling, Home is OPEN. Simply get out here and dazzle me 💋",
-    "The doors are open, mon chéri — entrances like this deserve an audience 🤭",
-    "Home's unlocked! Chop chop, darling, I did not do my makeup for nothing 🐇"
+    "Darling, Home is OPEN — tap it and get out here to dazzle me 💋",
+    "The doors are open, mon chéri — tap Home, entrances like this deserve an audience 🤭",
+    "Home's unlocked! Tap in, chop chop darling, I did not do my makeup for nothing 🐇"
   ],
   garden: [
-    "The Night Garden is open, darling — go find your bouquet before I do 🌸",
-    "Simply blooming out here. Doors open, partner in hand, chop chop 🤭",
-    "The Garden's unlocked, love. Romance waits for no one — especially not me 💋"
+    "The Night Garden is open, darling — tap it and go find your bouquet before I do 🌸",
+    "Simply blooming out here. Tap the Garden, partner in hand, chop chop 🤭",
+    "The Garden's unlocked, love — tap in, romance waits for no one, especially not me 💋"
   ],
   aita: [
-    "Relationships Court™ is officially in session, darling. Judge accordingly ⚖️💋",
-    "Court's open! Simply serve your verdict with the drama it deserves 🤭",
-    "We are PARKED, darling. Time to decide who's simply wrong here 🐇"
+    "Relationships Court™ is officially in session, darling — tap in and judge accordingly ⚖️💋",
+    "Court's open! Tap Relationships Court™ and serve your verdict with the drama it deserves 🤭",
+    "We are PARKED, darling — tap in, time to decide who's simply wrong here 🐇"
   ],
   closer: [
-    "The Post Office is open, darling — go post something worth reading 💌",
-    "Last stop, loves. Simply tell me something good before I get emotional 🤭",
-    "Doors open at the Post Office. Don't make me wait for your feelings 💋"
+    "The Post Office is open, darling — tap it and go post something worth reading 💌",
+    "Last stop, loves. Tap the Post Office and tell me something good before I get emotional 🤭",
+    "Doors open at the Post Office — tap in, don't make me wait for your feelings 💋"
   ]
 };
 let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
@@ -3934,18 +3888,19 @@ function spawnWhispers() {
   }
 }
 
-// A little variety so tapping a locked door doesn't just feel like a dead end.
+// A little variety so tapping a locked door doesn't just feel like a dead end —
+// but each one still tells you it's locked, and that I'll open it myself.
 const PATIENCE_MESSAGES = [
-  "Darling, the door is locked and so is my patience with your tapping. 💋",
-  "Simply not yet. Even the finest reveals need staging, mon chéri. 🤭",
-  "Ohh, eager thing. Save it — I like a little suspense. 🐇",
-  "Locked, darling. A queen never opens before her entrance music hits. 💋",
-  "Tut tut. Rushing me is simply not going to work. 🤭",
-  "Patience, love — I'm the one who decides when the curtain rises. 🐇",
-  "Still closed, darling. Go fix your hair, we're not there yet. 💋",
-  "Simply adorable that you tried. The answer is still no. 🤭",
-  "Not so fast, darling — good things wait for me, not the other way around. 🐇",
-  "Locked, love. Simply enjoy the anticipation — it's half the fun. 💋"
+  "Darling, this one's locked — sit tight, I'll unlock it myself when it's time. 💋",
+  "Not yet, mon chéri. I'm the one who opens the doors — watch for the ping. 🤭",
+  "Still closed, darling. I'll swing it open for everyone the moment we're ready. 🐇",
+  "Locked for now, love. I'll unlock it and you'll get a little tap on the shoulder. 💋",
+  "Patience, darling — I open every door myself, no need to keep knocking. 🤭",
+  "Simply not open yet. I'll flip the lock when it's go time, promise. 🐇",
+  "Not so fast, love. I'll unlock this one — you'll know the second it's ready. 💋",
+  "Still waiting on me, darling. I'll open it for the whole room at once. 🤭",
+  "Locked, darling. I'll take care of it — no tapping required. 🐇",
+  "Not yet, love — I open these, you'll feel the buzz when it's time. 💋"
 ];
 let lastPatienceIndex = -1;
 function showPatienceToast(){
