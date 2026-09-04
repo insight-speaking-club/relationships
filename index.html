@@ -84,6 +84,7 @@
     backdrop-filter: blur(8px); /* Blurs the sky behind the lantern */
     -webkit-backdrop-filter: blur(8px); /* Safari support */
     z-index: 20; /* Brings lanterns in front of the moon */
+    will-change: transform; transform: translateZ(0);
   }
   /* The dark wire opening at the bottom */
   .lantern::before {
@@ -318,13 +319,13 @@
   .greeting-bubble{
     position:relative; margin-top:16px; padding:20px 22px; max-width:320px;
     border-radius:20px 20px 20px 6px; text-align:left;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    background: rgba(30, 15, 45, 0.55);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     border-right: 1px solid rgba(255, 255, 255, 0.02);
     border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
   }
   .greeting-bubble p{
     font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px; line-height:1.55;
@@ -399,6 +400,12 @@
   .lounge-state:not(.active) * {
     animation-play-state: paused !important;
   }
+  /* PERF: same idea, applied globally. Any element inside a non-active
+     .screen (lanterns, fireflies, beacon sweep, gradients, etc.) keeps
+     animating in the background unless we explicitly freeze it here. */
+  .screen:not(.active) * {
+    animation-play-state: paused !important;
+  }
 
   /* -- State 1: The Gathering (Roster & Game) -- */
   .lounge-content{position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:50px; padding-left: 26px; padding-right: 26px;}
@@ -460,12 +467,12 @@
     position: relative;
     width: 100%; max-width: 420px;
     margin-bottom: 24px;
-    background: rgba(255, 255, 255, 0.02); /* Barely-there background */
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    background: rgba(30, 15, 45, 0.5); /* Solid-ish fallback for blur */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border-radius: 24px;
     padding: 24px 20px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.45);
     border: 1px solid transparent;
     background-clip: padding-box;
   }
@@ -609,8 +616,8 @@
     padding:16px 18px; border-radius:18px; cursor:pointer;
     opacity:1; pointer-events:auto;
     transition:opacity .3s ease, transform .15s ease, box-shadow .3s ease;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    background: rgba(35, 18, 52, 0.55);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     border: 1px solid transparent;
     background-clip: padding-box;
     position: relative;
@@ -647,7 +654,7 @@
     40%, 80% { transform: translateX(6px); }
   }
   .hub-card:not(.locked){
-    box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 15px rgba(242, 193, 78, 0.05);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.35);
   }
   .hub-card:not(.locked):active{ transform:scale(.97); }
   .hub-card-icon{
@@ -669,6 +676,7 @@
     border-color: var(--gold);
     box-shadow: 0 0 25px rgba(242, 193, 78, 0.2), inset 0 0 10px rgba(242, 193, 78, 0.1);
     animation: current-pulse 4.5s ease-in-out infinite alternate;
+    will-change: box-shadow; transform: translateZ(0);
   }
   @keyframes current-pulse {
     0% { box-shadow: 0 0 20px rgba(242, 193, 78, 0.2); }
@@ -950,6 +958,7 @@
     position:absolute; width:4px; height:4px; border-radius:50%;
     background:#fff4c9; box-shadow:0 0 8px 3px currentColor;
     animation:firefly-float ease-in-out infinite;
+    will-change: transform; transform: translateZ(0);
   }
   @keyframes firefly-float{
     0%,100%{transform:translate(0,0); opacity:.3;}
@@ -1256,10 +1265,10 @@
   .question-panel{
     position:fixed; bottom:0; left:0; right:0; z-index:10;
     padding:30px 26px 24px; text-align:center;
-    background:linear-gradient(180deg, rgba(18,8,33,0.3) 0%, rgba(18,8,33,.7) 40%, rgba(18,8,33,.95) 100%);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background:linear-gradient(180deg, rgba(18,8,33,0.55) 0%, rgba(18,8,33,.85) 40%, rgba(18,8,33,.97) 100%);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     border-top: 1px solid rgba(242, 193, 78, 0.25);
-    box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.4);
   }
   .question-eyebrow{font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; color:var(--gold); text-transform:uppercase;}
   .question-text{
@@ -2034,7 +2043,7 @@ body[data-phase="closer"] .sky {
   .passenger-orb {
     display: flex; flex-direction: column; align-items: center; gap: 8px;
     animation: float-orb 3.5s ease-in-out infinite alternate;
-    will-change: transform;
+    will-change: transform; transform: translateZ(0);
   }
   
   /* Organic staggered floating */
@@ -3331,8 +3340,18 @@ function show(id){
 }
 
 function setLoungeState(stateId) {
+  // PERF: the bunny game's requestAnimationFrame loop only makes sense while
+  // state-gathering is on screen. CSS-pausing hides the animations, but the
+  // physics loop (bg.raf) keeps computing jumps/collisions in the background
+  // unless we explicitly stop it here.
+  const leavingGathering = document.getElementById('state-gathering')?.classList.contains('active')
+    && stateId !== 'state-gathering';
+  if (leavingGathering) stopBunnyGame();
+
   document.querySelectorAll('.lounge-state').forEach(s => s.classList.remove('active'));
   document.getElementById(stateId).classList.add('active');
+
+  if (stateId === 'state-gathering' && !bg) startBunnyGame();
 }
 
 /* ---------- ambient lanterns ---------- */
@@ -4872,6 +4891,12 @@ function renderSpinCircle(guests) {
 }
 
 const originalListenRoster = listenRoster;
+// PERF: renderRoster()/renderSpinCircle() each wipe and rebuild a whole
+// container's innerHTML. If several guests join within the same moment,
+// Firebase fires this 'value' callback once per guest, and without a
+// debounce that's a full DOM rebuild per guest in the same tick — the
+// classic freeze-on-simultaneous-joins bug. Coalesce bursts into one redraw.
+let rosterRedrawTimer = null;
 listenRoster = function() {
   ref(`events/${EVENT_ID}/attendees`).on('value', snap => {
     stateGuests = Object.values(snap.val() || {}).sort((a,b) => a.joinedAt - b.joinedAt);
@@ -4897,10 +4922,14 @@ listenRoster = function() {
       section.style.setProperty('--glow-color', `${r.toFixed(0)}, ${g.toFixed(0)}, ${b.toFixed(0)}`);
     }
 
-    renderRoster();
     renderLeaderboard(stateGuests);
-    renderSpinCircle(stateGuests);
     if(isHost) renderHostList(stateGuests);
+
+    clearTimeout(rosterRedrawTimer);
+    rosterRedrawTimer = setTimeout(() => {
+      renderRoster();
+      renderSpinCircle(stateGuests);
+    }, 300);
   });
 };
 
