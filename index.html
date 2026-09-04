@@ -59,6 +59,16 @@
     overflow: hidden;
     z-index: 0;
   }
+  /* Sits above the lanterns (z-index 20) so anything drifting through the very
+     top strip of the viewport fades away instead of visibly parking there */
+  .sky-top-mask {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 90px;
+    background: linear-gradient(to bottom, var(--ink) 0%, rgba(18,8,33,0.6) 55%, transparent 100%);
+    pointer-events: none;
+    z-index: 25;
+  }
   /* Delicate starry texture for the top portion of the sky */
   .sky::before {
     content: '';
@@ -250,7 +260,7 @@
 
   .cinematic-heart {
     width: 75px; height: auto;
-    filter: drop-shadow(0 0 20px rgba(217, 46, 73, 0.6));
+    filter: drop-shadow(0 0 20px rgba(255, 111, 168, 0.65));
     /* Double-beat rhythm, followed by a massive light bloom */
     animation:
       heartbeat-double 1.2s ease-in-out 2,
@@ -271,11 +281,11 @@
 
   /* --- THE ORGANIC KEYFRAMES --- */
   @keyframes heartbeat-double {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(217,46,73,0.6)); }
-    15% { transform: scale(1.15); filter: drop-shadow(0 0 35px rgba(255,112,134,0.8)); }
-    30% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(217,46,73,0.6)); }
-    45% { transform: scale(1.35); filter: drop-shadow(0 0 60px rgba(255,112,134,1)) drop-shadow(0 0 20px var(--gold)); }
-    70% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(217,46,73,0.6)); }
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255,111,168,0.65)); }
+    15% { transform: scale(1.15); filter: drop-shadow(0 0 35px rgba(255,143,190,0.85)); }
+    30% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255,111,168,0.65)); }
+    45% { transform: scale(1.35); filter: drop-shadow(0 0 60px rgba(255,143,190,1)) drop-shadow(0 0 20px var(--gold)); }
+    70% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255,111,168,0.65)); }
   }
 
   @keyframes heart-bloom {
@@ -1847,52 +1857,53 @@ body[data-phase="closer"] .sky {
   100% { opacity: 0; filter: blur(6px); color: rgba(244, 233, 255, 0.2); }
 }
 
-/* --- THE BLACK ARCHIVE WRAPPER --- */
+/* --- THE MINIMALIST ARCHIVE WRAPPER --- */
 .archive-footer-section {
   width: 100%;
-  background: #05020a; /* Stark, dark background separation */
-  padding: 30px 26px; /* Tighter padding when closed */
-  margin-top: 40px;
-  border-top: 1px solid rgba(242, 193, 78, 0.15); /* A subtle gold boundary line */
+  background: transparent; /* Removes the stark black separation */
+  padding: 10px 26px 40px;
+  margin-top: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   z-index: 10;
-  box-shadow: 0 -15px 40px rgba(0,0,0,0.4);
 }
 
-/* --- COLLAPSIBLE ARCHIVE --- */
+/* --- SLEEK TOGGLE BUTTON --- */
 .archive-toggle-btn {
-  background: rgba(242, 193, 78, 0.06);
-  border: 1px solid rgba(242, 193, 78, 0.5);
-  border-radius: 20px; color: var(--gold);
-  font-family: 'Space Mono', monospace; font-size: 11px;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  padding: 12px 24px; cursor: pointer;
-  transition: all 0.3s ease; outline: none;
-  display: inline-flex; align-items: center; gap: 8px;
-  box-shadow: 0 0 15px rgba(242, 193, 78, 0.15);
-  animation: archive-toggle-pulse 2.4s ease-in-out infinite;
+  background: rgba(255, 255, 255, 0.05); /* Clean glass pill */
+  border: 1px solid rgba(244, 233, 255, 0.15);
+  border-radius: 30px;
+  color: var(--mist);
+  font-family: 'Jost', sans-serif;
+  font-size: 14.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
 
 .archive-toggle-btn .archive-toggle-chevron {
-  display: inline-flex;
-  transition: transform 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .archive-toggle-btn.open .archive-toggle-chevron {
   transform: rotate(180deg);
 }
-
-@keyframes archive-toggle-pulse {
-  0%, 100% { box-shadow: 0 0 15px rgba(242, 193, 78, 0.15); }
-  50% { box-shadow: 0 0 22px rgba(242, 193, 78, 0.4); }
-}
-
 .archive-toggle-btn:hover {
-  background: rgba(242, 193, 78, 0.12);
-  box-shadow: 0 0 20px rgba(242, 193, 78, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.35), 0 0 15px rgba(242, 193, 78, 0.15);
 }
 
 .archive-content {
@@ -1900,9 +1911,8 @@ body[data-phase="closer"] .sky {
   overflow: hidden; display: flex; flex-direction: column; align-items: center;
   transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
 }
-
 .archive-content.open {
-  max-height: 1100px; /* Expands to fit the postcard + footer */
+  max-height: 1100px;
   opacity: 1; margin-top: 24px;
 }
 
@@ -1958,35 +1968,6 @@ body[data-phase="closer"] .sky {
 
 .footer-instagram:hover {
   opacity: 1;
-}
-/* --- ETHEREAL SCROLL REVEALS --- */
-.reveal-mist {
-  opacity: 0;
-  transform: translateY(35px) scale(0.96);
-  filter: blur(12px);
-  transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              filter 1s ease;
-  will-change: opacity, transform, filter;
-}
-
-.reveal-mist.is-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-}
-
-/* The connector line draws itself downward */
-.reveal-line {
-  opacity: 0;
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
-}
-
-.reveal-line.is-visible {
-  opacity: 1;
-  transform: scaleY(1);
 }
   /* --- MAGICAL CAR GATHERING --- */
   .magical-gathering-section {
@@ -2507,6 +2488,10 @@ body[data-phase="closer"] .sky {
 
 <div class="sky" id="sky">
 
+  <!-- Fades out anything (lanterns) crossing the very top of the viewport,
+       so nothing ever visibly parks up there -->
+  <div class="sky-top-mask"></div>
+
   <!-- PARIS SKYLINE HORIZON -->
   <div class="paris-horizon">
     <!-- Sweeping Eiffel Tower Beacon Light -->
@@ -2562,15 +2547,25 @@ body[data-phase="closer"] .sky {
 <!-- CINEMATIC ENTRANCE SEQUENCE (Only shows for first-time users) -->
 <div id="entrance-magic" class="entrance-magic">
   <div class="heart-container">
-    <!-- Glowing SVG Heart -->
-    <svg class="cinematic-heart" viewBox="0 0 24 24" fill="rgba(217, 79, 140, 0.15)" stroke="url(#goldRoseGlow)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Glowing pink heart -->
+    <svg class="cinematic-heart" viewBox="0 0 24 22" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="goldRoseGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#f2c14e" /> <!-- Gold -->
-          <stop offset="100%" stop-color="#d94f8c" /> <!-- Rose -->
+        <linearGradient id="pinkHeartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ffc2e0" />
+          <stop offset="45%" stop-color="#ff6fa8" />
+          <stop offset="100%" stop-color="#d94f8c" />
         </linearGradient>
+        <filter id="heartSoftGlow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="1.6" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      <path filter="url(#heartSoftGlow)" fill="url(#pinkHeartGradient)"
+        d="M12,20.5l-1.34-1.22C5.4,14.66,2,11.5,2,7.62,2,4.55,4.42,2.1,7.5,2.1c1.74,0,3.41,0.83,4.5,2.14
+           c1.09-1.31,2.76-2.14,4.5-2.14,3.08,0,5.5,2.45,5.5,5.52,0,3.88-3.4,7.04-8.66,11.68L12,20.5z"/>
     </svg>
     <div class="shatter-ring"></div>
   </div>
@@ -3083,12 +3078,12 @@ body[data-phase="closer"] .sky {
 
     <!-- VISUALLY SEPARATED ARCHIVE & FOOTER (COLLAPSIBLE) -->
     <div class="archive-footer-section" id="archiveSection">
-      <button class="archive-toggle-btn open" id="btnToggleArchive" style="border-color: rgba(242, 193, 78, 0.6); background: rgba(242, 193, 78, 0.08);">
-        <span>✧ In the Rearview ✧</span>
-        <svg class="archive-toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      <button class="archive-toggle-btn" id="btnToggleArchive">
+        <span>View Past Events</span>
+        <svg class="archive-toggle-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       
-      <div class="archive-content open" id="archiveContent">
+      <div class="archive-content" id="archiveContent">
         <!-- THE SINGLE DEBUT ARCHIVE CARD, STYLED AS A POSTCARD FROM THE PLACE ITSELF -->
         <!-- To use your own photo: swap the src below for your image filename. -->
         <div class="memory-lane-card" onclick="window.open('https://insight-speaking-club.github.io/queerfashion/', '_blank')">
@@ -3486,43 +3481,8 @@ document.getElementById('btnJoin').addEventListener('click', async ()=>{
 
 /* ---------- single room logic ---------- */
 
-function initScrollMagic() {
-  const scroller = document.getElementById('state-gathering');
-  if (!scroller) return;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      // When the element enters the viewport, add the visible class
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        // Un-observe it so the animation only happens once (feels more permanent)
-        observer.unobserve(entry.target);
-      }
-    });
-  }, {
-    root: scroller, // We watch the scrolling container
-    threshold: 0.15, // Triggers when 15% of the element is visible
-    rootMargin: "0px 0px -40px 0px" // Triggers slightly before hitting the absolute bottom
-  });
-
-  // Attach the mist reveal to the main blocks
-  scroller.querySelectorAll('.dashboard-section, .hub-card, .game-section, .leaderboard-container, .memory-lane-card, .event-footer').forEach(el => {
-    el.classList.add('reveal-mist');
-    observer.observe(el);
-  });
-
-  // Attach the unrolling road reveal to the connector lines
-  scroller.querySelectorAll('.activity-connector').forEach(el => {
-    el.classList.add('reveal-line');
-    observer.observe(el);
-  });
-}
-
 function enterLounge(){
   show('screen-lounge');
-
-  // Initialize the scroll magic right before we show the lounge
-  initScrollMagic();
 
   setLoungeState('state-gathering');
   listenRoster();
@@ -4865,17 +4825,11 @@ document.getElementById('btnToggleArchive').addEventListener('click', function()
   content.classList.toggle('open');
   this.classList.toggle('open');
 
+  // Smooth scroll into view when opened
   if (content.classList.contains('open')) {
-    this.style.borderColor = 'rgba(242, 193, 78, 0.6)';
-    this.style.background = 'rgba(242, 193, 78, 0.08)';
-    // Give the expand animation a beat to start, then scroll it into view
-    // so people don't miss the card that just appeared below.
     setTimeout(() => {
       content.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 150);
-  } else {
-    this.style.borderColor = 'rgba(242, 193, 78, 0.3)';
-    this.style.background = 'transparent';
   }
 });
 
