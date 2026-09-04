@@ -18,7 +18,12 @@
     --vh:100vh;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  /* Organic film-grain overlay — zero network requests, inline SVG noise */
+  /* Organic film-grain overlay — DISABLED for performance.
+     mix-blend-mode forces the browser to recomposite this against the
+     entire page on every frame, which is expensive while dozens of other
+     animations are running. Re-enable by uncommenting if you want the
+     texture back and don't mind the performance cost. */
+  /*
   body::after {
     content: '';
     position: fixed;
@@ -29,6 +34,7 @@
     opacity: 0.04;
     mix-blend-mode: overlay;
   }
+  */
   html,body{margin:0;padding:0;height:100%;background:var(--ink);overflow:hidden;}
   body{
     font-family:'Jost',sans-serif;
@@ -2642,7 +2648,7 @@ body[data-phase="closer"] .sky {
       <div class="dashboard-section" id="activitiesSection">
         <div class="section-header" style="justify-content: center; flex-direction: column; gap: 8px;">
           <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(242,193,78,0.1); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(242, 193, 78, 0.2); position: relative; overflow: hidden;">
-            <img src="map.png" alt="Map" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <img loading="lazy" decoding="async" src="map.png" alt="Map" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <svg style="display: none; position: relative; z-index: 1;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="10" r="3"/>
               <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/>
@@ -2838,7 +2844,7 @@ body[data-phase="closer"] .sky {
 
           <!-- Sasha's car, parked next to Home -->
           <div class="hub-home-car" aria-hidden="true">
-            <img src="car-waiting.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <img loading="lazy" decoding="async" src="car-waiting.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <div class="hub-home-car-fallback">🚗</div>
           </div>
 
@@ -2851,7 +2857,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the compass icon -->
-              <img class="hub-card-photo" src="home-icon.jpg" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" loading="lazy" decoding="async" src="home-icon.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Compass / Location SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="3 11 22 2 13 21 11 13 3 11"/>
@@ -2878,7 +2884,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the storefront icon -->
-              <img class="hub-card-photo" src="night-garden-icon.jpg" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" loading="lazy" decoding="async" src="night-garden-icon.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Storefront SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l1.5-5.5A1 1 0 0 1 5.46 3h13.08a1 1 0 0 1 .96 1.5L21 9"/>
@@ -2908,7 +2914,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the courthouse icon -->
-              <img class="hub-card-photo" src="relationships-court-icon.jpg" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" loading="lazy" decoding="async" src="relationships-court-icon.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Courthouse Pillars SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 21h18"/><path d="M4 21v-4"/><path d="M20 21v-4"/><path d="M3 7v4h18V7"/><path d="M12 21v-9"/><path d="M8 21v-9"/><path d="M16 21v-9"/><polygon points="12,2 22,7 2,7"/>
@@ -2935,7 +2941,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the book icon -->
-              <img class="hub-card-photo" src="post-office-icon.jpg" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" loading="lazy" decoding="async" src="post-office-icon.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Open Book SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 4.5C2 4.5 5 3 8.5 3s6.5 1.5 6.5 1.5v15S12 18 8.5 18 2 19.5 2 19.5v-15Z"/>
@@ -3057,7 +3063,7 @@ body[data-phase="closer"] .sky {
           <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
           <div class="game-track" id="gameTrack">
             <div class="game-bunny" id="gameBunny">
-              <img src="sashas-car.png" alt="Sasha in Car" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <img loading="lazy" decoding="async" src="sashas-car.png" alt="Sasha in Car" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
               <span class="game-wisp-fallback"></span>
             </div>
             <div class="game-overlay" id="gameOverlay">
@@ -3088,7 +3094,7 @@ body[data-phase="closer"] .sky {
         <!-- To use your own photo: swap the src below for your image filename. -->
         <div class="memory-lane-card" onclick="window.open('https://insight-speaking-club.github.io/queerfashion/', '_blank')">
           <div class="postcard-frame">
-            <img src="fashion-speaking-club.png" alt="Fashion Speaking Club promo" class="postcard-photo" onerror="this.style.display='none'">
+            <img loading="lazy" decoding="async" src="fashion-speaking-club.png" alt="Fashion Speaking Club promo" class="postcard-photo" onerror="this.style.display='none'">
             <div class="memory-glass-sheen"></div>
             <div class="postcard-photo-vignette"></div>
             <div class="postcard-corner tl"></div>
@@ -3115,7 +3121,7 @@ body[data-phase="closer"] .sky {
 
         <!-- EVENT FOOTER -->
         <div class="event-footer">
-          <img src="logo.png" alt="Logo" class="footer-logo" onerror="this.style.display='none'">
+          <img loading="lazy" decoding="async" src="logo.png" alt="Logo" class="footer-logo" onerror="this.style.display='none'">
           <div class="footer-credit">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
           <div class="footer-message">Thank you for coming.<br>See you next time ♡</div>
           <a href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" class="footer-instagram">
@@ -4251,7 +4257,7 @@ function buildGarden(){
   if(!bed) return;
   // Layered paper folds
   bed.innerHTML = `
-    <img class="bouquet-bow-img" src="bow.png" alt="" onerror="this.style.display='none'">
+    <img class="bouquet-bow-img" loading="lazy" decoding="async" src="bow.png" alt="" onerror="this.style.display='none'">
     <div id="bouquetFlowers"></div>
     <div class="bouquet-wrap-left-fold"></div>
     <div class="bouquet-wrap-right-fold"></div>
