@@ -14,7 +14,7 @@
     --rose:#d94f8c;
     --gold:#f2c14e;
     --mist:#f4e9ff;
-    --dim:#b9a3d1;
+    --dim:#d1c1e0; /* Brightened from #b9a3d1 */
     --vh:100vh;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -238,12 +238,14 @@
     /* The black screen fades out right after the light bloom */
     animation: fade-out-world 1s cubic-bezier(0.4, 0, 0.2, 1) forwards 2.8s;
     pointer-events: none;
+    will-change: opacity;
   }
 
   .heart-container {
     position: relative;
     display: flex; align-items: center; justify-content: center;
     animation: camera-push-through 3s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+    will-change: transform;
   }
 
   .cinematic-heart {
@@ -253,14 +255,18 @@
     animation:
       heartbeat-double 1.2s ease-in-out 2,
       heart-bloom 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 2.2s;
+    will-change: transform, opacity;
+    transform: translateZ(0);
   }
 
   .shatter-ring {
     position: absolute; width: 2px; height: 2px; border-radius: 50%;
     border: 2px solid var(--gold);
+    box-shadow: 0 0 20px 6px rgba(242, 193, 78, 0.5); /* static — not animated, so it costs nothing extra per frame */
     opacity: 0;
     /* A golden shockwave when it blooms */
     animation: shockwave 0.8s cubic-bezier(0.1, 1, 0.3, 1) forwards 2.2s;
+    will-change: transform, opacity;
   }
 
   /* --- THE ORGANIC KEYFRAMES --- */
@@ -275,12 +281,12 @@
   @keyframes heart-bloom {
     0% { transform: scale(1.35); opacity: 1; }
     30% { transform: scale(0.85); opacity: 1; filter: brightness(2); } /* Deep inhale before burst */
-    100% { transform: scale(45); opacity: 0; filter: blur(15px) brightness(4); } /* Blinding light wash */
+    100% { transform: scale(45); opacity: 0; filter: brightness(4); } /* Blinding light wash, no blur() — see note above */
   }
 
   @keyframes shockwave {
-    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 40px 20px rgba(242,193,78,0.6); }
-    100% { transform: scale(80); opacity: 0; box-shadow: 0 0 0 0 rgba(242,193,78,0); }
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(80); opacity: 0; }
   }
 
   @keyframes fade-out-world {
@@ -2238,7 +2244,8 @@ body[data-phase="closer"] .sky {
   .hub-sections {
     position: relative;
     width: 100%;
-    height: 600px; /* Taller canvas — gives bottom pins room so toggling "We're here" doesn't clip */
+    min-height: 70vh; /* Adapts to tall phones */
+    aspect-ratio: 4 / 5; /* Keeps the map drawn correctly on short/wide screens */
     background: #2a0e3f;
     border-radius: 20px;
     display: block; /* Overrides the original grid layout */
@@ -2405,15 +2412,26 @@ body[data-phase="closer"] .sky {
   /* 10. New guests, queued beside the car (not stacked on top of Home) */
   .hub-waiting-guests {
     position: absolute;
-    top: 4%; left: 38%;
+    top: 4%;
+    left: 38%;
+    right: 5%; /* Prevents the row from bleeding off the screen */
     display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    gap: 6px 4px;
-    width: 130px;
+    flex-wrap: nowrap; /* Forces a single line */
+    align-items: flex-start;
+    gap: 8px;
     z-index: 2;
+    overflow-x: auto; /* Enables swiping left/right */
+    -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
+    scrollbar-width: none; /* Hides scrollbar on Firefox */
   }
+
+  /* Hides scrollbar on Chrome/Safari/Edge */
+  .hub-waiting-guests::-webkit-scrollbar {
+    display: none;
+  }
+
   .hub-waiting-chip {
+    flex: 0 0 auto; /* Prevents the avatars from squishing as more people join */
     display: flex;
     flex-direction: column;
     align-items: center;
