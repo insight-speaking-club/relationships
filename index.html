@@ -2817,6 +2817,29 @@ body[data-phase="closer"] .sky {
                 <path d="M0,4 Q0,-5 1,3" stroke="#4a2160" stroke-width="1.1" fill="none" opacity="0.6" stroke-linecap="round"/>
                 <path d="M4,4 Q6,-2 4,3" stroke="#3d1a52" stroke-width="1.1" fill="none" opacity="0.6" stroke-linecap="round"/>
               </g>
+
+              <!-- Iconic Paris landmarks, same silhouette-ink + gold-accent
+                   language as the map icons above, so they read as part of
+                   this world rather than clip-art dropped on top. -->
+              <g id="mapEiffel">
+                <polygon points="0,-42 -2,-27 -6,-13 -14,10 -17,15 17,15 14,10 6,-13 2,-27" fill="#2a0e3f" opacity="0.8"/>
+                <line x1="-9.5" y1="-3" x2="9.5" y2="-3" stroke="#1c0a2c" stroke-width="1.1" opacity="0.7"/>
+                <line x1="-13.5" y1="7" x2="13.5" y2="7" stroke="#1c0a2c" stroke-width="1.1" opacity="0.7"/>
+                <circle cx="0" cy="-40" r="3.5" fill="url(#hubGlowGold)"/>
+                <circle cx="0" cy="-40" r="1.1" fill="#f2c14e" opacity="0.9"/>
+              </g>
+              <g id="mapArc">
+                <path d="M-15,-9 L15,-9 L15,15 L-15,15 Z M-7.5,15 L-7.5,-1.5 A7.5,7.5 0 0 1 7.5,-1.5 L7.5,15 Z"
+                      fill="#2a0e3f" fill-rule="evenodd" opacity="0.8"/>
+                <circle cx="0" cy="-9" r="1.3" fill="#f2c14e" opacity="0.85"/>
+              </g>
+              <g id="mapLouvre">
+                <rect x="-17" y="9.5" width="34" height="2" fill="#2a0e3f" opacity="0.7"/>
+                <polygon points="0,-15 14,10 -14,10" fill="#341251" opacity="0.82"/>
+                <polygon points="0,-15 14,10 -14,10" fill="none" stroke="#f2c14e" stroke-width="0.6" opacity="0.55"/>
+                <line x1="0" y1="-15" x2="0" y2="10" stroke="#f2c14e" stroke-width="0.5" opacity="0.5"/>
+                <line x1="-7" y1="-2.5" x2="7" y2="-2.5" stroke="#f2c14e" stroke-width="0.5" opacity="0.45"/>
+              </g>
             </defs>
 
             <!-- ground wash -->
@@ -2856,6 +2879,12 @@ body[data-phase="closer"] .sky {
             <!-- Little landmarks scattered around the route, so each stop
                  sits in its own "neighborhood" instead of empty space -->
             <use href="#mapCompass" transform="translate(355,42)"/>
+
+            <!-- Iconic Paris skyline pieces, tucked into open ground so
+                 the map itself says "Paris" at a glance -->
+            <use href="#mapArc" transform="translate(200,55) scale(1.0)"/>
+            <use href="#mapEiffel" transform="translate(378,255) scale(1.3)"/>
+            <use href="#mapLouvre" transform="translate(112,468) scale(1.0)"/>
 
             <!-- near Home -->
             <use href="#mapHouse" transform="translate(38,118) scale(0.9)"/>
@@ -4092,7 +4121,15 @@ function startBunnyGame(){
       "I see you treat red flags in this game exactly like you do in real life: you just let them fly right by.",
       "Oh, so you swerved to avoid the red flag? Let me guess, you think you can 'fix' it.",
       "You let the red flag live. The absolute lack of judgment is stunning to me.",
-      "Dodging red flags instead of crushing them? Oh, so you like toxic men. Got it."
+      "Dodging red flags instead of crushing them? Oh, so you like toxic men. Got it.",
+      "You don't have a type. You have a collection of red flags you call exceptions.",
+      "Red flags don't scare you, they just remind you of somebody.",
+      "Something tells me your group chat calls this 'giving him grace.' Babe, it's avoidance.",
+      "You're not colorblind. You're red-flag blind. Very different, much more expensive.",
+      "I've watched you forgive things a courtroom wouldn't.",
+      "You didn't miss the red flag. You waved back.",
+      "The bar is in hell and somehow you still limbo under it.",
+      "You call it 'seeing the good in people.' I call it a liability."
     ];
 
     const messagesPet = [
