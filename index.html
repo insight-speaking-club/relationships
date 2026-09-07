@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>Relationships | Speaking Club</title>
+<title>Relationships | Vogue Committee Headquarters</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Italiana&display=swap" rel="stylesheet">
 <style>
@@ -1403,7 +1403,7 @@
   }
   .question-text.swap{opacity:0;}
 
-  /* -- State 3: Court of Love™ (AITA) -- */
+  /* -- State 3: People's Court™ (AITA) -- */
   #state-aita { padding: 40px 26px; justify-content: center; height: auto; overflow: visible; }
   #state-aita .eyebrow, #state-aita h1.display, #state-aita p.sub { display: block; }
   .aita-buttons{
@@ -1978,6 +1978,230 @@ body[data-phase="closer"] .sky {
   opacity: 1; margin-top: 24px;
 }
 
+/* --- THE TIMELINE --- */
+.timeline-container {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin: 20px auto 40px;
+  padding-left: 24px; /* Space for the line */
+  text-align: left;
+}
+
+/* The glowing golden thread connecting eras */
+.timeline-line {
+  position: absolute;
+  top: 10px;
+  bottom: 0;
+  left: 6px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--gold) 0%, rgba(242, 193, 78, 0.2) 100%);
+  box-shadow: 0 0 10px rgba(242, 193, 78, 0.5);
+  border-radius: 2px;
+}
+
+.timeline-event {
+  position: relative;
+  margin-bottom: 36px;
+  opacity: 0.9;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.timeline-event:hover {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* The nodes on the timeline */
+.timeline-dot {
+  position: absolute;
+  left: -23px; /* Centers dot on the line */
+  top: 2px;
+  width: 10px;
+  height: 10px;
+  background: var(--ink);
+  border: 2px solid rgba(244, 233, 255, 0.4);
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.timeline-event.current-era .timeline-dot {
+  border-color: var(--gold);
+  background: var(--gold);
+  box-shadow: 0 0 15px rgba(242, 193, 78, 0.8);
+}
+
+.timeline-dot.pulse {
+  animation: dot-pulse 2s infinite;
+}
+@keyframes dot-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(242, 193, 78, 0.6); }
+  70% { box-shadow: 0 0 0 8px rgba(242, 193, 78, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(242, 193, 78, 0); }
+}
+
+.timeline-date {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 8px;
+}
+
+.timeline-event.current-era .timeline-date {
+  color: var(--gold);
+}
+
+.timeline-card {
+  background: linear-gradient(160deg, rgba(30,15,45,0.7) 0%, rgba(18,8,33,0.9) 100%);
+  border: 1px solid rgba(244, 233, 255, 0.15);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.timeline-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 24px;
+  color: var(--mist);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+/* Clean narrative text instead of bullets */
+.timeline-desc {
+  font-family: 'Jost', sans-serif;
+  font-size: 14.5px;
+  color: rgba(244, 233, 255, 0.85);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* The Promo Picture Container */
+.timeline-photo-wrap {
+  width: 100%;
+  height: 280px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  border: 1px solid rgba(242, 193, 78, 0.3);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.timeline-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  filter: saturate(0.9) contrast(1.1);
+  display: block;
+}
+
+/* The Vogue Committee Challenge Box */
+.timeline-challenge {
+  background: rgba(242, 193, 78, 0.08);
+  border-left: 2px solid var(--gold);
+  padding: 12px 14px;
+  border-radius: 0 8px 8px 0;
+  font-family: 'Jost', sans-serif;
+  font-size: 13.5px;
+  color: var(--mist);
+  margin-bottom: 20px;
+  line-height: 1.45;
+}
+
+.challenge-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+/* The Glass Closet Button */
+.timeline-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(242, 193, 78, 0.4);
+  color: var(--gold);
+  border-radius: 30px;
+  padding: 10px 18px;
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.timeline-btn:hover {
+  background: var(--gold);
+  color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(242, 193, 78, 0.2);
+}
+
+/* The numbered step flow inside the challenge card */
+.timeline-steps {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.step-num {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(242, 193, 78, 0.15);
+  border: 1px solid rgba(242, 193, 78, 0.4);
+  color: var(--gold);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.step-title {
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--mist);
+  margin-bottom: 2px;
+}
+
+.step-sub {
+  font-family: 'Jost', sans-serif;
+  font-size: 12.5px;
+  color: rgba(244, 233, 255, 0.7);
+  line-height: 1.4;
+}
+
+.timeline-steps .timeline-btn {
+  align-self: flex-start;
+  margin: 8px 0 18px 34px;
+}
+
+.timeline-steps .timeline-step:last-of-type ~ .timeline-btn {
+  margin-bottom: 0;
+}
+
 /* --- EVENT FOOTER --- */
 .event-footer {
   text-align: center;
@@ -2405,6 +2629,42 @@ body[data-phase="closer"] .sky {
   #hubCardGarden   { top: 35%; left: 62%; }
   #hubCardAita     { top: 60%; left: 22%; }
   #hubCardCloser   { top: 72%; left: 48%; }
+  #hubCardVogue    { top: 10%; left: 68%; }
+
+  /* Vogue Committee HQ: a small, quiet reference pin — NOT a stop that
+     "opens" like the activities, so it should read as secondary, not a
+     focal point. ID selector used so this reliably beats the generic
+     unlocked-pin glow/gradient/size rules above. */
+  #hubCardVogue.hub-card {
+    width: 62px;
+  }
+  #hubCardVogue .hub-card-icon {
+    width: 30px;
+    height: 30px;
+    background: rgba(30, 15, 45, 0.85) !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4) !important;
+    border: 1.5px solid rgba(244, 233, 255, 0.35) !important;
+    animation: none !important;
+  }
+  #hubCardVogue .hub-card-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+  #hubCardVogue .hub-card-photo {
+    width: 26px;
+    height: 26px;
+  }
+  #hubCardVogue .hub-card-title {
+    font-size: 9.5px;
+    padding: 2px 7px;
+    background: rgba(20, 10, 30, 0.85);
+    color: var(--gold);
+    border: 1px solid rgba(242, 193, 78, 0.4);
+    box-shadow: none;
+  }
+  #hubCardVogue {
+    opacity: 0.85;
+  }
 
   /* 7b. FIX: on the map, every pin is centered on its coordinate via
      translate(-50%, -50%) (rule #3 above). The base stylesheet's
@@ -2726,7 +2986,7 @@ body[data-phase="closer"] .sky {
       <div style="text-align: center; margin: 12px 0 12px; width: 100%; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
         <button id="btnToggleGame" class="copilot-btn">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3v6.5M19.79 16.5L14.6 13.5M4.21 16.5L9.4 13.5"/></svg>
-          <span id="distractionLabel">Help Sasha stay sharp at the wheel</span>
+          <span id="distractionLabel">⚠️ Tap here to drive (Warning: Sasha judges your skills)</span>
           <svg id="distractionIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.4s ease;"><path d="m6 9 6 6 6-6"/></svg>
         </button>
       </div>
@@ -2946,7 +3206,7 @@ body[data-phase="closer"] .sky {
             <!-- near Midnight Garden -->
             <use href="#mapPark" transform="translate(302,138) scale(1.15)"/>
 
-            <!-- near Court of Love -->
+            <!-- near People's Court -->
             <use href="#mapCourt" transform="translate(38,262) scale(1.05)"/>
 
             <!-- near The Post Office -->
@@ -3092,7 +3352,7 @@ body[data-phase="closer"] .sky {
             </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Group Activity</div>
-              <div class="hub-card-title">Court of Love™</div>
+              <div class="hub-card-title">People's Court™</div>
               <div class="hub-card-desc">We're parked. Step inside, take your seat, and prepare to cast your vote.</div>
               <div class="hub-card-lock-note">The doors are currently closed.</div>
             </div>
@@ -3123,6 +3383,24 @@ body[data-phase="closer"] .sky {
               <div class="hub-card-title">The Post Office</div>
               <div class="hub-card-desc">Last stop of the night. The Post Office is open—post something you love before we head home.</div>
               <div class="hub-card-lock-note">The Post Office remains closed for now.</div>
+            </div>
+          </div>
+
+          <!-- Always-open side stop: not part of the driving route, so no connector heart -->
+          <div class="hub-card hub-card-vogue" id="hubCardVogue">
+            <div class="hub-card-icon">
+              <!-- Drop a real photo here named exactly this, or leave it
+                   missing — it'll quietly fall back to the award icon -->
+              <img class="hub-card-photo" loading="lazy" decoding="async" src="vogue-committee.png" alt="" onerror="this.style.display='none'">
+              <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+              </svg>
+            </div>
+            <div>
+              <div class="hub-card-sub" style="color:var(--gold);">Always Open</div>
+              <div class="hub-card-title">Vogue Committee Headquarters</div>
+              <div class="hub-card-desc">Where the looks get judged. Drop in anytime to see the archive and submit yours.</div>
             </div>
           </div>
 
@@ -3167,7 +3445,7 @@ body[data-phase="closer"] .sky {
         </div>
 
         <div class="host-map-deck-row">
-          <span class="host-map-deck-label">Court of Love™</span>
+          <span class="host-map-deck-label">People's Court™</span>
           <!-- HOST ONLY: Minimal Court Controls -->
           <div id="hostControlsAita" class="host-inline-controls" style="display:none; justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightCourt">Toggle "We're here"</button>
@@ -3218,36 +3496,63 @@ body[data-phase="closer"] .sky {
     <!-- VISUALLY SEPARATED ARCHIVE & FOOTER (COLLAPSIBLE) -->
     <div class="archive-footer-section" id="archiveSection">
       <button class="archive-toggle-btn" id="btnToggleArchive">
-        <span>View Past Events</span>
+        <span>View Past Eras</span>
         <svg class="archive-toggle-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       
       <div class="archive-content" id="archiveContent">
-        <!-- THE SINGLE DEBUT ARCHIVE CARD, STYLED AS A POSTCARD FROM THE PLACE ITSELF -->
-        <!-- To use your own photo: swap the src below for your image filename. -->
-        <div class="memory-lane-card" onclick="window.open('https://insight-speaking-club.github.io/queerfashion/', '_blank')">
-          <div class="postcard-frame">
-            <img loading="lazy" decoding="async" src="fashion-speaking-club.png" alt="Fashion Speaking Club promo" class="postcard-photo" onerror="this.style.display='none'">
-            <div class="memory-glass-sheen"></div>
-            <div class="postcard-photo-vignette"></div>
-            <div class="postcard-corner tl"></div>
-            <div class="postcard-corner tr"></div>
-            <div class="postcard-corner bl"></div>
-            <div class="postcard-corner br"></div>
-            <div class="postcard-postmark">
-              <span class="pm-star">✦</span>
-              <span class="pm-label">Sealed</span>
-            </div>
-          </div>
-          <div class="postcard-tag">
-            <span id="memoryDateCalc">August 14</span>
-          </div>
-          <div class="memory-lane-text postcard-caption">
-            <div class="memory-lane-title">Fashion Speaking Club</div>
-            <div class="memory-lane-desc">Where it all began. Take a trip down memory lane to our debut archive.</div>
-            <div class="memory-lane-icon">
-              Revisit the place
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <!-- GLOWING VERTICAL TIMELINE: past eras as an ongoing narrative -->
+        <div class="timeline-container">
+          <!-- The Glowing Thread -->
+          <div class="timeline-line"></div>
+
+          <!-- ERA I (Past) -->
+          <div class="timeline-event" id="eraFashionCard">
+            <div class="timeline-dot"></div>
+            <div class="timeline-date" id="memoryDateCalc">August 14, 2026 &bull; The Debut</div>
+            <div class="timeline-card">
+
+              <!-- Re-integrated Promo Picture -->
+              <div class="timeline-photo-wrap">
+                <img loading="lazy" decoding="async" src="fashion-speaking-club-billboard.png" alt="Fashion Era" class="timeline-photo" onerror="this.style.display='none'">
+              </div>
+
+              <div class="timeline-title">Era I: Fashion</div>
+              <div class="timeline-desc">
+                Where it all started. The birthplace of the Vogue Committee and our very first digital closet.
+              </div>
+
+              <!-- The Vogue Committee Challenge -->
+              <div class="timeline-challenge">
+                <span class="challenge-label">Vogue Committee Challenge:</span>
+                Tonight's theme: Relationship Milestones.
+              </div>
+
+              <div class="timeline-steps">
+                <div class="timeline-step">
+                  <div class="step-num">1</div>
+                  <div class="step-text">
+                    <div class="step-title">Build your look</div>
+                    <div class="step-sub">Head into the Glass Closet and put a fit together.</div>
+                  </div>
+                </div>
+                <button class="timeline-btn" onclick="window.open('https://insight-speaking-club.github.io/glass-closet/', '_blank')">
+                  Enter the Glass Closet
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+
+                <div class="timeline-step">
+                  <div class="step-num">2</div>
+                  <div class="step-text">
+                    <div class="step-title">Send it in</div>
+                    <div class="step-sub">Screenshot your look and send it to the Vogue Committee so everyone can judge it 💋</div>
+                  </div>
+                </div>
+                <button class="timeline-btn" onclick="window.open('https://t.me/+UC1vcZZRBWA0ZDg6', '_blank')">
+                  Submit to Vogue Committee
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -3326,7 +3631,7 @@ body[data-phase="closer"] .sky {
   <!-- STATE 3: RELATIONSHIPS COMMITTEE™ (AITA) -->
   <div id="state-aita" class="lounge-state">
     <button class="back-btn" id="btnBackToGatheringAita" onclick="setLoungeState('state-gathering')">‹</button>
-    <div class="eyebrow">Court of Love™</div>
+    <div class="eyebrow">People's Court™</div>
     <h1 class="display" style="font-size:28px;">Cast Your Verdict</h1>
     <p class="sub" style="margin-bottom: 24px;">The Host will present a real-life relationship conflict. Listen to the evidence, evaluate the boundaries crossed, and cast your official vote below.</p>
     <div class="aita-buttons">
@@ -3575,7 +3880,7 @@ window.addEventListener('load', ()=>{
   const diffDays = Math.floor((new Date() - debutDate) / (1000 * 60 * 60 * 24));
   const memoryDateEl = document.getElementById('memoryDateCalc');
   if(memoryDateEl) {
-    memoryDateEl.innerHTML = `August 14 &bull; ${diffDays} days ago`;
+    memoryDateEl.innerHTML = `August 14, 2026 &bull; ${diffDays} days ago`;
   }
 });
 
@@ -3664,7 +3969,7 @@ const TOUR_STEPS = [
   { selector: '#hubCardRoulette', title: 'Home', desc: 'We are currently idling right here. Before we hit the road, the host will trigger the GPS to recalibrate—if it locks onto you, answer honestly.', pad: 8 },
   // The rest remain the same
   { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
-  { selector: '#hubCardAita', title: 'Court of Love™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
+  { selector: '#hubCardAita', title: 'People\'s Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
   { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Last stop of the night. We\'ll each post something we love before we head home.', pad: 8 }
 ];
 
@@ -3872,7 +4177,7 @@ function listenPhase(){
 const HUB_SECTION_NAMES = {
   roulette: 'Home',
   garden: 'Midnight Garden',
-  aita: 'Court of Love™',
+  aita: 'People\'s Court™',
   closer: 'The Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
@@ -3887,8 +4192,8 @@ const HUB_UNLOCK_MESSAGES = {
     "The Garden's unlocked, love. Tap in, romance waits for no one, especially not me 💋"
   ],
   aita: [
-    "Court of Love™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
-    "Court's open! Tap Court of Love™ and serve your verdict with the drama it deserves 🤭",
+    "People's Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
+    "Court's open! Tap People's Court™ and serve your verdict with the drama it deserves 🤭",
     "We are PARKED, darling. Tap in, it's time to decide who's simply wrong here 🐇"
   ],
   closer: [
@@ -4037,6 +4342,22 @@ document.getElementById('hubCardCloser').addEventListener('click', function() {
   if (handleLockedHubClick(this)) return;
   // Open Padlet in a new tab/window
   window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank');
+});
+document.getElementById('hubCardVogue').addEventListener('click', function() {
+  // Not a locked/unlockable activity — just jump down to the archive
+  // timeline and auto-expand it, same as the "View Past Eras" toggle.
+  // Then land exactly on the Era I: Fashion card (the speaking-club/
+  // Glass Closet card), not just the top of the archive section.
+  const toggleBtn = document.getElementById('btnToggleArchive');
+  const content = document.getElementById('archiveContent');
+  const fashionCard = document.getElementById('eraFashionCard');
+  if (!content.classList.contains('open')) {
+    content.classList.add('open');
+    toggleBtn.classList.add('open');
+  }
+  setTimeout(() => {
+    (fashionCard || content).scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 150);
 });
 
 function enterAitaRound(round){
@@ -4776,7 +5097,7 @@ function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5
   el.innerHTML = `
     <div class="toast-top">
       <img class="toast-icon" src="sasha.png" alt="">
-      <span class="toast-appname">Speaking Club</span>
+      <span class="toast-appname">Vogue Committee Headquarters</span>
       <span class="toast-time">now</span>
     </div>
     <div class="toast-title">${escapeHtml(title)}</div>
@@ -4804,7 +5125,7 @@ function showMessageToast(msg){
   // If a browser tab is backgrounded and alerts were enabled, also fire a real OS notification.
   try{
     if(document.hidden && window.Notification && Notification.permission === 'granted'){
-      new Notification(msg.from || 'Speaking Club', { body: msg.text || '', icon: 'sasha.png' });
+      new Notification(msg.from || 'Vogue Committee Headquarters', { body: msg.text || '', icon: 'sasha.png' });
     }
   }catch(e){ /* ignore */ }
 }
@@ -4916,7 +5237,7 @@ document.getElementById('btnTimerGarden').addEventListener('click', () => {
 });
 
 document.getElementById('btnTimerCourt').addEventListener('click', () => {
-  const mins = prompt("Set a timer for Court of Love (in minutes). Leave blank to clear/skip.", "25");
+  const mins = prompt("Set a timer for People's Court (in minutes). Leave blank to clear/skip.", "25");
   if (mins === null) return;
   if (mins.trim() === "") {
     ref(`events/${EVENT_ID}/aitaTimerEnd`).set(null);
@@ -4964,7 +5285,7 @@ document.getElementById('btnPickElaborate').addEventListener('click', ()=>{
   ref(`events/${EVENT_ID}/messages/${id}`).set({
     text: `${pick.name}, please defend your position! 🎙️`,
     target: pick.id,
-    from: 'Court of Love™',
+    from: 'People\'s Court™',
     avatar: '⚖️',
     senderId: me && me.id,
     ts: Date.now()
@@ -5183,7 +5504,7 @@ if (isHost) {
 /* ---------- MAGNETIC TOUCH-RESPONSE ---------- */
 // Applies a physical "pull" to primary interactive elements as a thumb
 // drags across them, snapping back with a spring on release.
-document.querySelectorAll('.hub-card:not(.locked), .btn, .aita-btn').forEach(el => {
+document.querySelectorAll('.hub-card:not(.locked):not(.hub-sections .hub-card), .btn, .aita-btn').forEach(el => {
   el.style.transition = 'transform 0.4s cubic-bezier(0.22, 1.6, 0.4, 1)';
 
   el.addEventListener('pointermove', (e) => {
@@ -5217,12 +5538,12 @@ document.getElementById('btnToggleGame').addEventListener('click', function() {
   if (!isOpen) {
     container.classList.add('open');
     icon.style.transform = 'rotate(180deg)';
-    label.textContent = "Eyes back on the road";
+    label.textContent = "Let Sasha drive alone";
     startBunnyGame();
   } else {
     container.classList.remove('open');
     icon.style.transform = 'rotate(0deg)';
-    label.textContent = "Help Sasha stay sharp at the wheel";
+    label.textContent = "⚠️ Tap here to drive (Warning: Sasha judges your skills)";
     stopBunnyGame();
   }
 });
