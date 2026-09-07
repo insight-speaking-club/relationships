@@ -942,13 +942,49 @@
     filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none;
   }
   .jump-particle {
-    position: absolute; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--gold); box-shadow: 0 0 10px var(--gold); pointer-events: none;
-    animation: particle-fade 0.6s ease-out forwards; z-index: 1;
+    position: absolute; font-size: 18px; pointer-events: none;
+    animation: ribbon-float 0.7s ease-out forwards; z-index: 5;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
   }
-  @keyframes particle-fade {
-    0% { transform: scale(1) translate(0,0); opacity: 1; }
-    100% { transform: scale(0) translate(-30px, 20px); opacity: 0; }
+  @keyframes ribbon-float {
+    0% { transform: scale(1) translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { transform: scale(1.5) translate(-40px, 30px) rotate(-35deg); opacity: 0; }
+  }
+
+  /* Aesthetic power-up (wire-rimmed glasses) */
+  .obs-powerup {
+    position: absolute; bottom: 52px; font-size: 32px; z-index: 2;
+    filter: drop-shadow(0 0 15px #00f0ff); pointer-events: none;
+    animation: float-powerup 1.5s ease-in-out infinite;
+  }
+  @keyframes float-powerup {
+    0%,100%{transform:translateY(0) scale(1);}
+    50%{transform:translateY(-12px) scale(1.1);}
+  }
+
+  /* Invincibility state */
+  .game-bunny.invincible {
+    filter: drop-shadow(0 10px 20px #00f0ff) drop-shadow(0 0 30px #f2c14e);
+    animation: power-pulse 0.5s ease-in-out infinite alternate;
+  }
+  @keyframes power-pulse {
+    from { filter: drop-shadow(0 10px 20px #00f0ff) drop-shadow(0 0 10px #f2c14e); }
+    to { filter: drop-shadow(0 10px 20px #00f0ff) drop-shadow(0 0 40px #f2c14e); }
+  }
+
+  /* Milestone phase shift (dark academia speed-run) */
+  .lounge-ground.phase-2 .ground-grass {
+    background: #0a0510;
+    border-top-color: var(--rose);
+    transition: background 2s ease, border-color 2s ease;
+  }
+  .lounge-ground.phase-2 .layer-back {
+    filter: hue-rotate(45deg) brightness(0.6);
+    transition: filter 2s ease;
+  }
+  .lounge-ground.phase-2 .ground-sky-fade {
+    background: linear-gradient(180deg, rgba(18,8,33,0), rgba(217, 79, 140, 0.2));
+    transition: background 2s ease;
   }
 
   /* -- State 2: The Garden (Match Reveal & Blossoms) -- */
@@ -4079,11 +4115,11 @@ function startBunnyGame(){
   if(!track) return;
 
   // clear any obstacles left over from a previous round of this game
-  track.querySelectorAll('.obs-basic, .obs-iconic').forEach(el=>el.remove());
+  track.querySelectorAll('.obs-basic, .obs-iconic, .obs-powerup').forEach(el=>el.remove());
 
   bg = {
     running:false, over:false, y:0, vy:0, score:0, speed:3.2, frame:0, nextSpawn:60,
-    scrollBack:0, scrollMid:0, scrollFront:0,
+    scrollBack:0, scrollMid:0, scrollFront:0, jumps:0, invincibleUntil:0, phase:1,
     obstacles:[], raf:null, track, bunnyEl, scoreEl, overlay
   };
   const high = Number(localStorage.getItem('fsc_bunny_high')||0);
@@ -4095,18 +4131,25 @@ function startBunnyGame(){
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
   const parallaxFront = document.getElementById('parallaxFront');
+  const loungeGround = document.getElementById('loungeGround');
 
   function jump(){
     if(!bg || !bg.running) return;
-    if(bg.y <= 0.5){
-      bg.vy = 12.5;
-      // Jump spark
+
+    // Double jump: allowed on the ground (first jump) or mid-air (second jump)
+    if(bg.y <= 0.5 || bg.jumps < 2){
+      bg.vy = bg.y <= 0.5 ? 12.5 : 10.5; // second jump is slightly softer
+      bg.jumps = bg.y <= 0.5 ? 1 : 2;
+
+      if(navigator.vibrate) navigator.vibrate(15);
+
       const spark = document.createElement('div');
       spark.className = 'jump-particle';
+      spark.textContent = '🎀';
       spark.style.left = '30px';
-      spark.style.bottom = '52px';
+      spark.style.bottom = (52 + bg.y) + 'px';
       bg.track.appendChild(spark);
-      setTimeout(()=>spark.remove(), 600);
+      setTimeout(()=>spark.remove(), 700);
     }
   }
   function beginRun(){
@@ -4114,6 +4157,12 @@ function startBunnyGame(){
     bg.obstacles = [];
     bg.y = 0; bg.vy = 0; bg.score = 0; bg.speed = 3.2; bg.frame = 0; bg.nextSpawn = 60;
     bg.scrollBack = 0; bg.scrollMid = 0; bg.scrollFront = 0;
+    bg.jumps = 0; bg.invincibleUntil = 0; bg.phase = 1;
+
+    // Reset phase-shift visuals and invincibility glow from any previous run
+    if(loungeGround) loungeGround.classList.remove('phase-2');
+    bunnyEl.classList.remove('invincible');
+
     bg.over = false; bg.running = true;
     bg.lastTime = performance.now(); // Track initial time
     bunnyEl.style.transform = 'translateY(0)';
@@ -4199,7 +4248,7 @@ function startBunnyGame(){
     bg.frame += dt;
     bg.y += bg.vy * dt;
     bg.vy -= 0.75 * dt;
-    if(bg.y < 0){ bg.y = 0; bg.vy = 0; }
+    if(bg.y < 0){ bg.y = 0; bg.vy = 0; bg.jumps = 0; }
     bunnyEl.style.transform = `translateY(${-bg.y}px)`;
 
     // Parallax Background Scrolling
@@ -4210,18 +4259,33 @@ function startBunnyGame(){
     if(parallaxMid) parallaxMid.style.backgroundPosition = `${bg.scrollMid}px bottom`;
     if(parallaxFront) parallaxFront.style.backgroundPosition = `${bg.scrollFront}px bottom`;
 
+    // Milestone progression: dark-academia phase shift past 500 points
+    if (bg.score > 500 && bg.phase === 1) {
+      bg.phase = 2;
+      if(loungeGround) loungeGround.classList.add('phase-2');
+      if(navigator.vibrate) navigator.vibrate([40, 60, 40, 60, 100]);
+    }
+
     // SPAWN LOGIC (Protect the pets, run over the red flags)
     const BAD_ITEMS = ['🐈', '🐇']; // Pets: Jump over them so you don't crash!
     if(bg.frame >= bg.nextSpawn){
-      const isBad = Math.random() < 0.6; // 60% pet, 40% red flag
+      const roll = Math.random();
       const el = document.createElement('div');
-      el.className = isBad ? 'obs-basic' : 'obs-iconic';
-      if(isBad){
+
+      if (roll < 0.10) {
+        // Power-up: wire-rimmed glasses grant temporary invincibility
+        el.className = 'obs-powerup';
+        el.textContent = '👓';
+        el.dataset.type = 'powerup';
+      } else if (roll < 0.55) {
+        el.className = 'obs-basic';
         el.textContent = BAD_ITEMS[Math.floor(Math.random()*BAD_ITEMS.length)];
+        el.dataset.type = 'bad';
       } else {
+        el.className = 'obs-iconic';
         el.innerHTML = '<img src="red-flag.png" alt="red flag">';
+        el.dataset.type = 'good';
       }
-      el.dataset.type = isBad ? 'bad' : 'good';
 
       const w = track.clientWidth;
       el.style.left = w + 'px';
@@ -4231,6 +4295,10 @@ function startBunnyGame(){
     }
 
     const bunnyLeft = 33, bunnyWidth = 50;
+
+    // Apply invincibility visual state
+    const isInvincible = bg.frame < bg.invincibleUntil;
+    bunnyEl.classList.toggle('invincible', isInvincible);
 
     // COLLISION LOGIC
     for(let idx = bg.obstacles.length - 1; idx >= 0; idx--){
@@ -4245,10 +4313,21 @@ function startBunnyGame(){
 
       if (overlapX && isGrounded) {
         if (o.el.dataset.type === 'bad') {
-          // Crashed into a pet = LOSE
-          gameOver('pet'); return;
+          // Crashed into a pet = LOSE (unless invincible)
+          if (!isInvincible) {
+            if(navigator.vibrate) navigator.vibrate([100, 50, 150]);
+            gameOver('pet'); return;
+          }
+        } else if (o.el.dataset.type === 'powerup') {
+          // Caught the power-up: ~6 seconds of invincibility
+          if(navigator.vibrate) navigator.vibrate([30, 40, 50]);
+          bg.invincibleUntil = bg.frame + 350;
+          o.el.remove();
+          bg.obstacles.splice(idx, 1);
+          continue;
         } else {
           // Ran over a red flag/clown/trash = +50 POINTS!
+          if(navigator.vibrate) navigator.vibrate(30);
           bg.score += 50;
           o.el.remove();
           bg.obstacles.splice(idx, 1);
@@ -4257,8 +4336,15 @@ function startBunnyGame(){
       } else if (o.x + 40 < bunnyLeft) {
         // Passed the item!
         if (o.el.dataset.type === 'good') {
-          // Missed a hater target = LOSE
-          gameOver('flag'); return;
+          // Missed a hater target = LOSE (unless invincible pardons it)
+          if (!isInvincible) {
+            if(navigator.vibrate) navigator.vibrate([100, 50, 150]);
+            gameOver('flag'); return;
+          } else {
+            o.el.remove();
+            bg.obstacles.splice(idx, 1);
+            continue;
+          }
         } else {
           // Jumped over a pet safely
           o.el.remove();
@@ -4269,7 +4355,7 @@ function startBunnyGame(){
     }
 
     bg.score += 0.5 * dt; // Apply dt to score ticks
-    bg.speed = Math.min(8, 3.5 + bg.score * 0.005); // Speeds up slowly
+    bg.speed = Math.min(9.5, 3.5 + bg.score * 0.005); // Raised max speed for double-jump balance
     scoreEl.textContent = String(Math.floor(bg.score));
     bg.raf = requestAnimationFrame(loop);
   }
@@ -4298,7 +4384,7 @@ function stopBunnyGame(){
   const track = document.getElementById('gameTrack');
   if(track) {
     // Safely wipe all obstacles and leftover particle effects
-    track.querySelectorAll('.obs-basic, .jump-particle').forEach(el => el.remove());
+    track.querySelectorAll('.obs-basic, .obs-iconic, .obs-powerup, .jump-particle').forEach(el => el.remove());
   }
 
   bg = null;
@@ -4307,7 +4393,7 @@ window.addEventListener('keydown', (e)=>{
   // Only trigger if they press Spacebar AND the game is actually running
   if(e.code === 'Space' && bg && bg.running && document.getElementById('screen-lounge').classList.contains('active')){
     e.preventDefault(); // This stops the page from scrolling down!
-    if(bg.y <= 0.5) bg.jump();
+    if(bg.y <= 0.5 || bg.jumps < 2) bg.jump();
   }
 });
 
