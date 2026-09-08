@@ -6,6 +6,8 @@
 <title>Relationships | Vogue Committee Headquarters</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="sasha-car-front-1.png" as="image">
+<link rel="preload" href="sasha.png" as="image">
 <style>
   :root{
     --ink:#120821;
@@ -1972,10 +1974,12 @@ body[data-phase="closer"] .sky {
   width: 100%; max-height: 0; opacity: 0;
   overflow: hidden; display: flex; flex-direction: column; align-items: center;
   transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+  margin-top: 0;
 }
 .archive-content.open {
-  max-height: 1100px;
-  opacity: 1; margin-top: 24px;
+  max-height: 1500px;
+  opacity: 1;
+  margin-top: 24px;
 }
 
 /* --- THE TIMELINE --- */
@@ -2869,6 +2873,37 @@ body[data-phase="closer"] .sky {
      make out standing characters, so this full-size roster is the primary
      place to see everyone. */
   .magical-gathering-section { display: block; }
+
+  /* --- PERFORMANCE RESCUE OVERRIDES --- */
+
+  /* Strip out expensive background blurs and replace with solid dark glass */
+  .greeting-bubble, .dashboard-section, #activitiesSection, .hub-card, 
+  .partner-card, .question-panel, .timeline-card, .leaderboard-container, 
+  #partnerRevealWindow {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: rgba(22, 10, 35, 0.98) !important;
+  }
+
+  /* Strip drop-shadows from character sprites (tracing alpha channels is a massive GPU bottleneck) */
+  .avatar-sprite {
+    filter: none !important; 
+  }
+
+  /* Reduce the blur radius on the car shadow */
+  .gathering-car-img {
+    filter: drop-shadow(0 8px 10px rgba(0,0,0,0.6)) !important;
+  }
+
+  /* Fix the ugly black boxes behind the itinerary map pins */
+  .hub-sections .hub-card {
+    background-color: transparent !important;
+  }
+
+  /* Limit background particles */
+  .stardust-mote:nth-child(n+12) {
+    display: none !important; 
+  }
 </style>
 </head>
 <body>
@@ -3029,11 +3064,6 @@ body[data-phase="closer"] .sky {
   <!-- STATE 1: THE GATHERING -->
   <div id="state-gathering" class="lounge-state active">
     <div class="lounge-content">
-          <!-- CLEAN HEADER -->
-      <div class="lounge-header" style="position: relative; padding-bottom: 12px;">
-        <h1 class="display" style="font-size:38px; background:linear-gradient(to right, #ffffff, var(--mist)); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:0 4px 25px rgba(255,255,255,0.25);">A Trip to the City of Love</h1>
-        <div style="position: absolute; bottom: 0; left: 20%; right: 20%; height: 1px; background: linear-gradient(90deg, transparent, rgba(242, 193, 78, 0.6), transparent);"></div>
-      </div>
 
       <!-- HOST ONLY: Roster -->
       <div id="hostRosterContainer" class="dashboard-section" style="display:none; border-color: var(--gold);">
@@ -3050,56 +3080,6 @@ body[data-phase="closer"] .sky {
             <button type="button" class="msg-send-btn" id="btnSendMsg">Send</button>
           </div>
         </div>
-      </div>
-
-      <!-- Sleek Toggle Button -->
-      <div style="text-align: center; margin: 12px 0 12px; width: 100%; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <button id="btnToggleGame" class="copilot-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3v6.5M19.79 16.5L14.6 13.5M4.21 16.5L9.4 13.5"/></svg>
-          <span id="distractionLabel">⚠️ Tap here to drive (Warning: Sasha judges your skills)</span>
-          <svg id="distractionIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.4s ease;"><path d="m6 9 6 6 6-6"/></svg>
-        </button>
-      </div>
-
-      <!-- Hidden Wrapper for Both Game and Leaderboard -->
-      <div id="distractionContainer" class="distraction-collapse">
-
-        <div class="game-section" id="gameSection" style="margin-top: 0;">
-          <div class="lounge-ground" aria-hidden="true" id="loungeGround">
-            <div class="ground-sky-fade"></div>
-            <div class="parallax-layer layer-back" id="parallaxBack"></div>
-            <div class="parallax-layer layer-mid" id="parallaxMid"></div>
-
-            <div class="ground-grass" id="parallaxFront"></div>
-          </div>
-
-          <div class="lounge-game" id="loungeGame">
-            <div class="game-instructions">jump the pets • run over the red flags</div>
-            <div class="game-score" id="gameScore">0</div>
-            <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
-            <div class="game-track" id="gameTrack">
-              <div class="game-bunny" id="gameBunny">
-                <img loading="lazy" decoding="async" src="sashas-car.png" alt="Sasha in Car" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <span class="game-wisp-fallback"></span>
-              </div>
-              <div class="game-overlay" id="gameOverlay">
-                <div>Help Sasha jump over cats and bunnies and run over red flags!</div>
-                <button class="btn" id="gameStartBtn">Play</button>
-              </div>
-              <button class="game-replay-btn" id="gameReplayBtn">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
-                <span>Play again</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- LEADERBOARD -->
-        <div class="leaderboard-container">
-          <div class="eyebrow" style="text-align:center; margin-bottom:12px;">Top Scores</div>
-          <div id="gameLeaderboard" class="leaderboard-list"></div>
-        </div>
-
       </div>
 
       <!-- TODAY'S ACTIVITIES -->
@@ -3329,7 +3309,7 @@ body[data-phase="closer"] .sky {
             <path class="hub-route-path" d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,72.8 74,72" />
           </svg>
 
-          <!-- Stop 0: Home -->
+          <!-- Stop 0: The Driveway -->
           <div class="hub-card locked" id="hubCardRoulette">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
@@ -3346,10 +3326,10 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--gold);">Icebreaker Activity</div>
-              <div class="hub-card-title">Home</div>
-              <div class="hub-card-desc">We're idling right here at Home. The GPS is recalibrating—step out and let's break the ice.</div>
-              <div class="hub-card-lock-note">The host will start the engine soon.</div>
+              <div class="hub-card-sub" style="color:var(--gold);">Matching Activity</div>
+              <div class="hub-card-title">The Driveway</div>
+              <div class="hub-card-desc">We're idling right here in the driveway. Gather 'round the car and wait to see who you're paired with.</div>
+              <div class="hub-card-lock-note">The host will assign partners soon.</div>
             </div>
           </div>
 
@@ -3485,7 +3465,7 @@ body[data-phase="closer"] .sky {
         <div class="host-map-deck-title">Host Controls</div>
 
         <div class="host-map-deck-row">
-          <span class="host-map-deck-label">Home</span>
+          <span class="host-map-deck-label">The Driveway</span>
           <!-- HOST ONLY: Roulette Controls -->
           <div id="hostControlsRoulette" class="host-inline-controls" style="display:none; justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightRoulette">Toggle "We're here"</button>
@@ -3561,119 +3541,81 @@ body[data-phase="closer"] .sky {
       <!-- HOST ONLY: Reset Button -->
       <button class="btn ghost" id="btnResetEvent" style="display:none; width: 100%; max-width: 420px; margin: 20px auto; border-color: rgba(255,77,94,0.4); color: #ff4d5e; font-size:12px;">Reset Entire Event (Danger)</button>
 
-    </div> <!-- CLOSES .lounge-content so the next part is full-width -->
-
-    <!-- VISUALLY SEPARATED ARCHIVE & FOOTER (COLLAPSIBLE) -->
-    <div class="archive-footer-section" id="archiveSection">
-      <button class="archive-toggle-btn" id="btnToggleArchive">
-        <span>View Past Eras</span>
-        <svg class="archive-toggle-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      
-      <div class="archive-content" id="archiveContent">
-        <!-- GLOWING VERTICAL TIMELINE: past eras as an ongoing narrative -->
-        <div class="timeline-container">
-          <!-- The Glowing Thread -->
-          <div class="timeline-line"></div>
-
-          <!-- ERA I (Past) -->
-          <div class="timeline-event" id="eraFashionCard">
-            <div class="timeline-dot"></div>
-            <div class="timeline-date" id="memoryDateCalc">August 14, 2026 &bull; The Debut</div>
-            <div class="timeline-card">
-
-              <!-- Re-integrated Promo Picture -->
-              <div class="timeline-photo-wrap">
-                <img loading="lazy" decoding="async" src="fashion-speaking-club-billboard.png" alt="Fashion Era" class="timeline-photo" onerror="this.style.display='none'">
-              </div>
-
-              <div class="timeline-title">Era I: Fashion</div>
-              <div class="timeline-desc">
-                Where it all started. The birthplace of the Vogue Committee and our very first digital closet.
-              </div>
-
-              <!-- The Vogue Committee Challenge — the theme itself is now
-                   the tap target, so guests can't miss that it's interactive. -->
-              <button class="timeline-challenge" id="btnToggleChallenge">
-                <div class="challenge-toggle-top">
-                  <span class="challenge-label">Vogue Committee Challenge:</span>
-                  <svg class="challenge-toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-                <div class="challenge-theme">Tonight's theme: Relationship Milestones.</div>
-                <div class="challenge-cta">Tap to join the challenge</div>
-              </button>
-
-              <div class="challenge-steps-wrap" id="challengeStepsWrap">
-              <div class="timeline-steps">
-                <div class="timeline-step">
-                  <div class="step-num">1</div>
-                  <div class="step-text">
-                    <div class="step-title">Build your look</div>
-                    <div class="step-sub">Head into the Glass Closet and put a fit together.</div>
-                  </div>
-                </div>
-                <button class="timeline-btn" onclick="window.open('https://insight-speaking-club.github.io/glass-closet/', '_blank')">
-                  Enter the Glass Closet
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </button>
-
-                <div class="timeline-step">
-                  <div class="step-num">2</div>
-                  <div class="step-text">
-                    <div class="step-title">Send it in</div>
-                    <div class="step-sub">Screenshot your look and send it to the Vogue Committee so everyone can judge it 💋</div>
-                  </div>
-                </div>
-                <button class="timeline-btn" onclick="window.open('https://t.me/+UC1vcZZRBWA0ZDg6', '_blank')">
-                  Submit to Vogue Committee
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </button>
-              </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- EVENT FOOTER -->
-        <div class="event-footer">
-          <img loading="lazy" decoding="async" src="logo.png" alt="Logo" class="footer-logo" onerror="this.style.display='none'">
-          <div class="footer-credit">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
-          <div class="footer-message">Thank you for coming.<br>See you next time ♡</div>
-          <a href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" class="footer-instagram">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            @z3xhwi14
-          </a>
-        </div>
+      <!-- EVENT FOOTER -->
+      <div class="event-footer" style="margin-top: 40px; padding-bottom: 40px;">
+        <img loading="lazy" decoding="async" src="logo.png" alt="Logo" class="footer-logo" onerror="this.style.display='none'">
+        <div class="footer-credit">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
+        <div class="footer-message">Thank you for coming.<br>See you next time ♡</div>
+        <a href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" class="footer-instagram">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          @z3xhwi14
+        </a>
       </div>
-    </div>
+
+    </div> <!-- CLOSES .lounge-content so the next part is full-width -->
 
   </div> <!-- CLOSES #state-gathering -->
 
-  <!-- STATE 1.5: THE STARTING POINT (GPS ROULETTE) -->
+  <!-- STATE 1.5: THE DRIVEWAY (Passenger List & Red Flag Rally) -->
   <div id="state-roulette" class="lounge-state">
     <button class="back-btn" id="btnBackToGatheringRoulette" onclick="setLoungeState('state-gathering')">‹</button>
-    <div class="eyebrow" style="margin-top: 40px;">Home</div>
-    <h1 class="display" style="font-size:32px;">GPS Recalibration</h1>
-    <p class="sub" style="margin-bottom: 40px; padding: 0 20px;">The engine is running, but we aren't leaving just yet. When the needle locks onto you, answer honestly. We are all listening.</p>
-    
-    <div class="spin-container" id="spinContainer">
-      <div class="spin-circle" id="spinCircle">
-        <!-- Avatars + Names injected here -->
+    <div class="eyebrow" style="margin-top: 40px;">The Driveway</div>
+    <p class="sub" style="margin-bottom: 20px; padding: 0 20px;">Gather around. Check out who's on board and jump into the Red Flag Rally while we wait.</p>
+
+    <!-- SLEEK PASSENGER LIST -->
+    <div class="dashboard-section" style="width: 100%; max-width: 420px; margin: 0 auto 16px;">
+      <div class="section-header" style="margin-bottom: 6px;">
+        <div class="eyebrow" style="color:var(--gold); font-size: 11px;">Passenger List</div>
+        <div class="guest-count" id="passengerCountLabel" style="font-size: 10px; opacity: 0.6;">Checked In</div>
       </div>
-      <!-- The GPS Needle -->
-      <div class="needle-wrapper" id="needleWrapper">
-        <svg class="needle-svg" viewBox="0 0 24 24" fill="var(--gold)" stroke="none">
-          <path d="M12 2L19 21L12 17L5 21L12 2Z"/>
-        </svg>
+      <div id="drivewayPassengerList" style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;">
+        <!-- Populated dynamically -->
       </div>
     </div>
 
-    <!-- Question Display -->
-    <div class="spin-question-display" id="spinQuestionDisplay"></div>
+    <!-- RED FLAG RALLY GAME (Always Open, the star of this section) -->
+    <div class="dashboard-section" style="width: 100%; max-width: 420px; margin: 0 auto 24px; padding: 16px;">
+      <div class="eyebrow" style="text-align: center; margin-bottom: 12px; color: var(--gold);">Red Flag Rally</div>
 
-    <!-- HOST ONLY: Spin Control -->
-    <div id="hostControlsSpin" class="host-inline-controls" style="display:none; margin-top: 40px; border-color:var(--gold); width: 100%; max-width: 320px;">
-      <button class="host-inline-btn action" id="btnSpinNeedle" style="width:100%; padding: 14px; font-size: 16px;">Recalibrate GPS</button>
+      <div class="game-section" id="gameSection" style="margin-top: 0;">
+        <div class="lounge-ground" aria-hidden="true" id="loungeGround">
+          <div class="ground-sky-fade"></div>
+          <div class="parallax-layer layer-back" id="parallaxBack"></div>
+          <div class="parallax-layer layer-mid" id="parallaxMid"></div>
+          <div class="ground-grass" id="parallaxFront"></div>
+        </div>
+
+        <div class="lounge-game" id="loungeGame">
+          <div class="game-instructions">jump the pets • run over the red flags</div>
+          <div class="game-score" id="gameScore">0</div>
+          <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
+          <div class="game-track" id="gameTrack">
+            <div class="game-bunny" id="gameBunny">
+              <img loading="lazy" decoding="async" src="sashas-car.png" alt="Sasha in Car" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <span class="game-wisp-fallback"></span>
+            </div>
+            <div class="game-overlay" id="gameOverlay">
+              <div>Help Sasha jump over cats and bunnies and run over red flags!</div>
+              <button class="btn" id="gameStartBtn">Play</button>
+            </div>
+            <button class="game-replay-btn" id="gameReplayBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+              <span>Play again</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="leaderboard-container" style="margin-bottom: 40px;">
+      <div class="eyebrow" style="text-align:center; margin-bottom:12px;">Top Scores</div>
+      <div id="gameLeaderboard" class="leaderboard-list"></div>
+    </div>
+
+    <!-- HOST ONLY: Match Control -->
+    <div id="hostControlsSpin" class="host-inline-controls" style="display:none; margin: 0 auto 40px; border-color:var(--gold); width: 100%; max-width: 320px;">
+      <button class="host-inline-btn action" id="btnMatchPeople" style="width:100%; padding: 14px; font-size: 16px;">Match People</button>
     </div>
   </div>
 
@@ -3685,8 +3627,7 @@ body[data-phase="closer"] .sky {
 
 
     <div class="match-header" style="padding-top: 30px; position: relative; z-index: 10;">
-      <div class="eyebrow">Pairs Activity</div>
-      <h1 class="display" style="font-size:36px;">The Bouquet</h1>
+      <h1 class="display" style="font-size:36px;">The Midnight Garden</h1>
       <p class="sub" style="margin-top:6px; font-size: 14px; opacity: 0.7;">Pick a flower together to reveal your next question.</p>
     </div>
 
@@ -3698,7 +3639,7 @@ body[data-phase="closer"] .sky {
     </div>
 
     <div class="question-panel" id="questionPanel">
-      <div class="question-eyebrow" id="questionCounter">Conversation Starter</div>
+      <div class="question-eyebrow" id="questionCounter">Your question</div>
       <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
       <div class="ember-line"></div>
       <p class="sub" id="questionHint" style="margin-top:10px; font-size: 12px; opacity: 0.65; font-style: italic;">If a question doesn't feel comfortable, feel free to pick another one.</p>
@@ -3715,6 +3656,97 @@ body[data-phase="closer"] .sky {
       <button class="aita-btn aita-btn-red" id="btnVoteYTA"><span class="aita-btn-label">ASSHOLE</span></button>
       <button class="aita-btn aita-btn-green" id="btnVoteNTA"><span class="aita-btn-label">NOT THE ASSHOLE</span></button>
     </div>
+  </div>
+
+  <!-- STATE 4: PAST ERAS ARCHIVE -->
+  <div id="state-archive" class="lounge-state">
+    <button class="back-btn" onclick="setLoungeState('state-gathering')">‹</button>
+    
+    <div class="match-header" style="padding-top: 30px; position: relative; z-index: 10;">
+      <h1 class="display" style="font-size:36px;">The Archive</h1>
+      <p class="sub" style="margin-top:6px; font-size: 14px; opacity: 0.7;">The archives of Sasha's previous events.</p>
+    </div>
+
+    <!-- The timeline goes directly in here -->
+    <div class="timeline-container" style="margin-top: 0;">
+      <div class="timeline-line"></div>
+
+      <!-- ERA I (Past) -->
+      <div class="timeline-event" id="eraFashionCard">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date" id="memoryDateCalc">August 14, 2026 &bull; The Debut</div>
+        <div class="timeline-card">
+          <div class="timeline-photo-wrap">
+            <img loading="lazy" decoding="async" src="fashion-speaking-club-billboard.png" alt="Fashion Era" class="timeline-photo" onerror="this.style.display='none'">
+          </div>
+          <div class="timeline-title">Era I: Fashion</div>
+          <div class="timeline-desc">
+            Where it all started. The birthplace of the Vogue Committee and our very first digital closet.
+          </div>
+
+          <button class="timeline-challenge" id="btnToggleChallenge">
+            <div class="challenge-toggle-top">
+              <span class="challenge-label">Vogue Committee Challenge:</span>
+              <svg class="challenge-toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="challenge-theme">Tonight's theme: Relationship Milestones.</div>
+            <div class="challenge-cta">Tap to join the challenge</div>
+          </button>
+
+          <div class="challenge-steps-wrap" id="challengeStepsWrap">
+            <div class="timeline-steps">
+              <div class="timeline-step">
+                <div class="step-num">1</div>
+                <div class="step-text">
+                  <div class="step-title">Build your look</div>
+                  <div class="step-sub">Head into the Glass Closet and put a fit together.</div>
+                </div>
+              </div>
+              <button class="timeline-btn" onclick="window.open('https://insight-speaking-club.github.io/glass-closet/', '_blank')">
+                Enter the Glass Closet
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </button>
+
+              <div class="timeline-step">
+                <div class="step-num">2</div>
+                <div class="step-text">
+                  <div class="step-title">Send it in</div>
+                  <div class="step-sub">Screenshot your look and send it to the Vogue Committee so everyone can judge it 💋</div>
+                </div>
+              </div>
+              <button class="timeline-btn" onclick="window.open('https://t.me/+UC1vcZZRBWA0ZDg6', '_blank')">
+                Submit to Vogue Committee
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOBAL PARTNER REVEAL POPUP -->
+  <div id="partnerRevealWindow" class="partner-card" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; width: calc(100vw - 32px); max-width: 280px; background: rgba(22, 10, 35, 0.98); border: 1px solid var(--gold); box-shadow: 0 20px 50px rgba(0,0,0,0.8); padding: 16px 14px; border-radius: 16px; box-sizing: border-box; text-align: center; overflow: hidden;">
+    
+    <!-- Close Button -->
+    <button id="btnCloseReveal" style="position: absolute; top: 8px; right: 10px; background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer; padding: 0; line-height: 1;">✕</button>
+    
+    <div class="eyebrow" style="margin-bottom: 12px; color: var(--gold); font-size: 9px; letter-spacing: 0.12em; line-height: 1.3; padding-right: 14px;">Your partner(s) in the Midnight Garden tonight will be...</div>
+    
+    <!-- Wrap layout: prevents overflowing on small screens -->
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; gap: 8px; margin-bottom: 10px;">
+      <!-- Car -->
+      <div style="flex: 0 0 70px; max-width: 100%;">
+        <img src="sasha-car-front-1.png" alt="Car" style="width: 100%; display: block; object-fit: contain;">
+      </div>
+      
+      <!-- Characters -->
+      <div id="partnerAvatar" style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: flex-end; max-width: 100%;"></div>
+    </div>
+    
+    <div id="partnerName" class="partner-name" style="font-size: 16px; line-height: 1.3; margin-top: 8px; margin-bottom: 14px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto;"></div>
+
+    <button id="btnDontShowReveal" class="btn ghost" style="font-size: 10.5px; padding: 6px 12px; width: 100%; margin-top: 0;">Do not show again</button>
   </div>
 
 </div>
@@ -3875,19 +3907,23 @@ function show(id){
 
 function setLoungeState(stateId) {
   // PERF: the bunny game's requestAnimationFrame loop only makes sense while
-  // state-gathering is on screen. CSS-pausing hides the animations, but the
+  // state-roulette is on screen. CSS-pausing hides the animations, but the
   // physics loop (bg.raf) keeps computing jumps/collisions in the background
   // unless we explicitly stop it here.
-  const leavingGathering = document.getElementById('state-gathering')?.classList.contains('active')
-    && stateId !== 'state-gathering';
-  if (leavingGathering) stopBunnyGame();
+  const leavingDriveway = document.getElementById('state-roulette')?.classList.contains('active')
+    && stateId !== 'state-roulette';
+  if (leavingDriveway) stopBunnyGame();
 
   document.querySelectorAll('.lounge-state').forEach(s => s.classList.remove('active'));
   document.getElementById(stateId).classList.add('active');
 
-  if (stateId === 'state-gathering' && !bg) {
-    const gameSecVisible = document.getElementById('distractionContainer')?.classList.contains('open');
-    if (gameSecVisible) startBunnyGame();
+  // Red Flag Rally is now fully open on the Driveway screen (no toggle),
+  // so entering the state is enough to start it. Deferred a frame so the
+  // screen switch itself paints instantly — startBunnyGame() rebuilds DOM
+  // and isn't free, and doing it synchronously in the click handler was
+  // what made the location button feel laggy on tap.
+  if (stateId === 'state-roulette' && !bg) {
+    requestAnimationFrame(() => requestAnimationFrame(startBunnyGame));
   }
 }
 
@@ -4015,7 +4051,6 @@ function enterLounge(){
   listenPhase();
   listenHubs();
   listenMessages();
-  if (document.getElementById('distractionContainer')?.classList.contains('open')) startBunnyGame();
 
   // Aggregate blooms across every pair to drive the garden's ambient fireflies
   ref(`events/${EVENT_ID}/pairs`).on('value', snap => {
@@ -4043,7 +4078,7 @@ const TOUR_STEPS = [
   // Step 1: Highlights the whole Itinerary section first
   { selector: '#activitiesSection', title: 'The Itinerary', desc: 'Here\'s the full route for the night. Watch it light up as we go—we travel together, so sit tight until we pull up to the first stop.', pad: 10 },
   // Step 2: Zooms into the current stop
-  { selector: '#hubCardRoulette', title: 'Home', desc: 'We are currently idling right here. Before we hit the road, the host will trigger the GPS to recalibrate—if it locks onto you, answer honestly.', pad: 8 },
+  { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We are currently gathered right here in the driveway. Before we hit the road, the host will match everyone up—wait here to see who you\'re riding with.', pad: 8 },
   // The rest remain the same
   { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
   { selector: '#hubCardAita', title: 'People\'s Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
@@ -4223,10 +4258,6 @@ function listenPhase(){
       document.getElementById('aitaVerdictCard').style.display = 'none';
       const glowRingEl1 = document.getElementById('glowRing');
       if(glowRingEl1) glowRingEl1.style.boxShadow = `none`;
-
-      // Restart the game engine when entering the lounge, but only if the
-      // player has the collapsible distraction section open
-      if (document.getElementById('distractionContainer')?.classList.contains('open')) startBunnyGame();
     }
     else if(state === 'aita'){
       show('screen-lounge');
@@ -4252,16 +4283,16 @@ function listenPhase(){
 // like a text FROM that place ("Home", "Midnight Garden"...) rather than
 // a generic system message.
 const HUB_SECTION_NAMES = {
-  roulette: 'Home',
+  roulette: 'The Driveway',
   garden: 'Midnight Garden',
   aita: 'People\'s Court™',
   closer: 'The Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
   roulette: [
-    "Darling, Home is open. Get out here and dazzle me 💋",
-    "The doors are open, mon chéri. Entrances like this deserve an audience, so tap Home 🤭",
-    "Home's unlocked! Tap in, chop chop darling, I did not do my makeup for nothing 🐇"
+    "Darling, The Driveway is open. Gather 'round and let's get you paired up 💋",
+    "The doors are open, mon chéri. Time to see who you're riding with, tap The Driveway 🤭",
+    "The Driveway's unlocked! Tap in, chop chop darling, it's time to match up 🐇"
   ],
   garden: [
     "Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
@@ -4281,45 +4312,6 @@ const HUB_UNLOCK_MESSAGES = {
 };
 let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
 let previousActiveHub = null; // tracks hubs.current so we can fire a synchronized haptic pulse on room changes
-
-// The game toggle's label when collapsed. A pool of "we're waiting" lines
-// plays early on; once any stop has unlocked, we switch to an "anytime"
-// pool so guests don't read the button as only relevant before things start.
-// Within each pool we also rotate periodically so late-night visitors don't
-// see the same static line they saw at hour one.
-const GAME_LABELS_WAITING = [
-  "⚠️ Tap here to drive (Warning: Sasha judges your skills)",
-  "🚗 Sasha needs a co-pilot while we wait",
-  "🐇 Idle hands? Take the wheel for a bit"
-];
-const GAME_LABELS_ANYTIME = [
-  "🐇 Bored? Sasha still needs a co-pilot",
-  "🚗 Beat the leaderboard whenever you like",
-  "🐇 Sasha's still driving — think you can do better?"
-];
-let gameLabelPool = GAME_LABELS_WAITING;
-let gameClosedLabel = gameLabelPool[0];
-let lastGameLabelIndex = 0;
-let anyHubEverUnlocked = false;
-
-function pickGameLabel() {
-  let i;
-  do { i = Math.floor(Math.random() * gameLabelPool.length); }
-  while (i === lastGameLabelIndex && gameLabelPool.length > 1);
-  lastGameLabelIndex = i;
-  return gameLabelPool[i];
-}
-
-// Refresh the closed-state label every few minutes so the button doesn't
-// look frozen over a multi-hour event — only touches it while collapsed,
-// so it never interrupts anyone mid-game.
-setInterval(() => {
-  const container = document.getElementById('distractionContainer');
-  const label = document.getElementById('distractionLabel');
-  if (!container || !label || container.classList.contains('open')) return;
-  gameClosedLabel = pickGameLabel();
-  label.textContent = gameClosedLabel;
-}, 5 * 60 * 1000);
 
 function listenHubs() {
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
@@ -4355,20 +4347,6 @@ function listenHubs() {
       aita: !!hubs.aita,
       closer: !!hubs.closer
     };
-
-    // First time ANY stop unlocks, retire the "waiting" pool in favor of
-    // the "play anytime" pool — update the live label immediately if the
-    // game panel happens to be closed right now.
-    if (!anyHubEverUnlocked && (hubs.roulette || hubs.garden || hubs.aita || hubs.closer)) {
-      anyHubEverUnlocked = true;
-      gameLabelPool = GAME_LABELS_ANYTIME;
-      gameClosedLabel = pickGameLabel();
-      const container = document.getElementById('distractionContainer');
-      const label = document.getElementById('distractionLabel');
-      if (label && container && !container.classList.contains('open')) {
-        label.textContent = gameClosedLabel;
-      }
-    }
 
     const cardGarden = document.getElementById('hubCardGarden');
     const cardAita = document.getElementById('hubCardAita');
@@ -4455,10 +4433,14 @@ document.getElementById('hubCardGarden').addEventListener('click', function() {
   setLoungeState('state-garden');
   // Failsafe: if no pairing event has built the bouquet yet, build it now
   // so the flowers are always visible the moment the guest enters.
-  const bed = document.getElementById('gardenBed');
-  if (bed && !bed.querySelector('.flower-plant')) {
-    buildGarden();
-  }
+  // Deferred a frame so the tap itself feels instant — buildGarden() lays
+  // out 20 flower elements synchronously and shouldn't block the switch.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const bed = document.getElementById('gardenBed');
+    if (bed && !bed.querySelector('.flower-plant')) {
+      buildGarden();
+    }
+  }));
 });
 document.getElementById('hubCardAita').addEventListener('click', function() {
   if (handleLockedHubClick(this)) return;
@@ -4474,20 +4456,7 @@ document.getElementById('hubCardCloser').addEventListener('click', function() {
   window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank');
 });
 document.getElementById('hubCardVogue').addEventListener('click', function() {
-  // Not a locked/unlockable activity — just jump down to the archive
-  // timeline and auto-expand it, same as the "View Past Eras" toggle.
-  // Then land exactly on the Era I: Fashion card (the speaking-club/
-  // Glass Closet card), not just the top of the archive section.
-  const toggleBtn = document.getElementById('btnToggleArchive');
-  const content = document.getElementById('archiveContent');
-  const fashionCard = document.getElementById('eraFashionCard');
-  if (!content.classList.contains('open')) {
-    content.classList.add('open');
-    toggleBtn.classList.add('open');
-  }
-  setTimeout(() => {
-    (fashionCard || content).scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 150);
+  setLoungeState('state-archive');
 });
 
 function enterAitaRound(round){
@@ -4996,7 +4965,7 @@ function pickFlower(i, pairId, plant, color){
     textEl.classList.add('swap');
     setTimeout(() => {
       textEl.textContent = QUESTIONS[i];
-      counterEl.textContent = `Conversation Starter`;
+      counterEl.textContent = `Your question`;
       textEl.classList.remove('swap');
 
       // Reset any previous burns
@@ -5381,6 +5350,7 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
   if(!confirm('Clear the roster, pairs, and phase for a brand new event?')) return;
   ref(`events/${EVENT_ID}/attendees`).set(null);
   ref(`events/${EVENT_ID}/pairs`).set(null);
+  ref(`events/${EVENT_ID}/gpsRoulette/pairings`).set(null); // <--- ADD THIS LINE
   ref(`events/${EVENT_ID}/hubs`).set(null); // Lock all hubs
   ref(`events/${EVENT_ID}/aita/round`).set(null);
   ref(`events/${EVENT_ID}/aita/rounds`).set(null);
@@ -5420,20 +5390,6 @@ document.getElementById('btnPickElaborate').addEventListener('click', ()=>{
     senderId: me && me.id,
     ts: Date.now()
   });
-});
-
-// Toggle Archive Drawer
-document.getElementById('btnToggleArchive').addEventListener('click', function() {
-  const content = document.getElementById('archiveContent');
-  content.classList.toggle('open');
-  this.classList.toggle('open');
-
-  // Smooth scroll into view when opened
-  if (content.classList.contains('open')) {
-    setTimeout(() => {
-      content.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 150);
-  }
 });
 
 // Toggle Vogue Committee Challenge steps
@@ -5481,36 +5437,39 @@ ref(`events/${EVENT_ID}/gpsRoulette/completed`).on('value', snap => {
   if (spinGuestsCache.length > 0) renderSpinCircle(spinGuestsCache);
 });
 
+// PASSENGER LIST RENDERER: populates names & pronouns into the sleek list
 function renderSpinCircle(guests) {
   spinGuestsCache = guests;
-  const circle = document.getElementById('spinCircle');
-  if (!circle) return;
-  circle.innerHTML = '';
-  
-  const total = guests.length;
-  if (total === 0) return;
+  const listContainer = document.getElementById('drivewayPassengerList');
+  if (!listContainer) return;
 
-  const radius = 170; // Half of the 340px container width
-  
-  guests.forEach((g, i) => {
-    // Math to position in a perfect circle. -90deg starts the first person at the top (12 o'clock)
-    const angleDeg = (i * (360 / total)) - 90;
-    const angleRad = angleDeg * (Math.PI / 180);
-    
-    const x = radius + (radius * Math.cos(angleRad));
-    const y = radius + (radius * Math.sin(angleRad));
-    
-    const avatar = document.createElement('div');
-    avatar.className = 'spin-avatar';
-    if (completedRouletteIds.includes(g.id)) avatar.classList.add('is-completed'); // Gray out completed guests
+  const countLabel = document.getElementById('passengerCountLabel');
+  if (countLabel) countLabel.textContent = `${guests.length} Checked In`;
 
-    avatar.id = `spin-avatar-${g.id}`;
-    avatar.style.left = `${x}px`;
-    avatar.style.top = `${y}px`;
-    const pronounsHtml = g.pronouns ? `<span class="spin-pronouns">${escapeHtml(g.pronouns)}</span>` : '';
-    avatar.innerHTML = `${g.avatar}<div class="spin-name">${escapeHtml(g.name)}${pronounsHtml}</div>`;
-    circle.appendChild(avatar);
-  });
+  if (guests.length === 0) {
+    listContainer.innerHTML = `<div style="text-align:center; color:var(--dim); font-size:13px; padding: 10px;">No passengers checked in yet.</div>`;
+    return;
+  }
+
+  listContainer.innerHTML = guests.map(g => {
+    const isMe = me && g.id === me.id;
+    const pronounsRow = g.pronouns
+      ? `<div style="font-family: 'Space Mono', monospace; font-size: 9px; color: var(--dim); text-transform: uppercase; margin-top: 1px;">${escapeHtml(g.pronouns)}</div>`
+      : '';
+    return `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 14px;">${g.avatar}</div>
+          <div>
+            <div style="font-weight: 500; font-size: 13px; color: var(--mist); line-height: 1.2;">
+              ${escapeHtml(g.name)}${isMe ? '<span style="color:var(--gold); font-size:9px; margin-left: 6px;">(You)</span>' : ''}
+            </div>
+            ${pronounsRow}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 const originalListenRoster = listenRoster;
@@ -5556,81 +5515,114 @@ listenRoster = function() {
   });
 };
 
-// Host action: Pick a target, calculate angle, sync to Firebase
-document.getElementById('btnSpinNeedle').addEventListener('click', () => {
-  if (spinGuestsCache.length === 0) return;
+// HOST ACTION: Match People
+document.getElementById('btnMatchPeople')?.addEventListener('click', () => {
+  if (spinGuestsCache.length < 2) {
+    alert("You need at least 2 guests to match people.");
+    return;
+  }
+  
+  // Shuffle the array of guests
+  let shuffled = [...spinGuestsCache].sort(() => Math.random() - 0.5);
+  let individualPairings = {};
+  let globalPairs = {}; // Formats data for the Bouquet garden logic
+  let pairCount = 0;
 
-  // Filter out the completed guests
-  let availableGuests = spinGuestsCache.filter(g => !completedRouletteIds.includes(g.id));
-
-  // If everyone has gone, reset the board
-  if (availableGuests.length === 0) {
-    if (confirm("Everyone has been picked! Reset the circle?")) {
-      ref(`events/${EVENT_ID}/gpsRoulette/completed`).set([]);
+  for (let i = 0; i < shuffled.length; i += 2) {
+    if (i === shuffled.length - 1) {
+      // Odd person out: join the last pair to make a trio
+      let last1 = shuffled[i - 2];
+      let last2 = shuffled[i - 1];
+      let current = shuffled[i];
+      
+      individualPairings[current.id] = [last1, last2];
+      individualPairings[last1.id].push(current);
+      individualPairings[last2.id].push(current);
+      
+      globalPairs['pair_' + (pairCount - 1)] = { members: [last1.id, last2.id, current.id] };
+    } else {
+      let p1 = shuffled[i];
+      let p2 = shuffled[i+1];
+      
+      individualPairings[p1.id] = [p2];
+      individualPairings[p2.id] = [p1];
+      
+      globalPairs['pair_' + pairCount] = { members: [p1.id, p2.id] };
+      pairCount++;
     }
+  }
+
+  // Push personal pairings to the driveway display, and global pairs to the Garden
+  ref(`events/${EVENT_ID}/gpsRoulette/pairings`).set(individualPairings);
+  ref(`events/${EVENT_ID}/pairs`).set(globalPairs);
+});
+
+// Wire up the Close Button for the global reveal popup
+document.getElementById('btnCloseReveal')?.addEventListener('click', () => {
+  document.getElementById('partnerRevealWindow').style.display = 'none';
+});
+
+// EVERYONE: Listen for the match execution
+ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
+  const allPairings = snap.val();
+  if (!allPairings || !me) {
+    document.getElementById('partnerRevealWindow').style.display = 'none';
+    const crowd = document.getElementById('drivewayPassengerList');
+    if (crowd) crowd.style.opacity = '1';
     return;
   }
 
-  // Pick ONLY from the available guests
-  const target = availableGuests[Math.floor(Math.random() * availableGuests.length)];
-  const targetIndex = spinGuestsCache.findIndex(g => g.id === target.id); // Need their physical index for the angle
-  const question = ICEBREAKER_QUESTIONS[Math.floor(Math.random() * ICEBREAKER_QUESTIONS.length)];
-  
-  // Calculate angle. 360 / total gives degrees per slice.
-  const targetAngle = targetIndex * (360 / spinGuestsCache.length);
-  
-  // Add 5 full spins (1800 degrees) to the current rotation, plus the required angle
-  // We use modulo to find the current absolute angle to ensure a smooth forward sweep
-  const baseRotation = currentNeedleRotation - (currentNeedleRotation % 360);
-  const newRotation = baseRotation + 1800 + targetAngle;
-  
-  ref(`events/${EVENT_ID}/gpsRoulette`).set({
-    targetId: target.id,
-    targetName: target.name,
-    question: question,
-    rotation: newRotation,
-    ts: Date.now()
-  });
+  const myPartners = allPairings[me.id];
+  if (myPartners) {
+    // Find our specific global pair ID for the Garden routing later
+    ref(`events/${EVENT_ID}/pairs`).once('value').then(pSnap => {
+      const dbPairs = pSnap.val() || {};
+      const myPairKey = Object.keys(dbPairs).find(k => dbPairs[k].members.includes(me.id));
+      if (myPairKey) window.currentPairId = myPairKey;
+    });
+
+    // Dim the passenger list ONLY if they happen to be on the driveway screen
+    const crowd = document.getElementById('drivewayPassengerList');
+    if (crowd) crowd.style.opacity = '0.15';
+
+    // Check if the user dismissed it forever
+    if (localStorage.getItem('fsc_hide_partner_reveal') === '1') return;
+
+    const reveal = document.getElementById('partnerRevealWindow');
+    const avatarBox = document.getElementById('partnerAvatar');
+
+    reveal.style.display = 'block';
+    // Re-trigger the pop-in animation
+    reveal.style.animation = 'none';
+    void reveal.offsetWidth;
+    reveal.style.animation = 'pop-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards';
+
+    // Combine you + your partners so everyone shows up in the window together
+    const meObj = stateGuests.find(g => g.id === me.id) || me;
+    const groupMembers = [meObj, ...myPartners];
+
+    // Render all characters, sized to fit without stretching the popup
+    avatarBox.innerHTML = groupMembers.map(p => `<div class="guest-avatar" style="width: 30px; height: 42px; background: transparent; border: none; box-shadow: none; flex-shrink: 0;">${p.avatar}</div>`).join('');
+
+    // Format into ONE clean, non-redundant vertical list
+    document.getElementById('partnerName').innerHTML = groupMembers.map(p => {
+      let tags = [];
+      if (me && p.id === me.id) tags.push('You');
+      if (p.id && p.id.startsWith('host_')) tags.push('Host');
+      if (p.pronouns) tags.push(p.pronouns); // skips rendering when pronouns are missing
+
+      const tagStr = tags.length ? ` <span style="font-size: 9px; color: var(--gold); letter-spacing: 0.05em; text-transform: uppercase;">(${tags.join(', ')})</span>` : '';
+      return `${escapeHtml(p.name)}${tagStr}`;
+    }).join('<div style="font-size: 12px; color: rgba(255,255,255,0.3); margin: 4px 0;">&amp;</div>');
+
+    if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+  }
 });
 
-// Everyone listens for the spin
-ref(`events/${EVENT_ID}/gpsRoulette`).on('value', snap => {
-  const data = snap.val();
-  if (!data || !me) return;
-  
-  currentNeedleRotation = data.rotation;
-  
-  const needle = document.getElementById('needleWrapper');
-  const display = document.getElementById('spinQuestionDisplay');
-  
-  // Reset avatars and hide question
-  document.querySelectorAll('.spin-avatar').forEach(a => a.classList.remove('is-target'));
-  display.classList.remove('show');
-  
-  // Apply CSS hardware-accelerated spin
-  needle.style.transform = `translateZ(0) rotate(${currentNeedleRotation}deg)`;
-
-  const targetAvatar = document.getElementById(`spin-avatar-${data.targetId}`);
-  if (targetAvatar) targetAvatar.classList.add('is-target');
-
-  if (data.targetId === me.id) {
-    display.innerHTML = `
-      <div class="spin-q-target-name">It landed on you</div>
-      <div class="spin-q-text is-victim">${data.question}</div>
-    `;
-  } else {
-    display.innerHTML = `
-      <div class="spin-q-target-name">${escapeHtml(data.targetName)} answers</div>
-      <div class="spin-q-text is-victim">${data.question}</div>
-    `;
-  }
-  display.classList.add('show');
-
-  // Lock this guest out of future spins for the round
-  if (isHost && !completedRouletteIds.includes(data.targetId)) {
-    completedRouletteIds.push(data.targetId);
-    ref(`events/${EVENT_ID}/gpsRoulette/completed`).set(completedRouletteIds);
-  }
+// Wire up the "Do Not Show Again" button for the global reveal popup
+document.getElementById('btnDontShowReveal')?.addEventListener('click', () => {
+  localStorage.setItem('fsc_hide_partner_reveal', '1');
+  document.getElementById('partnerRevealWindow').style.display = 'none';
 });
 
 // Show the Host control if host
@@ -5665,26 +5657,7 @@ document.querySelectorAll('.hub-card:not(.locked):not(.hub-sections .hub-card), 
   el.addEventListener('pointercancel', resetTransform);
 });
 
-document.getElementById('btnToggleGame').addEventListener('click', function() {
-  const container = document.getElementById('distractionContainer');
-  const icon = document.getElementById('distractionIcon');
-  const label = document.getElementById('distractionLabel');
-
-  const isOpen = container.classList.contains('open');
-
-  if (!isOpen) {
-    container.classList.add('open');
-    icon.style.transform = 'rotate(180deg)';
-    label.textContent = "Let Sasha drive alone";
-    startBunnyGame();
-  } else {
-    container.classList.remove('open');
-    icon.style.transform = 'rotate(0deg)';
-    gameClosedLabel = pickGameLabel();
-    label.textContent = gameClosedLabel;
-    stopBunnyGame();
-  }
-});
 </script>
 </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
