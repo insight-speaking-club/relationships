@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 <title>Relationships | Vogue Committee Headquarters</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Italiana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#120821;
@@ -1922,7 +1922,7 @@ body[data-phase="closer"] .sky {
 /* --- THE MINIMALIST ARCHIVE WRAPPER --- */
 .archive-footer-section {
   width: 100%;
-  background: transparent; /* Removes the stark black separation */
+  background: #000; /* Solid black strip for the archive/epilogue section */
   padding: 10px 26px 40px;
   margin-top: 30px;
   display: flex;
@@ -2102,10 +2102,15 @@ body[data-phase="closer"] .sky {
   display: block;
 }
 
-/* The Vogue Committee Challenge Box */
+/* The Vogue Committee Challenge Box — now a button, so the whole theme
+   card itself is the tap target instead of a separate call-to-action. */
 .timeline-challenge {
+  width: 100%;
+  display: block;
+  text-align: left;
   background: rgba(242, 193, 78, 0.08);
   border-left: 2px solid var(--gold);
+  border-top: none; border-right: none; border-bottom: none;
   padding: 12px 14px;
   border-radius: 0 8px 8px 0;
   font-family: 'Jost', sans-serif;
@@ -2113,6 +2118,47 @@ body[data-phase="closer"] .sky {
   color: var(--mist);
   margin-bottom: 20px;
   line-height: 1.45;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.timeline-challenge:hover,
+.timeline-challenge.open {
+  background: rgba(242, 193, 78, 0.14);
+}
+
+.challenge-toggle-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.challenge-toggle-top .challenge-toggle-chevron {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  color: var(--gold);
+}
+.timeline-challenge.open .challenge-toggle-chevron {
+  transform: rotate(180deg);
+}
+
+.challenge-theme {
+  margin-top: 2px;
+}
+
+/* The nudge that makes the card unmistakably tappable — a soft pulse
+   so it stays noticeable without shouting over the rest of the card. */
+.challenge-cta {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 8px;
+  animation: pulse-fade 2.4s ease-in-out infinite;
+}
+.timeline-challenge.open .challenge-cta {
+  display: none;
 }
 
 .challenge-label {
@@ -2122,7 +2168,6 @@ body[data-phase="closer"] .sky {
   color: var(--gold);
   text-transform: uppercase;
   display: block;
-  margin-bottom: 6px;
   font-weight: bold;
 }
 
@@ -2200,6 +2245,21 @@ body[data-phase="closer"] .sky {
 
 .timeline-steps .timeline-step:last-of-type ~ .timeline-btn {
   margin-bottom: 0;
+}
+
+/* --- CHALLENGE STEPS COLLAPSE (mirrors .archive-content's collapse
+   mechanics so opening a challenge feels like the same interaction as
+   opening Past Eras) --- */
+.challenge-steps-wrap {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+}
+.challenge-steps-wrap.open {
+  max-height: 600px;
+  opacity: 1;
+  margin-top: 16px;
 }
 
 /* --- EVENT FOOTER --- */
@@ -2641,10 +2701,20 @@ body[data-phase="closer"] .sky {
   #hubCardVogue .hub-card-icon {
     width: 30px;
     height: 30px;
+    /* Plain circle, not the teardrop pin shape the real stops use —
+       a circle reads as "reference point" rather than "destination". */
+    border-radius: 50% !important;
+    transform: none !important; /* cancel the -45deg pin rotation */
     background: rgba(30, 15, 45, 0.85) !important;
     box-shadow: 0 2px 6px rgba(0,0,0,0.4) !important;
-    border: 1.5px solid rgba(244, 233, 255, 0.35) !important;
+    border: 1.5px dashed rgba(244, 233, 255, 0.45) !important;
     animation: none !important;
+  }
+  /* Since the icon no longer rotates -45deg, undo the pin's counter-
+     rotation on its contents so the svg/photo stay upright. */
+  #hubCardVogue .hub-card-icon svg,
+  #hubCardVogue .hub-card-icon img {
+    transform: none !important;
   }
   #hubCardVogue .hub-card-icon svg {
     width: 14px;
@@ -2961,7 +3031,7 @@ body[data-phase="closer"] .sky {
     <div class="lounge-content">
           <!-- CLEAN HEADER -->
       <div class="lounge-header" style="position: relative; padding-bottom: 12px;">
-        <h1 class="display" style="font-family:'Italiana', serif; font-size:38px; font-style:normal; font-weight:400; letter-spacing:.05em; background:linear-gradient(to right, #ffffff, var(--mist)); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:0 4px 25px rgba(255,255,255,0.25);">An Evening in Paris</h1>
+        <h1 class="display" style="font-size:38px; background:linear-gradient(to right, #ffffff, var(--mist)); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:0 4px 25px rgba(255,255,255,0.25);">A Trip to the City of Love</h1>
         <div style="position: absolute; bottom: 0; left: 20%; right: 20%; height: 1px; background: linear-gradient(90deg, transparent, rgba(242, 193, 78, 0.6), transparent);"></div>
       </div>
 
@@ -3046,7 +3116,7 @@ body[data-phase="closer"] .sky {
         </div>
         
         <p class="sub" style="margin-bottom: 20px; text-align: center; font-size: 14px;">
-          This is our roadmap for the night. Each stop is a different activity. We travel as a group, so sit tight—I will drive us to the next location and unlock the doors when it is time.
+          Our roadmap for tonight, darling. Each stop's its own activity. 💋
         </p>
 
         <div class="hub-sections">
@@ -3522,12 +3592,18 @@ body[data-phase="closer"] .sky {
                 Where it all started. The birthplace of the Vogue Committee and our very first digital closet.
               </div>
 
-              <!-- The Vogue Committee Challenge -->
-              <div class="timeline-challenge">
-                <span class="challenge-label">Vogue Committee Challenge:</span>
-                Tonight's theme: Relationship Milestones.
-              </div>
+              <!-- The Vogue Committee Challenge — the theme itself is now
+                   the tap target, so guests can't miss that it's interactive. -->
+              <button class="timeline-challenge" id="btnToggleChallenge">
+                <div class="challenge-toggle-top">
+                  <span class="challenge-label">Vogue Committee Challenge:</span>
+                  <svg class="challenge-toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+                <div class="challenge-theme">Tonight's theme: Relationship Milestones.</div>
+                <div class="challenge-cta">Tap to join the challenge</div>
+              </button>
 
+              <div class="challenge-steps-wrap" id="challengeStepsWrap">
               <div class="timeline-steps">
                 <div class="timeline-step">
                   <div class="step-num">1</div>
@@ -3552,6 +3628,7 @@ body[data-phase="closer"] .sky {
                   Submit to Vogue Committee
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </button>
+              </div>
               </div>
             </div>
           </div>
@@ -4205,6 +4282,45 @@ const HUB_UNLOCK_MESSAGES = {
 let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
 let previousActiveHub = null; // tracks hubs.current so we can fire a synchronized haptic pulse on room changes
 
+// The game toggle's label when collapsed. A pool of "we're waiting" lines
+// plays early on; once any stop has unlocked, we switch to an "anytime"
+// pool so guests don't read the button as only relevant before things start.
+// Within each pool we also rotate periodically so late-night visitors don't
+// see the same static line they saw at hour one.
+const GAME_LABELS_WAITING = [
+  "⚠️ Tap here to drive (Warning: Sasha judges your skills)",
+  "🚗 Sasha needs a co-pilot while we wait",
+  "🐇 Idle hands? Take the wheel for a bit"
+];
+const GAME_LABELS_ANYTIME = [
+  "🐇 Bored? Sasha still needs a co-pilot",
+  "🚗 Beat the leaderboard whenever you like",
+  "🐇 Sasha's still driving — think you can do better?"
+];
+let gameLabelPool = GAME_LABELS_WAITING;
+let gameClosedLabel = gameLabelPool[0];
+let lastGameLabelIndex = 0;
+let anyHubEverUnlocked = false;
+
+function pickGameLabel() {
+  let i;
+  do { i = Math.floor(Math.random() * gameLabelPool.length); }
+  while (i === lastGameLabelIndex && gameLabelPool.length > 1);
+  lastGameLabelIndex = i;
+  return gameLabelPool[i];
+}
+
+// Refresh the closed-state label every few minutes so the button doesn't
+// look frozen over a multi-hour event — only touches it while collapsed,
+// so it never interrupts anyone mid-game.
+setInterval(() => {
+  const container = document.getElementById('distractionContainer');
+  const label = document.getElementById('distractionLabel');
+  if (!container || !label || container.classList.contains('open')) return;
+  gameClosedLabel = pickGameLabel();
+  label.textContent = gameClosedLabel;
+}, 5 * 60 * 1000);
+
 function listenHubs() {
   ref(`events/${EVENT_ID}/hubs`).on('value', snap => {
     const hubs = snap.val() || {};
@@ -4239,6 +4355,20 @@ function listenHubs() {
       aita: !!hubs.aita,
       closer: !!hubs.closer
     };
+
+    // First time ANY stop unlocks, retire the "waiting" pool in favor of
+    // the "play anytime" pool — update the live label immediately if the
+    // game panel happens to be closed right now.
+    if (!anyHubEverUnlocked && (hubs.roulette || hubs.garden || hubs.aita || hubs.closer)) {
+      anyHubEverUnlocked = true;
+      gameLabelPool = GAME_LABELS_ANYTIME;
+      gameClosedLabel = pickGameLabel();
+      const container = document.getElementById('distractionContainer');
+      const label = document.getElementById('distractionLabel');
+      if (label && container && !container.classList.contains('open')) {
+        label.textContent = gameClosedLabel;
+      }
+    }
 
     const cardGarden = document.getElementById('hubCardGarden');
     const cardAita = document.getElementById('hubCardAita');
@@ -5306,6 +5436,13 @@ document.getElementById('btnToggleArchive').addEventListener('click', function()
   }
 });
 
+// Toggle Vogue Committee Challenge steps
+document.getElementById('btnToggleChallenge').addEventListener('click', function() {
+  const wrap = document.getElementById('challengeStepsWrap');
+  wrap.classList.toggle('open');
+  this.classList.toggle('open');
+});
+
 /* ---------- THE STARTING POINT LOGIC ---------- */
 const ICEBREAKER_QUESTIONS = [
   "They're a 10 but their primary love language is sending TikToks.",
@@ -5543,7 +5680,8 @@ document.getElementById('btnToggleGame').addEventListener('click', function() {
   } else {
     container.classList.remove('open');
     icon.style.transform = 'rotate(0deg)';
-    label.textContent = "⚠️ Tap here to drive (Warning: Sasha judges your skills)";
+    gameClosedLabel = pickGameLabel();
+    label.textContent = gameClosedLabel;
     stopBunnyGame();
   }
 });
