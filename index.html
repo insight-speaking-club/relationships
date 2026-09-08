@@ -3697,23 +3697,6 @@ body[data-phase="closer"] .sky {
       
       <!-- Avatars injected here by JS, aligned to the bottom so they stand on the grass -->
       <div id="drivewayGuests" class="passenger-cluster" style="position: absolute; inset: 0; z-index: 2; transition: opacity 0.5s ease; align-items: flex-end; padding-bottom: 40px;"></div>
-      
-      <!-- The Reveal Window (Split layout: Car on Left, Characters on Right) -->
-      <div id="partnerRevealWindow" class="partner-card" style="display: none; position: absolute; bottom: 40px; z-index: 10; width: 90%; max-width: 360px; animation: pop-in 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) both; background: rgba(30, 15, 45, 0.95);">
-        <div class="eyebrow" style="margin-bottom: 12px; color: var(--gold);">Your Car For Tonight</div>
-        
-        <!-- Split layout container -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; height: 110px; margin-bottom: 10px;">
-           <!-- Car on the left -->
-           <img src="sasha-car-front-1.png" alt="" style="width: 140px; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));">
-           
-           <!-- Avatars on the right -->
-           <div id="partnerAvatar" style="display: flex; justify-content: flex-end; align-items: flex-end; gap: 4px; flex: 1;"></div>
-        </div>
-        
-        <div id="partnerName" class="partner-name" style="margin-top: 12px; font-size: 24px; line-height: 1.1;"></div>
-        <div id="partnerPronouns" class="spin-pronouns" style="font-size: 10px; margin-top: 4px;"></div>
-      </div>
     </div>
 
     <!-- HOST ONLY: Match Control -->
@@ -3760,6 +3743,29 @@ body[data-phase="closer"] .sky {
       <button class="aita-btn aita-btn-red" id="btnVoteYTA"><span class="aita-btn-label">ASSHOLE</span></button>
       <button class="aita-btn aita-btn-green" id="btnVoteNTA"><span class="aita-btn-label">NOT THE ASSHOLE</span></button>
     </div>
+  </div>
+
+  <!-- GLOBAL PARTNER REVEAL POPUP -->
+  <div id="partnerRevealWindow" class="partner-card" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; width: 90%; max-width: 380px; background: rgba(22, 10, 35, 0.98); border: 1px solid var(--gold); box-shadow: 0 20px 50px rgba(0,0,0,0.8); padding: 24px;">
+    
+    <!-- Close Button -->
+    <button id="btnCloseReveal" style="position: absolute; top: 12px; right: 16px; background: none; border: none; color: var(--dim); font-size: 22px; cursor: pointer; padding: 4px; line-height: 1;">✕</button>
+    
+    <div class="eyebrow" style="margin-bottom: 20px; color: var(--gold); text-align: left;">Your Car For Tonight</div>
+    
+    <!-- Strict Left/Right Split Layout -->
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 16px;">
+      <!-- LEFT SIDE: Car Only -->
+      <div style="flex: 0 0 130px;">
+        <img src="sasha-car-front-1.png" alt="Car" style="width: 100%; display: block; object-fit: contain;">
+      </div>
+      
+      <!-- RIGHT SIDE: Characters Only -->
+      <div id="partnerAvatar" style="display: flex; flex-wrap: wrap; gap: 8px; flex: 1; justify-content: flex-end; align-items: flex-end;"></div>
+    </div>
+    
+    <div id="partnerName" class="partner-name" style="font-size: 24px; line-height: 1.1; text-align: left; margin-top: 16px;"></div>
+    <div id="partnerPronouns" class="spin-pronouns" style="font-size: 11px; text-align: left; margin-top: 4px;"></div>
   </div>
 
 </div>
@@ -5426,6 +5432,7 @@ document.getElementById('btnResetEvent').addEventListener('click', ()=>{
   if(!confirm('Clear the roster, pairs, and phase for a brand new event?')) return;
   ref(`events/${EVENT_ID}/attendees`).set(null);
   ref(`events/${EVENT_ID}/pairs`).set(null);
+  ref(`events/${EVENT_ID}/gpsRoulette/pairings`).set(null); // <--- ADD THIS LINE
   ref(`events/${EVENT_ID}/hubs`).set(null); // Lock all hubs
   ref(`events/${EVENT_ID}/aita/round`).set(null);
   ref(`events/${EVENT_ID}/aita/rounds`).set(null);
@@ -5646,13 +5653,18 @@ document.getElementById('btnMatchPeople')?.addEventListener('click', () => {
   ref(`events/${EVENT_ID}/pairs`).set(globalPairs);
 });
 
+// Wire up the Close Button for the global reveal popup
+document.getElementById('btnCloseReveal')?.addEventListener('click', () => {
+  document.getElementById('partnerRevealWindow').style.display = 'none';
+});
+
 // EVERYONE: Listen for the match execution
 ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
   const allPairings = snap.val();
   if (!allPairings || !me) {
-    // Reset view if pairings are cleared
     document.getElementById('partnerRevealWindow').style.display = 'none';
-    document.getElementById('drivewayGuests').style.opacity = '1';
+    const crowd = document.getElementById('drivewayGuests');
+    if (crowd) crowd.style.opacity = '1';
     return;
   }
 
@@ -5667,19 +5679,22 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
 
     const reveal = document.getElementById('partnerRevealWindow');
     const avatarBox = document.getElementById('partnerAvatar');
-    const nameEl = document.getElementById('partnerName');
-    const proEl = document.getElementById('partnerPronouns');
 
-    // Dim the background crowd, pop the reveal card
-    document.getElementById('drivewayGuests').style.opacity = '0.15';
+    // Dim the crowd ONLY if they happen to be on the driveway screen
+    const crowd = document.getElementById('drivewayGuests');
+    if (crowd) crowd.style.opacity = '0.15';
+
     reveal.style.display = 'block';
+    // Re-trigger the pop-in animation
+    reveal.style.animation = 'none';
+    void reveal.offsetWidth;
+    reveal.style.animation = 'pop-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards';
 
-    // Inject partner data
-    avatarBox.innerHTML = myPartners.map(p => `<div class="guest-avatar" style="width:70px; height:90px;">${p.avatar}</div>`).join('');
-    nameEl.textContent = myPartners.map(p => p.name).join(' & ');
-    proEl.textContent = myPartners.map(p => p.pronouns).join(' & ');
-    
-    // Buzz the phone if supported
+    // Inject partner data (Avatars scaled to fit the right side cleanly)
+    avatarBox.innerHTML = myPartners.map(p => `<div class="guest-avatar" style="width: 55px; height: 75px; background: transparent; border: none; box-shadow: none;">${p.avatar}</div>`).join('');
+    document.getElementById('partnerName').textContent = myPartners.map(p => p.name).join(' & ');
+    document.getElementById('partnerPronouns').textContent = myPartners.map(p => p.pronouns).join(' & ');
+
     if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
   }
 });
