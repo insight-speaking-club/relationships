@@ -6,6 +6,8 @@
 <title>Relationships | Vogue Committee Headquarters</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="sasha-car-front-1.png" as="image">
+<link rel="preload" href="sasha.png" as="image">
 <style>
   :root{
     --ink:#120821;
@@ -2869,6 +2871,32 @@ body[data-phase="closer"] .sky {
      make out standing characters, so this full-size roster is the primary
      place to see everyone. */
   .magical-gathering-section { display: block; }
+
+  /* --- PERFORMANCE RESCUE OVERRIDES --- */
+
+  /* Strip out expensive background blurs and replace with solid dark glass */
+  .greeting-bubble, .dashboard-section, #activitiesSection, .hub-card, 
+  .partner-card, .question-panel, .timeline-card, .leaderboard-container, 
+  #partnerRevealWindow {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: rgba(22, 10, 35, 0.98) !important;
+  }
+
+  /* Strip drop-shadows from character sprites (tracing alpha channels is a massive GPU bottleneck) */
+  .avatar-sprite {
+    filter: none !important; 
+  }
+
+  /* Reduce the blur radius on the car shadow */
+  .gathering-car-img {
+    filter: drop-shadow(0 8px 10px rgba(0,0,0,0.6)) !important;
+  }
+
+  /* Limit background particles */
+  .stardust-mote:nth-child(n+12) {
+    display: none !important; 
+  }
 </style>
 </head>
 <body>
@@ -3329,7 +3357,7 @@ body[data-phase="closer"] .sky {
             <path class="hub-route-path" d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,72.8 74,72" />
           </svg>
 
-          <!-- Stop 0: Home -->
+          <!-- Stop 0: The Driveway -->
           <div class="hub-card locked" id="hubCardRoulette">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
@@ -3346,10 +3374,10 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--gold);">Icebreaker Activity</div>
-              <div class="hub-card-title">Home</div>
-              <div class="hub-card-desc">We're idling right here at Home. The GPS is recalibrating—step out and let's break the ice.</div>
-              <div class="hub-card-lock-note">The host will start the engine soon.</div>
+              <div class="hub-card-sub" style="color:var(--gold);">Matching Activity</div>
+              <div class="hub-card-title">The Driveway</div>
+              <div class="hub-card-desc">We're idling right here in the driveway. Gather 'round the car and wait to see who you're paired with.</div>
+              <div class="hub-card-lock-note">The host will assign partners soon.</div>
             </div>
           </div>
 
@@ -3485,7 +3513,7 @@ body[data-phase="closer"] .sky {
         <div class="host-map-deck-title">Host Controls</div>
 
         <div class="host-map-deck-row">
-          <span class="host-map-deck-label">Home</span>
+          <span class="host-map-deck-label">The Driveway</span>
           <!-- HOST ONLY: Roulette Controls -->
           <div id="hostControlsRoulette" class="host-inline-controls" style="display:none; justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightRoulette">Toggle "We're here"</button>
@@ -3649,31 +3677,48 @@ body[data-phase="closer"] .sky {
 
   </div> <!-- CLOSES #state-gathering -->
 
-  <!-- STATE 1.5: THE STARTING POINT (GPS ROULETTE) -->
+  <!-- STATE 1.5: THE DRIVEWAY (Partner Matching) -->
   <div id="state-roulette" class="lounge-state">
     <button class="back-btn" id="btnBackToGatheringRoulette" onclick="setLoungeState('state-gathering')">‹</button>
-    <div class="eyebrow" style="margin-top: 40px;">Home</div>
-    <h1 class="display" style="font-size:32px;">GPS Recalibration</h1>
-    <p class="sub" style="margin-bottom: 40px; padding: 0 20px;">The engine is running, but we aren't leaving just yet. When the needle locks onto you, answer honestly. We are all listening.</p>
+    <div class="eyebrow" style="margin-top: 40px;">The Driveway</div>
+    <!-- Heading removed as requested -->
+    <p class="sub" style="margin-bottom: 20px; padding: 0 20px;">Gather around the car. The host will assign your partner for tonight's journey shortly.</p>
     
-    <div class="spin-container" id="spinContainer">
-      <div class="spin-circle" id="spinCircle">
-        <!-- Avatars + Names injected here -->
+    <!-- The Driveway Scene: Taller and wider for better character fit -->
+    <div class="driveway-scene" style="position: relative; width: 100%; max-width: 440px; height: 420px; margin: 0 auto 20px; border-radius: 22px; overflow: hidden; border: 1px solid rgba(244, 233, 255, 0.12); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); display: flex; align-items: flex-end; justify-content: center; background: linear-gradient(180deg, #2a0e3f 0%, #60185b 70%);">
+      
+      <!-- Green Grass Ground -->
+      <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 140px; background: linear-gradient(180deg, #1b3a24 0%, #0d1e11 100%); border-top: 2px solid rgba(140, 220, 170, 0.2); z-index: 0;"></div>
+      
+      <!-- The Car -->
+      <div class="gathering-car-wrap" style="position: absolute; bottom: 60px; z-index: 1;">
+        <img class="gathering-car-img" src="sasha-car-front-1.png" alt="Sasha's Car" style="width: 260px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.8));">
       </div>
-      <!-- The GPS Needle -->
-      <div class="needle-wrapper" id="needleWrapper">
-        <svg class="needle-svg" viewBox="0 0 24 24" fill="var(--gold)" stroke="none">
-          <path d="M12 2L19 21L12 17L5 21L12 2Z"/>
-        </svg>
+      
+      <!-- Avatars injected here by JS, aligned to the bottom so they stand on the grass -->
+      <div id="drivewayGuests" class="passenger-cluster" style="position: absolute; inset: 0; z-index: 2; transition: opacity 0.5s ease; align-items: flex-end; padding-bottom: 40px;"></div>
+      
+      <!-- The Reveal Window (Split layout: Car on Left, Characters on Right) -->
+      <div id="partnerRevealWindow" class="partner-card" style="display: none; position: absolute; bottom: 40px; z-index: 10; width: 90%; max-width: 360px; animation: pop-in 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) both; background: rgba(30, 15, 45, 0.95);">
+        <div class="eyebrow" style="margin-bottom: 12px; color: var(--gold);">Your Car For Tonight</div>
+        
+        <!-- Split layout container -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; height: 110px; margin-bottom: 10px;">
+           <!-- Car on the left -->
+           <img src="sasha-car-front-1.png" alt="" style="width: 140px; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));">
+           
+           <!-- Avatars on the right -->
+           <div id="partnerAvatar" style="display: flex; justify-content: flex-end; align-items: flex-end; gap: 4px; flex: 1;"></div>
+        </div>
+        
+        <div id="partnerName" class="partner-name" style="margin-top: 12px; font-size: 24px; line-height: 1.1;"></div>
+        <div id="partnerPronouns" class="spin-pronouns" style="font-size: 10px; margin-top: 4px;"></div>
       </div>
     </div>
 
-    <!-- Question Display -->
-    <div class="spin-question-display" id="spinQuestionDisplay"></div>
-
-    <!-- HOST ONLY: Spin Control -->
-    <div id="hostControlsSpin" class="host-inline-controls" style="display:none; margin-top: 40px; border-color:var(--gold); width: 100%; max-width: 320px;">
-      <button class="host-inline-btn action" id="btnSpinNeedle" style="width:100%; padding: 14px; font-size: 16px;">Recalibrate GPS</button>
+    <!-- HOST ONLY: Match Control -->
+    <div id="hostControlsSpin" class="host-inline-controls" style="display:none; margin-top: 20px; border-color:var(--gold); width: 100%; max-width: 320px;">
+      <button class="host-inline-btn action" id="btnMatchPeople" style="width:100%; padding: 14px; font-size: 16px;">Match People</button>
     </div>
   </div>
 
@@ -4043,7 +4088,7 @@ const TOUR_STEPS = [
   // Step 1: Highlights the whole Itinerary section first
   { selector: '#activitiesSection', title: 'The Itinerary', desc: 'Here\'s the full route for the night. Watch it light up as we go—we travel together, so sit tight until we pull up to the first stop.', pad: 10 },
   // Step 2: Zooms into the current stop
-  { selector: '#hubCardRoulette', title: 'Home', desc: 'We are currently idling right here. Before we hit the road, the host will trigger the GPS to recalibrate—if it locks onto you, answer honestly.', pad: 8 },
+  { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We are currently gathered right here in the driveway. Before we hit the road, the host will match everyone up—wait here to see who you\'re riding with.', pad: 8 },
   // The rest remain the same
   { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
   { selector: '#hubCardAita', title: 'People\'s Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
@@ -4252,16 +4297,16 @@ function listenPhase(){
 // like a text FROM that place ("Home", "Midnight Garden"...) rather than
 // a generic system message.
 const HUB_SECTION_NAMES = {
-  roulette: 'Home',
+  roulette: 'The Driveway',
   garden: 'Midnight Garden',
   aita: 'People\'s Court™',
   closer: 'The Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
   roulette: [
-    "Darling, Home is open. Get out here and dazzle me 💋",
-    "The doors are open, mon chéri. Entrances like this deserve an audience, so tap Home 🤭",
-    "Home's unlocked! Tap in, chop chop darling, I did not do my makeup for nothing 🐇"
+    "Darling, The Driveway is open. Gather 'round and let's get you paired up 💋",
+    "The doors are open, mon chéri. Time to see who you're riding with, tap The Driveway 🤭",
+    "The Driveway's unlocked! Tap in, chop chop darling, it's time to match up 🐇"
   ],
   garden: [
     "Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
@@ -5481,35 +5526,38 @@ ref(`events/${EVENT_ID}/gpsRoulette/completed`).on('value', snap => {
   if (spinGuestsCache.length > 0) renderSpinCircle(spinGuestsCache);
 });
 
+// SMART RENDERER: Updates the driveway without wiping the DOM
 function renderSpinCircle(guests) {
   spinGuestsCache = guests;
-  const circle = document.getElementById('spinCircle');
-  if (!circle) return;
-  circle.innerHTML = '';
+  const cluster = document.getElementById('drivewayGuests');
+  if (!cluster) return;
   
-  const total = guests.length;
-  if (total === 0) return;
+  const currentIds = guests.map(g => g.id);
 
-  const radius = 170; // Half of the 340px container width
-  
-  guests.forEach((g, i) => {
-    // Math to position in a perfect circle. -90deg starts the first person at the top (12 o'clock)
-    const angleDeg = (i * (360 / total)) - 90;
-    const angleRad = angleDeg * (Math.PI / 180);
-    
-    const x = radius + (radius * Math.cos(angleRad));
-    const y = radius + (radius * Math.sin(angleRad));
-    
-    const avatar = document.createElement('div');
-    avatar.className = 'spin-avatar';
-    if (completedRouletteIds.includes(g.id)) avatar.classList.add('is-completed'); // Gray out completed guests
+  // 1. Remove guests who left
+  Array.from(cluster.children).forEach(child => {
+    if (!currentIds.includes(child.dataset.id)) {
+      child.remove();
+    }
+  });
 
-    avatar.id = `spin-avatar-${g.id}`;
-    avatar.style.left = `${x}px`;
-    avatar.style.top = `${y}px`;
-    const pronounsHtml = g.pronouns ? `<span class="spin-pronouns">${escapeHtml(g.pronouns)}</span>` : '';
-    avatar.innerHTML = `${g.avatar}<div class="spin-name">${escapeHtml(g.name)}${pronounsHtml}</div>`;
-    circle.appendChild(avatar);
+  // 2. Add new guests (leave existing ones alone to prevent flickering)
+  guests.forEach(g => {
+    let orb = cluster.querySelector(`[data-id="${g.id}"]`);
+    const isMe = me && g.id === me.id;
+    
+    // If they aren't on the lawn yet, create them
+    if (!orb) {
+      orb = document.createElement('div');
+      orb.className = 'passenger-orb';
+      orb.dataset.id = g.id;
+      
+      orb.innerHTML = `
+        <div class="guest-avatar">${g.avatar}</div>
+        <div class="guest-name ${isMe ? 'is-me' : ''}">${escapeHtml(g.name)}</div>
+      `;
+      cluster.appendChild(orb);
+    }
   });
 }
 
@@ -5556,80 +5604,83 @@ listenRoster = function() {
   });
 };
 
-// Host action: Pick a target, calculate angle, sync to Firebase
-document.getElementById('btnSpinNeedle').addEventListener('click', () => {
-  if (spinGuestsCache.length === 0) return;
+// HOST ACTION: Match People
+document.getElementById('btnMatchPeople')?.addEventListener('click', () => {
+  if (spinGuestsCache.length < 2) {
+    alert("You need at least 2 guests to match people.");
+    return;
+  }
+  
+  // Shuffle the array of guests
+  let shuffled = [...spinGuestsCache].sort(() => Math.random() - 0.5);
+  let individualPairings = {};
+  let globalPairs = {}; // Formats data for the Bouquet garden logic
+  let pairCount = 0;
 
-  // Filter out the completed guests
-  let availableGuests = spinGuestsCache.filter(g => !completedRouletteIds.includes(g.id));
-
-  // If everyone has gone, reset the board
-  if (availableGuests.length === 0) {
-    if (confirm("Everyone has been picked! Reset the circle?")) {
-      ref(`events/${EVENT_ID}/gpsRoulette/completed`).set([]);
+  for (let i = 0; i < shuffled.length; i += 2) {
+    if (i === shuffled.length - 1) {
+      // Odd person out: join the last pair to make a trio
+      let last1 = shuffled[i - 2];
+      let last2 = shuffled[i - 1];
+      let current = shuffled[i];
+      
+      individualPairings[current.id] = [last1, last2];
+      individualPairings[last1.id].push(current);
+      individualPairings[last2.id].push(current);
+      
+      globalPairs['pair_' + (pairCount - 1)] = { members: [last1.id, last2.id, current.id] };
+    } else {
+      let p1 = shuffled[i];
+      let p2 = shuffled[i+1];
+      
+      individualPairings[p1.id] = [p2];
+      individualPairings[p2.id] = [p1];
+      
+      globalPairs['pair_' + pairCount] = { members: [p1.id, p2.id] };
+      pairCount++;
     }
+  }
+
+  // Push personal pairings to the driveway display, and global pairs to the Garden
+  ref(`events/${EVENT_ID}/gpsRoulette/pairings`).set(individualPairings);
+  ref(`events/${EVENT_ID}/pairs`).set(globalPairs);
+});
+
+// EVERYONE: Listen for the match execution
+ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
+  const allPairings = snap.val();
+  if (!allPairings || !me) {
+    // Reset view if pairings are cleared
+    document.getElementById('partnerRevealWindow').style.display = 'none';
+    document.getElementById('drivewayGuests').style.opacity = '1';
     return;
   }
 
-  // Pick ONLY from the available guests
-  const target = availableGuests[Math.floor(Math.random() * availableGuests.length)];
-  const targetIndex = spinGuestsCache.findIndex(g => g.id === target.id); // Need their physical index for the angle
-  const question = ICEBREAKER_QUESTIONS[Math.floor(Math.random() * ICEBREAKER_QUESTIONS.length)];
-  
-  // Calculate angle. 360 / total gives degrees per slice.
-  const targetAngle = targetIndex * (360 / spinGuestsCache.length);
-  
-  // Add 5 full spins (1800 degrees) to the current rotation, plus the required angle
-  // We use modulo to find the current absolute angle to ensure a smooth forward sweep
-  const baseRotation = currentNeedleRotation - (currentNeedleRotation % 360);
-  const newRotation = baseRotation + 1800 + targetAngle;
-  
-  ref(`events/${EVENT_ID}/gpsRoulette`).set({
-    targetId: target.id,
-    targetName: target.name,
-    question: question,
-    rotation: newRotation,
-    ts: Date.now()
-  });
-});
+  const myPartners = allPairings[me.id];
+  if (myPartners) {
+    // Find our specific global pair ID for the Garden routing later
+    ref(`events/${EVENT_ID}/pairs`).once('value').then(pSnap => {
+      const dbPairs = pSnap.val() || {};
+      const myPairKey = Object.keys(dbPairs).find(k => dbPairs[k].members.includes(me.id));
+      if (myPairKey) window.currentPairId = myPairKey;
+    });
 
-// Everyone listens for the spin
-ref(`events/${EVENT_ID}/gpsRoulette`).on('value', snap => {
-  const data = snap.val();
-  if (!data || !me) return;
-  
-  currentNeedleRotation = data.rotation;
-  
-  const needle = document.getElementById('needleWrapper');
-  const display = document.getElementById('spinQuestionDisplay');
-  
-  // Reset avatars and hide question
-  document.querySelectorAll('.spin-avatar').forEach(a => a.classList.remove('is-target'));
-  display.classList.remove('show');
-  
-  // Apply CSS hardware-accelerated spin
-  needle.style.transform = `translateZ(0) rotate(${currentNeedleRotation}deg)`;
+    const reveal = document.getElementById('partnerRevealWindow');
+    const avatarBox = document.getElementById('partnerAvatar');
+    const nameEl = document.getElementById('partnerName');
+    const proEl = document.getElementById('partnerPronouns');
 
-  const targetAvatar = document.getElementById(`spin-avatar-${data.targetId}`);
-  if (targetAvatar) targetAvatar.classList.add('is-target');
+    // Dim the background crowd, pop the reveal card
+    document.getElementById('drivewayGuests').style.opacity = '0.15';
+    reveal.style.display = 'block';
 
-  if (data.targetId === me.id) {
-    display.innerHTML = `
-      <div class="spin-q-target-name">It landed on you</div>
-      <div class="spin-q-text is-victim">${data.question}</div>
-    `;
-  } else {
-    display.innerHTML = `
-      <div class="spin-q-target-name">${escapeHtml(data.targetName)} answers</div>
-      <div class="spin-q-text is-victim">${data.question}</div>
-    `;
-  }
-  display.classList.add('show');
-
-  // Lock this guest out of future spins for the round
-  if (isHost && !completedRouletteIds.includes(data.targetId)) {
-    completedRouletteIds.push(data.targetId);
-    ref(`events/${EVENT_ID}/gpsRoulette/completed`).set(completedRouletteIds);
+    // Inject partner data
+    avatarBox.innerHTML = myPartners.map(p => `<div class="guest-avatar" style="width:70px; height:90px;">${p.avatar}</div>`).join('');
+    nameEl.textContent = myPartners.map(p => p.name).join(' & ');
+    proEl.textContent = myPartners.map(p => p.pronouns).join(' & ');
+    
+    // Buzz the phone if supported
+    if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
   }
 });
 
