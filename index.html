@@ -547,6 +547,21 @@
     text-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
   }
   .lounge-header .eyebrow { color: var(--gold); letter-spacing: 0.3em; }
+
+  /* ---------- Personal greeting, sits above the itinerary ---------- */
+  .personal-greeting{
+    width:100%; max-width:420px; text-align:center;
+    margin: 4px 0 18px;
+  }
+  .personal-greeting-text{
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500;
+    font-size:23px; line-height:1.35; color:var(--mist);
+    text-shadow: 0 2px 16px rgba(217,79,140,0.35);
+  }
+  .personal-greeting-text .name{
+    font-style:normal; color:var(--gold);
+    text-shadow: 0 0 14px rgba(242,193,78,0.4);
+  }
   .dashboard-section, #activitiesSection {
     position: relative;
     width: 100%; max-width: 420px;
@@ -3065,6 +3080,11 @@ body[data-phase="closer"] .sky {
   <div id="state-gathering" class="lounge-state active">
     <div class="lounge-content">
 
+      <!-- Personal, rotating greeting — sits right above the itinerary -->
+      <div class="personal-greeting" id="personalGreeting">
+        <div class="personal-greeting-text" id="personalGreetingText"></div>
+      </div>
+
       <!-- HOST ONLY: Roster -->
       <div id="hostRosterContainer" class="dashboard-section" style="display:none; border-color: var(--gold);">
         <div class="section-header"><div class="eyebrow" style="color:var(--gold);">Host Roster</div></div>
@@ -3545,7 +3565,6 @@ body[data-phase="closer"] .sky {
       <div class="event-footer" style="margin-top: 40px; padding-bottom: 40px;">
         <img loading="lazy" decoding="async" src="logo.png" alt="Logo" class="footer-logo" onerror="this.style.display='none'">
         <div class="footer-credit">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
-        <div class="footer-message">Thank you for coming.<br>See you next time ♡</div>
         <a href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" class="footer-instagram">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           @z3xhwi14
@@ -3726,25 +3745,14 @@ body[data-phase="closer"] .sky {
   </div>
 
   <!-- GLOBAL PARTNER REVEAL POPUP -->
-  <div id="partnerRevealWindow" class="partner-card" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; width: calc(100vw - 32px); max-width: 280px; background: rgba(22, 10, 35, 0.98); border: 1px solid var(--gold); box-shadow: 0 20px 50px rgba(0,0,0,0.8); padding: 16px 14px; border-radius: 16px; box-sizing: border-box; text-align: center; overflow: hidden;">
-    
+  <div id="partnerRevealWindow" class="partner-card" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; width: calc(100vw - 32px); max-width: 280px; background: rgba(22, 10, 35, 0.98); border: 1px solid var(--gold); box-shadow: 0 20px 50px rgba(0,0,0,0.8); padding: 24px 14px 16px; border-radius: 16px; box-sizing: border-box; text-align: center; overflow: hidden;">
+
     <!-- Close Button -->
     <button id="btnCloseReveal" style="position: absolute; top: 8px; right: 10px; background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer; padding: 0; line-height: 1;">✕</button>
-    
-    <div class="eyebrow" style="margin-bottom: 12px; color: var(--gold); font-size: 9px; letter-spacing: 0.12em; line-height: 1.3; padding-right: 14px;">Your partner(s) in the Midnight Garden tonight will be...</div>
-    
-    <!-- Wrap layout: prevents overflowing on small screens -->
-    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; gap: 8px; margin-bottom: 10px;">
-      <!-- Car -->
-      <div style="flex: 0 0 70px; max-width: 100%;">
-        <img src="sasha-car-front-1.png" alt="Car" style="width: 100%; display: block; object-fit: contain;">
-      </div>
-      
-      <!-- Characters -->
-      <div id="partnerAvatar" style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: flex-end; max-width: 100%;"></div>
-    </div>
-    
-    <div id="partnerName" class="partner-name" style="font-size: 16px; line-height: 1.3; margin-top: 8px; margin-bottom: 14px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto;"></div>
+
+    <div class="eyebrow" style="margin-bottom: 10px; color: var(--gold); font-size: 10px; letter-spacing: 0.12em;">You're paired with</div>
+
+    <div id="partnerName" class="partner-name" style="font-size: 20px; line-height: 1.3; margin-bottom: 16px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto;"></div>
 
     <button id="btnDontShowReveal" class="btn ghost" style="font-size: 10.5px; padding: 6px 12px; width: 100%; margin-top: 0;">Do not show again</button>
   </div>
@@ -4043,9 +4051,18 @@ document.getElementById('btnJoin').addEventListener('click', async ()=>{
 
 /* ---------- single room logic ---------- */
 
+function renderPersonalGreeting(){
+  const el = document.getElementById('personalGreetingText');
+  if(!el || !me || !me.name) return;
+
+  const firstName = me.name.split(' ')[0];
+  el.innerHTML = `Good evening, <span class="name">${escapeHtml(firstName)}</span> 🥂`;
+}
+
 function enterLounge(){
   show('screen-lounge');
 
+  renderPersonalGreeting();
   setLoungeState('state-gathering');
   listenRoster();
   listenPhase();
@@ -4389,26 +4406,28 @@ function listenHubs() {
 // Bind the hub cards!
 
 // A little variety so tapping a locked door doesn't just feel like a dead end —
-// but each one still tells you it's locked, and that I'll open it myself.
+// each one names the section and treats it like a real venue we haven't
+// arrived at yet, not a door Sasha personally unlocks.
 const PATIENCE_MESSAGES = [
-  "Darling, this one's locked. Sit tight, I'll unlock it myself when it's time 💋",
-  "Not yet, mon chéri. I'm the one who opens the doors, so watch for the ping 🤭",
-  "Still closed, darling. I'll swing it open for everyone the moment we're ready. 🐇",
-  "Locked for now, love. I'll unlock it and you'll get a little tap on the shoulder. 💋",
-  "Patience, darling. I open every door myself, no need to keep knocking 🤭",
-  "Simply not open yet. I'll flip the lock when it's go time, promise. 🐇",
-  "Not so fast, love. I'll unlock this one, and you'll know the second it's ready 💋",
-  "Still waiting on me, darling. I'll open it for the whole room at once. 🤭",
-  "Locked, darling. I'll take care of it, no tapping required 🐇",
-  "Not yet, love. I open these myself, and you'll feel the buzz when it's time 💋"
+  "Darling, {name} isn't taking guests yet. We're still on the road 🚗",
+  "Not yet, mon chéri. {name} doesn't open until we actually pull up 🤭",
+  "{name}'s still closed for the night. Sit tight, we're on our way 🐇",
+  "Patience, love. {name} doesn't open its doors till we arrive 💋",
+  "We haven't gotten to {name} yet, darling. Buckle up 🤭",
+  "{name} isn't seating anyone until we get there. Won't be long 🐇",
+  "Not so fast, love — {name} opens when we roll in, not a second before 💋",
+  "Still en route to {name}, darling. You'll feel it the moment we arrive 🤭",
+  "{name} is closed to guests for now. We'll be there before you know it 🐇",
+  "Hold on, love. {name} isn't open till the car actually stops 💋"
 ];
 let lastPatienceIndex = -1;
-function showPatienceToast(){
+function showPatienceToast(sectionName){
   let i;
   do { i = Math.floor(Math.random() * PATIENCE_MESSAGES.length); }
   while (i === lastPatienceIndex && PATIENCE_MESSAGES.length > 1);
   lastPatienceIndex = i;
-  showSashaToast({ title: 'Sasha', body: PATIENCE_MESSAGES[i], vibrateMs: 40, holdMs: 3200 });
+  const body = PATIENCE_MESSAGES[i].replace('{name}', sectionName || 'this stop');
+  showSashaToast({ title: 'Sasha', body, vibrateMs: 40, holdMs: 3200 });
 }
 
 function handleLockedHubClick(el) {
@@ -4418,7 +4437,8 @@ function handleLockedHubClick(el) {
     void el.offsetWidth; // Trigger DOM reflow
     el.classList.add('shake-reject');
     setTimeout(() => el.classList.remove('shake-reject'), 400);
-    showPatienceToast();
+    const sectionName = el.querySelector('.hub-card-title')?.textContent?.trim();
+    showPatienceToast(sectionName);
     return true; // Indicates it was locked
   }
   return false; // Indicates it was unlocked
@@ -5589,7 +5609,6 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
     if (localStorage.getItem('fsc_hide_partner_reveal') === '1') return;
 
     const reveal = document.getElementById('partnerRevealWindow');
-    const avatarBox = document.getElementById('partnerAvatar');
 
     reveal.style.display = 'block';
     // Re-trigger the pop-in animation
@@ -5597,23 +5616,10 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
     void reveal.offsetWidth;
     reveal.style.animation = 'pop-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards';
 
-    // Combine you + your partners so everyone shows up in the window together
-    const meObj = stateGuests.find(g => g.id === me.id) || me;
-    const groupMembers = [meObj, ...myPartners];
-
-    // Render all characters, sized to fit without stretching the popup
-    avatarBox.innerHTML = groupMembers.map(p => `<div class="guest-avatar" style="width: 30px; height: 42px; background: transparent; border: none; box-shadow: none; flex-shrink: 0;">${p.avatar}</div>`).join('');
-
-    // Format into ONE clean, non-redundant vertical list
-    document.getElementById('partnerName').innerHTML = groupMembers.map(p => {
-      let tags = [];
-      if (me && p.id === me.id) tags.push('You');
-      if (p.id && p.id.startsWith('host_')) tags.push('Host');
-      if (p.pronouns) tags.push(p.pronouns); // skips rendering when pronouns are missing
-
-      const tagStr = tags.length ? ` <span style="font-size: 9px; color: var(--gold); letter-spacing: 0.05em; text-transform: uppercase;">(${tags.join(', ')})</span>` : '';
-      return `${escapeHtml(p.name)}${tagStr}`;
-    }).join('<div style="font-size: 12px; color: rgba(255,255,255,0.3); margin: 4px 0;">&amp;</div>');
+    // Simple: just the partner's name(s), nothing else
+    document.getElementById('partnerName').innerHTML = myPartners.map(p =>
+      escapeHtml(p.name)
+    ).join('<div style="font-size: 12px; color: rgba(255,255,255,0.3); margin: 4px 0;">&amp;</div>');
 
     if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
   }
@@ -5629,33 +5635,6 @@ document.getElementById('btnDontShowReveal')?.addEventListener('click', () => {
 if (isHost) {
   document.getElementById('hostControlsSpin').style.display = 'flex';
 }
-
-/* ---------- MAGNETIC TOUCH-RESPONSE ---------- */
-// Applies a physical "pull" to primary interactive elements as a thumb
-// drags across them, snapping back with a spring on release.
-document.querySelectorAll('.hub-card:not(.locked):not(.hub-sections .hub-card), .btn, .aita-btn').forEach(el => {
-  el.style.transition = 'transform 0.4s cubic-bezier(0.22, 1.6, 0.4, 1)';
-
-  el.addEventListener('pointermove', (e) => {
-    if (!e.isPrimary) return; // avoid multi-touch glitches
-
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-
-    el.style.transition = 'none'; // 1:1 mapping while dragging
-    el.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px) scale(0.98)`;
-  });
-
-  const resetTransform = () => {
-    el.style.transition = 'transform 0.4s cubic-bezier(0.22, 1.6, 0.4, 1)';
-    el.style.transform = '';
-  };
-
-  el.addEventListener('pointerleave', resetTransform);
-  el.addEventListener('pointerup', resetTransform);
-  el.addEventListener('pointercancel', resetTransform);
-});
 
 </script>
 </body>
