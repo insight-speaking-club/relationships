@@ -2950,15 +2950,18 @@ body[data-phase="closer"] .sky {
     animation: none !important;
   }
 
-  /* Force hardware acceleration on scrolling and remove any leftover blurs */
-  * {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
   /* Ensure the map track doesn't jitter */
   .hub-sections {
     transform: translateZ(0);
+  }
+
+  /* Keeps the partner-reveal popup's -50%/-50% centering intact while it
+     pops in — the generic .pop-in keyframe only animates scale/translateY,
+     which overwrites the popup's centering transform for the animation's
+     duration and shoves it off-screen. */
+  @keyframes pop-in-center {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.5) translateY(10px); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1) translateY(0); }
   }
 </style>
 </head>
@@ -5410,19 +5413,20 @@ document.getElementById('btnTimerCourt').addEventListener('click', () => {
 });
 
 // RESET EVENT
-document.getElementById('btnResetEvent').addEventListener('click', ()=>{
+document.getElementById('btnResetEvent').addEventListener('click', async () => {
   if(!confirm('Clear the roster, pairs, and phase for a brand new event?')) return;
-  ref(`events/${EVENT_ID}/attendees`).set(null);
-  ref(`events/${EVENT_ID}/pairs`).set(null);
-  ref(`events/${EVENT_ID}/gpsRoulette/pairings`).set(null); // <--- ADD THIS LINE
-  ref(`events/${EVENT_ID}/hubs`).set(null); // Lock all hubs
-  ref(`events/${EVENT_ID}/aita/round`).set(null);
-  ref(`events/${EVENT_ID}/aita/rounds`).set(null);
-  ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null);
-  ref(`events/${EVENT_ID}/aitaTimerEnd`).set(null);
-  document.getElementById('aitaTally').style.display='none';
-  document.getElementById('aitaPicked').textContent='';
-  ref(`events/${EVENT_ID}/state`).set('lounge');
+
+  // 1. Wipe the entire event node from the database instantly
+  await ref(`events/${EVENT_ID}`).set(null);
+
+  // 2. Clear all local guest data and ghost scores
+  localStorage.removeItem('fsc_guest');
+  localStorage.removeItem('fsc_bunny_high');
+  localStorage.removeItem('fsc_tour_seen');
+  localStorage.removeItem('fsc_hide_partner_reveal');
+
+  // 3. Force a hard page reload to reset the UI completely
+  window.location.href = window.location.pathname + '?host=1';
 });
 
 /* ---------- AITA voting (host) ---------- */
@@ -5653,7 +5657,7 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
     // Re-trigger the pop-in animation
     reveal.style.animation = 'none';
     void reveal.offsetWidth;
-    reveal.style.animation = 'pop-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards';
+    reveal.style.animation = 'pop-in-center 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards';
 
     // Simple: just the partner's name(s), nothing else
     document.getElementById('partnerName').innerHTML = myPartners.map(p =>
