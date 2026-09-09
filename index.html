@@ -2668,10 +2668,12 @@ body[data-phase="closer"] .sky {
      matter whether the badge is showing. */
   .hub-card .current-badge {
     position: absolute;
-    top: -22px;
+    top: -34px; /* Increased to push it safely above the pin and tag */
     left: 50%;
     transform: translateX(-50%);
     margin-bottom: 0;
+    z-index: 10; /* Ensures it sits on top */
+    white-space: nowrap; /* Prevents the text from wrapping and drooping down */
   }
 
   /* 6. Turn the icon into an actual map-pin marker — a gradient
@@ -2735,68 +2737,25 @@ body[data-phase="closer"] .sky {
   #hubCardGarden   { top: 35%; left: 62%; }
   #hubCardAita     { top: 60%; left: 22%; }
   #hubCardCloser   { top: 72%; left: 48%; }
-  #hubCardVogue    { top: 10%; left: 68%; }
 
-  /* Vogue Committee HQ: a small, quiet reference pin — NOT a stop that
-     "opens" like the activities, so it should read as secondary, not a
-     focal point. ID selector used so this reliably beats the generic
-     unlocked-pin glow/gradient/size rules above. */
-  #hubCardVogue.hub-card {
-    width: 62px;
-  }
-  #hubCardVogue .hub-card-icon {
-    width: 30px;
-    height: 30px;
-    /* Plain circle, not the teardrop pin shape the real stops use —
-       a circle reads as "reference point" rather than "destination". */
-    border-radius: 50% !important;
-    transform: none !important; /* cancel the -45deg pin rotation */
-    background: rgba(30, 15, 45, 0.85) !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4) !important;
-    border: 1.5px dashed rgba(244, 233, 255, 0.45) !important;
-    animation: none !important;
-  }
-  /* Since the icon no longer rotates -45deg, undo the pin's counter-
-     rotation on its contents so the svg/photo stay upright. */
-  #hubCardVogue .hub-card-icon svg,
-  #hubCardVogue .hub-card-icon img {
-    transform: none !important;
-  }
-  #hubCardVogue .hub-card-icon svg {
-    width: 14px;
-    height: 14px;
-  }
-  #hubCardVogue .hub-card-photo {
-    width: 26px;
-    height: 26px;
-  }
-  #hubCardVogue .hub-card-title {
-    font-size: 9.5px;
-    padding: 2px 7px;
-    background: rgba(20, 10, 30, 0.85);
-    color: var(--gold);
-    border: 1px solid rgba(242, 193, 78, 0.4);
-    box-shadow: none;
-  }
-  #hubCardVogue {
-    opacity: 0.85;
-  }
-
-  /* Position The Polaroid Wall — a real teardrop stop like the other pins
+  /* Position Memory Wall — a real teardrop stop like the other pins
      (Roulette, Garden, Post Office), just scaled down a bit so it reads
      as a lighter, secondary stop rather than a full main destination.
      It still inherits the base .hub-card-icon teardrop shape + the
      "unlocked" gold-glow treatment, same as every other active stop on
-     the map — just smaller. The emoji is wrapped in .hub-card-emoji so
-     it can be counter-rotated upright inside the rotated teardrop, the
-     same trick used for the real svg icons. */
+     the map — just smaller. */
   #hubCardRecap { top: 71%; left: 81%; width: 72px; }
   #hubCardRecap .hub-card-icon {
     width: 36px;
     height: 36px;
   }
-  #hubCardRecap .hub-card-emoji {
-    font-size: 15px;
+  #hubCardRecap .hub-card-photo {
+    width: 28px;
+    height: 28px;
+  }
+  #hubCardRecap .icon-normal {
+    width: 17px;
+    height: 17px;
   }
   #hubCardRecap .hub-card-title {
     font-size: 10.5px;
@@ -2815,11 +2774,6 @@ body[data-phase="closer"] .sky {
     border: 2px solid rgba(244, 233, 255, 0.35) !important;
     animation: none !important;
   }
-  .hub-card-emoji {
-    display: inline-block;
-    transform: rotate(45deg);
-  }
-
   /* Host-triggered visual states */
   .hub-card.is-dimmed {
     opacity: 0.35 !important;
@@ -3609,33 +3563,23 @@ body[data-phase="closer"] .sky {
             </div>
           </div>
 
-          <!-- Always-open side stop: not part of the driving route, so no connector heart -->
-          <div class="hub-card hub-card-vogue" id="hubCardVogue" onclick="handleVogueClick()">
-            <div class="hub-card-icon" style="position: relative;">
-              <!-- Drop a real photo here named exactly this, or leave it
-                   missing — it'll quietly fall back to the award icon -->
-              <img class="hub-card-photo" loading="lazy" decoding="async" src="vogue-committee.png" alt="" onerror="this.style.display='none'">
-              <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="8" r="6"/>
-                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
-              </svg>
-            </div>
-            <div>
-              <div class="hub-card-sub" style="color:var(--gold);">Always Open</div>
-              <div class="hub-card-title">Vogue Committee Headquarters</div>
-              <div class="hub-card-desc">Where the looks get judged. Drop in anytime to see the archive and submit yours.</div>
-            </div>
-          </div>
-
-          <!-- Always-open side stop: The Polaroid Wall (Recap) -->
+          <!-- Always-open side stop: Memory Wall (Recap) -->
           <div class="hub-card" id="hubCardRecap" onclick="window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank')">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
-              <span class="hub-card-emoji">📸</span>
+              <!-- Drop a real photo here named exactly this, or leave it
+                   missing — it'll quietly fall back to the photo-frame icon -->
+              <img class="hub-card-photo" loading="lazy" decoding="async" src="wall-of-memories-icon.jpg" alt="" onerror="this.style.display='none'">
+              <!-- Minimalist Photo Frame SVG -->
+              <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
             </div>
             <div>
-              <div class="hub-card-title">The Polaroid Wall</div>
-              <div class="hub-card-desc">This is the final stop, darling. Drop your photos, drop the gossip. This is what we'll remember it by.</div>
+              <div class="hub-card-title">Memory Wall</div>
+              <div class="hub-card-desc">This is the final stop, darling. Pin up photos with the people you met, drop those Instagram handles, and leave a little note. This is our digital scrapbook.</div>
             </div>
           </div>
 
@@ -3990,18 +3934,6 @@ try{
   }
 }catch(e){ console.warn("Firebase init failed, falling back to preview mode.", e); }
 
-/* =========================================================
-   VOGUE COMMITTEE — one-time lore card, then straight to the Archive
-   ========================================================= */
-function handleVogueClick(){
-  const hideLore = localStorage.getItem('fsc_hide_vogue_lore') === '1';
-  if(!hideLore){
-    document.getElementById('vogueLoreOverlay').style.display = 'block';
-  } else {
-    setLoungeState('state-archive');
-  }
-}
-
 function proceedToVogueHQ(){
   document.getElementById('vogueLoreOverlay').style.display = 'none';
   setLoungeState('state-archive');
@@ -4306,7 +4238,7 @@ const TOUR_STEPS = [
   { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
   { selector: '#hubCardAita', title: 'People\'s Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
   { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Third stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.', pad: 8 },
-  { selector: '#hubCardRecap', title: 'The Polaroid Wall', desc: 'This is the final stop, darling. Drop your photos, drop the gossip. This is what we\'ll remember it by.', pad: 8 }
+  { selector: '#hubCardRecap', title: 'Memory Wall', desc: 'This is the final stop, darling. Pin up photos with the people you met, drop those Instagram handles, and leave a little note. This is our digital scrapbook.', pad: 8 }
 ];
 
 function startTour() {
@@ -4682,11 +4614,6 @@ document.getElementById('hubCardCloser').addEventListener('click', function() {
   // Route to the new journaling activity
   window.location.href = 'the-post-office.html';
 });
-// Note: hubCardVogue's click is now handled entirely by the inline
-// onclick="handleVogueClick()" on the element (first-time lore card,
-// then straight to VOGUE_TARGET_URL every time after). No listener
-// needed here — it used to send guests to the archive state instead.
-
 function enterAitaRound(round){
   window.currentAitaRound = round;
   setLoungeState('state-aita');
