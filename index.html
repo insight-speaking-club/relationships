@@ -2769,42 +2769,47 @@ body[data-phase="closer"] .sky {
     opacity: 0.85;
   }
 
-  /* Position The Lantern Archive pin where the red arrow points, and
-     mirror the Vogue HQ styling exactly so both read as quiet,
-     secondary reference pins rather than full stops. */
-  #hubCardLanterns { top: 62% !important; left: 78% !important; }
-  #hubCardLanterns.hub-card {
-    width: 62px;
+  /* Position The Polaroid Wall — a real teardrop stop like the other pins
+     (Roulette, Garden, Post Office), just scaled down a bit so it reads
+     as a lighter, secondary stop rather than a full main destination.
+     It still inherits the base .hub-card-icon teardrop shape + the
+     "unlocked" gold-glow treatment, same as every other active stop on
+     the map — just smaller. The emoji is wrapped in .hub-card-emoji so
+     it can be counter-rotated upright inside the rotated teardrop, the
+     same trick used for the real svg icons. */
+  #hubCardRecap { top: 71%; left: 81%; width: 72px; }
+  #hubCardRecap .hub-card-icon {
+    width: 36px;
+    height: 36px;
   }
-  #hubCardLanterns .hub-card-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 50% !important;
-    transform: none !important;
-    background: rgba(30, 15, 45, 0.85) !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4) !important;
-    border: 1.5px dashed rgba(244, 233, 255, 0.45) !important;
-    animation: none !important;
+  #hubCardRecap .hub-card-emoji {
+    font-size: 15px;
   }
-  #hubCardLanterns .hub-card-icon svg,
-  #hubCardLanterns .hub-card-icon img {
-    transform: none !important;
+  #hubCardRecap .hub-card-title {
+    font-size: 10.5px;
+    padding: 3px 7px;
+    margin-top: -4px;
   }
-  #hubCardLanterns .hub-card-icon svg {
-    width: 14px;
-    height: 14px;
+  .hub-card-emoji {
+    display: inline-block;
+    transform: rotate(45deg);
   }
-  #hubCardLanterns .hub-card-title {
-    font-size: 9.5px;
-    padding: 2px 7px;
-    background: rgba(20, 10, 30, 0.85);
-    color: var(--gold);
-    border: 1px solid rgba(242, 193, 78, 0.4);
-    box-shadow: none;
-    white-space: nowrap;
+
+  /* Host-triggered visual states */
+  .hub-card.is-dimmed {
+    opacity: 0.35 !important;
+    filter: grayscale(100%) brightness(0.6);
   }
-  #hubCardLanterns {
-    opacity: 0.85;
+
+  .hub-card.is-super-glow .hub-card-icon {
+    animation: super-pin-glow 1s infinite alternate !important;
+    background: linear-gradient(135deg, #ff4d5e, #f2c14e) !important;
+    border: 2px solid #fff !important;
+  }
+
+  @keyframes super-pin-glow {
+    0% { box-shadow: 0 0 20px 5px rgba(255, 77, 94, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.8); transform: rotate(-45deg) scale(1); }
+    100% { box-shadow: 0 0 45px 15px rgba(242, 193, 78, 1), inset 0 0 20px rgba(255, 255, 255, 1); transform: rotate(-45deg) scale(1.15); }
   }
 
   /* The Polished Lore Card Overlay */
@@ -3574,7 +3579,7 @@ body[data-phase="closer"] .sky {
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Closer Activity</div>
               <div class="hub-card-title">The Post Office</div>
-              <div class="hub-card-desc">Last stop of the night. The Post Office is open—post something you love before we head home.</div>
+              <div class="hub-card-desc">Step into the Post Office and write a letter. We won't tell you what kind. You'll find out once you're inside.</div>
               <div class="hub-card-lock-note">The Post Office remains closed for now.</div>
             </div>
           </div>
@@ -3597,15 +3602,15 @@ body[data-phase="closer"] .sky {
             </div>
           </div>
 
-          <!-- Always-open side stop: The Lantern Archive -->
-          <div class="hub-card hub-card-vogue" id="hubCardLanterns" onclick="handleLanternsClick()">
+          <!-- Always-open side stop: The Polaroid Wall (Recap) -->
+          <div class="hub-card" id="hubCardRecap" onclick="window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank')">
+            <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
-              <svg class="icon-normal" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-              </svg>
+              <span class="hub-card-emoji">📸</span>
             </div>
             <div>
-              <div class="hub-card-title">The Lantern Archive</div>
+              <div class="hub-card-title">The Polaroid Wall</div>
+              <div class="hub-card-desc">This is the final stop, darling. Drop your photos, drop the gossip. This is what we'll remember it by.</div>
             </div>
           </div>
 
@@ -3689,6 +3694,17 @@ body[data-phase="closer"] .sky {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
               <span>Unlock</span>
             </button>
+          </div>
+        </div>
+
+        <div class="host-map-deck-row">
+          <span class="host-map-deck-label">The Polaroid Wall</span>
+          <div class="host-inline-controls" style="justify-content: space-between;">
+            <button class="host-inline-btn action" id="btnHighlightRecap">Toggle "We're here"</button>
+            <div style="display:flex; gap:6px;">
+              <button class="host-inline-btn" id="btnGlowRecap">✨ Glow</button>
+              <button class="host-inline-btn" id="btnDimRecap">🌙 Dim</button>
+            </div>
           </div>
         </div>
       </div>
@@ -3922,26 +3938,6 @@ body[data-phase="closer"] .sky {
   </div>
 </div>
 
-<!-- THE LANTERN ARCHIVE SYMBOLISM LORE CARD -->
-<div id="lanternLoreOverlay" class="lore-card-overlay">
-  <div class="lore-card-backdrop" onclick="document.getElementById('lanternLoreOverlay').style.display='none'"></div>
-  <div class="lore-card">
-    <div class="tt-head">
-      <img class="lore-avatar" src="sasha.png" alt="Sasha">
-      <div class="tt-bubble">
-        <div class="tt-title">The Lanterns</div>
-      </div>
-    </div>
-    <div class="tt-desc">
-      Darling, please don't tell me you thought those floating lights drifting across the sky were just decoration... Every single lantern represents a real, breathing love story sent up into the dark.
-      <br><br>
-      <span style="color: var(--gold); font-weight: 500;">Click below to read more and step into the archive. 🏮✨</span>
-    </div>
-    <button class="btn-close" onclick="proceedToLanterns()" style="margin-bottom: 12px;">Open the Archive</button>
-    <button onclick="dismissLanternLoreForever()" style="background: none; border: none; color: var(--dim); font-size: 10px; opacity: 0.6; cursor: pointer; padding: 4px; text-decoration: underline; margin: 0 auto; display: block;">Do not show this again</button>
-  </div>
-</div>
-
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script>
@@ -3990,32 +3986,6 @@ function dismissVogueLoreForever(){
   localStorage.setItem('fsc_hide_vogue_lore', '1');
   document.getElementById('vogueLoreOverlay').style.display = 'none';
   setLoungeState('state-archive');
-}
-
-/* =========================================================
-   THE LANTERN ARCHIVE — one-time lore card, then opens the
-   separate archive page in a new tab
-   ========================================================= */
-const LANTERNS_URL = 'lanterns.html'; // Points to your separate stories page
-
-function handleLanternsClick(){
-  const hideLore = localStorage.getItem('fsc_hide_lantern_lore') === '1';
-  if(!hideLore){
-    document.getElementById('lanternLoreOverlay').style.display = 'block';
-  } else {
-    window.open(LANTERNS_URL, '_blank');
-  }
-}
-
-function proceedToLanterns(){
-  document.getElementById('lanternLoreOverlay').style.display = 'none';
-  window.open(LANTERNS_URL, '_blank');
-}
-
-function dismissLanternLoreForever(){
-  localStorage.setItem('fsc_hide_lantern_lore', '1');
-  document.getElementById('lanternLoreOverlay').style.display = 'none';
-  window.open(LANTERNS_URL, '_blank');
 }
 
 function localRef(path){
@@ -4310,7 +4280,7 @@ const TOUR_STEPS = [
   // The rest remain the same
   { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
   { selector: '#hubCardAita', title: 'People\'s Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
-  { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Last stop of the night. We\'ll each post something we love before we head home.', pad: 8 }
+  { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Step into the Post Office and write something just for you. What kind of letter? You\'ll find out once you\'re inside.', pad: 8 }
 ];
 
 function startTour() {
@@ -4533,9 +4503,9 @@ const HUB_UNLOCK_MESSAGES = {
     "We are PARKED, darling. Tap in, it's time to decide who's simply wrong here 🐇"
   ],
   closer: [
-    "The Post Office is open, darling. Tap it and go post something worth reading 💌",
-    "Last stop, loves. Tap the Post Office and tell me something good before I get emotional 🤭",
-    "Doors open at the Post Office. Tap in, don't make me wait for your feelings 💋"
+    "The Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌",
+    "Doors open at the Post Office. Pick up a pen and let it reveal itself 🤭",
+    "The Post Office is calling. Go write something... you'll understand once you start 💋"
   ]
 };
 let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
@@ -4593,6 +4563,12 @@ function listenHubs() {
     if(cardCloser) {
       cardCloser.classList.toggle('locked', !hubs.closer);
       cardCloser.classList.toggle('is-current', hubs.current === 'closer');
+    }
+    const cardRecap = document.getElementById('hubCardRecap');
+    if(cardRecap) {
+      cardRecap.classList.toggle('is-current', hubs.current === 'recap');
+      cardRecap.classList.toggle('is-super-glow', hubs.recapState === 'glow');
+      cardRecap.classList.toggle('is-dimmed', hubs.recapState === 'dimmed');
     }
     const cardRoulette = document.getElementById('hubCardRoulette');
     if(cardRoulette) {
@@ -4677,8 +4653,8 @@ document.getElementById('hubCardAita').addEventListener('click', function() {
 });
 document.getElementById('hubCardCloser').addEventListener('click', function() {
   if (handleLockedHubClick(this)) return;
-  // Open Padlet in a new tab/window
-  window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank');
+  // Route to the new journaling activity
+  window.location.href = 'the-post-office.html';
 });
 // Note: hubCardVogue's click is now handled entirely by the inline
 // onclick="handleVogueClick()" on the element (first-time lore card,
@@ -5736,6 +5712,25 @@ listenRoster = function() {
     }, 300);
   });
 };
+
+// --- HOST ONLY: The Polaroid Wall Controls ---
+document.getElementById('btnHighlightRecap')?.addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
+  if (snap.val() === 'recap') ref(`events/${EVENT_ID}/hubs/current`).set(null);
+  else ref(`events/${EVENT_ID}/hubs/current`).set('recap');
+});
+
+document.getElementById('btnGlowRecap')?.addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/recapState`).once('value');
+  if (snap.val() === 'glow') ref(`events/${EVENT_ID}/hubs/recapState`).set('normal');
+  else ref(`events/${EVENT_ID}/hubs/recapState`).set('glow');
+});
+
+document.getElementById('btnDimRecap')?.addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/hubs/recapState`).once('value');
+  if (snap.val() === 'dimmed') ref(`events/${EVENT_ID}/hubs/recapState`).set('normal');
+  else ref(`events/${EVENT_ID}/hubs/recapState`).set('dimmed');
+});
 
 // HOST ACTION: Match People
 document.getElementById('btnMatchPeople')?.addEventListener('click', () => {
