@@ -744,8 +744,8 @@
   }
   .hub-card.shake-reject {
     animation: hub-reject 0.4s cubic-bezier(.36,.07,.19,.97) both;
-    border-color: rgba(255, 77, 94, 0.4);
-    box-shadow: 0 0 20px rgba(217, 79, 140, 0.3);
+    border-color: rgba(255, 77, 94, 0.4) !important;
+    box-shadow: 0 0 20px rgba(217, 79, 140, 0.3) !important;
   }
   @keyframes hub-reject {
     0%, 100% { transform: translate(-50%, -50%) translateX(0); }
@@ -4474,16 +4474,21 @@ function showPatienceToast(sectionName){
   showSashaToast({ title: 'Sasha', body, vibrateMs: 40, holdMs: 3200 });
 }
 
+let lockedClickCooldown = false;
+
 function handleLockedHubClick(el) {
   if (el.classList.contains('locked')) {
-    // Reset animation smoothly without forcing a synchronous layout recalculation
+    // 1. Prevent notification spam and lag from rapid repeat taps
+    if (lockedClickCooldown) return true;
+    lockedClickCooldown = true;
+    setTimeout(() => lockedClickCooldown = false, 1000);
+
+    // 2. Force the browser to restart the animation reliably
     el.classList.remove('shake-reject');
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        el.classList.add('shake-reject');
-        setTimeout(() => el.classList.remove('shake-reject'), 400);
-      });
-    });
+    void el.offsetWidth;
+    el.classList.add('shake-reject');
+    setTimeout(() => el.classList.remove('shake-reject'), 400);
+
     const sectionName = el.querySelector('.hub-card-title')?.textContent?.trim();
     showPatienceToast(sectionName);
     return true; // Indicates it was locked
