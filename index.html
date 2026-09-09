@@ -2661,6 +2661,19 @@ body[data-phase="closer"] .sky {
     white-space: nowrap; /* keeps the label from wrapping/spilling out */
   }
 
+  /* 5b. On the map, the "We're here" badge used to be a normal flex
+     child stacked above the icon — so the moment it appeared, it pushed
+     the icon/title down and the whole pin visibly jumped. Floating it as
+     an absolute overlay keeps the icon locked to its coordinate no
+     matter whether the badge is showing. */
+  .hub-card .current-badge {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 0;
+  }
+
   /* 6. Turn the icon into an actual map-pin marker — a gradient
      teardrop shape (not just a plain circle), so every stop looks
      like a finished place icon whether or not you add a real photo. */
@@ -2789,6 +2802,18 @@ body[data-phase="closer"] .sky {
     font-size: 10.5px;
     padding: 3px 7px;
     margin-top: -4px;
+  }
+  /* The base map stylesheet auto-glows any pin that isn't marked
+     .locked — and Recap is never given a "locked" class (it's always
+     open), so it inherited that pulsing neon treatment permanently.
+     Reset it back to the plain resting teardrop look here, so it reads
+     as a normal, quiet location. It only lights up when the host
+     explicitly flips the "Glow" toggle (.is-super-glow, ruled below). */
+  #hubCardRecap:not(.is-super-glow) .hub-card-icon {
+    background: rgba(30, 15, 45, 0.9) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
+    border: 2px solid rgba(244, 233, 255, 0.35) !important;
+    animation: none !important;
   }
   .hub-card-emoji {
     display: inline-block;
