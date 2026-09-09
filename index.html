@@ -3677,8 +3677,9 @@ body[data-phase="closer"] .sky {
     </div>
 
     <!-- HOST ONLY: Match Control -->
-    <div id="hostControlsSpin" class="host-inline-controls" style="display:none; margin: 0 auto 40px; border-color:var(--gold); width: 100%; max-width: 320px;">
+    <div id="hostControlsSpin" class="host-inline-controls" style="display:none; margin: 0 auto 40px; border-color:var(--gold); width: 100%; max-width: 320px; flex-direction: column; gap: 8px;">
       <button class="host-inline-btn action" id="btnMatchPeople" style="width:100%; padding: 14px; font-size: 16px;">Match People</button>
+      <button class="btn ghost" id="btnUnmatchPeople" style="width:100%; margin: 0; padding: 10px; font-size: 12px; border-color: rgba(255, 255, 255, 0.2); color: var(--dim);">Unmatch Everyone</button>
     </div>
   </div>
 
@@ -3794,7 +3795,7 @@ body[data-phase="closer"] .sky {
     <!-- Close Button -->
     <button id="btnCloseReveal" style="position: absolute; top: 8px; right: 10px; background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer; padding: 0; line-height: 1;">✕</button>
 
-    <div class="eyebrow" style="margin-bottom: 10px; color: var(--gold); font-size: 10px; letter-spacing: 0.12em;">Your partner is</div>
+    <div id="partnerRevealEyebrow" class="eyebrow" style="margin-bottom: 10px; color: var(--gold); font-size: 10px; letter-spacing: 0.12em;">Your partner is</div>
 
     <div id="partnerName" class="partner-name" style="font-size: 20px; line-height: 1.3; margin-bottom: 16px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto;"></div>
 
@@ -4478,19 +4479,20 @@ let lockedClickCooldown = false;
 
 function handleLockedHubClick(el) {
   if (el.classList.contains('locked')) {
-    // 1. Prevent notification spam and lag from rapid repeat taps
-    if (lockedClickCooldown) return true;
-    lockedClickCooldown = true;
-    setTimeout(() => lockedClickCooldown = false, 1000);
-
-    // 2. Force the browser to restart the animation reliably
+    // 1. ALWAYS execute the shake animation instantly on every tap for tactile feedback
     el.classList.remove('shake-reject');
-    void el.offsetWidth;
+    void el.offsetWidth; // Force DOM reflow
     el.classList.add('shake-reject');
     setTimeout(() => el.classList.remove('shake-reject'), 400);
 
-    const sectionName = el.querySelector('.hub-card-title')?.textContent?.trim();
-    showPatienceToast(sectionName);
+    // 2. Throttle ONLY the pop-up notification so the phone processor doesn't freeze
+    if (!lockedClickCooldown) {
+      lockedClickCooldown = true;
+      setTimeout(() => lockedClickCooldown = false, 1200); // 1.2 second grace period
+
+      const sectionName = el.querySelector('.hub-card-title')?.textContent?.trim();
+      showPatienceToast(sectionName);
+    }
     return true; // Indicates it was locked
   }
   return false; // Indicates it was unlocked
@@ -5625,6 +5627,15 @@ document.getElementById('btnMatchPeople')?.addEventListener('click', () => {
   ref(`events/${EVENT_ID}/pairs`).set(globalPairs);
 });
 
+// HOST ACTION: Unmatch Everyone
+document.getElementById('btnUnmatchPeople')?.addEventListener('click', () => {
+  if (!confirm("Clear all current pairs? This removes the popup for everyone.")) return;
+
+  // Wiping these instantly hides the popup on all guest screens
+  ref(`events/${EVENT_ID}/gpsRoulette/pairings`).set(null);
+  ref(`events/${EVENT_ID}/pairs`).set(null);
+});
+
 // Wire up the Close Button for the global reveal popup
 document.getElementById('btnCloseReveal')?.addEventListener('click', () => {
   document.getElementById('partnerRevealWindow').style.display = 'none';
@@ -5663,6 +5674,12 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
     reveal.style.animation = 'none';
     void reveal.offsetWidth;
     reveal.style.animation = 'pop-in-center 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards';
+
+    // Update the grammar if it is a trio (odd number of guests)
+    const eyebrow = document.getElementById('partnerRevealEyebrow');
+    if (eyebrow) {
+      eyebrow.textContent = myPartners.length > 1 ? "Your partners are" : "Your partner is";
+    }
 
     // Simple: just the partner's name(s), nothing else
     document.getElementById('partnerName').innerHTML = myPartners.map(p =>
