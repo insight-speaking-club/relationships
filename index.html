@@ -195,7 +195,7 @@
     /* Added scale and blur for video-like depth of field */
     transform: scale(0.95);
     filter: blur(5px);
-    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), filter 0.8s ease;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease;
   }
   .screen.active{
     opacity:1; visibility:visible; pointer-events:auto;
@@ -473,7 +473,7 @@
   
   .lounge-state {
     position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.8s ease; z-index: 2;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 2;
     overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
   }
   .lounge-state.active { opacity: 1; pointer-events: auto; }
@@ -483,12 +483,14 @@
      which is a major source of jank. Freeze them while hidden. */
   .lounge-state:not(.active) * {
     animation-play-state: paused !important;
+    pointer-events: none !important;
   }
   /* PERF: same idea, applied globally. Any element inside a non-active
      .screen (lanterns, fireflies, beacon sweep, gradients, etc.) keeps
      animating in the background unless we explicitly freeze it here. */
   .screen:not(.active) * {
     animation-play-state: paused !important;
+    pointer-events: none !important;
   }
 
   /* -- State 1: The Gathering (Roster & Game) -- */
@@ -814,7 +816,6 @@
     position: absolute; left: 0; right: 0; bottom: 0; height: 120px;
     background: #1a1a24; /* Dark asphalt */
     border-top: 2px solid rgba(255, 255, 255, 0.1);
-    pointer-events: auto;
   }
   .ground-grass::after {
     content: ''; position: absolute; inset: 0; top: 40px; height: 4px;
@@ -870,7 +871,7 @@
     gap:12px; text-align:center; z-index:4; padding:0 24px;
     font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; color:var(--mist);
     background:rgba(8,4,16,.6);
-    transition:opacity .3s ease; pointer-events:auto;
+    transition:opacity .3s ease;
   }
   .game-overlay.hidden{opacity:0; pointer-events:none;}
   .game-overlay .btn{margin-top:0; padding:10px 28px; font-size:13px;}
@@ -895,7 +896,7 @@
     background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.2);
     color:var(--gold); font-size:14px; line-height:1;
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer; pointer-events:auto;
+    cursor:pointer;
   }
 
   /* --- FULLSCREEN LANDSCAPE MODE --- */
@@ -4454,45 +4455,34 @@ function listenHubs() {
 // each one names the section and treats it like a real venue we haven't
 // arrived at yet, not a door Sasha personally unlocks.
 const PATIENCE_MESSAGES = [
-  "Darling, {name} isn't taking guests yet. We're still on the road 🚗",
-  "Not yet, mon chéri. {name} doesn't open until we actually pull up 🤭",
-  "{name}'s still closed for the night. Sit tight, we're on our way 🐇",
-  "Patience, love. {name} doesn't open its doors till we arrive 💋",
-  "We haven't gotten to {name} yet, darling. Buckle up 🤭",
-  "{name} isn't seating anyone until we get there. Won't be long 🐇",
-  "Not so fast, love — {name} opens when we roll in, not a second before 💋",
-  "Still en route to {name}, darling. You'll feel it the moment we arrive 🤭",
-  "{name} is closed to guests for now. We'll be there before you know it 🐇",
-  "Hold on, love. {name} isn't open till the car actually stops 💋"
+  "Darling, this one's locked. Sit tight, I'll unlock it myself when it's time 💋",
+  "Not yet, mon chéri. I'm the one who opens the doors, so watch for the ping 🤭",
+  "Still closed, darling. I'll swing it open for everyone the moment we're ready. 🐇",
+  "Locked for now, love. I'll unlock it and you'll get a little tap on the shoulder. 💋",
+  "Patience, darling. I open every door myself, no need to keep knocking 🤭",
+  "Simply not open yet. I'll flip the lock when it's go time, promise. 🐇",
+  "Not so fast, love. I'll unlock this one, and you'll know the second it's ready 💋",
+  "Still waiting on me, darling. I'll open it for the whole room at once. 🤭",
+  "Locked, darling. I'll take care of it, no tapping required 🐇",
+  "Not yet, love. I open these myself, and you'll feel the buzz when it's time 💋"
 ];
 let lastPatienceIndex = -1;
-function showPatienceToast(sectionName){
+function showPatienceToast(){
   let i;
   do { i = Math.floor(Math.random() * PATIENCE_MESSAGES.length); }
   while (i === lastPatienceIndex && PATIENCE_MESSAGES.length > 1);
   lastPatienceIndex = i;
-  const body = PATIENCE_MESSAGES[i].replace('{name}', sectionName || 'this stop');
-  showSashaToast({ title: 'Sasha', body, vibrateMs: 40, holdMs: 3200 });
+  showSashaToast({ title: 'Sasha', body: PATIENCE_MESSAGES[i], vibrateMs: 40, holdMs: 3200 });
 }
-
-let lockedClickCooldown = false;
 
 function handleLockedHubClick(el) {
   if (el.classList.contains('locked')) {
-    // 1. ALWAYS execute the shake animation instantly on every tap for tactile feedback
+    // Reset animation if tapped repeatedly
     el.classList.remove('shake-reject');
-    void el.offsetWidth; // Force DOM reflow
+    void el.offsetWidth; // Trigger DOM reflow
     el.classList.add('shake-reject');
     setTimeout(() => el.classList.remove('shake-reject'), 400);
-
-    // 2. Throttle ONLY the pop-up notification so the phone processor doesn't freeze
-    if (!lockedClickCooldown) {
-      lockedClickCooldown = true;
-      setTimeout(() => lockedClickCooldown = false, 1200); // 1.2 second grace period
-
-      const sectionName = el.querySelector('.hub-card-title')?.textContent?.trim();
-      showPatienceToast(sectionName);
-    }
+    showPatienceToast();
     return true; // Indicates it was locked
   }
   return false; // Indicates it was unlocked
@@ -4507,14 +4497,10 @@ document.getElementById('hubCardGarden').addEventListener('click', function() {
   setLoungeState('state-garden');
   // Failsafe: if no pairing event has built the bouquet yet, build it now
   // so the flowers are always visible the moment the guest enters.
-  // Deferred a frame so the tap itself feels instant — buildGarden() lays
-  // out 20 flower elements synchronously and shouldn't block the switch.
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    const bed = document.getElementById('gardenBed');
-    if (bed && !bed.querySelector('.flower-plant')) {
-      buildGarden();
-    }
-  }));
+  const bed = document.getElementById('gardenBed');
+  if (bed && !bed.querySelector('.flower-plant')) {
+    buildGarden();
+  }
 });
 document.getElementById('hubCardAita').addEventListener('click', function() {
   if (handleLockedHubClick(this)) return;
