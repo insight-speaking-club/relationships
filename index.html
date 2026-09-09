@@ -4299,13 +4299,13 @@ let isTyping = false;
 
 const TOUR_STEPS = [
   // Step 1: Highlights the whole Itinerary section first
-  { selector: '#activitiesSection', title: 'The Itinerary', desc: 'Here\'s the full route for the night. Watch it light up as we go—we travel together, so sit tight until we pull up to the first stop.', pad: 10 },
+  { selector: '#activitiesSection', title: 'The Itinerary', desc: 'Here\'s the full route for the night. Watch it light up as we go. We\'ll be traveling together, so sit tight until we pull up to the first stop.', pad: 10 },
   // Step 2: Zooms into the current stop
   { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We are currently gathered right here in the driveway. Before we hit the road, the host will match everyone up—wait here to see who you\'re riding with.', pad: 8 },
   // The rest remain the same
   { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
   { selector: '#hubCardAita', title: 'People\'s Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
-  { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Step into the Post Office and write something just for you. What kind of letter? You\'ll find out once you\'re inside.', pad: 8 },
+  { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Third stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.', pad: 8 },
   { selector: '#hubCardRecap', title: 'The Polaroid Wall', desc: 'This is the final stop, darling. Drop your photos, drop the gossip. This is what we\'ll remember it by.', pad: 8 }
 ];
 
@@ -4314,7 +4314,7 @@ function startTour() {
 
   // Dynamically set the Welcome Step (which is now Step 1: The Itinerary)
   TOUR_STEPS[0].title = `Welcome aboard, ${me.name.split(' ')[0]}`;
-  TOUR_STEPS[0].desc = `Tonight's a journey with a few stops, no set roads—just us. Here is your map for the evening. Watch it light up as we travel together.`;
+  TOUR_STEPS[0].desc = `Here's the full route for the night. Watch it light up as we go. We'll be traveling together, so sit tight until we pull up to the first stop.`;
 
   document.getElementById('tour-overlay').classList.add('show');
   document.getElementById('tour-dots').innerHTML = TOUR_STEPS.map(() => '<span></span>').join('');
