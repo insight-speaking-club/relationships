@@ -2085,6 +2085,13 @@ body[data-phase="closer"] .sky {
   -webkit-backdrop-filter: blur(8px);
 }
 
+/* Forces solid black background for the archive page/section itself
+   (not the timeline cards, which keep their glass look) */
+#state-archive {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
 .timeline-title {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
@@ -2759,6 +2766,44 @@ body[data-phase="closer"] .sky {
     box-shadow: none;
   }
   #hubCardVogue {
+    opacity: 0.85;
+  }
+
+  /* Position The Lantern Archive pin where the red arrow points, and
+     mirror the Vogue HQ styling exactly so both read as quiet,
+     secondary reference pins rather than full stops. */
+  #hubCardLanterns { top: 62% !important; left: 78% !important; }
+  #hubCardLanterns.hub-card {
+    width: 62px;
+  }
+  #hubCardLanterns .hub-card-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50% !important;
+    transform: none !important;
+    background: rgba(30, 15, 45, 0.85) !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4) !important;
+    border: 1.5px dashed rgba(244, 233, 255, 0.45) !important;
+    animation: none !important;
+  }
+  #hubCardLanterns .hub-card-icon svg,
+  #hubCardLanterns .hub-card-icon img {
+    transform: none !important;
+  }
+  #hubCardLanterns .hub-card-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+  #hubCardLanterns .hub-card-title {
+    font-size: 9.5px;
+    padding: 2px 7px;
+    background: rgba(20, 10, 30, 0.85);
+    color: var(--gold);
+    border: 1px solid rgba(242, 193, 78, 0.4);
+    box-shadow: none;
+    white-space: nowrap;
+  }
+  #hubCardLanterns {
     opacity: 0.85;
   }
 
@@ -3552,6 +3597,18 @@ body[data-phase="closer"] .sky {
             </div>
           </div>
 
+          <!-- Always-open side stop: The Lantern Archive -->
+          <div class="hub-card hub-card-vogue" id="hubCardLanterns" onclick="handleLanternsClick()">
+            <div class="hub-card-icon">
+              <svg class="icon-normal" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+              </svg>
+            </div>
+            <div>
+              <div class="hub-card-title">The Lantern Archive</div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -3863,7 +3920,28 @@ body[data-phase="closer"] .sky {
       <br><br>
       <span style="color: var(--gold); font-weight: 500;">Missed the previous event? Click below to participate in tonight's special challenge from the Vogue Committee. 💋</span>
     </div>
-    <button class="btn-close" onclick="proceedToVogueHQ()">Proceed to Challenge</button>
+    <button class="btn-close" onclick="proceedToVogueHQ()" style="margin-bottom: 12px;">Proceed to Challenge</button>
+    <button onclick="dismissVogueLoreForever()" style="background: none; border: none; color: var(--dim); font-size: 10px; opacity: 0.6; cursor: pointer; padding: 4px; text-decoration: underline; margin: 0 auto; display: block;">Do not show this again</button>
+  </div>
+</div>
+
+<!-- THE LANTERN ARCHIVE SYMBOLISM LORE CARD -->
+<div id="lanternLoreOverlay" class="lore-card-overlay">
+  <div class="lore-card-backdrop" onclick="document.getElementById('lanternLoreOverlay').style.display='none'"></div>
+  <div class="lore-card">
+    <div class="tt-head">
+      <img class="lore-avatar" src="sasha.png" alt="Sasha">
+      <div class="tt-bubble">
+        <div class="tt-title">The Lanterns</div>
+      </div>
+    </div>
+    <div class="tt-desc">
+      Darling, please don't tell me you thought those floating lights drifting across the sky were just decoration... Every single lantern represents a real, breathing love story sent up into the dark.
+      <br><br>
+      <span style="color: var(--gold); font-weight: 500;">Click below to read more and step into the archive. 🏮✨</span>
+    </div>
+    <button class="btn-close" onclick="proceedToLanterns()" style="margin-bottom: 12px;">Open the Archive</button>
+    <button onclick="dismissLanternLoreForever()" style="background: none; border: none; color: var(--dim); font-size: 10px; opacity: 0.6; cursor: pointer; padding: 4px; text-decoration: underline; margin: 0 auto; display: block;">Do not show this again</button>
   </div>
 </div>
 
@@ -3898,8 +3976,8 @@ try{
    VOGUE COMMITTEE — one-time lore card, then straight to the Archive
    ========================================================= */
 function handleVogueClick(){
-  const hasSeenLore = localStorage.getItem('fsc_vogue_lore_seen');
-  if(!hasSeenLore){
+  const hideLore = localStorage.getItem('fsc_hide_vogue_lore') === '1';
+  if(!hideLore){
     document.getElementById('vogueLoreOverlay').style.display = 'block';
   } else {
     setLoungeState('state-archive');
@@ -3907,9 +3985,40 @@ function handleVogueClick(){
 }
 
 function proceedToVogueHQ(){
-  localStorage.setItem('fsc_vogue_lore_seen', '1');
   document.getElementById('vogueLoreOverlay').style.display = 'none';
   setLoungeState('state-archive');
+}
+
+function dismissVogueLoreForever(){
+  localStorage.setItem('fsc_hide_vogue_lore', '1');
+  document.getElementById('vogueLoreOverlay').style.display = 'none';
+  setLoungeState('state-archive');
+}
+
+/* =========================================================
+   THE LANTERN ARCHIVE — one-time lore card, then opens the
+   separate archive page in a new tab
+   ========================================================= */
+const LANTERNS_URL = 'lanterns.html'; // Points to your separate stories page
+
+function handleLanternsClick(){
+  const hideLore = localStorage.getItem('fsc_hide_lantern_lore') === '1';
+  if(!hideLore){
+    document.getElementById('lanternLoreOverlay').style.display = 'block';
+  } else {
+    window.open(LANTERNS_URL, '_blank');
+  }
+}
+
+function proceedToLanterns(){
+  document.getElementById('lanternLoreOverlay').style.display = 'none';
+  window.open(LANTERNS_URL, '_blank');
+}
+
+function dismissLanternLoreForever(){
+  localStorage.setItem('fsc_hide_lantern_lore', '1');
+  document.getElementById('lanternLoreOverlay').style.display = 'none';
+  window.open(LANTERNS_URL, '_blank');
 }
 
 function localRef(path){
