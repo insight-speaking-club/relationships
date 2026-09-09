@@ -2168,19 +2168,23 @@ body[data-phase="closer"] .sky {
   margin-top: 2px;
 }
 
-/* The nudge that makes the card unmistakably tappable — a soft pulse
-   so it stays noticeable without shouting over the rest of the card. */
-.challenge-cta {
-  font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-top: 8px;
+/* The teaser — all that's visible until the card is tapped open. Pulses
+   softly so it stays noticeable without shouting over the rest of the page. */
+.challenge-teaser {
   animation: pulse-fade 2.4s ease-in-out infinite;
 }
-.timeline-challenge.open .challenge-cta {
+.timeline-challenge.open .challenge-teaser {
   display: none;
+}
+
+/* The reveal — Vogue Committee Challenge label + tonight's theme,
+   hidden until the card is tapped open. */
+.challenge-revealed {
+  display: none;
+}
+.timeline-challenge.open .challenge-revealed {
+  display: block;
+  margin-top: 2px;
 }
 
 .challenge-label {
@@ -2757,6 +2761,35 @@ body[data-phase="closer"] .sky {
   #hubCardVogue {
     opacity: 0.85;
   }
+
+  /* The Polished Lore Card Overlay */
+  .lore-card-overlay {
+    display: none; position: fixed; inset: 0; z-index: 100050;
+  }
+  .lore-card-backdrop {
+    position: absolute; inset: 0; background: rgba(18,8,33,0.75); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  }
+  .lore-card {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: min(84vw, 320px);
+    background: rgba(30,15,45,0.95);
+    border: 1px solid rgba(244,233,255,0.2); border-radius: 16px;
+    padding: 20px; box-shadow: 0 14px 40px rgba(0,0,0,0.8);
+  }
+  .lore-card .tt-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  /* Named lore-avatar (not tt-avatar) so it isn't stripped by the global
+     Avataria override at .tt-avatar, which forces flat/borderless sprites —
+     this photo is meant to stay circular with the gold frame and glow. */
+  .lore-card .lore-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--gold); box-shadow: 0 4px 15px rgba(242, 193, 78, 0.3); }
+  .lore-card .tt-step { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
+  .lore-card .tt-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--mist); line-height: 1.1; }
+  .lore-card .tt-desc { font-family: 'Jost', sans-serif; font-size: 14.5px; color: #d1c5df; line-height: 1.5; margin-bottom: 20px; }
+  .lore-card .btn-close {
+    background: var(--gold); color: var(--ink); border: none; border-radius: 20px;
+    padding: 10px 22px; font-family: 'Jost', sans-serif; font-weight: 600; font-size: 14px;
+    cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(242, 193, 78, 0.2);
+  }
+  .lore-card .btn-close:active { transform: scale(0.97); }
 
   /* 7b. FIX: on the map, every pin is centered on its coordinate via
      translate(-50%, -50%) (rule #3 above). The base stylesheet's
@@ -3502,8 +3535,8 @@ body[data-phase="closer"] .sky {
           </div>
 
           <!-- Always-open side stop: not part of the driving route, so no connector heart -->
-          <div class="hub-card hub-card-vogue" id="hubCardVogue">
-            <div class="hub-card-icon">
+          <div class="hub-card hub-card-vogue" id="hubCardVogue" onclick="handleVogueClick()">
+            <div class="hub-card-icon" style="position: relative;">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the award icon -->
               <img class="hub-card-photo" loading="lazy" decoding="async" src="vogue-committee.png" alt="" onerror="this.style.display='none'">
@@ -3751,11 +3784,13 @@ body[data-phase="closer"] .sky {
 
           <button class="timeline-challenge" id="btnToggleChallenge">
             <div class="challenge-toggle-top">
-              <span class="challenge-label">Vogue Committee Challenge:</span>
+              <span class="challenge-teaser">Tap to join tonight's special challenge from the Vogue Committee</span>
               <svg class="challenge-toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </div>
-            <div class="challenge-theme">Tonight's theme: Relationship Milestones.</div>
-            <div class="challenge-cta">Tap to join the challenge</div>
+            <div class="challenge-revealed">
+              <span class="challenge-label">Vogue Committee Challenge:</span>
+              <div class="challenge-theme">Tonight's theme: Relationship Milestones.</div>
+            </div>
           </button>
 
           <div class="challenge-steps-wrap" id="challengeStepsWrap">
@@ -3812,6 +3847,26 @@ body[data-phase="closer"] .sky {
   <button class="btn ghost" id="btnChangeVote" style="border-color:rgba(255,255,255,.5); color:#fff;">change my vote</button>
 </div>
 
+<!-- THE VOGUE COMMITTEE LORE CARD -->
+<div id="vogueLoreOverlay" class="lore-card-overlay">
+  <div class="lore-card-backdrop" onclick="document.getElementById('vogueLoreOverlay').style.display='none'"></div>
+  <div class="lore-card">
+    <div class="tt-head">
+      <img class="lore-avatar" src="sasha.png" alt="Sasha">
+      <div class="tt-bubble">
+        <div class="tt-step">Vogue Committee™ Lore</div>
+        <div class="tt-title">The Glass Closet</div>
+      </div>
+    </div>
+    <div class="tt-desc">
+      Curious, darling? Our last event was all about Fashion. We played 'Glass Closet'—styling looks for specific scenarios. Those who actually served earned their Vogue Committee™ membership.
+      <br><br>
+      <span style="color: var(--gold); font-weight: 500;">Missed the previous event? Click below to participate in tonight's special challenge from the Vogue Committee. 💋</span>
+    </div>
+    <button class="btn-close" onclick="proceedToVogueHQ()">Proceed to Challenge</button>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script>
@@ -3838,6 +3893,24 @@ try{
     usingFirebase = true;
   }
 }catch(e){ console.warn("Firebase init failed, falling back to preview mode.", e); }
+
+/* =========================================================
+   VOGUE COMMITTEE — one-time lore card, then straight to the Archive
+   ========================================================= */
+function handleVogueClick(){
+  const hasSeenLore = localStorage.getItem('fsc_vogue_lore_seen');
+  if(!hasSeenLore){
+    document.getElementById('vogueLoreOverlay').style.display = 'block';
+  } else {
+    setLoungeState('state-archive');
+  }
+}
+
+function proceedToVogueHQ(){
+  localStorage.setItem('fsc_vogue_lore_seen', '1');
+  document.getElementById('vogueLoreOverlay').style.display = 'none';
+  setLoungeState('state-archive');
+}
 
 function localRef(path){
   const key = "fsc:"+path;
@@ -4501,9 +4574,10 @@ document.getElementById('hubCardCloser').addEventListener('click', function() {
   // Open Padlet in a new tab/window
   window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank');
 });
-document.getElementById('hubCardVogue').addEventListener('click', function() {
-  setLoungeState('state-archive');
-});
+// Note: hubCardVogue's click is now handled entirely by the inline
+// onclick="handleVogueClick()" on the element (first-time lore card,
+// then straight to VOGUE_TARGET_URL every time after). No listener
+// needed here — it used to send guests to the archive state instead.
 
 function enterAitaRound(round){
   window.currentAitaRound = round;
