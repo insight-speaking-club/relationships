@@ -69,6 +69,44 @@
   body.tour-started .letterbox-top, body.tour-started .letterbox-bottom { height: 4vh; }
   body.opened .letterbox-top, body.opened .letterbox-bottom { height: 5vh; }
 
+  /* --- OPENING DOORS --- */
+  .door-scene { position: fixed; inset: 0; z-index: 80; perspective: 2200px; pointer-events: none; }
+  .door-scene.hidden { display: none; }
+
+  .door {
+    position: absolute; top: 0; width: 50%; height: 100%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%),
+                linear-gradient(135deg, var(--midnight) 0%, var(--navy) 55%, #05070f 100%);
+    box-shadow: inset 0 0 90px rgba(0,0,0,0.65);
+    transition: transform 2.6s cubic-bezier(0.76, 0, 0.24, 1);
+    backface-visibility: hidden;
+  }
+  .door-left  { left: 0;  transform-origin: left center;  border-right: 1px solid rgba(242, 193, 78, 0.28); }
+  .door-right { right: 0; transform-origin: right center; border-left: 1px solid rgba(242, 193, 78, 0.28); }
+  .door::before { content: ''; position: absolute; inset: 26px; border: 1px solid rgba(242, 193, 78, 0.14); border-radius: 4px; }
+  .door::after { content: ''; position: absolute; inset: 40px; border: 1px solid rgba(244, 233, 255, 0.05); border-radius: 3px; }
+
+  .door-scene.opening .door-left  { transform: rotateY(-100deg); }
+  .door-scene.opening .door-right { transform: rotateY(100deg); }
+
+  .door-glow {
+    position: absolute; top: 0; left: 50%; width: 3px; height: 100%; transform: translateX(-50%);
+    background: radial-gradient(60% 100% at 50% 50%, rgba(242, 193, 78, 0.6), transparent 70%);
+    filter: blur(7px); opacity: 0; transition: opacity 1.8s ease; z-index: 1;
+  }
+  .door-scene.opening .door-glow { opacity: 1; }
+
+  .door-emblem {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    display: flex; flex-direction: column; align-items: center; z-index: 2;
+    opacity: 0; transition: opacity 1.3s ease, transform 1.3s ease;
+  }
+  .door-emblem.show { opacity: 1; }
+  .door-emblem.fade { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+  .door-emblem-icon { width: 46px; height: 46px; object-fit: contain; margin-bottom: 16px; filter: drop-shadow(0 0 14px rgba(242, 193, 78, 0.45)); }
+  .door-emblem-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 24px; letter-spacing: 0.03em; color: var(--gold); text-shadow: 0 0 16px rgba(242, 193, 78, 0.3); }
+  .door-emblem-sub { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--dim); margin-top: 10px; }
+
   /* =========================================================
      PART 1: THE GUIDED TOUR (EMILY & THE MENU)
      ========================================================= */
@@ -191,12 +229,24 @@
   <div class="letterbox letterbox-bottom"></div>
   <div class="shooting-star" id="shootingStar"></div>
 
+  <!-- OPENING DOORS -->
+  <div class="door-scene" id="doorScene">
+    <div class="door door-left"></div>
+    <div class="door door-right"></div>
+    <div class="door-glow"></div>
+    <div class="door-emblem" id="doorEmblem">
+      <img src="post-office-icon.png" alt="" class="door-emblem-icon" onerror="if(this.dataset.fb!=='1'){this.dataset.fb='1';this.src='post-office-icon.jpg';}else{this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23f2c14e\'><path d=\'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z\'/></svg>';}">
+      <div class="door-emblem-title">The Post Office</div>
+      <div class="door-emblem-sub">Please, Come In</div>
+    </div>
+  </div>
+
   <!-- PART 1: TOUR CONTENT -->
   <main id="tourContent">
-    <img src="post-office-icon.png" alt="The Post Office Icon" class="post-office-icon" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23f2c14e\'><path d=\'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z\'/></svg>'">
+    <img src="post-office-icon.png" alt="The Post Office Icon" class="post-office-icon" onerror="if(this.dataset.fb!=='1'){this.dataset.fb='1';this.src='post-office-icon.jpg';}else{this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23f2c14e\'><path d=\'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z\'/></svg>';}">
     
     <div class="guide-container">
-      <img src="Emily.png" alt="Emily" class="emily-portrait" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%238b9bb4\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg>'">
+      <img src="emily.jpg" alt="Emily" class="emily-portrait" onerror="if(this.dataset.fb!=='1'){this.dataset.fb='1';this.src='emily.png';}else{this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%238b9bb4\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg>';}">
       <div class="dialogue-box">
         <div class="dialogue-text" id="dialogueText"></div>
       </div>
@@ -330,7 +380,27 @@
       document.getElementById('cursorEmily').classList.add('hidden');
     }
 
-    window.addEventListener('DOMContentLoaded', runTour);
+    /* --- OPENING DOORS --- */
+    async function openDoors() {
+      const scene = document.getElementById('doorScene');
+      const emblem = document.getElementById('doorEmblem');
+      await wait(300);
+      emblem.classList.add('show');
+      await wait(1900);
+      emblem.classList.remove('show');
+      emblem.classList.add('fade');
+      await wait(500);
+      scene.classList.add('opening');
+      await wait(2600);
+      scene.classList.add('hidden');
+    }
+
+    async function init() {
+      await openDoors();
+      runTour();
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
 
     /* --- TRANSITION TO PAST SELF EDITOR --- */
     document.getElementById('card1').addEventListener('click', async function(e) {
