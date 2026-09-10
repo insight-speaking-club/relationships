@@ -354,6 +354,9 @@
             <div id="storyDate"></div>
           </div>
         </div>
+        <div style="width: 100%; height: 3px; background: rgba(244, 233, 255, 0.1);">
+          <div id="caseTimerBar" style="height: 100%; width: 100%; background: var(--gold); transform-origin: left; transition: transform 1s linear;"></div>
+        </div>
 
         <div class="open-email-body" id="storyDisplay"></div>
 
@@ -375,7 +378,7 @@
   <div class="aita-verdict-card" id="verdictCard">
     <div class="aita-verdict-text" id="verdictText"></div>
     <p style="color: rgba(255,255,255,0.85); font-family: 'Jost', sans-serif; font-size: 18px; margin-bottom: 50px;">Hold your phone up so everyone can see.</p>
-    <button class="btn-ghost" onclick="closeVerdict()">Review next case</button>
+    <button class="btn-ghost" onclick="closeVerdict()">Return to the docket</button>
   </div>
 
 <script>
@@ -546,6 +549,8 @@
     }, 400); // Wait for fade out
   }
 
+  let caseTimerInterval;
+
   function openStory(index) {
     const story = DOCKET_STORIES[index];
 
@@ -561,10 +566,41 @@
     document.getElementById('phaseDocket').classList.remove('active');
     setTimeout(() => {
       document.getElementById('phaseStory').classList.add('active');
+      startCaseTimer(60); // 60 seconds to read and vote
     }, 400);
   }
 
+  function startCaseTimer(seconds) {
+    clearInterval(caseTimerInterval);
+    const bar = document.getElementById('caseTimerBar');
+    let timeLeft = seconds;
+
+    // Reset bar instantly
+    bar.style.transition = 'none';
+    bar.style.transform = 'scaleX(1)';
+    bar.style.background = 'var(--gold)';
+
+    // Start shrinking
+    setTimeout(() => {
+      bar.style.transition = 'transform 1s linear, background 0.5s ease';
+      caseTimerInterval = setInterval(() => {
+        timeLeft--;
+        const percentage = timeLeft / seconds;
+        bar.style.transform = `scaleX(${Math.max(0, percentage)})`;
+
+        if (timeLeft <= 10) {
+          bar.style.background = '#ff4d5e'; // Turns red at 10 seconds
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(caseTimerInterval);
+        }
+      }, 1000);
+    }, 50);
+  }
+
   function backToDocket() {
+    clearInterval(caseTimerInterval);
     document.getElementById('phaseStory').classList.remove('active');
     setTimeout(() => {
       document.getElementById('phaseDocket').classList.add('active');
