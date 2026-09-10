@@ -4602,12 +4602,11 @@ document.getElementById('hubCardGarden').addEventListener('click', function() {
   }
 });
 document.getElementById('hubCardAita').addEventListener('click', function() {
+  // Keeps the lock check so the host still controls when the doors open
   if (handleLockedHubClick(this)) return;
-  ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
-    const round = snap.val();
-    if(round) enterAitaRound(round);
-    else setLoungeState('state-aita');
-  });
+
+  // Sends the user to the standalone file in your repository
+  window.location.href = 'peoples-court.html';
 });
 document.getElementById('hubCardCloser').addEventListener('click', function() {
   if (handleLockedHubClick(this)) return;
