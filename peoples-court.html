@@ -28,7 +28,13 @@
   /* --- ATMOSPHERIC BACKGROUND --- */
   .sky {
     position: fixed; inset: 0; z-index: 0;
-    background: linear-gradient(200deg, #0a0311 0%, #120821 25%, #230c33 60%, #4a1949 100%);
+    background-image:
+      linear-gradient(200deg, rgba(10,3,17,0.55) 0%, rgba(18,8,33,0.6) 25%, rgba(35,12,51,0.72) 60%, rgba(74,25,73,0.8) 100%),
+      url('background-court.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-color: #0a0311;
   }
   .sky::before {
     content: ''; position: absolute; inset: 0;
@@ -111,6 +117,7 @@
     overflow-y: auto; overflow-x: hidden;
     padding: 60px 24px 80px; display: flex; flex-direction: column; align-items: center;
   }
+  #phaseIntro { padding-top: 52vh; }
   .display { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-style: italic; font-weight: 500; margin: 0 0 24px 0; text-align: center; text-shadow: 0 4px 15px rgba(0,0,0,0.6); }
 
   .section-layer {
@@ -126,21 +133,22 @@
 
   /* --- PHASE 1: JUDGE SASHA LORE (chat thread) --- */
   .judge-header {
-    display: flex; flex-direction: column; align-items: center; margin-bottom: 22px;
+    display: flex; flex-direction: column; align-items: center; margin-bottom: 18px;
   }
-  .judge-portrait {
-    width: 92px; height: 92px; border-radius: 50%; object-fit: cover;
-    border: 2px solid var(--gold); box-shadow: 0 0 30px rgba(242, 193, 78, 0.3);
-    margin-bottom: 12px; background: rgba(30,15,45,0.8);
+  .judge-name-pill {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; color: var(--gold);
+    background: rgba(18, 8, 33, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(242, 193, 78, 0.35); border-radius: 999px;
+    padding: 7px 20px; box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    opacity: 0; animation: bubble-in 0.6s ease forwards;
   }
-  .judge-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 20px; color: var(--gold); }
 
   .thread { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
 
   .lore-bubble {
-    background: rgba(30, 15, 45, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(244, 233, 255, 0.15); border-radius: 18px 18px 18px 4px;
-    padding: 16px 20px; box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+    background: rgba(20, 9, 33, 0.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(244, 233, 255, 0.18); border-radius: 18px 18px 18px 4px;
+    padding: 16px 20px; box-shadow: 0 14px 40px rgba(0,0,0,0.6);
     align-self: flex-start; max-width: 88%;
     opacity: 0; transform: translateY(8px);
     animation: bubble-in 0.5s ease forwards;
@@ -305,8 +313,7 @@
     <!-- Phase 1: Lore / Judge Sasha chat thread -->
     <div class="section-layer" id="phaseIntro">
       <div class="judge-header">
-        <img src="sasha.png" alt="Judge Sasha" class="judge-portrait" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23f2c14e\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg>'">
-        <div class="judge-name">Judge Sasha</div>
+        <div class="judge-name-pill">Judge Sasha presiding</div>
       </div>
 
       <div class="thread" id="loreThread"></div>
