@@ -67,17 +67,16 @@
     transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
   }
 
-  /* Subtle interaction: the arrow glides back slightly when hovered/tapped */
   .itinerary-link:hover svg, .itinerary-link:active svg {
     transform: translateX(-4px);
   }
 
-  /* --- ORNATE 3D DOORS (Refined & Cinematic) --- */
+  /* --- ORNATE 3D DOORS --- */
   .doors-wrapper {
     position: fixed; inset: 0; z-index: 9999;
-    display: flex; perspective: 2000px; /* Deepened perspective */
+    display: flex; perspective: 2000px; 
     pointer-events: none;
-    background: #000; /* Start in pure darkness */
+    background: #000; 
     transition: background 2s ease 1s;
   }
   .doors-wrapper.open {
@@ -86,10 +85,9 @@
 
   .door {
     width: 50%; height: 100%;
-    background: #0a0510; /* Near black */
+    background: #0a0510; 
     border: none;
     display: flex; align-items: center; justify-content: center;
-    /* Slowed down to 4 seconds with a highly dramatic, smooth ease-out */
     transition: transform 4s cubic-bezier(0.2, 1, 0.3, 1), opacity 3s ease 1.5s;
     box-shadow: inset 0 0 150px rgba(0,0,0,1), inset 0 0 20px rgba(242, 193, 78, 0.05);
     position: relative; overflow: hidden;
@@ -101,7 +99,6 @@
   .door.left { transform-origin: left; border-right: 1px solid rgba(242, 193, 78, 0.2); }
   .door.right { transform-origin: right; border-left: 1px solid rgba(242, 193, 78, 0.2); }
 
-  /* Minimalist, elegant handles */
   .door-handle {
     width: 3px; height: 140px; border-radius: 2px;
     background: linear-gradient(to bottom, rgba(242,193,78,0.2), var(--gold), rgba(242,193,78,0.2));
@@ -110,8 +107,6 @@
   }
   .door.left .door-handle { margin-left: auto; margin-right: 25px; }
   .door.right .door-handle { margin-right: auto; margin-left: 25px; }
-
-  /* Remove the tacky glowing laser beam entirely */
   .light-seam { display: none; }
 
   .doors-wrapper.open .door.left { transform: rotateY(-105deg); opacity: 0; }
@@ -124,7 +119,7 @@
     overflow-y: auto; overflow-x: hidden;
     padding: 60px 24px 80px; display: flex; flex-direction: column; align-items: center;
   }
-  #phaseIntro { padding-top: 52vh; }
+  #phaseIntro { padding-top: 40vh; }
   .display { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-style: italic; font-weight: 500; margin: 0 0 24px 0; text-align: center; text-shadow: 0 4px 15px rgba(0,0,0,0.6); }
 
   .section-layer {
@@ -138,55 +133,24 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* --- PHASE 1: JUDGE SASHA LORE (Cinematic Text) --- */
-  .judge-header {
-    display: flex; flex-direction: column; align-items: center; margin-bottom: 24px;
-  }
-
-  /* Redesigned as an authoritative desk plaque */
-  .judge-name-pill {
-    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold); background: transparent;
-    border: 1px solid rgba(242, 193, 78, 0.3); border-radius: 4px;
-    padding: 8px 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    opacity: 0; animation: fade-up 1s ease forwards;
-  }
-
-  /* --- PHASE 1: LORE PROLOGUE (Literary Format) --- */
+  /* --- PHASE 1: LORE --- */
   .thread {
     width: 100%; display: flex; flex-direction: column; align-items: center;
-    gap: 28px; margin-bottom: 40px; padding: 0 10px;
+    gap: 24px; margin-bottom: 40px; padding: 0 10px;
   }
   @keyframes bubble-in { to { opacity: 1; transform: translateY(0); } }
 
   .lore-paragraph {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
+    font-size: 21px;
     font-style: italic;
     font-weight: 400;
-    line-height: 1.55;
+    line-height: 1.5;
     color: rgba(244, 233, 255, 0.9);
     text-align: center;
     text-shadow: 0 4px 15px rgba(0,0,0,0.8);
-    opacity: 0;
-    transform: translateY(15px);
-    transition: opacity 2.5s ease, transform 2.5s cubic-bezier(0.2, 1, 0.3, 1);
+    opacity: 1; 
   }
-
-  .lore-paragraph.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .skip-btn {
-    background: none; border: none; color: var(--dim);
-    font-family: 'Space Mono', monospace; font-size: 10px;
-    letter-spacing: 0.15em; text-transform: uppercase;
-    text-decoration: underline; cursor: pointer;
-    opacity: 0.5; transition: opacity 0.3s ease;
-    margin-top: 10px; padding: 10px;
-  }
-  .skip-btn:active { opacity: 1; }
 
   .btn-gold {
     background: linear-gradient(135deg, #ffdf94 0%, var(--gold) 100%);
@@ -195,12 +159,9 @@
     letter-spacing: 0.05em; cursor: pointer; box-shadow: 0 8px 20px rgba(242, 193, 78, 0.3);
     transition: transform 0.2s ease; display: inline-flex; align-items: center; gap: 8px;
     opacity: 0; animation: bubble-in 0.6s ease forwards;
+    margin-top: 10px;
   }
   .btn-gold:active { transform: scale(0.95); }
-  .btn-sub {
-    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
-    color: var(--dim); margin-top: 10px; opacity: 0; animation: bubble-in 0.6s ease forwards;
-  }
 
   /* --- PHASE 2: EMAIL INBOX (THE DOCKET) --- */
   .email-client {
@@ -229,6 +190,20 @@
     background: linear-gradient(135deg, #ffdf94, var(--gold));
     color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 700; font-size: 12px;
     display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  .me-avatar:active { transform: scale(0.9); }
+
+  .inbox-instruction {
+    padding: 12px 16px;
+    background: rgba(242, 193, 78, 0.05);
+    border-bottom: 1px solid rgba(244, 233, 255, 0.08);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--gold);
+    text-align: center;
   }
 
   .search-row { padding: 12px 16px; border-bottom: 1px solid rgba(244, 233, 255, 0.08); }
@@ -305,6 +280,10 @@
     padding: 15px 35px; font-family: 'Jost', sans-serif; font-size: 15px; cursor: pointer; transition: background 0.2s ease;
   }
   .btn-ghost:active { background: rgba(255,255,255,0.1); }
+  
+  .verdict-button-group {
+    display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;
+  }
 
   /* --- ELEGANT TOGGLABLE TIMER --- */
   .court-timer-wrap {
@@ -320,7 +299,7 @@
   .court-timer-wrap.is-hidden {
     background: rgba(18, 8, 33, 0.2);
     border-color: rgba(244, 233, 255, 0.05);
-    padding-right: 10px; /* Compress the pill */
+    padding-right: 10px;
   }
 
   .timer-toggle-btn {
@@ -332,16 +311,15 @@
 
   .court-timer-text {
     font-family: 'Space Mono', monospace; font-size: 13.5px;
-    color: rgba(244, 233, 255, 0.65); /* Soft, dim text to reduce anxiety */
+    color: rgba(244, 233, 255, 0.65); 
     transition: opacity 0.3s ease, width 0.3s ease;
     opacity: 1; width: 42px; text-align: right; overflow: hidden;
   }
 
   .court-timer-wrap.is-hidden .court-timer-text {
-    opacity: 0; width: 0; margin-left: -8px; /* Collapses the gap */
+    opacity: 0; width: 0; margin-left: -8px; 
   }
 
-  /* Gentle "wrap it up soon" cue — last 3 minutes. Subtle, not alarming. */
   @keyframes courtTimerPulse {
     0%, 100% { box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 0px rgba(242,193,78,0); }
     50%      { box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 12px rgba(242,193,78,0.22); }
@@ -364,7 +342,7 @@
 
   <a href="index.html" class="itinerary-link">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-    Return
+    Return to Itinerary
   </a>
 
   <!-- Opening Door Animation -->
@@ -377,31 +355,27 @@
   <!-- Main Scrollable Container -->
   <div class="court-container" id="courtContainer">
 
-    <!-- Phase 1: Lore / Judge Sasha chat thread -->
+    <!-- Phase 1: Lore -->
     <div class="section-layer" id="phaseIntro">
-      <div class="judge-header">
-        <div class="judge-name-pill">Judge Sasha presiding</div>
-      </div>
-
       <div class="thread" id="loreThread"></div>
-
       <div id="introCta" style="display:flex; flex-direction:column; align-items:center;"></div>
-      <button id="skipLoreBtn" class="skip-btn" onclick="skipLore()">Skip introduction</button>
     </div>
 
     <!-- Phase 2: The Email Inbox -->
     <div class="section-layer" id="phaseDocket">
       <div class="email-client">
         <div class="inbox-toolbar">
-          <button class="icon-btn" onclick="backToIntro()" aria-label="Back">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-          </button>
           <div class="inbox-title-block">
             <div class="email-title">People's Court Inbox</div>
             <div class="email-count">6 unread</div>
           </div>
           <div class="me-avatar">JS</div>
         </div>
+        
+        <div class="inbox-instruction">
+          We choose one submission together and review it.
+        </div>
+
         <div class="search-row">
           <div class="search-bar">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -436,6 +410,7 @@
         <div class="open-email-body" id="storyDisplay"></div>
 
         <div class="voting-dock">
+          <p style="text-align: center; color: var(--dim); font-size: 14px; margin-bottom: 12px;">After we review this story, the court proceeds to vote and discuss to deliver the final verdict.</p>
           <div class="aita-buttons">
             <button class="aita-btn aita-btn-red" onclick="castVote('YTA')">ASSHOLE</button>
             <button class="aita-btn aita-btn-green" onclick="castVote('NTA')">NOT THE ASSHOLE</button>
@@ -453,7 +428,11 @@
   <div class="aita-verdict-card" id="verdictCard">
     <div class="aita-verdict-text" id="verdictText"></div>
     <p style="color: rgba(255,255,255,0.85); font-family: 'Jost', sans-serif; font-size: 18px; margin-bottom: 50px;">Hold your phone up so everyone can see.</p>
-    <button class="btn-ghost" onclick="closeVerdict()">Return to the docket</button>
+    
+    <div class="verdict-button-group">
+      <button class="btn-ghost" onclick="closeVerdict()">Return to the docket</button>
+      <button class="btn-ghost" style="border-color: rgba(255,255,255,0.3);" onclick="changeVote()">Change my vote</button>
+    </div>
   </div>
 
   <!-- Elegant Togglable Global Timer -->
@@ -464,7 +443,7 @@
         <path d="M2 12c3-6 7-8 10-8s7 2 10 8-7 8-10 8-7-2-10-8z"></path>
         <circle cx="12" cy="12" r="3"></circle>
       </svg>
-      <!-- Eye Closed SVG (Hidden by default) -->
+      <!-- Eye Closed SVG -->
       <svg id="iconEyeClosed" style="display: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
         <line x1="1" y1="1" x2="23" y2="23"></line>
@@ -528,10 +507,8 @@
       return;
     }
 
-    // Show the wrapper when a timer is set
     timerWrapper.style.display = 'flex';
-
-    const WARNING_THRESHOLD_MS = 3 * 60 * 1000; // 3 minutes
+    const WARNING_THRESHOLD_MS = 3 * 60 * 1000; 
 
     globalTimerInterval = setInterval(() => {
       const timeLeft = endTime - Date.now();
@@ -545,66 +522,61 @@
         clearInterval(globalTimerInterval);
         timerTextEl.textContent = "0:00";
         timerWrapper.classList.remove('is-warning');
-        // Clear the timer from the database so it doesn't trigger again immediately
         db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).set(null);
-        // Redirect everyone to the itinerary
         window.location.href = 'index.html';
       }
     }, 100);
   });
 
+  // Rendered as a single cohesive paragraph
   const LORE_MESSAGES = [
-    "The People's Court has convened above the Marais in Paris for longer than any living record can prove.",
-    "For generations, lovers, friends, and strangers have submitted their disputes to this room, trusting an impartial jury to determine where the truth lies.",
-    "The wax seals and parchment of the past have given way to the digital inbox of the present.",
-    "Tonight, the docket holds six unseen disputes. But I will not be casting the verdict...",
-    "The gavel is yours."
+    "Welcome to the People's Court. Our secret sessions above Paris have guided society for decades. We’ve upgraded from parchment to an email inbox, but people are still behaving just as terribly. Leave your own baggage at the door—tonight, we're dissecting strangers. Please try not to ruin anyone’s life. (Or do. It’s more fun that way.)"
   ];
 
   const DOCKET_STORIES = [
     {
-      sender: "voucher.winner22@domain.com",
-      name: "The Generous Friend",
+      sender: "lucie_radine_99@gmail.com",
+      name: "Lucie Dubois",
       time: "10:15 AM",
       date: "Today, 10:15 AM",
       subject: "AITA for making my friends pay at a 'free' dinner?",
       text: "I won a $500 restaurant voucher online. I invited three friends and said dinner was on me. I assumed we'd eat normally, but they treated it like a blank check, ordering wagyu, double sides, and top-shelf cocktails. The bill came to $830. I put the $500 voucher down and told them we needed to split the remaining $330. They got furious, saying I invited them to a 'free dinner' and I should have warned them there was a budget."
     },
     {
-      sender: "secret_bilingual@mail.com",
-      name: "Language Barrier",
+      sender: "espionne_bilingue@orange.fr",
+      name: "Camille Laurent",
       time: "09:42 AM",
       date: "Today, 09:42 AM",
       subject: "AITA for hiding that I speak his language?",
       text: "I've been dating my boyfriend for 6 months. His family speaks Spanish. I'm actually fluent, but I never brought it up because I'm shy about my accent. At dinner, his mom made a passive-aggressive comment in Spanish about my job being a dead end. I instinctively replied in Spanish to defend myself. The table went dead silent. My boyfriend is furious and says I 'spied' on them for half a year just to trap them."
     },
     {
-      sender: "unemployed.moh@web.net",
-      name: "The Maid of Honor",
+      sender: "elodie_cherche_cdi@laposte.net",
+      name: "Élodie Martin",
       time: "Yesterday",
       date: "Yesterday, 19:30",
       subject: "AITA for taking a job interview at a wedding?",
       text: "I've been unemployed and struggling financially for 8 months. I was the Maid of Honor at my best friend's wedding. Right as dinner started, a recruiter from my dream company called. She said the hiring manager was jumping on a flight and needed a 10-minute chat right now, or they were moving on. I stepped into the hallway to take it. The bride realized I was missing during a group toast and says I selfishly ruined her moment."
     },
     {
-      sender: "wfh_survival@domain.com",
-      name: "The Tired Roommate",
+      sender: "survivant.du.teletravail@free.fr",
+      name: "Antoine Rousseau",
       time: "Yesterday",
       date: "Yesterday, 14:10",
       subject: "AITA for locking up my roommate's cat?",
       text: "My roommate got a cat that constantly screams and knocks over my monitors while I work from home. She refuses to train or contain it, saying 'cats will be cats.' To save my job, I started putting the cat in her bedroom with its litter, water, and food for the 3 hours a day I have client video calls. She came home early, saw the cat meowing at her closed door, and lost her mind. She's calling me abusive."
     },
     {
-      sender: "puppy.regret@domain.com",
-      name: "Overwhelmed Partner",
+      sender: "julien_sans_husky@hotmail.fr",
+      name: "Julien Leroy",
       time: "Tuesday",
       date: "Tuesday, 11:05",
       subject: "AITA for refusing to keep a surprise puppy?",
       text: "My partner and I agreed to adopt a dog, but I specifically said I only wanted a calm, older rescue dog. I went out of town for a weekend, and my partner surprised me by buying a 10-week-old Husky puppy from a breeder. I am exhausted just looking at it, and I told my partner they have to return or rehome it because I did not agree to this lifestyle change. They are crying and saying I'm heartless."
     },
     {
-      sender: "locked_closet@mail.com",
-      name: "The Older Sister",
+      sender: "garde_robe_fermee@yahoo.fr",
+      name: "Chloé Dupont",
       time: "Monday",
       date: "Monday, 08:20",
       subject: "AITA for putting fabric over family?",
@@ -613,22 +585,21 @@
   ];
 
   window.addEventListener('DOMContentLoaded', () => {
-    // --- 5-CLICK HOST TRIGGER ---
-    let pillClickCount = 0;
-    let pillClickTimeout;
+    // --- 5-CLICK HOST TRIGGER (MOVED TO JS AVATAR) ---
+    let avatarClickCount = 0;
+    let avatarClickTimeout;
 
-    // Use setInterval to check when the element is rendered, as it may be injected dynamically
-    const checkPillInterval = setInterval(() => {
-      const judgePill = document.querySelector('.judge-name-pill');
-      if (judgePill) {
-        clearInterval(checkPillInterval);
-        judgePill.addEventListener('click', () => {
-          pillClickCount++;
-          clearTimeout(pillClickTimeout);
-          pillClickTimeout = setTimeout(() => pillClickCount = 0, 2000); // Reset count after 2 seconds
+    const checkAvatarInterval = setInterval(() => {
+      const jsAvatar = document.querySelector('.me-avatar');
+      if (jsAvatar) {
+        clearInterval(checkAvatarInterval);
+        jsAvatar.addEventListener('click', () => {
+          avatarClickCount++;
+          clearTimeout(avatarClickTimeout);
+          avatarClickTimeout = setTimeout(() => avatarClickCount = 0, 2000); 
 
-          if (pillClickCount >= 5) {
-            pillClickCount = 0;
+          if (avatarClickCount >= 5) {
+            avatarClickCount = 0;
             const mins = prompt("Host Override: Set global timer for the court (in minutes):", "15");
             if (mins !== null && !isNaN(mins) && mins.trim() !== "") {
               const endTime = Date.now() + parseFloat(mins) * 60000;
@@ -644,13 +615,12 @@
       document.getElementById('doors').classList.add('open');
     }, 700);
 
-    // Remove doors from flow entirely once the animation finishes
     setTimeout(() => {
       const doors = document.getElementById('doors');
       doors.style.display = 'none';
     }, 4200);
 
-    // 2. Show the Intro Phase
+    // 2. Show the Intro Phase instantly
     setTimeout(() => {
       document.getElementById('phaseIntro').classList.add('active');
       playLoreThread();
@@ -691,49 +661,19 @@
     el.classList.toggle('starred');
   }
 
-  // Judge Sasha's lore, delivered as a fading literary prologue
-  let loreTimeouts = [];
-
+  // Instantly renders all lore
   function playLoreThread() {
     const thread = document.getElementById('loreThread');
     thread.innerHTML = '';
-    let delayAcc = 800;
-
-    LORE_MESSAGES.forEach((msg, index) => {
+    
+    LORE_MESSAGES.forEach((msg) => {
       const p = document.createElement('div');
       p.className = 'lore-paragraph';
       p.textContent = msg;
       thread.appendChild(p);
-
-      const t = setTimeout(() => {
-        p.classList.add('visible');
-        if (index === LORE_MESSAGES.length - 1) {
-          setTimeout(revealCta, 2500);
-          const skipBtn = document.getElementById('skipLoreBtn');
-          if (skipBtn) skipBtn.style.opacity = '0'; // Fade out skip button gracefully
-        }
-      }, delayAcc);
-
-      loreTimeouts.push(t);
-      // Pacing based on text length for a cinematic reading speed
-      delayAcc += 2000 + (msg.length * 45);
     });
-  }
-
-  function skipLore() {
-    // Clear all scheduled animations
-    loreTimeouts.forEach(t => clearTimeout(t));
-
-    // Instantly reveal all text
-    const paragraphs = document.querySelectorAll('.lore-paragraph');
-    paragraphs.forEach(p => {
-      p.style.transition = 'opacity 0.5s ease';
-      p.classList.add('visible');
-    });
-
-    // Instantly show the CTA button and hide the skip button
+    
     revealCta();
-    document.getElementById('skipLoreBtn').style.display = 'none';
   }
 
   function revealCta() {
@@ -743,23 +683,15 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
         Open the inbox
       </button>
-      <div class="btn-sub">six emails are waiting</div>
     `;
   }
 
   // Navigation Functions
-  function backToIntro() {
-    document.getElementById('phaseDocket').classList.remove('active');
-    setTimeout(() => {
-      document.getElementById('phaseIntro').classList.add('active');
-    }, 400);
-  }
-
   function openDocket() {
     document.getElementById('phaseIntro').classList.remove('active');
     setTimeout(() => {
       document.getElementById('phaseDocket').classList.add('active');
-    }, 400); // Wait for fade out
+    }, 400); 
   }
 
   let caseTimerInterval;
@@ -779,7 +711,7 @@
     document.getElementById('phaseDocket').classList.remove('active');
     setTimeout(() => {
       document.getElementById('phaseStory').classList.add('active');
-      startCaseTimer(60); // 60 seconds to read and vote
+      startCaseTimer(60); 
     }, 400);
   }
 
@@ -788,12 +720,10 @@
     const bar = document.getElementById('caseTimerBar');
     let timeLeft = seconds;
 
-    // Reset bar instantly
     bar.style.transition = 'none';
     bar.style.transform = 'scaleX(1)';
     bar.style.background = 'var(--gold)';
 
-    // Start shrinking
     setTimeout(() => {
       bar.style.transition = 'transform 1s linear, background 0.5s ease';
       caseTimerInterval = setInterval(() => {
@@ -802,7 +732,7 @@
         bar.style.transform = `scaleX(${Math.max(0, percentage)})`;
 
         if (timeLeft <= 10) {
-          bar.style.background = '#ff4d5e'; // Turns red at 10 seconds
+          bar.style.background = '#ff4d5e';
         }
 
         if (timeLeft <= 0) {
@@ -836,9 +766,17 @@
     }
 
     card.style.display = 'flex';
-    // Trigger reflow for CSS transition
     void card.offsetWidth;
     card.classList.add('visible');
+  }
+
+  function changeVote() {
+    const card = document.getElementById('verdictCard');
+    card.classList.remove('visible');
+    
+    setTimeout(() => {
+      card.style.display = 'none';
+    }, 500);
   }
 
   function closeVerdict() {
@@ -847,7 +785,7 @@
 
     setTimeout(() => {
       card.style.display = 'none';
-      backToDocket(); // Automatically route back to the inbox
+      backToDocket(); 
     }, 500);
   }
 </script>
