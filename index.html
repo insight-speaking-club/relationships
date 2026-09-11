@@ -62,22 +62,6 @@
   .court-timer-wrap.is-hidden .court-timer-text {
     opacity: 0; width: 0; margin-left: -8px; /* Collapses the gap */
   }
-
-  /* Gentle "wrap it up soon" cue — last 3 minutes. Subtle, not alarming. */
-  @keyframes courtTimerPulse {
-    0%, 100% { box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 0px rgba(242,193,78,0); }
-    50%      { box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 12px rgba(242,193,78,0.22); }
-  }
-  .court-timer-wrap.is-warning {
-    border-color: rgba(242, 193, 78, 0.35);
-    animation: courtTimerPulse 2.8s ease-in-out infinite;
-  }
-  .court-timer-wrap.is-warning .court-timer-text {
-    color: rgba(242, 193, 78, 0.85);
-  }
-  .court-timer-wrap.is-warning .timer-toggle-btn {
-    color: rgba(242, 193, 78, 0.7);
-  }
   /* Organic film-grain overlay — DISABLED for performance.
      mix-blend-mode forces the browser to recomposite this against the
      entire page on every frame, which is expensive while dozens of other
@@ -5265,7 +5249,7 @@ function listenTimer() {
     const overlayEl = document.getElementById('countdownOverlay');
 
     if (!endTime) {
-      if (wrapperEl) { wrapperEl.style.opacity = '0'; wrapperEl.classList.remove('is-warning'); }
+      if (wrapperEl) wrapperEl.style.opacity = '0';
       setTimeout(() => { if (wrapperEl && wrapperEl.style.opacity === '0') wrapperEl.style.display = 'none'; }, 500);
       overlayEl.style.opacity = '0';
       return;
@@ -5276,8 +5260,6 @@ function listenTimer() {
       setTimeout(() => wrapperEl.style.opacity = '1', 50); // Small delay to trigger CSS fade-in
     }
 
-    const WARNING_THRESHOLD_MS = 3 * 60 * 1000; // 3 minutes
-
     timerInterval = setInterval(() => {
       const timeLeft = endTime - Date.now();
 
@@ -5286,15 +5268,12 @@ function listenTimer() {
         const mins = Math.floor(timeLeft / 60000);
         const secs = Math.floor((timeLeft % 60000) / 1000);
         warningEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-        if (wrapperEl) {
-          wrapperEl.style.opacity = '1';
-          wrapperEl.classList.toggle('is-warning', timeLeft <= WARNING_THRESHOLD_MS);
-        }
+        if (wrapperEl) wrapperEl.style.opacity = '1';
         overlayEl.style.opacity = '0';
         overlayEl.style.pointerEvents = 'none';
       } else if (timeLeft <= 0) {
         // Time is up -> Hide the small wrapper, show the full overlay
-        if (wrapperEl) { wrapperEl.style.opacity = '0'; wrapperEl.classList.remove('is-warning'); }
+        if (wrapperEl) wrapperEl.style.opacity = '0';
         overlayEl.style.opacity = '1';
         overlayEl.style.pointerEvents = 'auto';
 
