@@ -29,30 +29,8 @@
     background: linear-gradient(200deg, #180624 0%, #2a0e3f 25%, #60185b 60%, #b8447e 100%);
   }
 
-  .container {
-    position: relative; z-index: 10;
-    height: 100%; display: flex; flex-direction: column; align-items: center;
-    padding: 40px 24px; overflow-y: auto; overflow-x: hidden;
-  }
-
   .eyebrow { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); }
   .display { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-style: italic; margin: 10px 0 24px; text-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center; }
-
-  /* --- LOGIN SCREEN (For direct link visitors) --- */
-  #loginScreen {
-    display: none; flex-direction: column; align-items: center; justify-content: center;
-    width: 100%; max-width: 320px; margin: auto; text-align: center;
-  }
-  #loginScreen.active { display: flex; }
-  
-  .field { width: 100%; text-align: left; margin-top: 16px; }
-  .field label { display: block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); margin-bottom: 6px; font-family: 'Space Mono', monospace; }
-  .field input {
-    width: 100%; padding: 13px 15px; border-radius: 12px; border: 1px solid rgba(244,233,255,.25);
-    background: rgba(255,255,255,.06); color: var(--mist); font-family: 'Jost', sans-serif; font-size: 15px;
-    outline: none; transition: border-color 0.2s ease; text-align: center;
-  }
-  .field input:focus { border-color: var(--gold); background: rgba(255,255,255,.1); }
 
   .btn {
     font-family: 'Jost', sans-serif; font-weight: 600; font-size: 15px;
@@ -64,25 +42,46 @@
   .btn:active { transform: scale(0.96); }
 
   /* --- GAME WRAPPER --- */
-  #gameScreen { display: none; width: 100%; max-width: 420px; flex-direction: column; align-items: center; }
-  #gameScreen.active { display: flex; }
-
   .game-section {
-    position: relative; width: 100%; height: 240px; border-radius: 22px; overflow: hidden;
-    border: 1px solid rgba(244, 233, 255, 0.12); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
-    background: #1a1a24; margin-bottom: 24px; flex-shrink: 0;
+    position: absolute; inset: 0; width: 100%; height: 100%; 
+    overflow: hidden; z-index: 10;
   }
 
-  .lounge-ground { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; pointer-events: none; overflow: hidden; }
-  .ground-sky-fade { position: absolute; inset: 0; bottom: auto; height: 50px; background: linear-gradient(180deg, rgba(18,8,33,0), rgba(15,10,25,.3)); }
-  .ground-grass { position: absolute; left: 0; right: 0; bottom: 0; height: 120px; background: #1a1a24; border-top: 2px solid rgba(255, 255, 255, 0.1); background-repeat: repeat-x; will-change: background-position; z-index: 3; }
-  .ground-grass::after { content: ''; position: absolute; inset: 0; top: 40px; height: 4px; background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.6) 0, rgba(255, 255, 255, 0.6) 30px, transparent 30px, transparent 70px); opacity: 0.8; }
+  .lounge-ground { 
+    position: absolute; left: 0; right: 0; bottom: 0; 
+    height: 300px; /* Anchors the road to the bottom */
+    pointer-events: none; overflow: hidden; 
+  }
   
-  .parallax-layer { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; background-repeat: repeat-x; pointer-events: none; will-change: background-position; }
+  .ground-sky-fade { 
+    position: absolute; inset: 0; bottom: auto; height: 50px; 
+    background: linear-gradient(180deg, rgba(18,8,33,0), rgba(15,10,25,.3)); 
+  }
+  
+  .ground-grass { 
+    position: absolute; left: 0; right: 0; bottom: 0; height: 120px; 
+    background: #1a1a24; border-top: 2px solid rgba(255, 255, 255, 0.1); 
+    background-repeat: repeat-x; will-change: background-position; z-index: 3; 
+  }
+  
+  .ground-grass::after { 
+    content: ''; position: absolute; inset: 0; top: 40px; height: 4px; 
+    background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.6) 0, rgba(255, 255, 255, 0.6) 30px, transparent 30px, transparent 70px); 
+    opacity: 0.8; 
+  }
+  
+  .parallax-layer { 
+    position: absolute; left: 0; right: 0; bottom: 0; height: 100%; 
+    background-repeat: repeat-x; pointer-events: none; will-change: background-position; 
+  }
+  
   .layer-back { background-image: radial-gradient(circle at 50% 100%, #220e3a 0%, #220e3a 45%, transparent 46%); background-size: 140px 100px; background-position: 0 bottom; opacity: 0.7; z-index: 1; }
   .layer-mid { background-image: radial-gradient(circle at 50% 100%, #15291f 0%, #15291f 48%, transparent 49%); background-size: 90px 70px; background-position: 0 bottom; z-index: 2; opacity: 0.9; }
 
-  .lounge-game { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; z-index: 11; }
+  .lounge-game { 
+    position: absolute; left: 0; right: 0; bottom: 0; 
+    height: 100%; z-index: 11; 
+  }
   .game-instructions { position: absolute; top: 12px; left: 16px; z-index: 3; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--dim); pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
   .game-score { position: absolute; top: 12px; right: 16px; z-index: 3; font-family: 'Space Mono', monospace; font-size: 14px; color: var(--gold); background: rgba(0,0,0,.5); padding: 4px 12px; border-radius: 999px; pointer-events: none; }
   .game-track { position: absolute; inset: 0; cursor: pointer; touch-action: manipulation; }
@@ -107,15 +106,6 @@
   .obs-powerup { position: absolute; bottom: 52px; font-size: 34px; z-index: 2; filter: drop-shadow(0 0 15px #00f0ff); pointer-events: none; animation: float-powerup 1.5s ease-in-out infinite; }
   @keyframes float-powerup { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-12px) scale(1.1);} }
 
-  /* --- LEADERBOARD --- */
-  .leaderboard-container { width: 100%; background: rgba(30, 15, 45, 0.6); backdrop-filter: blur(12px); border-radius: 16px; border: 1px solid rgba(244, 233, 255, 0.1); padding: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
-  .leaderboard-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-  .lb-row { display: flex; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 12px; }
-  .lb-rank { font-family: 'Space Mono', monospace; color: var(--dim); width: 28px; font-size: 13px; }
-  .lb-rank.rank-1 { color: var(--gold); font-size: 15px; font-weight: bold; }
-  .lb-name { flex: 1; font-weight: 500; font-size: 15px; color: var(--mist); }
-  .lb-score { font-family: 'Space Mono', monospace; color: var(--gold); font-size: 15px; }
-
   /* --- TOAST NOTIFICATIONS --- */
   #toastStack { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 380px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
   .imessage-toast { pointer-events: auto; background: #120821; border: 1px solid var(--gold); border-radius: 16px; padding: 14px; box-shadow: 4px 4px 0px rgba(242, 193, 78, 0.4); opacity: 0; transform: translateY(-20px); transition: transform 0.4s cubic-bezier(0.2,1.3,.3,1), opacity 0.3s ease; }
@@ -128,106 +118,36 @@
 </style>
 </head>
 <body>
-
-<div class="sky"></div>
-<div id="toastStack"></div>
-
-<div class="container">
+  <div class="sky"></div>
+  <div id="toastStack"></div>
   
-  <!-- LOGIN SCREEN -->
-  <div id="loginScreen" class="active">
-    <div class="eyebrow">Driver Check-In</div>
-    <h1 class="display">Red Flag Rally</h1>
-    <p style="color: var(--dim); font-size: 15px; margin-bottom: 24px;">Enter your name to join the global leaderboard.</p>
-    
-    <div class="field">
-      <label>Your Name</label>
-      <input type="text" id="inputName" placeholder="What should we call you?" maxlength="20">
+  <div class="game-section" id="gameSection">
+    <div class="lounge-ground" aria-hidden="true" id="loungeGround">
+      <div class="ground-sky-fade"></div>
+      <div class="parallax-layer layer-back" id="parallaxBack"></div>
+      <div class="parallax-layer layer-mid" id="parallaxMid"></div>
+      <div class="ground-grass" id="parallaxFront"></div>
     </div>
-    
-    <button class="btn" id="btnJoin">Start Engine</button>
-  </div>
 
-  <!-- GAME SCREEN -->
-  <div id="gameScreen">
-    <div class="eyebrow" style="margin-bottom: 16px;">Red Flag Rally</div>
-    
-    <div class="game-section" id="gameSection">
-      <div class="lounge-ground" aria-hidden="true" id="loungeGround">
-        <div class="ground-sky-fade"></div>
-        <div class="parallax-layer layer-back" id="parallaxBack"></div>
-        <div class="parallax-layer layer-mid" id="parallaxMid"></div>
-        <div class="ground-grass" id="parallaxFront"></div>
-      </div>
-
-      <div class="lounge-game" id="loungeGame">
-        <div class="game-instructions">jump the pets • run over the red flags</div>
-        <div class="game-score" id="gameScore">0</div>
-        
-        <div class="game-track" id="gameTrack">
-          <div class="game-bunny" id="gameBunny">
-            <img src="sashas-car.png" alt="Sasha Car" onerror="this.style.display='none'">
-          </div>
-          <div class="game-overlay" id="gameOverlay">
-            <div>Help Sasha jump over cats and bunnies and run over red flags!</div>
-            <button class="btn" id="gameStartBtn" style="width: auto;">Play</button>
-          </div>
+    <div class="lounge-game" id="loungeGame">
+      <div class="game-instructions">jump the pets • run over the red flags</div>
+      <div class="game-score" id="gameScore">0</div>
+      
+      <div class="game-track" id="gameTrack">
+        <div class="game-bunny" id="gameBunny">
+          <img src="sashas-car.png" alt="Sasha Car" onerror="this.style.display='none'">
+        </div>
+        <div class="game-overlay" id="gameOverlay">
+          <div>Help Sasha jump over cats and bunnies and run over red flags!</div>
+          <button class="btn" id="gameStartBtn" style="width: auto;">Play</button>
         </div>
       </div>
     </div>
-
-    <!-- LEADERBOARD -->
-    <div class="leaderboard-container">
-      <div class="eyebrow" style="text-align:center;">Global Top Scores</div>
-      <div id="gameLeaderboard" class="leaderboard-list">Loading...</div>
-    </div>
   </div>
 
-</div>
-
-<!-- Firebase Integration -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script>
-  // --- FIREBASE SETUP ---
-  const firebaseConfig = {
-    apiKey: "AIzaSyDv47HEwF9APQLLoLdJgHwdLHzoYfTawyQ",
-    authDomain: "relationships-d8119.firebaseapp.com",
-    databaseURL: "https://relationships-d8119-default-rtdb.firebaseio.com",
-    projectId: "relationships-d8119",
-    storageBucket: "relationships-d8119.firebasestorage.app",
-    messagingSenderId: "852389788989",
-    appId: "1:852389788989:web:6c79282e08c665b54dd954"
-  };
-  const EVENT_ID = "default";
-  
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  // --- USER AUTHENTICATION ---
-  let me = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
-
-  if (me && me.name) {
-    // Already logged in from the main app or a previous visit
-    document.getElementById('loginScreen').classList.remove('active');
-    document.getElementById('gameScreen').classList.add('active');
-    initGame();
-  }
-
-  document.getElementById('btnJoin').addEventListener('click', () => {
-    const name = document.getElementById('inputName').value.trim();
-    if (!name) return alert('Please enter your name to play.');
-    
-    // Create guest profile if one doesn't exist
-    const id = 'g_' + Math.random().toString(36).slice(2,10);
-    me = { id, name, avatar: '🏎️', highScore: 0 };
-    localStorage.setItem('fsc_guest', JSON.stringify(me));
-    
-    // Save to Firebase so they appear on the main app's roster
-    db.ref(`events/${EVENT_ID}/attendees/${id}`).update({ ...me, joinedAt: Date.now() });
-
-    document.getElementById('loginScreen').classList.remove('active');
-    document.getElementById('gameScreen').classList.add('active');
+  // Initialize immediately on load
+  document.addEventListener('DOMContentLoaded', () => {
     initGame();
   });
 
@@ -255,33 +175,7 @@
   }
 
   // --- GAME LOGIC ---
-  function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-  function renderLeaderboard(guests) {
-    const list = document.getElementById('gameLeaderboard');
-    const ranked = [...guests].filter(g => g.highScore > 0).sort((a,b) => b.highScore - a.highScore);
-
-    if(ranked.length === 0) {
-      list.innerHTML = `<div style="text-align:center; color:var(--dim); font-size:14px; padding: 10px;">No scores yet. Play to rank!</div>`;
-      return;
-    }
-
-    list.innerHTML = ranked.map((g, i) => `
-      <div class="lb-row">
-        <div class="lb-rank ${i === 0 ? 'rank-1' : ''}">${i + 1}</div>
-        <div class="lb-name">${escapeHtml(g.name)} ${g.id === me?.id ? '<span style="color:var(--gold); font-size:10px;">(you)</span>' : ''}</div>
-        <div class="lb-score">${g.highScore}</div>
-      </div>
-    `).join('');
-  }
-
   function initGame() {
-    // Listen for leaderboard updates from Firebase
-    db.ref(`events/${EVENT_ID}/attendees`).on('value', snap => {
-      const guests = Object.values(snap.val() || {});
-      renderLeaderboard(guests);
-    });
-
     let bg = null;
     const track = document.getElementById('gameTrack');
     const bunnyEl = document.getElementById('gameBunny');
@@ -290,6 +184,10 @@
     const parallaxBack = document.getElementById('parallaxBack');
     const parallaxMid = document.getElementById('parallaxMid');
     const parallaxFront = document.getElementById('parallaxFront');
+
+    // Load initial high score
+    const initBest = Number(localStorage.getItem('fsc_bunny_high') || 0);
+    scoreEl.textContent = initBest ? `best ${initBest}` : '0';
 
     function jump() {
       if(!bg || !bg.running) return;
@@ -327,11 +225,6 @@
       const finalScore = Math.floor(bg.score);
       const best = Math.max(Number(localStorage.getItem('fsc_bunny_high')||0), finalScore);
       localStorage.setItem('fsc_bunny_high', String(best));
-
-      if (me && finalScore > (me.highScore || 0)) {
-        me.highScore = finalScore;
-        db.ref(`events/${EVENT_ID}/attendees/${me.id}`).update({ highScore: finalScore });
-      }
 
       const messagesFlag = [
         "We *run over* the red flags, sweetheart. We don't save them for a 2 AM text.",
