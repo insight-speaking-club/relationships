@@ -119,7 +119,7 @@
     overflow-y: auto; overflow-x: hidden;
     padding: 60px 24px 80px; display: flex; flex-direction: column; align-items: center;
   }
-  #phaseIntro { padding-top: 40vh; }
+  #phaseIntro { padding-top: 35vh; }
   .display { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-style: italic; font-weight: 500; margin: 0 0 24px 0; text-align: center; text-shadow: 0 4px 15px rgba(0,0,0,0.6); }
 
   .section-layer {
@@ -150,6 +150,14 @@
     text-align: center;
     text-shadow: 0 4px 15px rgba(0,0,0,0.8);
     opacity: 1; 
+  }
+
+  /* Make the first line larger */
+  .lore-paragraph:first-child {
+    font-size: 34px;
+    margin-bottom: 10px;
+    color: var(--gold);
+    font-weight: 500;
   }
 
   .btn-gold {
@@ -528,9 +536,10 @@
     }, 100);
   });
 
-  // Rendered as a single cohesive paragraph
   const LORE_MESSAGES = [
-    "Welcome to the People's Court. Our secret sessions above Paris have guided society for decades. We’ve upgraded from parchment to an email inbox, but people are still behaving just as terribly. Leave your own baggage at the door—tonight, we're dissecting strangers. Please try not to ruin anyone’s life. (Or do. It’s more fun that way.)"
+    "Welcome to the People's Court, loves.",
+    "We've been judging strangers from a renowned Parisian courtroom since before you were born. We once received letters by carrier pigeon; now, they simply arrive by email. Our generation has inherited the gavel.",
+    "Tonight, we're dissecting strangers. Deliver your verdict with grace... or be absolutely ruthless. We're making history."
   ];
 
   const DOCKET_STORIES = [
