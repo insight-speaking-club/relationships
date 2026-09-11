@@ -4174,7 +4174,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     // The host sees the exact same lounge experience as everyone else,
     // plus a floating control button that opens the admin drawer.
     if(!me){
-      me = { id: 'host_'+Math.random().toString(36).slice(2,9), name:'Sasha', avatar:'👑' };
+      me = { id: 'host_'+Math.random().toString(36).slice(2,9), name:'Sasha', avatar:'🐇' };
       localStorage.setItem('fsc_guest', JSON.stringify(me));
     }
     initHost();
@@ -4232,16 +4232,13 @@ document.getElementById('btnJoin').addEventListener('click', async ()=>{
     try { await Notification.requestPermission(); } catch(e) {}
   }
 
-  // Select a random image from the specific pronoun pool
-  const pool = AVATAR_IMAGES[pronouns];
-  const randomImage = pool[Math.floor(Math.random() * pool.length)];
-
-  // Store the actual HTML image tag so it automatically renders everywhere in the app
-  const characterHtml = `<img class="avatar-sprite" src="${randomImage}" alt="${pronouns}">`;
+  // Select a random animal emoji for the character
+  const ANIMAL_EMOJIS = ['🐇', '🐈', '🦊', '🐻', '🐼', '🐨', '🐹', '🐶', '🐯', '🦁'];
+  const randomEmoji = ANIMAL_EMOJIS[Math.floor(Math.random() * ANIMAL_EMOJIS.length)];
 
   const id = 'g_'+Math.random().toString(36).slice(2,10);
 
-  me = {id, name, pronouns, avatar: characterHtml};
+  me = {id, name, pronouns, avatar: randomEmoji};
   localStorage.setItem('fsc_guest', JSON.stringify(me));
   ref(`events/${EVENT_ID}/attendees/${id}`).set({...me, joinedAt: Date.now()});
   enterLounge();
@@ -4444,18 +4441,9 @@ function listenRoster(){
 }
 
 function renderRoster(){
-  // "The Crew" box (#rosterGrid) has been removed from the page;
-  // guests now only appear waiting next to Sasha's parked car below.
   const waitingGrid = document.getElementById('hubWaitingGuests');
   if (waitingGrid) {
-    waitingGrid.innerHTML = stateGuests.map(m => {
-      const isYou = !!(me && m.id === me.id);
-      const shortName = m.name && m.name.length > 9 ? m.name.slice(0, 8) + '…' : m.name;
-      return `<div class="hub-waiting-chip">
-        <div class="hub-waiting-avatar${isYou ? ' is-me' : ''}" title="${escapeHtml(m.name)}${m.pronouns ? ' (' + escapeHtml(m.pronouns) + ')' : ''}">${m.avatar}</div>
-        <div class="hub-waiting-name${isYou ? ' is-me' : ''}">${escapeHtml(isYou ? 'You' : shortName)}</div>
-      </div>`;
-    }).join('');
+    waitingGrid.innerHTML = '';
   }
 }
 
