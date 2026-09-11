@@ -340,6 +340,22 @@
   .court-timer-wrap.is-hidden .court-timer-text {
     opacity: 0; width: 0; margin-left: -8px; /* Collapses the gap */
   }
+
+  /* Gentle "wrap it up soon" cue — last 3 minutes. Subtle, not alarming. */
+  @keyframes courtTimerPulse {
+    0%, 100% { box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 0px rgba(242,193,78,0); }
+    50%      { box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 12px rgba(242,193,78,0.22); }
+  }
+  .court-timer-wrap.is-warning {
+    border-color: rgba(242, 193, 78, 0.35);
+    animation: courtTimerPulse 2.8s ease-in-out infinite;
+  }
+  .court-timer-wrap.is-warning .court-timer-text {
+    color: rgba(242, 193, 78, 0.85);
+  }
+  .court-timer-wrap.is-warning .timer-toggle-btn {
+    color: rgba(242, 193, 78, 0.7);
+  }
 </style>
 </head>
 <body>
@@ -508,11 +524,14 @@
 
     if (!endTime) {
       timerWrapper.style.display = 'none';
+      timerWrapper.classList.remove('is-warning');
       return;
     }
 
     // Show the wrapper when a timer is set
     timerWrapper.style.display = 'flex';
+
+    const WARNING_THRESHOLD_MS = 3 * 60 * 1000; // 3 minutes
 
     globalTimerInterval = setInterval(() => {
       const timeLeft = endTime - Date.now();
@@ -521,9 +540,11 @@
         const mins = Math.floor(timeLeft / 60000);
         const secs = Math.floor((timeLeft % 60000) / 1000);
         timerTextEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        timerWrapper.classList.toggle('is-warning', timeLeft <= WARNING_THRESHOLD_MS);
       } else {
         clearInterval(globalTimerInterval);
         timerTextEl.textContent = "0:00";
+        timerWrapper.classList.remove('is-warning');
         // Clear the timer from the database so it doesn't trigger again immediately
         db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).set(null);
         // Redirect everyone to the itinerary
