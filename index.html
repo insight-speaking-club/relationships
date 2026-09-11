@@ -4813,49 +4813,56 @@ function startBunnyGame(){
     }
 
     const messagesFlag = [
-      "We run over the red flags, sweetheart. This isn't your dating history.",
-      "I see you treat red flags in this game exactly like you do in real life: you just let them fly right by.",
+      "We *run over* the red flags, sweetheart. We don't save them for a 2 AM text.",
       "Oh, so you swerved to avoid the red flag? Let me guess, you think you can 'fix' it.",
       "You let the red flag live. The absolute lack of judgment is stunning to me.",
-      "Dodging red flags instead of crushing them? Oh, so you like toxic men. Got it.",
-      "You don't have a type. You have a collection of red flags you call exceptions.",
-      "Red flags don't scare you, they just remind you of somebody.",
+      "Dodging red flags instead of crushing them? Your therapist is going to hear about this.",
+      "You don't have a type. You have a collection of red flags you call exceptions. Run them over!",
       "Something tells me your group chat calls this 'giving him grace.' Babe, it's avoidance.",
-      "You're not colorblind. You're red-flag blind. Very different, much more expensive.",
-      "I've watched you forgive things a courtroom wouldn't.",
-      "You didn't miss the red flag. You waved back.",
-      "The bar is in hell and somehow you still limbo under it.",
-      "You call it 'seeing the good in people.' I call it a liability."
+      "You're not colorblind. You're red-flag blind. Very different, much more expensive."
     ];
 
     const messagesPet = [
-      "You just ran over a pet in a luxury vehicle. You are officially canceled.",
-      "911? Yes, I'd like to report a hit-and-run on a pet. Lock them up immediately.",
-      "I did not put on this much lip gloss to be an accessory to animal cruelty. Give me the keys.",
-      "Not the pet! I am actively calling PETA and my legal team.",
-      "You hit a pet. Honestly, the only thing worse than your driving is the vibe you just brought to this car.",
-      "We do not run over pets on my watch, sweetheart. Hand over your license right now."
+      "You ran over the only pure thing on this road. Honestly, your self-sabotage is showing.",
+      "Destroying something innocent while chasing red flags. A perfect metaphor for your twenties.",
+      "You swerved into a kitten? I didn't think it was possible to have worse reflexes than taste in men.",
+      "I asked you to dodge the good things, not treat them like people who actually treat you well.",
+      "Running over cute things while entirely focused on garbage. Put that in your journal tonight.",
+      "You just hit a pet. Honestly, the only thing more tragic than your driving is your dating history.",
+      "I did not put on this much lip gloss to be an accessory to your terrible life choices. Give me the keys."
     ];
 
     const messagesLow = [
-      "Is the talent in the room with us?",
-      "I’d ask if your phone was lagging, but we both know it’s just a skill issue.",
-      "I could do better in six-inch heels while responding to a group chat.",
-      "This performance is giving 'student driver who lied on their resume.'",
+      "That score is lower than your standards, and we both know how tragic those are.",
+      "Are you driving with your eyes closed, or are you always this oblivious to what's right in front of you?",
+      "Is the talent in the room with us? Because this performance is giving 'student driver'.",
+      "I’ve seen better maneuvering from a shopping cart with a broken wheel.",
       "Please don't tell anyone you know me after dropping a tragic score like that.",
-      "Give me the keys. Give me the keys right now."
+      "If you navigated life the way you navigate this road... actually, that explains a lot."
     ];
 
     let sassyMessage = "";
+    let activeArray = [];
 
-    // If the score is tragically low (under 300), there's a 50% chance to just give a skill-issue read
+    // Determine which pool of roasts to pull from based on the crash reason and score
     if (finalScore < 300 && Math.random() > 0.5) {
-      sassyMessage = messagesLow[Math.floor(Math.random() * messagesLow.length)];
+      activeArray = messagesLow;
     } else if (reason === 'flag') {
-      sassyMessage = messagesFlag[Math.floor(Math.random() * messagesFlag.length)];
+      activeArray = messagesFlag;
     } else {
-      sassyMessage = messagesPet[Math.floor(Math.random() * messagesPet.length)];
+      activeArray = messagesPet;
     }
+
+    // Initialize the global tracker if it doesn't exist yet
+    window.lastRoastMessage = window.lastRoastMessage || "";
+
+    // Keep picking a random message until it is DIFFERENT from the last one shown
+    do {
+      sassyMessage = activeArray[Math.floor(Math.random() * activeArray.length)];
+    } while (sassyMessage === window.lastRoastMessage && activeArray.length > 1);
+
+    // Save the new message to check against next time
+    window.lastRoastMessage = sassyMessage;
 
     overlay.innerHTML = `
       <div style="font-size: 22px; color: var(--gold); font-weight: 600; margin-bottom: 8px;">Score: ${finalScore}</div>
