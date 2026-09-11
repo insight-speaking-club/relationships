@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Red Flag Rally | Vogue Committee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #120821;
+    --rose: #d94f8c;
+    --gold: #f2c14e;
+    --mist: #f4e9ff;
+    --dim: #d1c1e0;
+  }
+  
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  body, html {
+    margin: 0; padding: 0; height: 100%; width: 100%;
+    background: var(--ink); color: var(--mist);
+    font-family: 'Jost', sans-serif; overflow: hidden;
+  }
+
+  .sky {
+    position: fixed; inset: 0; z-index: 0;
+    background: linear-gradient(200deg, #180624 0%, #2a0e3f 25%, #60185b 60%, #b8447e 100%);
+  }
+
+  .container {
+    position: relative; z-index: 10;
+    height: 100%; display: flex; flex-direction: column; align-items: center;
+    padding: 40px 24px; overflow-y: auto; overflow-x: hidden;
+  }
+
+  .eyebrow { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); }
+  .display { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-style: italic; margin: 10px 0 24px; text-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center; }
+
+  /* --- LOGIN SCREEN (For direct link visitors) --- */
+  #loginScreen {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; max-width: 320px; margin: auto; text-align: center;
+  }
+  #loginScreen.active { display: flex; }
+  
+  .field { width: 100%; text-align: left; margin-top: 16px; }
+  .field label { display: block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); margin-bottom: 6px; font-family: 'Space Mono', monospace; }
+  .field input {
+    width: 100%; padding: 13px 15px; border-radius: 12px; border: 1px solid rgba(244,233,255,.25);
+    background: rgba(255,255,255,.06); color: var(--mist); font-family: 'Jost', sans-serif; font-size: 15px;
+    outline: none; transition: border-color 0.2s ease; text-align: center;
+  }
+  .field input:focus { border-color: var(--gold); background: rgba(255,255,255,.1); }
+
+  .btn {
+    font-family: 'Jost', sans-serif; font-weight: 600; font-size: 15px;
+    color: var(--ink); background: linear-gradient(135deg, #ffdf94 0%, var(--gold) 100%);
+    border: none; border-radius: 999px; padding: 15px 34px; cursor: pointer;
+    box-shadow: 0 8px 20px rgba(242, 193, 78, 0.3); transition: transform 0.2s ease;
+    margin-top: 24px; width: 100%;
+  }
+  .btn:active { transform: scale(0.96); }
+
+  /* --- GAME WRAPPER --- */
+  #gameScreen { display: none; width: 100%; max-width: 420px; flex-direction: column; align-items: center; }
+  #gameScreen.active { display: flex; }
+
+  .game-section {
+    position: relative; width: 100%; height: 240px; border-radius: 22px; overflow: hidden;
+    border: 1px solid rgba(244, 233, 255, 0.12); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    background: #1a1a24; margin-bottom: 24px; flex-shrink: 0;
+  }
+
+  .lounge-ground { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; pointer-events: none; overflow: hidden; }
+  .ground-sky-fade { position: absolute; inset: 0; bottom: auto; height: 50px; background: linear-gradient(180deg, rgba(18,8,33,0), rgba(15,10,25,.3)); }
+  .ground-grass { position: absolute; left: 0; right: 0; bottom: 0; height: 120px; background: #1a1a24; border-top: 2px solid rgba(255, 255, 255, 0.1); background-repeat: repeat-x; will-change: background-position; z-index: 3; }
+  .ground-grass::after { content: ''; position: absolute; inset: 0; top: 40px; height: 4px; background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.6) 0, rgba(255, 255, 255, 0.6) 30px, transparent 30px, transparent 70px); opacity: 0.8; }
+  
+  .parallax-layer { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; background-repeat: repeat-x; pointer-events: none; will-change: background-position; }
+  .layer-back { background-image: radial-gradient(circle at 50% 100%, #220e3a 0%, #220e3a 45%, transparent 46%); background-size: 140px 100px; background-position: 0 bottom; opacity: 0.7; z-index: 1; }
+  .layer-mid { background-image: radial-gradient(circle at 50% 100%, #15291f 0%, #15291f 48%, transparent 49%); background-size: 90px 70px; background-position: 0 bottom; z-index: 2; opacity: 0.9; }
+
+  .lounge-game { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; z-index: 11; }
+  .game-instructions { position: absolute; top: 12px; left: 16px; z-index: 3; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--dim); pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+  .game-score { position: absolute; top: 12px; right: 16px; z-index: 3; font-family: 'Space Mono', monospace; font-size: 14px; color: var(--gold); background: rgba(0,0,0,.5); padding: 4px 12px; border-radius: 999px; pointer-events: none; }
+  .game-track { position: absolute; inset: 0; cursor: pointer; touch-action: manipulation; }
+  
+  .game-bunny { position: absolute; left: 20px; bottom: 52px; width: 120px; height: 120px; z-index: 2; display: flex; align-items: center; justify-content: center; transform: translateY(0); will-change: transform; filter: drop-shadow(0 6px 6px rgba(0,0,0,.4)); pointer-events: none; }
+  .game-bunny img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  
+  .game-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; z-index: 4; padding: 0 24px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: var(--mist); background: rgba(8,4,16,.7); backdrop-filter: blur(4px); transition: opacity .3s ease; }
+  .game-overlay.hidden { opacity: 0; pointer-events: none; }
+  
+  .obs-basic { position: absolute; bottom: 52px; font-size: 38px; z-index: 2; filter: drop-shadow(0 4px 5px rgba(0,0,0,.4)); pointer-events: none; }
+  .obs-iconic { position: absolute; bottom: 52px; width: 44px; height: 44px; z-index: 2; filter: drop-shadow(0 0 10px rgba(242,193,78,.8)); pointer-events: none; animation: float-icon 2s ease-in-out infinite; }
+  .obs-iconic img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  @keyframes float-icon { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+  
+  .jump-particle { position: absolute; font-size: 20px; pointer-events: none; animation: ribbon-float 0.7s ease-out forwards; z-index: 5; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
+  @keyframes ribbon-float { 0% { transform: scale(1) translate(0, 0) rotate(0deg); opacity: 1; } 100% { transform: scale(1.5) translate(-40px, 30px) rotate(-35deg); opacity: 0; } }
+
+  .game-bunny.invincible { filter: drop-shadow(0 10px 20px #00f0ff) drop-shadow(0 0 30px #f2c14e); animation: power-pulse 0.5s ease-in-out infinite alternate; }
+  @keyframes power-pulse { from { filter: drop-shadow(0 10px 20px #00f0ff) drop-shadow(0 0 10px #f2c14e); } to { filter: drop-shadow(0 10px 20px #00f0ff) drop-shadow(0 0 40px #f2c14e); } }
+
+  .obs-powerup { position: absolute; bottom: 52px; font-size: 34px; z-index: 2; filter: drop-shadow(0 0 15px #00f0ff); pointer-events: none; animation: float-powerup 1.5s ease-in-out infinite; }
+  @keyframes float-powerup { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-12px) scale(1.1);} }
+
+  /* --- LEADERBOARD --- */
+  .leaderboard-container { width: 100%; background: rgba(30, 15, 45, 0.6); backdrop-filter: blur(12px); border-radius: 16px; border: 1px solid rgba(244, 233, 255, 0.1); padding: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+  .leaderboard-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .lb-row { display: flex; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 12px; }
+  .lb-rank { font-family: 'Space Mono', monospace; color: var(--dim); width: 28px; font-size: 13px; }
+  .lb-rank.rank-1 { color: var(--gold); font-size: 15px; font-weight: bold; }
+  .lb-name { flex: 1; font-weight: 500; font-size: 15px; color: var(--mist); }
+  .lb-score { font-family: 'Space Mono', monospace; color: var(--gold); font-size: 15px; }
+
+  /* --- TOAST NOTIFICATIONS --- */
+  #toastStack { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 380px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+  .imessage-toast { pointer-events: auto; background: #120821; border: 1px solid var(--gold); border-radius: 16px; padding: 14px; box-shadow: 4px 4px 0px rgba(242, 193, 78, 0.4); opacity: 0; transform: translateY(-20px); transition: transform 0.4s cubic-bezier(0.2,1.3,.3,1), opacity 0.3s ease; }
+  .imessage-toast.show { opacity: 1; transform: translateY(0); }
+  .toast-top { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .toast-icon { width: 18px; height: 18px; border-radius: 4px; object-fit: cover; }
+  .toast-appname { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+  .toast-title { font-family: 'Jost', sans-serif; font-weight: 600; font-size: 15px; color: var(--mist); margin-bottom: 2px; }
+  .toast-body { font-family: 'Jost', sans-serif; font-size: 14px; line-height: 1.4; color: var(--mist); }
+</style>
+</head>
+<body>
+
+<div class="sky"></div>
+<div id="toastStack"></div>
+
+<div class="container">
+  
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="active">
+    <div class="eyebrow">Driver Check-In</div>
+    <h1 class="display">Red Flag Rally</h1>
+    <p style="color: var(--dim); font-size: 15px; margin-bottom: 24px;">Enter your name to join the global leaderboard.</p>
+    
+    <div class="field">
+      <label>Your Name</label>
+      <input type="text" id="inputName" placeholder="What should we call you?" maxlength="20">
+    </div>
+    
+    <button class="btn" id="btnJoin">Start Engine</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="gameScreen">
+    <div class="eyebrow" style="margin-bottom: 16px;">Red Flag Rally</div>
+    
+    <div class="game-section" id="gameSection">
+      <div class="lounge-ground" aria-hidden="true" id="loungeGround">
+        <div class="ground-sky-fade"></div>
+        <div class="parallax-layer layer-back" id="parallaxBack"></div>
+        <div class="parallax-layer layer-mid" id="parallaxMid"></div>
+        <div class="ground-grass" id="parallaxFront"></div>
+      </div>
+
+      <div class="lounge-game" id="loungeGame">
+        <div class="game-instructions">jump the pets • run over the red flags</div>
+        <div class="game-score" id="gameScore">0</div>
+        
+        <div class="game-track" id="gameTrack">
+          <div class="game-bunny" id="gameBunny">
+            <img src="sashas-car.png" alt="Sasha Car" onerror="this.style.display='none'">
+          </div>
+          <div class="game-overlay" id="gameOverlay">
+            <div>Help Sasha jump over cats and bunnies and run over red flags!</div>
+            <button class="btn" id="gameStartBtn" style="width: auto;">Play</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="leaderboard-container">
+      <div class="eyebrow" style="text-align:center;">Global Top Scores</div>
+      <div id="gameLeaderboard" class="leaderboard-list">Loading...</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Firebase Integration -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script>
+  // --- FIREBASE SETUP ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyDv47HEwF9APQLLoLdJgHwdLHzoYfTawyQ",
+    authDomain: "relationships-d8119.firebaseapp.com",
+    databaseURL: "https://relationships-d8119-default-rtdb.firebaseio.com",
+    projectId: "relationships-d8119",
+    storageBucket: "relationships-d8119.firebasestorage.app",
+    messagingSenderId: "852389788989",
+    appId: "1:852389788989:web:6c79282e08c665b54dd954"
+  };
+  const EVENT_ID = "default";
+  
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // --- USER AUTHENTICATION ---
+  let me = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
+
+  if (me && me.name) {
+    // Already logged in from the main app or a previous visit
+    document.getElementById('loginScreen').classList.remove('active');
+    document.getElementById('gameScreen').classList.add('active');
+    initGame();
+  }
+
+  document.getElementById('btnJoin').addEventListener('click', () => {
+    const name = document.getElementById('inputName').value.trim();
+    if (!name) return alert('Please enter your name to play.');
+    
+    // Create guest profile if one doesn't exist
+    const id = 'g_' + Math.random().toString(36).slice(2,10);
+    me = { id, name, avatar: '🏎️', highScore: 0 };
+    localStorage.setItem('fsc_guest', JSON.stringify(me));
+    
+    // Save to Firebase so they appear on the main app's roster
+    db.ref(`events/${EVENT_ID}/attendees/${id}`).update({ ...me, joinedAt: Date.now() });
+
+    document.getElementById('loginScreen').classList.remove('active');
+    document.getElementById('gameScreen').classList.add('active');
+    initGame();
+  });
+
+  // --- TOAST NOTIFICATIONS ---
+  function showSashaToast(message) {
+    const stack = document.getElementById('toastStack');
+    const el = document.createElement('div');
+    el.className = 'imessage-toast';
+    el.innerHTML = `
+      <div class="toast-top">
+        <img class="toast-icon" src="sasha.png" alt="" onerror="this.style.display='none'">
+        <span class="toast-appname">Vogue Committee Headquarters</span>
+      </div>
+      <div class="toast-title">Sasha</div>
+      <div class="toast-body">${message}</div>
+    `;
+    stack.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    if(navigator.vibrate) navigator.vibrate(50);
+
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 400);
+    }, 4200);
+  }
+
+  // --- GAME LOGIC ---
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function renderLeaderboard(guests) {
+    const list = document.getElementById('gameLeaderboard');
+    const ranked = [...guests].filter(g => g.highScore > 0).sort((a,b) => b.highScore - a.highScore);
+
+    if(ranked.length === 0) {
+      list.innerHTML = `<div style="text-align:center; color:var(--dim); font-size:14px; padding: 10px;">No scores yet. Play to rank!</div>`;
+      return;
+    }
+
+    list.innerHTML = ranked.map((g, i) => `
+      <div class="lb-row">
+        <div class="lb-rank ${i === 0 ? 'rank-1' : ''}">${i + 1}</div>
+        <div class="lb-name">${escapeHtml(g.name)} ${g.id === me?.id ? '<span style="color:var(--gold); font-size:10px;">(you)</span>' : ''}</div>
+        <div class="lb-score">${g.highScore}</div>
+      </div>
+    `).join('');
+  }
+
+  function initGame() {
+    // Listen for leaderboard updates from Firebase
+    db.ref(`events/${EVENT_ID}/attendees`).on('value', snap => {
+      const guests = Object.values(snap.val() || {});
+      renderLeaderboard(guests);
+    });
+
+    let bg = null;
+    const track = document.getElementById('gameTrack');
+    const bunnyEl = document.getElementById('gameBunny');
+    const scoreEl = document.getElementById('gameScore');
+    const overlay = document.getElementById('gameOverlay');
+    const parallaxBack = document.getElementById('parallaxBack');
+    const parallaxMid = document.getElementById('parallaxMid');
+    const parallaxFront = document.getElementById('parallaxFront');
+
+    function jump() {
+      if(!bg || !bg.running) return;
+      if(bg.y <= 0.5 || bg.jumps < 2){
+        bg.vy = bg.y <= 0.5 ? 12.5 : 10.5;
+        bg.jumps = bg.y <= 0.5 ? 1 : 2;
+        if(navigator.vibrate) navigator.vibrate(15);
+
+        const spark = document.createElement('div');
+        spark.className = 'jump-particle';
+        spark.textContent = '🎀';
+        spark.style.left = '30px';
+        spark.style.bottom = (52 + bg.y) + 'px';
+        track.appendChild(spark);
+        setTimeout(()=>spark.remove(), 700);
+      }
+    }
+
+    function beginRun() {
+      if(bg && bg.obstacles) bg.obstacles.forEach(o=>o.el.remove());
+      bg = {
+        running: true, over: false, y: 0, vy: 0, score: 0, speed: 3.2, frame: 0, nextSpawn: 60,
+        scrollBack: 0, scrollMid: 0, scrollFront: 0, jumps: 0, invincibleUntil: 0, phase: 1,
+        obstacles: [], raf: null, lastTime: performance.now()
+      };
+
+      bunnyEl.classList.remove('invincible');
+      bunnyEl.style.transform = 'translateY(0)';
+      overlay.classList.add('hidden');
+      bg.raf = requestAnimationFrame(loop);
+    }
+
+    function gameOver(reason) {
+      bg.running = false; bg.over = true;
+      const finalScore = Math.floor(bg.score);
+      const best = Math.max(Number(localStorage.getItem('fsc_bunny_high')||0), finalScore);
+      localStorage.setItem('fsc_bunny_high', String(best));
+
+      if (me && finalScore > (me.highScore || 0)) {
+        me.highScore = finalScore;
+        db.ref(`events/${EVENT_ID}/attendees/${me.id}`).update({ highScore: finalScore });
+      }
+
+      const messagesFlag = [
+        "We *run over* the red flags, sweetheart. We don't save them for a 2 AM text.",
+        "Oh, so you swerved to avoid the red flag? Let me guess, you think you can 'fix' it.",
+        "You let the red flag live. The absolute lack of judgment is stunning to me.",
+        "Dodging red flags instead of crushing them? Your therapist is going to hear about this.",
+        "You don't have a type. You have a collection of red flags you call exceptions. Run them over!",
+        "Something tells me your group chat calls this 'giving him grace.' Babe, it's avoidance.",
+        "You're not colorblind. You're red-flag blind. Very different, much more expensive.",
+        "You let another red flag slide? This is why your friends drink before you talk about your dating life.",
+        "Missing that red flag just cost you five years of peace. I hope you're happy.",
+        "I told you to run it over, not take it home to meet your mother.",
+        "That red flag was practically begging to be crushed, but you just gave it a second chance.",
+        "Swerving around a red flag is just putting a bow on a toxic trait.",
+        "You missed. Did you suddenly think you could communicate through its issues?",
+        "We don't 'hold space' for red flags, darling. We accelerate.",
+        "You treating that red flag like a minor detour is exactly why you're still single.",
+        "Another red flag ignored. Are you building a collection, or is it a lifestyle brand now?",
+        "That was a textbook red flag and you just waved at it. My God, the delusion."
+      ];
+
+      const messagesPet = [
+        "You ran over the only pure thing on this road. Honestly, your self-sabotage is showing.",
+        "Destroying something innocent while chasing red flags. A perfect metaphor for your twenties.",
+        "You swerved into a kitten? I didn't think it was possible to have worse reflexes than taste in men.",
+        "I asked you to dodge the good things, not treat them like people who actually treat you well.",
+        "Running over cute things while entirely focused on garbage. Put that in your journal tonight.",
+        "You just hit a pet. Honestly, the only thing more tragic than your driving is your dating history.",
+        "I did not put on this much lip gloss to be an accessory to your terrible life choices. Give me the keys.",
+        "You ran over the cute thing while staring at the red flags. Honestly, poetry.",
+        "If you applied the brakes to your bad decisions instead of the kittens, we wouldn't be here.",
+        "Another innocent casualty of your inability to steer your life properly.",
+        "You hit the pet. Your emotional unavailability is officially a danger to society.",
+        "You pushed away the healthy option and crashed. We call that 'your standard Tuesday'.",
+        "We dodge the good things and run straight into disaster. Do you need me to call your therapist?",
+        "I'm confiscating your keys and your dating apps. You're a menace to anything wholesome.",
+        "You just plowed through the greenest flag on this road. Classic you.",
+        "Hitting the sweet thing because you panicked? The metaphors write themselves, darling.",
+        "You wrecked the car over a bunny. And you wonder why you're not allowed to plan group trips."
+      ];
+
+      const messagesLow = [
+        "That score is lower than your standards, and we both know how tragic those are.",
+        "Are you driving with your eyes closed, or are you always this oblivious to what's right in front of you?",
+        "Is the talent in the room with us? Because this performance is giving 'student driver'.",
+        "I’ve seen better maneuvering from a shopping cart with a broken wheel.",
+        "Please don't tell anyone you know me after dropping a tragic score like that.",
+        "If you navigated life the way you navigate this road... actually, that explains a lot.",
+        "Your score is in the double digits. I would literally rather walk to Paris.",
+        "I've seen more drive from a parked car. Let's try to focus, darling.",
+        "Did you close your eyes and hope for the best? Because that's not how we drive, or date.",
+        "I'm not mad, I'm just embarrassed I let you in the driver's seat.",
+        "This score is giving 'I settle for the bare minimum' energy.",
+        "You crashed before the song even hit the chorus. Pathetic.",
+        "If mediocrity was a speeding ticket, you’d be in solitary confinement.",
+        "I'd ask if you're trying your best, but I'm terrified the answer is yes.",
+        "A score that low is a choice. A terrible, humiliating choice.",
+        "Babe, even my Wi-Fi connects better than you do with this road."
+      ];
+
+      let sassyMessage = "";
+      let activeArray = [];
+
+      if (finalScore < 300 && Math.random() > 0.5) {
+        activeArray = messagesLow;
+      } else if (reason === 'flag') {
+        activeArray = messagesFlag;
+      } else {
+        activeArray = messagesPet;
+      }
+
+      window.lastRoastMessage = window.lastRoastMessage || "";
+      do {
+        sassyMessage = activeArray[Math.floor(Math.random() * activeArray.length)];
+      } while (sassyMessage === window.lastRoastMessage && activeArray.length > 1);
+      window.lastRoastMessage = sassyMessage;
+
+      overlay.innerHTML = `
+        <div style="font-size: 22px; color: var(--gold); font-weight: 600; margin-bottom: 8px;">Score: ${finalScore}</div>
+        <button class="btn" id="gameStartBtn" style="width:auto;">Play Again</button>
+      `;
+      overlay.classList.remove('hidden');
+      scoreEl.textContent = `best ${best}`;
+
+      showSashaToast(sassyMessage);
+    }
+
+    function loop(timestamp) {
+      if(!bg || !bg.running) return;
+
+      let dt = (timestamp - bg.lastTime) / (1000 / 60);
+      bg.lastTime = timestamp;
+      if (dt > 3) dt = 3; 
+
+      bg.frame += dt;
+      bg.y += bg.vy * dt;
+      bg.vy -= 0.75 * dt;
+      if(bg.y < 0){ bg.y = 0; bg.vy = 0; bg.jumps = 0; }
+      bunnyEl.style.transform = `translateY(${-bg.y}px)`;
+
+      bg.scrollBack -= bg.speed * 0.15 * dt;
+      bg.scrollMid -= bg.speed * 0.4 * dt;
+      bg.scrollFront -= bg.speed * dt;
+      parallaxBack.style.backgroundPosition = `${bg.scrollBack}px bottom`;
+      parallaxMid.style.backgroundPosition = `${bg.scrollMid}px bottom`;
+      parallaxFront.style.backgroundPosition = `${bg.scrollFront}px bottom`;
+
+      const BAD_ITEMS = ['🐈', '🐇'];
+      if(bg.frame >= bg.nextSpawn){
+        const roll = Math.random();
+        const el = document.createElement('div');
+
+        if (roll < 0.10) {
+          el.className = 'obs-powerup'; el.textContent = '👓'; el.dataset.type = 'powerup';
+        } else if (roll < 0.55) {
+          el.className = 'obs-basic'; el.textContent = BAD_ITEMS[Math.floor(Math.random()*BAD_ITEMS.length)]; el.dataset.type = 'bad';
+        } else {
+          el.className = 'obs-iconic'; el.innerHTML = '<img src="red-flag.png" alt="red flag">'; el.dataset.type = 'good';
+        }
+
+        const w = track.clientWidth;
+        el.style.left = w + 'px';
+        track.appendChild(el);
+        bg.obstacles.push({el, x:w});
+        bg.nextSpawn = bg.frame + 60 + Math.random()*40;
+      }
+
+      const bunnyLeft = 33, bunnyWidth = 50;
+      const isInvincible = bg.frame < bg.invincibleUntil;
+      bunnyEl.classList.toggle('invincible', isInvincible);
+
+      for(let idx = bg.obstacles.length - 1; idx >= 0; idx--){
+        const o = bg.obstacles[idx];
+        o.x -= bg.speed * dt;
+        o.el.style.left = o.x + 'px';
+
+        const overlapX = o.x < bunnyLeft + bunnyWidth && o.x + 40 > bunnyLeft;
+        const isGrounded = bg.y < 25;
+
+        if (overlapX && isGrounded) {
+          if (o.el.dataset.type === 'bad') {
+            if (!isInvincible) { if(navigator.vibrate) navigator.vibrate([100, 50, 150]); gameOver('pet'); return; }
+          } else if (o.el.dataset.type === 'powerup') {
+            if(navigator.vibrate) navigator.vibrate([30, 40, 50]);
+            bg.invincibleUntil = bg.frame + 350;
+            o.el.remove(); bg.obstacles.splice(idx, 1); continue;
+          } else {
+            if(navigator.vibrate) navigator.vibrate(30);
+            bg.score += 50; o.el.remove(); bg.obstacles.splice(idx, 1); continue;
+          }
+        } else if (o.x + 40 < bunnyLeft) {
+          if (o.el.dataset.type === 'good') {
+            if (!isInvincible) { if(navigator.vibrate) navigator.vibrate([100, 50, 150]); gameOver('flag'); return; }
+            else { o.el.remove(); bg.obstacles.splice(idx, 1); continue; }
+          } else {
+            o.el.remove(); bg.obstacles.splice(idx, 1); continue;
+          }
+        }
+      }
+
+      bg.score += 0.5 * dt;
+      bg.speed = Math.min(9.5, 3.5 + bg.score * 0.005);
+      scoreEl.textContent = String(Math.floor(bg.score));
+      bg.raf = requestAnimationFrame(loop);
+    }
+
+    overlay.addEventListener('click', (e) => { if(e.target.closest('#gameStartBtn')) beginRun(); });
+    track.addEventListener('click', () => { if(bg && bg.running) jump(); });
+    window.addEventListener('keydown', (e) => { if(e.code === 'Space' && bg && bg.running) { e.preventDefault(); jump(); } });
+  }
+</script>
+</body>
+</html>

@@ -3285,6 +3285,15 @@ body[data-phase="closer"] .sky {
 
         <div class="hub-sections">
 
+          <!-- 9. Sasha's car, parked next to Home -->
+          <div class="hub-home-car">
+            <img src="sasha-car-front-1.png" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="hub-home-car-fallback">🚗</div>
+          </div>
+
+          <!-- 10. New guests, queued beside the car -->
+          <div id="hubWaitingGuests" class="hub-waiting-guests"></div>
+
           <!-- Soft romantic night-map backdrop: no picture file needed.
                A gentle gradient wash + glowing light blobs + scattered
                stars, matching the app's existing palette. Uses a
@@ -3985,7 +3994,7 @@ let db = null;
 let usingFirebase = false;
 try{
   if(firebaseConfig.apiKey !== "YOUR_API_KEY"){
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.database();
     usingFirebase = true;
   }
@@ -4813,32 +4822,68 @@ function startBunnyGame(){
     }
 
     const messagesFlag = [
+      // Original 7
       "We *run over* the red flags, sweetheart. We don't save them for a 2 AM text.",
       "Oh, so you swerved to avoid the red flag? Let me guess, you think you can 'fix' it.",
       "You let the red flag live. The absolute lack of judgment is stunning to me.",
       "Dodging red flags instead of crushing them? Your therapist is going to hear about this.",
       "You don't have a type. You have a collection of red flags you call exceptions. Run them over!",
       "Something tells me your group chat calls this 'giving him grace.' Babe, it's avoidance.",
-      "You're not colorblind. You're red-flag blind. Very different, much more expensive."
+      "You're not colorblind. You're red-flag blind. Very different, much more expensive.",
+      // 10 New
+      "You let another red flag slide? This is why your friends drink before you talk about your dating life.",
+      "Missing that red flag just cost you five years of peace. I hope you're happy.",
+      "I told you to run it over, not take it home to meet your mother.",
+      "That red flag was practically begging to be crushed, but you just gave it a second chance.",
+      "Swerving around a red flag is just putting a bow on a toxic trait.",
+      "You missed. Did you suddenly think you could communicate through its issues?",
+      "We don't 'hold space' for red flags, darling. We accelerate.",
+      "You treating that red flag like a minor detour is exactly why you're still single.",
+      "Another red flag ignored. Are you building a collection, or is it a lifestyle brand now?",
+      "That was a textbook red flag and you just waved at it. My God, the delusion."
     ];
 
     const messagesPet = [
+      // Original 7
       "You ran over the only pure thing on this road. Honestly, your self-sabotage is showing.",
       "Destroying something innocent while chasing red flags. A perfect metaphor for your twenties.",
       "You swerved into a kitten? I didn't think it was possible to have worse reflexes than taste in men.",
       "I asked you to dodge the good things, not treat them like people who actually treat you well.",
       "Running over cute things while entirely focused on garbage. Put that in your journal tonight.",
       "You just hit a pet. Honestly, the only thing more tragic than your driving is your dating history.",
-      "I did not put on this much lip gloss to be an accessory to your terrible life choices. Give me the keys."
+      "I did not put on this much lip gloss to be an accessory to your terrible life choices. Give me the keys.",
+      // 10 New
+      "You ran over the cute thing while staring at the red flags. Honestly, poetry.",
+      "If you applied the brakes to your bad decisions instead of the kittens, we wouldn't be here.",
+      "Another innocent casualty of your inability to steer your life properly.",
+      "You hit the pet. Your emotional unavailability is officially a danger to society.",
+      "You pushed away the healthy option and crashed. We call that 'your standard Tuesday'.",
+      "We dodge the good things and run straight into disaster. Do you need me to call your therapist?",
+      "I'm confiscating your keys and your dating apps. You're a menace to anything wholesome.",
+      "You just plowed through the greenest flag on this road. Classic you.",
+      "Hitting the sweet thing because you panicked? The metaphors write themselves, darling.",
+      "You wrecked the car over a bunny. And you wonder why you're not allowed to plan group trips."
     ];
 
     const messagesLow = [
+      // Original 6
       "That score is lower than your standards, and we both know how tragic those are.",
       "Are you driving with your eyes closed, or are you always this oblivious to what's right in front of you?",
       "Is the talent in the room with us? Because this performance is giving 'student driver'.",
       "I’ve seen better maneuvering from a shopping cart with a broken wheel.",
       "Please don't tell anyone you know me after dropping a tragic score like that.",
-      "If you navigated life the way you navigate this road... actually, that explains a lot."
+      "If you navigated life the way you navigate this road... actually, that explains a lot.",
+      // 10 New
+      "Your score is in the double digits. I would literally rather walk to Paris.",
+      "I've seen more drive from a parked car. Let's try to focus, darling.",
+      "Did you close your eyes and hope for the best? Because that's not how we drive, or date.",
+      "I'm not mad, I'm just embarrassed I let you in the driver's seat.",
+      "This score is giving 'I settle for the bare minimum' energy.",
+      "You crashed before the song even hit the chorus. Pathetic.",
+      "If mediocrity was a speeding ticket, you’d be in solitary confinement.",
+      "I'd ask if you're trying your best, but I'm terrified the answer is yes.",
+      "A score that low is a choice. A terrible, humiliating choice.",
+      "Babe, even my Wi-Fi connects better than you do with this road."
     ];
 
     let sassyMessage = "";
@@ -4856,7 +4901,7 @@ function startBunnyGame(){
     // Initialize the global tracker if it doesn't exist yet
     window.lastRoastMessage = window.lastRoastMessage || "";
 
-    // Keep picking a random message until it is DIFFERENT from the last one shown
+    // The do-while loop ensures the same message is never shown twice in a row
     do {
       sassyMessage = activeArray[Math.floor(Math.random() * activeArray.length)];
     } while (sassyMessage === window.lastRoastMessage && activeArray.length > 1);
@@ -5831,17 +5876,13 @@ document.getElementById('btnUnmatchPeople')?.addEventListener('click', () => {
   ref(`events/${EVENT_ID}/pairs`).set(null);
 });
 
-// Wire up the Close Button for the global reveal popup
-document.getElementById('btnCloseReveal')?.addEventListener('click', () => {
-  document.getElementById('partnerRevealWindow').style.display = 'none';
-});
-
 // EVERYONE: Listen for the match execution
 ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
   const allPairings = snap.val();
+  const crowd = document.getElementById('drivewayPassengerList');
+
   if (!allPairings || !me) {
     document.getElementById('partnerRevealWindow').style.display = 'none';
-    const crowd = document.getElementById('drivewayPassengerList');
     if (crowd) crowd.style.opacity = '1';
     return;
   }
@@ -5855,15 +5896,16 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
       if (myPairKey) window.currentPairId = myPairKey;
     });
 
-    // Dim the passenger list ONLY if they happen to be on the driveway screen
-    const crowd = document.getElementById('drivewayPassengerList');
+    // Check if the user dismissed it forever BEFORE dimming the screen
+    if (localStorage.getItem('fsc_hide_partner_reveal') === '1') {
+      if (crowd) crowd.style.opacity = '1'; // Keep them fully visible
+      return;
+    }
+
+    // Dim the passenger list to focus on the popup
     if (crowd) crowd.style.opacity = '0.15';
 
-    // Check if the user dismissed it forever
-    if (localStorage.getItem('fsc_hide_partner_reveal') === '1') return;
-
     const reveal = document.getElementById('partnerRevealWindow');
-
     reveal.style.display = 'block';
     // Re-trigger the pop-in animation
     reveal.style.animation = 'none';
@@ -5885,10 +5927,19 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
   }
 });
 
-// Wire up the "Do Not Show Again" button for the global reveal popup
+// Wire up the Close Button for the global reveal popup (restores opacity)
+document.getElementById('btnCloseReveal')?.addEventListener('click', () => {
+  document.getElementById('partnerRevealWindow').style.display = 'none';
+  const crowd = document.getElementById('drivewayPassengerList');
+  if (crowd) crowd.style.opacity = '1';
+});
+
+// Wire up the "Do Not Show Again" button for the global reveal popup (restores opacity)
 document.getElementById('btnDontShowReveal')?.addEventListener('click', () => {
   localStorage.setItem('fsc_hide_partner_reveal', '1');
   document.getElementById('partnerRevealWindow').style.display = 'none';
+  const crowd = document.getElementById('drivewayPassengerList');
+  if (crowd) crowd.style.opacity = '1';
 });
 
 // Show the Host control if host
