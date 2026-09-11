@@ -27,6 +27,41 @@
     --vh:100vh;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+
+  /* --- ELEGANT TOGGLABLE TIMER --- */
+  .court-timer-wrap {
+    position: fixed; top: 20px; right: 20px; z-index: 90;
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(18, 8, 33, 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(244, 233, 255, 0.15); border-radius: 999px;
+    padding: 6px 14px 6px 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: background 0.3s ease, border-color 0.3s ease, opacity 0.5s ease;
+  }
+
+  .court-timer-wrap.is-hidden {
+    background: rgba(18, 8, 33, 0.2);
+    border-color: rgba(244, 233, 255, 0.05);
+    padding-right: 10px; /* Compress the pill */
+  }
+
+  .timer-toggle-btn {
+    background: none; border: none; color: var(--dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    padding: 4px; transition: color 0.2s ease;
+  }
+  .timer-toggle-btn:active { color: var(--gold); }
+
+  .court-timer-text {
+    font-family: 'Space Mono', monospace; font-size: 13.5px;
+    color: rgba(244, 233, 255, 0.65); /* Soft, dim text to reduce anxiety */
+    transition: opacity 0.3s ease, width 0.3s ease;
+    opacity: 1; width: 42px; text-align: right; overflow: hidden;
+  }
+
+  .court-timer-wrap.is-hidden .court-timer-text {
+    opacity: 0; width: 0; margin-left: -8px; /* Collapses the gap */
+  }
   /* Organic film-grain overlay — DISABLED for performance.
      mix-blend-mode forces the browser to recomposite this against the
      entire page on every frame, which is expensive while dozens of other
@@ -3109,8 +3144,22 @@ body[data-phase="closer"] .sky {
 <div id="toastStack"></div>
 
 <!-- Timer Overlays -->
-<!-- Elegant, small Garden Timer -->
-<div id="timerWarning" style="position:fixed; top:20px; right:20px; z-index:90; background:rgba(255,255,255,0.08); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); color:var(--gold); padding:8px 16px; border-radius:999px; font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.05em; opacity:0; pointer-events:none; transition: opacity 0.5s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">00:00</div>
+<!-- Elegant Togglable Global Timer -->
+<div id="courtTimerWrapper" class="court-timer-wrap" style="display: none; opacity: 0;">
+  <button id="btnToggleTimer" class="timer-toggle-btn" aria-label="Toggle Timer">
+    <!-- Eye Open SVG -->
+    <svg id="iconEyeOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 12c3-6 7-8 10-8s7 2 10 8-7 8-10 8-7-2-10-8z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+    <!-- Eye Closed SVG (Hidden by default) -->
+    <svg id="iconEyeClosed" style="display: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+      <line x1="1" y1="1" x2="23" y2="23"></line>
+    </svg>
+  </button>
+  <div id="timerWarning" class="court-timer-text">00:00</div>
+</div>
 
 <!-- Time's Up Screen -->
 <div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.3s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
@@ -5163,20 +5212,52 @@ function pickFlower(i, pairId, plant, color){
   }
 }
 
-/* ---------- synced garden timer ---------- */
+/* ---------- synced garden timer & toggle logic ---------- */
 let timerInterval = null;
+
+// Timer Toggle Event Listener
+document.addEventListener('DOMContentLoaded', () => {
+  const timerWrapper = document.getElementById('courtTimerWrapper');
+  const btnToggleTimer = document.getElementById('btnToggleTimer');
+  const iconOpen = document.getElementById('iconEyeOpen');
+  const iconClosed = document.getElementById('iconEyeClosed');
+  let isTimerHidden = false;
+
+  if (btnToggleTimer) {
+    btnToggleTimer.addEventListener('click', () => {
+      isTimerHidden = !isTimerHidden;
+      if (isTimerHidden) {
+        timerWrapper.classList.add('is-hidden');
+        iconOpen.style.display = 'none';
+        iconClosed.style.display = 'block';
+      } else {
+        timerWrapper.classList.remove('is-hidden');
+        iconOpen.style.display = 'block';
+        iconClosed.style.display = 'none';
+      }
+    });
+  }
+});
+
 function listenTimer() {
   ref(`events/${EVENT_ID}/gardenTimerEnd`).on('value', snap => {
     const endTime = snap.val();
     if (timerInterval) clearInterval(timerInterval);
 
     const warningEl = document.getElementById('timerWarning');
+    const wrapperEl = document.getElementById('courtTimerWrapper');
     const overlayEl = document.getElementById('countdownOverlay');
 
     if (!endTime) {
-      warningEl.style.opacity = '0';
+      if (wrapperEl) wrapperEl.style.opacity = '0';
+      setTimeout(() => { if (wrapperEl && wrapperEl.style.opacity === '0') wrapperEl.style.display = 'none'; }, 500);
       overlayEl.style.opacity = '0';
       return;
+    }
+
+    if (wrapperEl) {
+      wrapperEl.style.display = 'flex';
+      setTimeout(() => wrapperEl.style.opacity = '1', 50); // Small delay to trigger CSS fade-in
     }
 
     timerInterval = setInterval(() => {
@@ -5187,12 +5268,12 @@ function listenTimer() {
         const mins = Math.floor(timeLeft / 60000);
         const secs = Math.floor((timeLeft % 60000) / 1000);
         warningEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-        warningEl.style.opacity = '1';
+        if (wrapperEl) wrapperEl.style.opacity = '1';
         overlayEl.style.opacity = '0';
         overlayEl.style.pointerEvents = 'none';
       } else if (timeLeft <= 0) {
-        // Time is up -> Show the overlay
-        warningEl.style.opacity = '0';
+        // Time is up -> Hide the small wrapper, show the full overlay
+        if (wrapperEl) wrapperEl.style.opacity = '0';
         overlayEl.style.opacity = '1';
         overlayEl.style.pointerEvents = 'auto';
 

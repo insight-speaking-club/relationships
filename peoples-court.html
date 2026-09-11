@@ -45,70 +45,77 @@
   }
   @keyframes sky-twinkle { 0% { opacity: 0.4; } 100% { opacity: 0.8; } }
 
-  /* --- PERSISTENT BACK TO ITINERARY LINK --- */
+  /* --- PERSISTENT BACK TO ITINERARY LINK (Minimalist) --- */
   .itinerary-link {
-    position: fixed; top: 16px; left: 16px; z-index: 500;
-    display: flex; align-items: center; gap: 7px;
-    background: rgba(18, 8, 33, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(244, 233, 255, 0.18); border-radius: 999px;
-    padding: 9px 16px 9px 12px; font-family: 'Jost', sans-serif; font-size: 13px; color: var(--mist);
-    text-decoration: none; box-shadow: 0 6px 18px rgba(0,0,0,0.4);
-    transition: background 0.2s ease;
+    position: fixed; top: 24px; left: 24px; z-index: 500;
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244, 233, 255, 0.5);
+    text-decoration: none; opacity: 0.7;
+    transition: opacity 0.3s ease, color 0.3s ease;
   }
-  .itinerary-link:active { background: rgba(244, 233, 255, 0.12); }
-  .itinerary-link svg { flex-shrink: 0; }
 
-  /* --- ORNATE 3D DOORS --- */
+  .itinerary-link:hover, .itinerary-link:active {
+    opacity: 1;
+    color: var(--gold);
+  }
+
+  .itinerary-link svg {
+    flex-shrink: 0;
+    width: 14px; height: 14px;
+    stroke-width: 1.5px;
+    transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
+  }
+
+  /* Subtle interaction: the arrow glides back slightly when hovered/tapped */
+  .itinerary-link:hover svg, .itinerary-link:active svg {
+    transform: translateX(-4px);
+  }
+
+  /* --- ORNATE 3D DOORS (Refined & Cinematic) --- */
   .doors-wrapper {
     position: fixed; inset: 0; z-index: 9999;
-    display: flex; perspective: 1400px;
+    display: flex; perspective: 2000px; /* Deepened perspective */
     pointer-events: none;
+    background: #000; /* Start in pure darkness */
+    transition: background 2s ease 1s;
   }
+  .doors-wrapper.open {
+    background: transparent;
+  }
+
   .door {
     width: 50%; height: 100%;
-    background: linear-gradient(160deg, #170a26 0%, #0a0311 70%);
-    border: 2px solid rgba(242, 193, 78, 0.4);
+    background: #0a0510; /* Near black */
+    border: none;
     display: flex; align-items: center; justify-content: center;
-    transition: transform 3.2s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 2.6s ease 0.6s;
-    box-shadow: inset 0 0 90px rgba(0,0,0,0.9);
+    /* Slowed down to 4 seconds with a highly dramatic, smooth ease-out */
+    transition: transform 4s cubic-bezier(0.2, 1, 0.3, 1), opacity 3s ease 1.5s;
+    box-shadow: inset 0 0 150px rgba(0,0,0,1), inset 0 0 20px rgba(242, 193, 78, 0.05);
     position: relative; overflow: hidden;
   }
   .door::before {
-    content: ''; position: absolute; top: 8%; bottom: 8%; left: 8%; right: 8%;
-    border: 1px solid rgba(242, 193, 78, 0.22); border-radius: 12px;
-    box-shadow: inset 0 0 40px rgba(242, 193, 78, 0.06);
+    content: ''; position: absolute; top: 10%; bottom: 10%; left: 10%; right: 10%;
+    border: 1px solid rgba(242, 193, 78, 0.1); border-radius: 4px;
   }
-  .door::after {
-    content: ''; position: absolute; top: 18%; bottom: 18%; left: 18%; right: 18%;
-    border: 1px solid rgba(242, 193, 78, 0.12); border-radius: 8px;
-  }
-  .door.left { transform-origin: left; border-right: 2px solid var(--gold); }
-  .door.right { transform-origin: right; border-left: 2px solid var(--gold); }
+  .door.left { transform-origin: left; border-right: 1px solid rgba(242, 193, 78, 0.2); }
+  .door.right { transform-origin: right; border-left: 1px solid rgba(242, 193, 78, 0.2); }
 
+  /* Minimalist, elegant handles */
   .door-handle {
-    width: 14px; height: 80px; border-radius: 6px;
-    background: linear-gradient(to bottom, #ffdf94, var(--gold), #b8860b);
-    box-shadow: 0 0 25px rgba(242, 193, 78, 0.5);
+    width: 3px; height: 140px; border-radius: 2px;
+    background: linear-gradient(to bottom, rgba(242,193,78,0.2), var(--gold), rgba(242,193,78,0.2));
+    box-shadow: 0 0 10px rgba(242, 193, 78, 0.2);
     z-index: 2;
   }
-  .door.left .door-handle { margin-left: auto; margin-right: 20px; }
-  .door.right .door-handle { margin-right: auto; margin-left: 20px; }
+  .door.left .door-handle { margin-left: auto; margin-right: 25px; }
+  .door.right .door-handle { margin-right: auto; margin-left: 25px; }
 
-  .light-seam {
-    position: absolute; top: 0; bottom: 0; left: 50%; width: 2px;
-    transform: translateX(-50%); z-index: 3;
-    background: linear-gradient(to bottom, transparent, var(--gold) 40%, var(--gold) 60%, transparent);
-    box-shadow: 0 0 0px rgba(242,193,78,0);
-    opacity: 0;
-    transition: box-shadow 1.4s ease 0.2s, opacity 1.4s ease 0.2s, width 2.8s ease 0.6s;
-  }
-  .doors-wrapper.open .light-seam {
-    opacity: 1; width: 140vw;
-    box-shadow: 0 0 120px 40px rgba(242,193,78,0.35);
-  }
+  /* Remove the tacky glowing laser beam entirely */
+  .light-seam { display: none; }
 
-  .doors-wrapper.open .door.left { transform: rotateY(-112deg); opacity: 0; }
-  .doors-wrapper.open .door.right { transform: rotateY(112deg); opacity: 0; }
+  .doors-wrapper.open .door.left { transform: rotateY(-105deg); opacity: 0; }
+  .doors-wrapper.open .door.right { transform: rotateY(105deg); opacity: 0; }
 
   /* --- SHARED UI --- */
   .court-container {
@@ -131,46 +138,55 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* --- PHASE 1: JUDGE SASHA LORE (chat thread) --- */
+  /* --- PHASE 1: JUDGE SASHA LORE (Cinematic Text) --- */
   .judge-header {
-    display: flex; flex-direction: column; align-items: center; margin-bottom: 18px;
+    display: flex; flex-direction: column; align-items: center; margin-bottom: 24px;
   }
+
+  /* Redesigned as an authoritative desk plaque */
   .judge-name-pill {
-    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; color: var(--gold);
-    background: rgba(18, 8, 33, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(242, 193, 78, 0.35); border-radius: 999px;
-    padding: 7px 20px; box-shadow: 0 6px 18px rgba(0,0,0,0.4);
-    opacity: 0; animation: bubble-in 0.6s ease forwards;
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); background: transparent;
+    border: 1px solid rgba(242, 193, 78, 0.3); border-radius: 4px;
+    padding: 8px 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    opacity: 0; animation: fade-up 1s ease forwards;
   }
 
-  .thread { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
-
-  .lore-bubble {
-    background: rgba(20, 9, 33, 0.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(244, 233, 255, 0.18); border-radius: 18px 18px 18px 4px;
-    padding: 16px 20px; box-shadow: 0 14px 40px rgba(0,0,0,0.6);
-    align-self: flex-start; max-width: 88%;
-    opacity: 0; transform: translateY(8px);
-    animation: bubble-in 0.5s ease forwards;
+  /* --- PHASE 1: LORE PROLOGUE (Literary Format) --- */
+  .thread {
+    width: 100%; display: flex; flex-direction: column; align-items: center;
+    gap: 28px; margin-bottom: 40px; padding: 0 10px;
   }
   @keyframes bubble-in { to { opacity: 1; transform: translateY(0); } }
-  .lore-text {
-    font-family: 'Cormorant Garamond', serif; font-size: 19px; font-style: italic;
-    line-height: 1.5; color: var(--mist); text-align: left;
+
+  .lore-paragraph {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.55;
+    color: rgba(244, 233, 255, 0.9);
+    text-align: center;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 2.5s ease, transform 2.5s cubic-bezier(0.2, 1, 0.3, 1);
   }
 
-  .typing-bubble {
-    align-self: flex-start; background: rgba(30, 15, 45, 0.7);
-    border: 1px solid rgba(244, 233, 255, 0.15); border-radius: 18px 18px 18px 4px;
-    padding: 14px 18px; display: flex; gap: 5px; align-items: center;
+  .lore-paragraph.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
-  .typing-dot {
-    width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
-    animation: dot-bounce 1.1s ease-in-out infinite;
+
+  .skip-btn {
+    background: none; border: none; color: var(--dim);
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    text-decoration: underline; cursor: pointer;
+    opacity: 0.5; transition: opacity 0.3s ease;
+    margin-top: 10px; padding: 10px;
   }
-  .typing-dot:nth-child(2) { animation-delay: 0.15s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.3s; }
-  @keyframes dot-bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+  .skip-btn:active { opacity: 1; }
 
   .btn-gold {
     background: linear-gradient(135deg, #ffdf94 0%, var(--gold) 100%);
@@ -289,6 +305,41 @@
     padding: 15px 35px; font-family: 'Jost', sans-serif; font-size: 15px; cursor: pointer; transition: background 0.2s ease;
   }
   .btn-ghost:active { background: rgba(255,255,255,0.1); }
+
+  /* --- ELEGANT TOGGLABLE TIMER --- */
+  .court-timer-wrap {
+    position: fixed; top: 16px; right: 16px; z-index: 9999;
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(18, 8, 33, 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(244, 233, 255, 0.15); border-radius: 999px;
+    padding: 6px 14px 6px 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+
+  .court-timer-wrap.is-hidden {
+    background: rgba(18, 8, 33, 0.2);
+    border-color: rgba(244, 233, 255, 0.05);
+    padding-right: 10px; /* Compress the pill */
+  }
+
+  .timer-toggle-btn {
+    background: none; border: none; color: var(--dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    padding: 4px; transition: color 0.2s ease;
+  }
+  .timer-toggle-btn:active { color: var(--gold); }
+
+  .court-timer-text {
+    font-family: 'Space Mono', monospace; font-size: 13.5px;
+    color: rgba(244, 233, 255, 0.65); /* Soft, dim text to reduce anxiety */
+    transition: opacity 0.3s ease, width 0.3s ease;
+    opacity: 1; width: 42px; text-align: right; overflow: hidden;
+  }
+
+  .court-timer-wrap.is-hidden .court-timer-text {
+    opacity: 0; width: 0; margin-left: -8px; /* Collapses the gap */
+  }
 </style>
 </head>
 <body>
@@ -296,8 +347,8 @@
   <div class="sky"></div>
 
   <a href="index.html" class="itinerary-link">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-    Back to the itinerary
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    Return
   </a>
 
   <!-- Opening Door Animation -->
@@ -319,6 +370,7 @@
       <div class="thread" id="loreThread"></div>
 
       <div id="introCta" style="display:flex; flex-direction:column; align-items:center;"></div>
+      <button id="skipLoreBtn" class="skip-btn" onclick="skipLore()">Skip introduction</button>
     </div>
 
     <!-- Phase 2: The Email Inbox -->
@@ -388,12 +440,104 @@
     <button class="btn-ghost" onclick="closeVerdict()">Return to the docket</button>
   </div>
 
+  <!-- Elegant Togglable Global Timer -->
+  <div id="courtTimerWrapper" class="court-timer-wrap" style="display: none;">
+    <button id="btnToggleTimer" class="timer-toggle-btn" aria-label="Toggle Timer">
+      <!-- Eye Open SVG -->
+      <svg id="iconEyeOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 12c3-6 7-8 10-8s7 2 10 8-7 8-10 8-7-2-10-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      <!-- Eye Closed SVG (Hidden by default) -->
+      <svg id="iconEyeClosed" style="display: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+      </svg>
+    </button>
+    <div id="globalCourtTimerText" class="court-timer-text">00:00</div>
+  </div>
+
+  <!-- Firebase Integration -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
 <script>
+  // --- FIREBASE SETUP ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyDv47HEwF9APQLLoLdJgHwdLHzoYfTawyQ",
+    authDomain: "relationships-d8119.firebaseapp.com",
+    databaseURL: "https://relationships-d8119-default-rtdb.firebaseio.com",
+    projectId: "relationships-d8119",
+    storageBucket: "relationships-d8119.firebasestorage.app",
+    messagingSenderId: "852389788989",
+    appId: "1:852389788989:web:6c79282e08c665b54dd954"
+  };
+  const EVENT_ID = "default";
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.database();
+
+  // --- TIMER TOGGLE LOGIC ---
+  const timerWrapper = document.getElementById('courtTimerWrapper');
+  const btnToggleTimer = document.getElementById('btnToggleTimer');
+  const iconOpen = document.getElementById('iconEyeOpen');
+  const iconClosed = document.getElementById('iconEyeClosed');
+  let isTimerHidden = false;
+
+  btnToggleTimer.addEventListener('click', () => {
+    isTimerHidden = !isTimerHidden;
+    if (isTimerHidden) {
+      timerWrapper.classList.add('is-hidden');
+      iconOpen.style.display = 'none';
+      iconClosed.style.display = 'block';
+    } else {
+      timerWrapper.classList.remove('is-hidden');
+      iconOpen.style.display = 'block';
+      iconClosed.style.display = 'none';
+    }
+  });
+
+  // --- GLOBAL TIMER SYNC ---
+  let globalTimerInterval;
+  db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).on('value', snap => {
+    const endTime = snap.val();
+    clearInterval(globalTimerInterval);
+    const timerTextEl = document.getElementById('globalCourtTimerText');
+
+    if (!endTime) {
+      timerWrapper.style.display = 'none';
+      return;
+    }
+
+    // Show the wrapper when a timer is set
+    timerWrapper.style.display = 'flex';
+
+    globalTimerInterval = setInterval(() => {
+      const timeLeft = endTime - Date.now();
+
+      if (timeLeft > 0) {
+        const mins = Math.floor(timeLeft / 60000);
+        const secs = Math.floor((timeLeft % 60000) / 1000);
+        timerTextEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      } else {
+        clearInterval(globalTimerInterval);
+        timerTextEl.textContent = "0:00";
+        // Clear the timer from the database so it doesn't trigger again immediately
+        db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).set(null);
+        // Redirect everyone to the itinerary
+        window.location.href = 'index.html';
+      }
+    }, 100);
+  });
+
   const LORE_MESSAGES = [
-    "You may call me Judge Sasha.",
-    "The People's Court has sat above the Marais in Paris longer than anyone still living can prove. People have always written in about their arguments, trusting a room of strangers to say who was right.",
-    "It used to be letters, sealed and posted. These days people just email us.",
-    "Tonight, only queer people were invited to write in. Six emails came through, and the gavel isn't mine — it's yours."
+    "The People's Court has convened above the Marais in Paris for longer than any living record can prove.",
+    "For generations, lovers, friends, and strangers have submitted their disputes to this room, trusting an impartial jury to determine where the truth lies.",
+    "The wax seals and parchment of the past have given way to the digital inbox of the present.",
+    "Tonight, the docket holds six unseen disputes. But I will not be casting the verdict...",
+    "The gavel is yours."
   ];
 
   const DOCKET_STORIES = [
@@ -448,6 +592,32 @@
   ];
 
   window.addEventListener('DOMContentLoaded', () => {
+    // --- 5-CLICK HOST TRIGGER ---
+    let pillClickCount = 0;
+    let pillClickTimeout;
+
+    // Use setInterval to check when the element is rendered, as it may be injected dynamically
+    const checkPillInterval = setInterval(() => {
+      const judgePill = document.querySelector('.judge-name-pill');
+      if (judgePill) {
+        clearInterval(checkPillInterval);
+        judgePill.addEventListener('click', () => {
+          pillClickCount++;
+          clearTimeout(pillClickTimeout);
+          pillClickTimeout = setTimeout(() => pillClickCount = 0, 2000); // Reset count after 2 seconds
+
+          if (pillClickCount >= 5) {
+            pillClickCount = 0;
+            const mins = prompt("Host Override: Set global timer for the court (in minutes):", "15");
+            if (mins !== null && !isNaN(mins) && mins.trim() !== "") {
+              const endTime = Date.now() + parseFloat(mins) * 60000;
+              db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).set(endTime);
+            }
+          }
+        });
+      }
+    }, 500);
+
     // 1. Open the doors dramatically
     setTimeout(() => {
       document.getElementById('doors').classList.add('open');
@@ -500,34 +670,49 @@
     el.classList.toggle('starred');
   }
 
-  // Judge Sasha's lore, delivered as a typed chat thread
+  // Judge Sasha's lore, delivered as a fading literary prologue
+  let loreTimeouts = [];
+
   function playLoreThread() {
     const thread = document.getElementById('loreThread');
-    let i = 0;
+    thread.innerHTML = '';
+    let delayAcc = 800;
 
-    function nextMessage() {
-      if (i >= LORE_MESSAGES.length) {
-        revealCta();
-        return;
-      }
-      const typing = document.createElement('div');
-      typing.className = 'typing-bubble';
-      typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-      thread.appendChild(typing);
+    LORE_MESSAGES.forEach((msg, index) => {
+      const p = document.createElement('div');
+      p.className = 'lore-paragraph';
+      p.textContent = msg;
+      thread.appendChild(p);
 
-      const delay = 900 + Math.min(LORE_MESSAGES[i].length * 12, 1600);
-      setTimeout(() => {
-        thread.removeChild(typing);
-        const bubble = document.createElement('div');
-        bubble.className = 'lore-bubble';
-        bubble.innerHTML = `<div class="lore-text">${LORE_MESSAGES[i]}</div>`;
-        thread.appendChild(bubble);
-        i++;
-        setTimeout(nextMessage, 500);
-      }, delay);
-    }
+      const t = setTimeout(() => {
+        p.classList.add('visible');
+        if (index === LORE_MESSAGES.length - 1) {
+          setTimeout(revealCta, 2500);
+          const skipBtn = document.getElementById('skipLoreBtn');
+          if (skipBtn) skipBtn.style.opacity = '0'; // Fade out skip button gracefully
+        }
+      }, delayAcc);
 
-    nextMessage();
+      loreTimeouts.push(t);
+      // Pacing based on text length for a cinematic reading speed
+      delayAcc += 2000 + (msg.length * 45);
+    });
+  }
+
+  function skipLore() {
+    // Clear all scheduled animations
+    loreTimeouts.forEach(t => clearTimeout(t));
+
+    // Instantly reveal all text
+    const paragraphs = document.querySelectorAll('.lore-paragraph');
+    paragraphs.forEach(p => {
+      p.style.transition = 'opacity 0.5s ease';
+      p.classList.add('visible');
+    });
+
+    // Instantly show the CTA button and hide the skip button
+    revealCta();
+    document.getElementById('skipLoreBtn').style.display = 'none';
   }
 
   function revealCta() {
