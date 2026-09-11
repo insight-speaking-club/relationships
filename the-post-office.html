@@ -40,7 +40,6 @@
     z-index: 0; pointer-events: none;
   }
   
-  /* Twinkling ambient particles over the image */
   .sky::before {
     content: ''; position: absolute; inset: -10%;
     background-image:
@@ -156,19 +155,19 @@
     box-shadow: 0 12px 40px rgba(0,0,0,0.6); 
     text-align: center; 
     position: relative;
-    margin-top: 5vh; /* Gives room above Sasha's portrait layer */
+    margin-top: 5vh; 
   }
   
-  /* Speech Bubble Tail pointing downward */
+  /* Speech Bubble Tail pointing downward-right */
   .dialogue-box::before { 
-    content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); 
-    border-width: 12px 12px 0 12px; border-style: solid; 
+    content: ''; position: absolute; bottom: -16px; right: 20%; 
+    border-width: 16px 16px 0 0; border-style: solid; 
     border-color: rgba(242, 193, 78, 0.35) transparent transparent transparent; 
   }
   .dialogue-box::after { 
-    content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); 
-    border-width: 11px 11px 0 11px; border-style: solid; 
-    border-color: rgba(10, 17, 40, 0.9) transparent transparent transparent; 
+    content: ''; position: absolute; bottom: -14px; right: 20%; 
+    border-width: 15px 15px 0 0; border-style: solid; 
+    border-color: rgba(10, 17, 40, 0.95) transparent transparent transparent; 
   }
   
   .dialogue-text { font-family: 'Space Mono', monospace; font-size: 15px; color: var(--gold); line-height: 1.6; min-height: 1.6em; text-shadow: 0 0 8px rgba(242, 193, 78, 0.2); }
@@ -278,9 +277,21 @@
   <!-- FULL SCREEN SASHA IMAGE (Overlay) -->
   <div class="sasha-full" id="sashaFull"></div>
 
+  <!-- OPENING DOORS -->
+  <div class="door-scene" id="doorScene">
+    <div class="door door-left"></div>
+    <div class="door door-right"></div>
+    <div class="door-glow"></div>
+    <div class="door-emblem" id="doorEmblem">
+      <img src="post-office-icon.png" alt="" class="door-emblem-icon" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23f2c14e\'><path d=\'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z\'/></svg>'">
+      <div class="door-emblem-title">The Post Office</div>
+      <div class="door-emblem-sub">Please, Come In</div>
+    </div>
+  </div>
+
   <!-- PART 1: TOUR CONTENT -->
   <main id="tourContent">
-    <img src="post-office-icon.png" alt="The Post Office Icon" class="post-office-icon" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23f2c14e\'><path d=\'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z\'/></svg>'">
+    <img src="post-office-icon.png" alt="The Post Office Icon" class="post-office-icon" style="opacity: 0;"> <!-- Invisible placeholder to preserve layout height -->
     
     <div class="guide-container">
       <div class="dialogue-box">
@@ -394,7 +405,7 @@
       await wait(500);
       document.body.classList.add('tour-started');
       document.getElementById('tourContent').classList.add('show');
-      document.getElementById('sashaFull').classList.add('show'); // Fade in Sasha
+      document.getElementById('sashaFull').classList.add('show'); // Fade in Sasha overlay
       
       await wait(1500);
       await typeDialogue("Hello there. I'm Sasha.<br>Welcome to The Post Office.");
@@ -444,7 +455,7 @@
     document.getElementById('card1').addEventListener('click', async function(e) {
       e.preventDefault();
       
-      // Fade out the tour and the Sasha image
+      // Fade out the tour menu and Sasha image
       const tourContent = document.getElementById('tourContent');
       const sashaFull = document.getElementById('sashaFull');
       tourContent.style.opacity = '0';
@@ -594,4 +605,3 @@
   </script>
 </body>
 </html>
-
