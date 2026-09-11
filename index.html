@@ -4424,7 +4424,7 @@ function renderLeaderboard(guests) {
   list.innerHTML = ranked.map((g, i) => `
     <div class="lb-row">
       <div class="lb-rank ${i === 0 ? 'rank-1' : ''}">${i + 1}</div>
-      <div class="lb-name">${escapeHtml(g.name)} ${g.id === me?.id ? '<span style="color:var(--gold); font-size:10px;">(you)</span>' : ''}</div>
+      <div class="lb-name">${escapeHtml(g.name || 'Unknown')} ${g.id === me?.id ? '<span style="color:var(--gold); font-size:10px;">(you)</span>' : ''}</div>
       <div class="lb-score">${g.highScore}</div>
     </div>
   `).join('');
@@ -4459,7 +4459,7 @@ function renderRoster(){
   }
 }
 
-function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escapeHtml(s){ if (!s) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function listenPhase(){
   ref(`events/${EVENT_ID}/state`).on('value', snap=>{
@@ -5375,8 +5375,8 @@ function renderHostList(guests){
     const row = document.createElement('div');
     row.className='host-row';
     row.innerHTML = `
-      <div class="guest-avatar">${g.avatar}</div>
-      <div style="flex:1;"><div>${escapeHtml(g.name)}</div></div>
+      <div class="guest-avatar">${g.avatar || ''}</div>
+      <div style="flex:1;"><div>${escapeHtml(g.name || 'Unknown')}</div></div>
       <button class="btn ghost" onclick="removeGuest('${g.id}')" style="margin:0; padding:6px 12px; font-size:11px; border-color:#ff4d5e; color:#ff4d5e;">Kick</button>
     `;
     list.appendChild(row);
@@ -5746,10 +5746,10 @@ function renderSpinCircle(guests) {
     return `
       <div style="flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 6px; width: 64px;">
         <div style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; font-size: 26px; background: rgba(255,255,255,0.05); border: 1px solid ${isMe ? 'var(--gold)' : 'rgba(244,233,255,0.25)'}; border-radius: 50%; box-shadow: ${isMe ? '0 0 10px rgba(242, 193, 78, 0.4)' : 'none'};">
-          ${g.avatar}
+          ${g.avatar || ''}
         </div>
         <div style="font-weight: 500; font-size: 11px; color: ${isMe ? 'var(--gold)' : 'var(--mist)'}; line-height: 1.1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">
-          ${escapeHtml(g.name)}
+          ${escapeHtml(g.name || 'Unknown')}
         </div>
         ${g.pronouns ? `<div style="font-family: 'Space Mono', monospace; font-size: 8px; color: var(--dim); text-transform: uppercase;">${escapeHtml(g.pronouns)}</div>` : ''}
       </div>
