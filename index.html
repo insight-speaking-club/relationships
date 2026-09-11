@@ -4104,6 +4104,23 @@ function updateGardenAtmosphere(globalBloomCount) {
 function seeded(n){ const x = Math.sin(n*12.9898)*43758.5453; return x - Math.floor(x); }
 
 let me = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
+// Migrate any previously-cached identity that still has an old <img> sprite
+// avatar (from before the emoji switch) to a fresh animal emoji, and migrate
+// the old host crown avatar to the bunny.
+if (me && me.avatar === '👑') {
+  me.avatar = '🐇';
+  localStorage.setItem('fsc_guest', JSON.stringify(me));
+  if (me.id) {
+    ref(`events/${EVENT_ID}/attendees/${me.id}/avatar`).set(me.avatar);
+  }
+} else if (me && typeof me.avatar === 'string' && me.avatar.includes('<img')) {
+  const ANIMAL_EMOJIS_MIGRATE = ['🐇', '🐈', '🦊', '🐻', '🐼', '🐨', '🐹', '🐶', '🐯', '🦁'];
+  me.avatar = ANIMAL_EMOJIS_MIGRATE[Math.floor(Math.random() * ANIMAL_EMOJIS_MIGRATE.length)];
+  localStorage.setItem('fsc_guest', JSON.stringify(me));
+  if (me.id) {
+    ref(`events/${EVENT_ID}/attendees/${me.id}/avatar`).set(me.avatar);
+  }
+}
 const isHost = new URLSearchParams(location.search).get('host') === '1';
 
 function show(id){
@@ -4202,20 +4219,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     memoryDateEl.innerHTML = `August 14, 2026 &bull; ${diffDays} days ago`;
   }
 });
-
-/* --- CHARACTER IMAGE POOLS --- */
-const AVATAR_IMAGES = {
-  'she/her': [
-    'avatar-she-1.png', 'avatar-she-2.png', 'avatar-she-3.png', 'avatar-she-4.png',
-    'avatar-she-5.png', 'avatar-she-6.png', 'avatar-she-7.png', 'avatar-she-8.png'
-  ],
-  'he/him': [
-    'avatar-he-1.png', 'avatar-he-2.png', 'avatar-he-3.png'
-  ],
-  'they/them': [
-    'avatar-they-1.png', 'avatar-they-2.png', 'avatar-they-3.png'
-  ]
-};
 
 /* ---------- join ---------- */
 document.getElementById('btnJoin').addEventListener('click', async ()=>{
@@ -5755,6 +5758,19 @@ let rosterRedrawTimer = null;
 listenRoster = function() {
   ref(`events/${EVENT_ID}/attendees`).on('value', snap => {
     stateGuests = Object.values(snap.val() || {}).sort((a,b) => a.joinedAt - b.joinedAt);
+    // Normalize any attendee records saved before the emoji switch, which
+    // still carry an <img class="avatar-sprite" ...> HTML string as avatar,
+    // or the old host crown avatar.
+    const ANIMAL_EMOJIS_NORMALIZE = ['🐇', '🐈', '🦊', '🐻', '🐼', '🐨', '🐹', '🐶', '🐯', '🦁'];
+    stateGuests.forEach(g => {
+      if (g && g.avatar === '👑') {
+        g.avatar = '🐇';
+        if (g.id) ref(`events/${EVENT_ID}/attendees/${g.id}/avatar`).set(g.avatar);
+      } else if (g && typeof g.avatar === 'string' && g.avatar.includes('<img')) {
+        g.avatar = ANIMAL_EMOJIS_NORMALIZE[Math.floor(Math.random() * ANIMAL_EMOJIS_NORMALIZE.length)];
+        if (g.id) ref(`events/${EVENT_ID}/attendees/${g.id}/avatar`).set(g.avatar);
+      }
+    });
     const countEl = document.getElementById('loungeCount');
     if(countEl) countEl.textContent = stateGuests.length;
 
