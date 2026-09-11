@@ -10,6 +10,8 @@
 <link rel="preload" href="sasha-car-front-1.png" as="image" fetchpriority="high">
 <link rel="preload" href="sasha.png" as="image" fetchpriority="high">
 <link rel="preload" href="map.png" as="image" fetchpriority="high">
+<link rel="preload" href="sashas-car.png" as="image" fetchpriority="high">
+<link rel="preload" href="red-flag.png" as="image">
 <link rel="preload" href="home-icon.jpg" as="image">
 <link rel="preload" href="night-garden-icon.jpg" as="image">
 <link rel="preload" href="relationships-court-icon.jpg" as="image">
@@ -3790,7 +3792,7 @@ body[data-phase="closer"] .sky {
           <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
           <div class="game-track" id="gameTrack">
             <div class="game-bunny" id="gameBunny">
-              <img loading="lazy" decoding="async" src="sashas-car.png" alt="Sasha in Car" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <img decoding="async" src="sashas-car.png" alt="Sasha in Car" onerror="if(!this.dataset.retried){this.dataset.retried='1'; this.src='sashas-car.png?retry=' + Date.now();} else {this.style.display='none'; this.nextElementSibling.style.display='block';}">
               <span class="game-wisp-fallback"></span>
             </div>
             <div class="game-overlay" id="gameOverlay">
@@ -4730,6 +4732,14 @@ document.getElementById('btnChangeVote').addEventListener('click', ()=>{
 
 /* ---------- bunny-hop mini game ---------- */
 let bg = null;
+// If the red-flag artwork fails to load, swap it for a flag emoji so the
+// obstacle is never invisible/broken in the driving game.
+function handleRedFlagImgError(img){
+  const span = document.createElement('span');
+  span.textContent = '🚩';
+  span.style.cssText = 'font-size:32px; line-height:40px; display:block; text-align:center;';
+  img.replaceWith(span);
+}
 function startBunnyGame(){
   stopBunnyGame();
   const track = document.getElementById('gameTrack');
@@ -4951,7 +4961,7 @@ function startBunnyGame(){
         el.dataset.type = 'bad';
       } else {
         el.className = 'obs-iconic';
-        el.innerHTML = '<img src="red-flag.png" alt="red flag">';
+        el.innerHTML = '<img src="red-flag.png" alt="red flag" onerror="handleRedFlagImgError(this)">';
         el.dataset.type = 'good';
       }
 
