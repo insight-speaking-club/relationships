@@ -5,16 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 <title>People's Court™ | The Archives</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #120821;
-    --twilight: #341251;
+    --ink: #0d0614;
+    --twilight: #2a113a;
     --magenta: #7c2f6e;
     --rose: #d94f8c;
-    --gold: #f2c14e;
-    --mist: #f4e9ff;
-    --dim: #d1c1e0;
+    --gold: #dfb14a;
+    --gold-glow: rgba(223, 177, 74, 0.5);
+    --mist: #f0e6fa;
+    --dim: #a69bb5;
+    --crimson: #9e1432;
+    --emerald: #126e47;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -22,334 +25,239 @@
   body, html {
     margin: 0; padding: 0; height: 100%; width: 100%;
     background: var(--ink); color: var(--mist);
-    font-family: 'Jost', sans-serif; overflow: hidden;
+    font-family: 'Montserrat', sans-serif; overflow: hidden;
   }
 
   /* --- ATMOSPHERIC BACKGROUND --- */
   .sky {
     position: fixed; inset: 0; z-index: 0;
     background-image:
-      linear-gradient(200deg, rgba(10,3,17,0.55) 0%, rgba(18,8,33,0.6) 25%, rgba(35,12,51,0.72) 60%, rgba(74,25,73,0.8) 100%),
+      linear-gradient(200deg, rgba(13,6,20,0.7) 0%, rgba(20,9,30,0.8) 40%, rgba(42,17,58,0.85) 100%),
       url('background-court.png');
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-color: #0a0311;
+    background-size: cover; background-position: center top; background-color: #0d0614;
   }
   .sky::before {
     content: ''; position: absolute; inset: 0;
-    background-image: radial-gradient(1.5px 1.5px at 15% 12%, rgba(255,255,255,0.8) 100%, transparent),
-                      radial-gradient(1.5px 1.5px at 65% 22%, rgba(242, 193, 78, 0.6) 100%, transparent),
-                      radial-gradient(2px 2px at 85% 6%, rgba(255,255,255,0.6) 100%, transparent);
-    opacity: 0.6; animation: sky-twinkle 6s ease-in-out infinite alternate;
+    background-image: radial-gradient(1.5px 1.5px at 20% 15%, rgba(255,255,255,0.7) 100%, transparent),
+                      radial-gradient(1.5px 1.5px at 75% 30%, var(--gold-glow) 100%, transparent),
+                      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.5) 100%, transparent);
+    opacity: 0.5; animation: sky-twinkle 7s ease-in-out infinite alternate;
   }
-  @keyframes sky-twinkle { 0% { opacity: 0.4; } 100% { opacity: 0.8; } }
+  @keyframes sky-twinkle { 0% { opacity: 0.3; } 100% { opacity: 0.7; } }
 
-  /* --- PERSISTENT BACK TO ITINERARY LINK (Minimalist) --- */
+  /* --- MINIMALIST ITINERARY LINK --- */
   .itinerary-link {
     position: fixed; top: 24px; left: 24px; z-index: 500;
     display: flex; align-items: center; gap: 10px;
-    font-family: 'Space Mono', monospace; font-size: 9px;
-    letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244, 233, 255, 0.5);
-    text-decoration: none; opacity: 0.7;
-    transition: opacity 0.3s ease, color 0.3s ease;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim);
+    text-decoration: none; opacity: 0.7; transition: opacity 0.3s ease, color 0.3s ease;
   }
-
-  .itinerary-link:hover, .itinerary-link:active {
-    opacity: 1;
-    color: var(--gold);
-  }
-
-  .itinerary-link svg {
-    flex-shrink: 0;
-    width: 14px; height: 14px;
-    stroke-width: 1.5px;
-    transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
-  }
-
-  .itinerary-link:hover svg, .itinerary-link:active svg {
-    transform: translateX(-4px);
-  }
+  .itinerary-link:hover, .itinerary-link:active { opacity: 1; color: var(--gold); }
+  .itinerary-link svg { width: 14px; height: 14px; transition: transform 0.3s ease; }
+  .itinerary-link:hover svg { transform: translateX(-4px); }
 
   /* --- ORNATE 3D DOORS --- */
   .doors-wrapper {
     position: fixed; inset: 0; z-index: 9999;
-    display: flex; perspective: 2000px; 
-    pointer-events: none;
-    background: #000; 
-    transition: background 2s ease 1s;
+    display: flex; perspective: 2000px; pointer-events: none;
+    background: #000; transition: background 2s ease 1s;
   }
-  .doors-wrapper.open {
-    background: transparent;
-  }
-
+  .doors-wrapper.open { background: transparent; }
   .door {
-    width: 50%; height: 100%;
-    background: #0a0510; 
-    border: none;
+    width: 50%; height: 100%; background: #08040a; 
     display: flex; align-items: center; justify-content: center;
     transition: transform 4s cubic-bezier(0.2, 1, 0.3, 1), opacity 3s ease 1.5s;
-    box-shadow: inset 0 0 150px rgba(0,0,0,1), inset 0 0 20px rgba(242, 193, 78, 0.05);
-    position: relative; overflow: hidden;
+    box-shadow: inset 0 0 150px rgba(0,0,0,1); position: relative; overflow: hidden;
   }
   .door::before {
     content: ''; position: absolute; top: 10%; bottom: 10%; left: 10%; right: 10%;
-    border: 1px solid rgba(242, 193, 78, 0.1); border-radius: 4px;
+    border: 1px solid rgba(223, 177, 74, 0.15); border-radius: 2px;
   }
-  .door.left { transform-origin: left; border-right: 1px solid rgba(242, 193, 78, 0.2); }
-  .door.right { transform-origin: right; border-left: 1px solid rgba(242, 193, 78, 0.2); }
-
+  .door.left { transform-origin: left; border-right: 1px solid rgba(223, 177, 74, 0.3); }
+  .door.right { transform-origin: right; border-left: 1px solid rgba(223, 177, 74, 0.3); }
   .door-handle {
-    width: 3px; height: 140px; border-radius: 2px;
-    background: linear-gradient(to bottom, rgba(242,193,78,0.2), var(--gold), rgba(242,193,78,0.2));
-    box-shadow: 0 0 10px rgba(242, 193, 78, 0.2);
-    z-index: 2;
+    width: 4px; height: 160px; border-radius: 2px;
+    background: linear-gradient(to bottom, rgba(223,177,74,0.2), var(--gold), rgba(223,177,74,0.2));
+    box-shadow: 0 0 15px var(--gold-glow); z-index: 2;
   }
-  .door.left .door-handle { margin-left: auto; margin-right: 25px; }
-  .door.right .door-handle { margin-right: auto; margin-left: 25px; }
-  .light-seam { display: none; }
-
+  .door.left .door-handle { margin-left: auto; margin-right: 30px; }
+  .door.right .door-handle { margin-right: auto; margin-left: 30px; }
   .doors-wrapper.open .door.left { transform: rotateY(-105deg); opacity: 0; }
   .doors-wrapper.open .door.right { transform: rotateY(105deg); opacity: 0; }
 
   /* --- SHARED UI --- */
   .court-container {
-    position: relative; z-index: 10;
-    width: 100%; height: 100%;
+    position: relative; z-index: 10; width: 100%; height: 100%;
     overflow-y: auto; overflow-x: hidden;
-    padding: 60px 24px 80px; display: flex; flex-direction: column; align-items: center;
+    padding: 70px 20px 80px; display: flex; flex-direction: column; align-items: center;
   }
-  #phaseIntro { padding-top: 35vh; }
-  .display { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-style: italic; font-weight: 500; margin: 0 0 24px 0; text-align: center; text-shadow: 0 4px 15px rgba(0,0,0,0.6); }
+  #phaseIntro { padding-top: 30vh; }
 
   .section-layer {
-    width: 100%; max-width: 600px;
-    display: none; flex-direction: column; align-items: center;
+    width: 100%; max-width: 650px; display: none; flex-direction: column; align-items: center;
     opacity: 0; animation: fade-up 0.8s ease forwards;
   }
   .section-layer.active { display: flex; }
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
   /* --- PHASE 1: LORE --- */
-  .thread {
-    width: 100%; display: flex; flex-direction: column; align-items: center;
-    gap: 24px; margin-bottom: 40px; padding: 0 10px;
-  }
-  @keyframes bubble-in { to { opacity: 1; transform: translateY(0); } }
-
+  .thread { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 28px; margin-bottom: 50px; }
   .lore-paragraph {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 21px;
-    font-style: italic;
-    font-weight: 400;
-    line-height: 1.5;
-    color: rgba(244, 233, 255, 0.9);
-    text-align: center;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
-    opacity: 1; 
+    font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic;
+    line-height: 1.6; color: rgba(240, 230, 250, 0.85); text-align: center;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.9);
   }
-
-  /* Make the first line larger */
-  .lore-paragraph:first-child {
-    font-size: 34px;
-    margin-bottom: 10px;
-    color: var(--gold);
-    font-weight: 500;
-  }
+  .lore-paragraph:first-child { font-size: 32px; color: var(--gold); font-weight: 600; margin-bottom: 5px; }
 
   .btn-gold {
-    background: linear-gradient(135deg, #ffdf94 0%, var(--gold) 100%);
+    background: linear-gradient(135deg, #f2d48f 0%, var(--gold) 100%);
     color: var(--ink); border: none; border-radius: 999px;
-    padding: 16px 36px; font-family: 'Jost', sans-serif; font-weight: 600; font-size: 15px;
-    letter-spacing: 0.05em; cursor: pointer; box-shadow: 0 8px 20px rgba(242, 193, 78, 0.3);
-    transition: transform 0.2s ease; display: inline-flex; align-items: center; gap: 8px;
-    opacity: 0; animation: bubble-in 0.6s ease forwards;
-    margin-top: 10px;
+    padding: 16px 36px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 15px;
+    letter-spacing: 0.05em; cursor: pointer; 
+    box-shadow: 0 8px 25px var(--gold-glow); transition: transform 0.2s ease, filter 0.2s ease;
+    display: inline-flex; align-items: center; gap: 10px; animation: fade-up 0.6s ease forwards;
   }
-  .btn-gold:active { transform: scale(0.95); }
+  .btn-gold:active { transform: scale(0.96); filter: brightness(0.9); }
 
-  /* --- PHASE 2: EMAIL INBOX (THE DOCKET) --- */
+  /* --- PHASE 2: THE EMAIL INBOX --- */
   .email-client {
-    width: 100%; background: rgba(22, 10, 35, 0.85);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(244, 233, 255, 0.15); border-radius: 16px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden;
-    display: flex; flex-direction: column;
+    width: 100%; background: rgba(13, 6, 20, 0.75);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(223, 177, 74, 0.2); border-radius: 12px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.9); overflow: hidden; display: flex; flex-direction: column;
   }
   .inbox-toolbar {
-    display: flex; align-items: center; gap: 10px; padding: 12px 16px;
-    background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(244, 233, 255, 0.08);
+    display: flex; align-items: center; gap: 10px; padding: 16px 20px;
+    background: rgba(0,0,0,0.6); border-bottom: 1px solid rgba(223, 177, 74, 0.15);
   }
-  .icon-btn {
-    background: none; border: none; color: var(--mist); cursor: pointer;
-    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s ease;
-  }
-  .icon-btn:active { background: rgba(244, 233, 255, 0.12); }
-  .inbox-title-block { flex: 1; min-width: 0; }
-  .email-title { font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 600; color: var(--mist); }
-  .email-count { font-family: 'Jost', sans-serif; font-size: 12px; color: var(--gold); }
+  .inbox-title-block { flex: 1; }
+  .email-title { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 600; color: var(--mist); letter-spacing: 0.02em; }
+  .email-count { font-family: 'Montserrat', sans-serif; font-size: 12px; color: var(--gold); margin-top: 4px; }
+  
   .me-avatar {
-    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, #ffdf94, var(--gold));
-    color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 700; font-size: 12px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s ease;
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #f2d48f, var(--gold));
+    color: var(--ink); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.2);
   }
   .me-avatar:active { transform: scale(0.9); }
 
   .inbox-instruction {
-    padding: 12px 16px;
-    background: rgba(242, 193, 78, 0.05);
-    border-bottom: 1px solid rgba(244, 233, 255, 0.08);
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 17px;
-    color: var(--gold);
-    text-align: center;
+    padding: 14px 20px; background: rgba(223, 177, 74, 0.05);
+    border-bottom: 1px solid rgba(240, 230, 250, 0.05);
+    font-family: 'Playfair Display', serif; font-style: italic; font-size: 17px; color: var(--gold); text-align: center;
   }
-
-  .search-row { padding: 12px 16px; border-bottom: 1px solid rgba(244, 233, 255, 0.08); }
-  .search-bar {
-    display: flex; align-items: center; gap: 10px;
-    background: rgba(244, 233, 255, 0.06); border: 1px solid rgba(244, 233, 255, 0.1);
-    border-radius: 999px; padding: 9px 16px; color: var(--dim); font-size: 13px;
-  }
-  .search-bar svg { flex-shrink: 0; opacity: 0.6; }
 
   .email-row {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 14px 16px; border-bottom: 1px solid rgba(244, 233, 255, 0.05);
-    cursor: pointer; transition: background 0.2s ease;
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 18px 20px; border-bottom: 1px solid rgba(240, 230, 250, 0.05);
+    cursor: pointer; transition: background 0.3s ease, border-left 0.2s ease;
+    border-left: 3px solid transparent;
   }
-  .email-row:hover { background: rgba(242, 193, 78, 0.08); }
-  .email-row:last-child { border-bottom: none; }
-  .email-row.read .email-subject { color: var(--dim); font-weight: 400; }
+  .email-row:hover { background: rgba(223, 177, 74, 0.08); }
+  .email-row.read { opacity: 0.6; }
+  .email-row.selected { border-left-color: var(--gold); background: rgba(223, 177, 74, 0.04); }
 
   .email-avatar {
-    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Jost', sans-serif; font-weight: 600; font-size: 14px; color: #fff;
-    margin-top: 2px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px; color: #fff;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
   }
-  .email-content-preview { flex: 1; min-width: 0; text-align: left; }
-  .email-subject { font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 600; color: var(--mist); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s ease; }
-  .email-snippet { font-size: 13px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; }
-  .email-right-col { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; margin-top: 2px; }
-  .email-time { font-family: 'Jost', sans-serif; font-size: 11px; color: var(--dim); }
-  .email-star { opacity: 0.35; cursor: pointer; padding: 2px; transition: opacity 0.2s ease; }
-  .email-star:active { opacity: 0.7; }
-  .email-star.starred { opacity: 1; }
+  .email-content { flex: 1; min-width: 0; }
+  .email-subject { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: var(--mist); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .email-snippet { font-size: 13px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 400; line-height: 1.4; }
+  .email-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
+  .email-time { font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--dim); }
+  
+  .star-icon { color: var(--dim); opacity: 0.4; cursor: pointer; transition: all 0.2s ease; }
+  .star-icon:active { transform: scale(1.2); }
+  .star-icon.starred { opacity: 1; color: var(--gold); filter: drop-shadow(0 0 5px var(--gold-glow)); fill: var(--gold); }
 
   /* --- PHASE 3: OPEN EMAIL & VOTING --- */
-  .open-email-header { padding: 24px; border-bottom: 1px solid rgba(244, 233, 255, 0.1); background: rgba(0,0,0,0.2); text-align: left; }
-  .oe-subject { font-family: 'Jost', sans-serif; font-size: 22px; font-weight: 600; color: var(--mist); margin-bottom: 16px; line-height: 1.3; }
-  .oe-meta-grid { display: grid; grid-template-columns: 45px 1fr; gap: 6px; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--mist); }
-  .oe-meta-label { color: var(--dim); text-align: right; margin-right: 8px; }
+  .open-email-header { padding: 24px; border-bottom: 1px solid rgba(223, 177, 74, 0.15); background: rgba(0,0,0,0.4); }
+  .oe-subject { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 600; color: var(--mist); margin-bottom: 20px; line-height: 1.3; }
+  .oe-meta-grid { display: grid; grid-template-columns: 50px 1fr; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mist); }
+  .meta-label { color: var(--dim); }
 
-  .open-email-body { padding: 28px 24px; text-align: left; font-family: 'Cormorant Garamond', serif; font-size: 19px; font-style: italic; line-height: 1.55; color: var(--mist); }
-
-  .voting-dock { padding: 24px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(244, 233, 255, 0.1); }
-  .aita-buttons { display: flex; flex-direction: column; gap: 12px; width: 100%; margin: 0 auto; }
-  .aita-btn {
-    border: none; border-radius: 12px; cursor: pointer; display: block; width: 100%;
-    font-family: 'Jost', sans-serif; font-weight: 700; padding: 20px 18px; font-size: 17px; letter-spacing: .04em; color: #fff;
-    box-shadow: 0 6px 20px rgba(0,0,0,.3); transition: transform 0.2s ease, filter 0.2s ease;
+  /* Burning Fuse Timer */
+  .fuse-container { width: 100%; height: 4px; background: rgba(255,255,255,0.05); position: relative; }
+  .fuse-bar { height: 100%; width: 100%; background: var(--gold); transform-origin: left; box-shadow: 0 0 10px var(--gold-glow); position: relative; }
+  .fuse-bar::after { 
+    content: ''; position: absolute; right: 0; top: -3px; width: 10px; height: 10px; 
+    background: #fff; border-radius: 50%; box-shadow: 0 0 15px 5px var(--gold-glow);
   }
-  .aita-btn:active { filter: brightness(0.8); transform: scale(0.97); }
-  .aita-btn-red { background: linear-gradient(135deg, #b31f47, #750e2a); }
-  .aita-btn-green { background: linear-gradient(135deg, #1b8c5e, #0d4d32); }
+  .fuse-bar.critical { background: var(--crimson); box-shadow: 0 0 15px var(--crimson); }
+  .fuse-bar.critical::after { box-shadow: 0 0 20px 8px var(--crimson); background: #ffb3b3; }
 
-  .back-link { font-family: 'Jost', sans-serif; font-size: 14px; color: var(--dim); text-decoration: underline; margin-top: 24px; cursor: pointer; background: none; border: none; padding: 8px; }
-  .back-link:active { opacity: 0.7; }
+  .open-email-body { padding: 32px 24px; font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; line-height: 1.6; color: rgba(240, 230, 250, 0.95); }
+
+  .voting-dock { padding: 24px; background: rgba(0,0,0,0.5); border-top: 1px solid rgba(223, 177, 74, 0.15); }
+  .aita-buttons { display: flex; flex-direction: column; gap: 14px; width: 100%; margin-top: 16px; }
+  .aita-btn {
+    border: none; border-radius: 8px; cursor: pointer; display: block; width: 100%;
+    font-family: 'Montserrat', sans-serif; font-weight: 700; padding: 22px 18px; font-size: 16px; 
+    letter-spacing: 0.15em; color: #fff; text-transform: uppercase; transition: transform 0.2s ease, filter 0.2s ease;
+  }
+  .aita-btn:active { transform: scale(0.97); filter: brightness(0.8); }
+  .aita-btn-red { background: linear-gradient(135deg, var(--crimson), #5c081b); box-shadow: 0 6px 20px rgba(158, 20, 50, 0.3); }
+  .aita-btn-green { background: linear-gradient(135deg, var(--emerald), #073823); box-shadow: 0 6px 20px rgba(18, 110, 71, 0.3); }
+
+  .back-link { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--dim); text-decoration: underline; margin-top: 24px; cursor: pointer; background: none; border: none; padding: 8px; }
 
   /* --- FULL SCREEN VERDICT --- */
-  .aita-verdict-card {
-    position: fixed; inset: 0; z-index: 99999; display: none;
-    flex-direction: column; align-items: center; justify-content: center; gap: 26px;
-    padding: 20px; text-align: center; opacity: 0; transition: opacity 0.5s ease;
+  .verdict-card {
+    position: fixed; inset: 0; z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 30px; padding: 20px; text-align: center; opacity: 0; transition: opacity 0.5s ease;
+    background-size: 200% 200%; animation: gradientMesh 5s ease infinite;
   }
-  .aita-verdict-card.visible { opacity: 1; }
-  .aita-verdict-card.aita-red { background: #b31f47; }
-  .aita-verdict-card.aita-green { background: #1b8c5e; }
+  .verdict-card.visible { opacity: 1; }
+  .verdict-card.red { background-image: linear-gradient(45deg, #9e1432, #5c081b, #d91c44, #38030f); }
+  .verdict-card.green { background-image: linear-gradient(45deg, #126e47, #073823, #1ea36b, #032114); }
+  @keyframes gradientMesh { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-  .aita-verdict-text {
-    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 800;
-    font-size: 18vw; max-font-size: 100px; line-height: 1.1; color: #fff; text-shadow: 6px 6px 0px rgba(0,0,0,0.4);
-    margin-bottom: 20px; text-transform: uppercase; white-space: pre-line;
+  .verdict-text {
+    font-family: 'Playfair Display', serif; font-style: italic; font-weight: 800;
+    font-size: 16vw; max-font-size: 90px; line-height: 1.1; color: #fff; text-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    margin-bottom: 10px; text-transform: uppercase; white-space: pre-line;
   }
+  .verdict-instruction { color: rgba(255,255,255,0.85); font-family: 'Montserrat', sans-serif; font-size: 18px; margin-bottom: 50px; }
+
   .btn-ghost {
     background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.6); border-radius: 999px;
-    padding: 15px 35px; font-family: 'Jost', sans-serif; font-size: 15px; cursor: pointer; transition: background 0.2s ease;
+    padding: 15px 35px; font-family: 'Montserrat', sans-serif; font-size: 15px; cursor: pointer; transition: background 0.2s ease;
   }
   .btn-ghost:active { background: rgba(255,255,255,0.1); }
-  
-  .verdict-button-group {
-    display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;
-  }
+  .verdict-button-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
 
-  /* --- ELEGANT TOGGLABLE TIMER --- */
+  /* --- GLOBAL TIMER --- */
   .court-timer-wrap {
-    position: fixed; top: 16px; right: 16px; z-index: 9999;
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(18, 8, 33, 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(244, 233, 255, 0.15); border-radius: 999px;
-    padding: 6px 14px 6px 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: background 0.3s ease, border-color 0.3s ease;
+    position: fixed; top: 16px; right: 16px; z-index: 9999; display: flex; align-items: center; gap: 8px;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(223, 177, 74, 0.3); border-radius: 999px; padding: 6px 14px 6px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
   }
-
-  .court-timer-wrap.is-hidden {
-    background: rgba(18, 8, 33, 0.2);
-    border-color: rgba(244, 233, 255, 0.05);
-    padding-right: 10px;
-  }
-
-  .timer-toggle-btn {
-    background: none; border: none; color: var(--dim); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    padding: 4px; transition: color 0.2s ease;
-  }
-  .timer-toggle-btn:active { color: var(--gold); }
-
-  .court-timer-text {
-    font-family: 'Space Mono', monospace; font-size: 13.5px;
-    color: rgba(244, 233, 255, 0.65); 
-    transition: opacity 0.3s ease, width 0.3s ease;
-    opacity: 1; width: 42px; text-align: right; overflow: hidden;
-  }
-
-  .court-timer-wrap.is-hidden .court-timer-text {
-    opacity: 0; width: 0; margin-left: -8px; 
-  }
-
-  @keyframes courtTimerPulse {
-    0%, 100% { box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 0px rgba(242,193,78,0); }
-    50%      { box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 12px rgba(242,193,78,0.22); }
-  }
-  .court-timer-wrap.is-warning {
-    border-color: rgba(242, 193, 78, 0.35);
-    animation: courtTimerPulse 2.8s ease-in-out infinite;
-  }
-  .court-timer-wrap.is-warning .court-timer-text {
-    color: rgba(242, 193, 78, 0.85);
-  }
-  .court-timer-wrap.is-warning .timer-toggle-btn {
-    color: rgba(242, 193, 78, 0.7);
-  }
+  .court-timer-wrap.is-hidden { border-color: rgba(240, 230, 250, 0.1); padding-right: 10px; }
+  .timer-toggle-btn { background: none; border: none; color: var(--dim); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; }
+  .court-timer-text { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--mist); transition: opacity 0.3s ease, width 0.3s ease; opacity: 1; width: 45px; text-align: right; overflow: hidden; }
+  .court-timer-wrap.is-hidden .court-timer-text { opacity: 0; width: 0; margin-left: -8px; }
+  @keyframes timerPulse { 0%, 100% { box-shadow: 0 0 0 rgba(158, 20, 50, 0); } 50% { box-shadow: 0 0 20px rgba(158, 20, 50, 0.6); } }
+  .court-timer-wrap.is-warning { border-color: var(--crimson); animation: timerPulse 2s infinite; }
+  .court-timer-wrap.is-warning .court-timer-text { color: #ffb3b3; }
 </style>
 </head>
 <body>
 
   <div class="sky"></div>
 
+  <!-- Audio Asset for Gavel Strike -->
+  <audio id="gavelSound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-hard-wood-desk-hit-and-echo-3112.mp3" type="audio/mpeg">
+  </audio>
+
   <a href="index.html" class="itinerary-link">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
     Return to Itinerary
   </a>
 
@@ -357,10 +265,8 @@
   <div class="doors-wrapper" id="doors">
     <div class="door left"><div class="door-handle"></div></div>
     <div class="door right"><div class="door-handle"></div></div>
-    <div class="light-seam"></div>
   </div>
 
-  <!-- Main Scrollable Container -->
   <div class="court-container" id="courtContainer">
 
     <!-- Phase 1: Lore -->
@@ -380,39 +286,26 @@
           <div class="me-avatar">JS</div>
         </div>
         
-        <div class="inbox-instruction">
-          We choose one submission together and review it.
-        </div>
+        <div class="inbox-instruction">We choose one submission together and review it.</div>
 
-        <div class="search-row">
-          <div class="search-bar">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <span>Search letters</span>
-          </div>
-        </div>
-        <div class="docket-list" id="docketList">
-          <!-- Rendered via JS -->
-        </div>
+        <div id="emailList"></div>
       </div>
     </div>
 
-    <!-- Phase 3: Open Email & Voting -->
+    <!-- Phase 3: Open Email -->
     <div class="section-layer" id="phaseStory">
       <div class="email-client">
-
         <div class="open-email-header">
           <div class="oe-subject" id="storySubject"></div>
           <div class="oe-meta-grid">
-            <div class="oe-meta-label">From:</div>
-            <div id="storySender"></div>
-            <div class="oe-meta-label">To:</div>
-            <div>Honorable Judge Sasha</div>
-            <div class="oe-meta-label">Date:</div>
-            <div id="storyDate"></div>
+            <div class="meta-label">From:</div><div id="storySender"></div>
+            <div class="meta-label">To:</div><div>Honorable Judge Sasha</div>
+            <div class="meta-label">Date:</div><div id="storyDate"></div>
           </div>
         </div>
-        <div style="width: 100%; height: 3px; background: rgba(244, 233, 255, 0.1);">
-          <div id="caseTimerBar" style="height: 100%; width: 100%; background: var(--gold); transform-origin: left; transition: transform 1s linear;"></div>
+        
+        <div class="fuse-container">
+          <div id="caseTimerBar" class="fuse-bar"></div>
         </div>
 
         <div class="open-email-body" id="storyDisplay"></div>
@@ -424,48 +317,35 @@
             <button class="aita-btn aita-btn-green" onclick="castVote('NTA')">NOT THE ASSHOLE</button>
           </div>
         </div>
-
       </div>
-
       <button class="back-link" onclick="backToDocket()">Back to the inbox</button>
     </div>
 
   </div>
 
-  <!-- Full Screen Verdict Card -->
-  <div class="aita-verdict-card" id="verdictCard">
-    <div class="aita-verdict-text" id="verdictText"></div>
-    <p style="color: rgba(255,255,255,0.85); font-family: 'Jost', sans-serif; font-size: 18px; margin-bottom: 50px;">Hold your phone up so everyone can see.</p>
-    
+  <!-- Full Screen Verdict -->
+  <div class="verdict-card" id="verdictCard">
+    <div class="verdict-text" id="verdictText"></div>
+    <p class="verdict-instruction">Hold your phone up so everyone can see.</p>
     <div class="verdict-button-group">
       <button class="btn-ghost" onclick="closeVerdict()">Return to the docket</button>
       <button class="btn-ghost" style="border-color: rgba(255,255,255,0.3);" onclick="changeVote()">Change my vote</button>
     </div>
   </div>
 
-  <!-- Elegant Togglable Global Timer -->
+  <!-- Global Timer -->
   <div id="courtTimerWrapper" class="court-timer-wrap" style="display: none;">
-    <button id="btnToggleTimer" class="timer-toggle-btn" aria-label="Toggle Timer">
-      <!-- Eye Open SVG -->
-      <svg id="iconEyeOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 12c3-6 7-8 10-8s7 2 10 8-7 8-10 8-7-2-10-8z"></path>
-        <circle cx="12" cy="12" r="3"></circle>
-      </svg>
-      <!-- Eye Closed SVG -->
-      <svg id="iconEyeClosed" style="display: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-        <line x1="1" y1="1" x2="23" y2="23"></line>
-      </svg>
+    <button id="btnToggleTimer" class="timer-toggle-btn">
+      <svg id="iconEyeOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c3-6 7-8 10-8s7 2 10 8-7 8-10 8-7-2-10-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      <svg id="iconEyeClosed" style="display: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
     </button>
     <div id="globalCourtTimerText" class="court-timer-text">00:00</div>
   </div>
 
-  <!-- Firebase Integration -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
-  // --- FIREBASE SETUP ---
   const firebaseConfig = {
     apiKey: "AIzaSyDv47HEwF9APQLLoLdJgHwdLHzoYfTawyQ",
     authDomain: "relationships-d8119.firebaseapp.com",
@@ -476,60 +356,35 @@
     appId: "1:852389788989:web:6c79282e08c665b54dd954"
   };
   const EVENT_ID = "default";
-
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // --- TIMER TOGGLE LOGIC ---
+  const gavelAudio = document.getElementById('gavelSound');
+
   const timerWrapper = document.getElementById('courtTimerWrapper');
   const btnToggleTimer = document.getElementById('btnToggleTimer');
-  const iconOpen = document.getElementById('iconEyeOpen');
-  const iconClosed = document.getElementById('iconEyeClosed');
   let isTimerHidden = false;
-
   btnToggleTimer.addEventListener('click', () => {
     isTimerHidden = !isTimerHidden;
-    if (isTimerHidden) {
-      timerWrapper.classList.add('is-hidden');
-      iconOpen.style.display = 'none';
-      iconClosed.style.display = 'block';
-    } else {
-      timerWrapper.classList.remove('is-hidden');
-      iconOpen.style.display = 'block';
-      iconClosed.style.display = 'none';
-    }
+    timerWrapper.classList.toggle('is-hidden', isTimerHidden);
+    document.getElementById('iconEyeOpen').style.display = isTimerHidden ? 'none' : 'block';
+    document.getElementById('iconEyeClosed').style.display = isTimerHidden ? 'block' : 'none';
   });
 
-  // --- GLOBAL TIMER SYNC ---
   let globalTimerInterval;
   db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).on('value', snap => {
     const endTime = snap.val();
     clearInterval(globalTimerInterval);
-    const timerTextEl = document.getElementById('globalCourtTimerText');
-
-    if (!endTime) {
-      timerWrapper.style.display = 'none';
-      timerWrapper.classList.remove('is-warning');
-      return;
-    }
-
+    if (!endTime) { timerWrapper.style.display = 'none'; return; }
     timerWrapper.style.display = 'flex';
-    const WARNING_THRESHOLD_MS = 3 * 60 * 1000; 
-
     globalTimerInterval = setInterval(() => {
       const timeLeft = endTime - Date.now();
-
       if (timeLeft > 0) {
-        const mins = Math.floor(timeLeft / 60000);
-        const secs = Math.floor((timeLeft % 60000) / 1000);
-        timerTextEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-        timerWrapper.classList.toggle('is-warning', timeLeft <= WARNING_THRESHOLD_MS);
+        timerWrapper.classList.toggle('is-warning', timeLeft <= 180000);
+        document.getElementById('globalCourtTimerText').textContent = `${Math.floor(timeLeft / 60000)}:${Math.floor((timeLeft % 60000) / 1000).toString().padStart(2, '0')}`;
       } else {
         clearInterval(globalTimerInterval);
-        timerTextEl.textContent = "0:00";
-        timerWrapper.classList.remove('is-warning');
+        document.getElementById('globalCourtTimerText').textContent = "0:00";
         db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).set(null);
         window.location.href = 'index.html';
       }
@@ -538,126 +393,55 @@
 
   const LORE_MESSAGES = [
     "Welcome to the People's Court, loves.",
-    "We've been judging strangers from a renowned Parisian courtroom since before you were born. We once received letters by carrier pigeon; now, they simply arrive by email. Our generation has inherited the gavel.",
+    "We've been judging strangers from a renowned Parisian courtroom since 1986. We once received letters by carrier pigeon; now, they simply arrive by email. Our generation has inherited the gavel.",
     "Tonight, we're dissecting strangers. Deliver your verdict with grace... or be absolutely ruthless. We're making history."
   ];
 
   const DOCKET_STORIES = [
-    {
-      sender: "lucie_radine_99@gmail.com",
-      name: "Lucie Dubois",
-      time: "10:15 AM",
-      date: "Today, 10:15 AM",
-      subject: "AITA for making my friends pay at a 'free' dinner?",
-      text: "I won a $500 restaurant voucher online. I invited three friends and said dinner was on me. I assumed we'd eat normally, but they treated it like a blank check, ordering wagyu, double sides, and top-shelf cocktails. The bill came to $830. I put the $500 voucher down and told them we needed to split the remaining $330. They got furious, saying I invited them to a 'free dinner' and I should have warned them there was a budget."
-    },
-    {
-      sender: "espionne_bilingue@orange.fr",
-      name: "Camille Laurent",
-      time: "09:42 AM",
-      date: "Today, 09:42 AM",
-      subject: "AITA for hiding that I speak his language?",
-      text: "I've been dating my boyfriend for 6 months. His family speaks Spanish. I'm actually fluent, but I never brought it up because I'm shy about my accent. At dinner, his mom made a passive-aggressive comment in Spanish about my job being a dead end. I instinctively replied in Spanish to defend myself. The table went dead silent. My boyfriend is furious and says I 'spied' on them for half a year just to trap them."
-    },
-    {
-      sender: "elodie_cherche_cdi@laposte.net",
-      name: "Élodie Martin",
-      time: "Yesterday",
-      date: "Yesterday, 19:30",
-      subject: "AITA for taking a job interview at a wedding?",
-      text: "I've been unemployed and struggling financially for 8 months. I was the Maid of Honor at my best friend's wedding. Right as dinner started, a recruiter from my dream company called. She said the hiring manager was jumping on a flight and needed a 10-minute chat right now, or they were moving on. I stepped into the hallway to take it. The bride realized I was missing during a group toast and says I selfishly ruined her moment."
-    },
-    {
-      sender: "survivant.du.teletravail@free.fr",
-      name: "Antoine Rousseau",
-      time: "Yesterday",
-      date: "Yesterday, 14:10",
-      subject: "AITA for locking my roommate's cat in the bathroom?",
-      text: "My roommate got a cat that constantly screams and knocks over my laptop while I work from home. I had the most important client presentation of my career, and the cat wouldn't stop attacking my camera. Desperate, I locked it in our small, windowless bathroom for two hours. I didn't put a litter box in there because I didn't want the smell. My roommate came home, found the cat stressed and crying in the dark, and is now calling me abusive."
-    },
-    {
-      sender: "julien_sans_husky@hotmail.fr",
-      name: "Julien Leroy",
-      time: "Tuesday",
-      date: "Tuesday, 11:05",
-      subject: "AITA for refusing to keep a surprise puppy?",
-      text: "My partner and I agreed to adopt a dog, but I specifically said I only wanted a calm, older rescue dog. I went out of town for a weekend, and my partner surprised me by buying a 10-week-old Husky puppy from a breeder. I am exhausted just looking at it, and I told my partner they have to return or rehome it because I did not agree to this lifestyle change. They are crying and saying I'm heartless."
-    },
-    {
-      sender: "garde_robe_fermee@yahoo.fr",
-      name: "Chloé Dupont",
-      time: "Monday",
-      date: "Monday, 08:20",
-      subject: "AITA for refusing to lend my sister a backup wedding dress?",
-      text: "My sister's wedding dress was ruined by a spilled coffee on the morning of her wedding. Panicking, she begged to wear my white silk designer gown as an emergency backup. I said no. It cost me €2,000, and she has a history of ruining clothes. She cried and pleaded, but I locked it in my car. She ended up walking down the aisle in a mismatched bridesmaid dress. My family says I ruined her wedding over a piece of fabric."
-    }
+    { sender: "lucie_radine_99@gmail.com", name: "Lucie Dubois", time: "10:15 AM", date: "Today, 10:15 AM", subject: "AITA for making my friends pay at a 'free' dinner?", text: "I won a $500 restaurant voucher online. I invited three friends and said dinner was on me. I assumed we'd eat normally, but they treated it like a blank check, ordering wagyu, double sides, and top-shelf cocktails. The bill came to $830. I put the $500 voucher down and told them we needed to split the remaining $330. They got furious, saying I invited them to a 'free dinner' and I should have warned them there was a budget." },
+    { sender: "espionne_bilingue@orange.fr", name: "Camille Laurent", time: "09:42 AM", date: "Today, 09:42 AM", subject: "AITA for hiding that I speak his language?", text: "I've been dating my boyfriend for 6 months. His family speaks Spanish. I'm actually fluent, but I never brought it up because I'm shy about my accent. At dinner, his mom made a passive-aggressive comment in Spanish about my job being a dead end. I instinctively replied in Spanish to defend myself. The table went dead silent. My boyfriend is furious and says I 'spied' on them for half a year just to trap them." },
+    { sender: "elodie_cherche_cdi@laposte.net", name: "Élodie Martin", time: "Yesterday", date: "Yesterday, 19:30", subject: "AITA for taking a job interview at a wedding?", text: "I've been unemployed and struggling financially for 8 months. I was the Maid of Honor at my best friend's wedding. Right as dinner started, a recruiter from my dream company called. She said the hiring manager was jumping on a flight and needed a 10-minute chat right now, or they were moving on. I stepped into the hallway to take it. The bride realized I was missing during a group toast and says I selfishly ruined her moment." },
+    { sender: "survivant.du.teletravail@free.fr", name: "Antoine Rousseau", time: "Yesterday", date: "Yesterday, 14:10", subject: "AITA for locking my roommate's cat in the bathroom?", text: "My roommate got a cat that constantly screams and knocks over my laptop while I work from home. I had the most important client presentation of my career, and the cat wouldn't stop attacking my camera. Desperate, I locked it in our small, windowless bathroom for two hours. I didn't put a litter box in there because I didn't want the smell. My roommate came home, found the cat stressed and crying in the dark, and is now calling me abusive." },
+    { sender: "julien_sans_husky@hotmail.fr", name: "Julien Leroy", time: "Tuesday", date: "Tuesday, 11:05", subject: "AITA for refusing to keep a surprise puppy?", text: "My partner and I agreed to adopt a dog, but I specifically said I only wanted a calm, older rescue dog. I went out of town for a weekend, and my partner surprised me by buying a 10-week-old Husky puppy from a breeder. I am exhausted just looking at it, and I told my partner they have to return or rehome it because I did not agree to this lifestyle change. They are crying and saying I'm heartless." },
+    { sender: "garde_robe_fermee@yahoo.fr", name: "Chloé Dupont", time: "Monday", date: "Monday, 08:20", subject: "AITA for refusing to lend my sister a backup wedding dress?", text: "My sister's wedding dress was ruined by a spilled coffee on the morning of her wedding. Panicking, she begged to wear my white silk designer gown as an emergency backup. I said no. It cost me €2,000, and she has a history of ruining clothes. She cried and pleaded, but I locked it in my car. She ended up walking down the aisle in a mismatched bridesmaid dress. My family says I ruined her wedding over a piece of fabric." }
   ];
 
   window.addEventListener('DOMContentLoaded', () => {
-    // --- 5-CLICK HOST TRIGGER (MOVED TO JS AVATAR) ---
-    let avatarClickCount = 0;
-    let avatarClickTimeout;
-
-    const checkAvatarInterval = setInterval(() => {
-      const jsAvatar = document.querySelector('.me-avatar');
-      if (jsAvatar) {
-        clearInterval(checkAvatarInterval);
-        jsAvatar.addEventListener('click', () => {
-          avatarClickCount++;
-          clearTimeout(avatarClickTimeout);
-          avatarClickTimeout = setTimeout(() => avatarClickCount = 0, 2000); 
-
-          if (avatarClickCount >= 5) {
-            avatarClickCount = 0;
-            const mins = prompt("Host Override: Set global timer for the court (in minutes):", "15");
-            if (mins !== null && !isNaN(mins) && mins.trim() !== "") {
-              const endTime = Date.now() + parseFloat(mins) * 60000;
-              db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).set(endTime);
-            }
-          }
-        });
-      }
-    }, 500);
-
-    // 1. Open the doors dramatically
-    setTimeout(() => {
-      document.getElementById('doors').classList.add('open');
-    }, 700);
-
-    setTimeout(() => {
-      const doors = document.getElementById('doors');
-      doors.style.display = 'none';
-    }, 4200);
-
-    // 2. Show the Intro Phase instantly
-    setTimeout(() => {
-      document.getElementById('phaseIntro').classList.add('active');
-      playLoreThread();
-    }, 1400);
-
-    // 3. Render the Email Inbox List
-    const AVATAR_COLORS = ['#d94f8c', '#7c2f6e', '#c9863f', '#4a1949', '#b31f47', '#1b8c5e'];
-    function initialsFor(name) {
-      return name.split(' ').filter(w => w[0] === w[0].toUpperCase()).slice(0, 2).map(w => w[0]).join('') || name.slice(0, 2).toUpperCase();
+    let avatarClickCount = 0, avatarClickTimeout;
+    const jsAvatar = document.querySelector('.me-avatar');
+    if (jsAvatar) {
+      jsAvatar.addEventListener('click', () => {
+        avatarClickCount++;
+        clearTimeout(avatarClickTimeout);
+        avatarClickTimeout = setTimeout(() => avatarClickCount = 0, 2000); 
+        if (avatarClickCount >= 5) {
+          avatarClickCount = 0;
+          const mins = prompt("Host Override: Set global timer (minutes):", "15");
+          if (mins && !isNaN(mins)) db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).set(Date.now() + parseFloat(mins) * 60000);
+        }
+      });
     }
 
-    const list = document.getElementById('docketList');
+    setTimeout(() => document.getElementById('doors').classList.add('open'), 700);
+    setTimeout(() => document.getElementById('doors').style.display = 'none', 4200);
+    setTimeout(() => { document.getElementById('phaseIntro').classList.add('active'); playLoreThread(); }, 1400);
+
+    const AVATAR_COLORS = ['#38030f', '#2a113a', '#5c3a11', '#1a0b1d', '#5c081b', '#073823'];
+    const list = document.getElementById('emailList');
     DOCKET_STORIES.forEach((story, index) => {
+      const initials = story.name.split(' ').slice(0, 2).map(w => w[0]).join('');
       const row = document.createElement('div');
       row.className = 'email-row';
       row.id = `emailRow_${index}`;
-      const color = AVATAR_COLORS[index % AVATAR_COLORS.length];
       row.innerHTML = `
-        <div class="email-avatar" style="background:${color}">${initialsFor(story.name)}</div>
-        <div class="email-content-preview">
+        <div class="email-avatar" style="background:${AVATAR_COLORS[index % AVATAR_COLORS.length]}">${initials}</div>
+        <div class="email-content">
           <div class="email-subject">${story.subject}</div>
           <div class="email-snippet">${story.text}</div>
         </div>
-        <div class="email-right-col">
+        <div class="email-meta">
           <div class="email-time">${story.time}</div>
-          <div class="email-star" onclick="toggleStar(event, this)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-          </div>
+          <svg class="star-icon" onclick="toggleStar(event, this, 'emailRow_${index}')" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         </div>
       `;
       row.addEventListener('click', () => openStory(index));
@@ -665,29 +449,20 @@
     });
   });
 
-  function toggleStar(evt, el) {
+  function toggleStar(evt, iconEl, rowId) {
     evt.stopPropagation();
-    el.classList.toggle('starred');
+    iconEl.classList.toggle('starred');
   }
 
-  // Instantly renders all lore
   function playLoreThread() {
     const thread = document.getElementById('loreThread');
-    thread.innerHTML = '';
-    
-    LORE_MESSAGES.forEach((msg) => {
+    LORE_MESSAGES.forEach(msg => {
       const p = document.createElement('div');
       p.className = 'lore-paragraph';
       p.textContent = msg;
       thread.appendChild(p);
     });
-    
-    revealCta();
-  }
-
-  function revealCta() {
-    const cta = document.getElementById('introCta');
-    cta.innerHTML = `
+    document.getElementById('introCta').innerHTML = `
       <button class="btn-gold" onclick="openDocket()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
         Open the inbox
@@ -695,23 +470,15 @@
     `;
   }
 
-  // Navigation Functions
   function openDocket() {
     document.getElementById('phaseIntro').classList.remove('active');
-    setTimeout(() => {
-      document.getElementById('phaseDocket').classList.add('active');
-    }, 400); 
+    setTimeout(() => document.getElementById('phaseDocket').classList.add('active'), 400); 
   }
 
   let caseTimerInterval;
-
   function openStory(index) {
     const story = DOCKET_STORIES[index];
-
-    // Mark as read visually
     document.getElementById(`emailRow_${index}`).classList.add('read');
-
-    // Populate the open email view
     document.getElementById('storySubject').textContent = story.subject;
     document.getElementById('storySender').textContent = `${story.name} <${story.sender}>`;
     document.getElementById('storyDate').textContent = story.date;
@@ -728,25 +495,15 @@
     clearInterval(caseTimerInterval);
     const bar = document.getElementById('caseTimerBar');
     let timeLeft = seconds;
-
-    bar.style.transition = 'none';
-    bar.style.transform = 'scaleX(1)';
-    bar.style.background = 'var(--gold)';
+    bar.style.transition = 'none'; bar.style.transform = 'scaleX(1)'; bar.classList.remove('critical');
 
     setTimeout(() => {
-      bar.style.transition = 'transform 1s linear, background 0.5s ease';
+      bar.style.transition = 'transform 1s linear';
       caseTimerInterval = setInterval(() => {
         timeLeft--;
-        const percentage = timeLeft / seconds;
-        bar.style.transform = `scaleX(${Math.max(0, percentage)})`;
-
-        if (timeLeft <= 10) {
-          bar.style.background = '#ff4d5e';
-        }
-
-        if (timeLeft <= 0) {
-          clearInterval(caseTimerInterval);
-        }
+        bar.style.transform = `scaleX(${Math.max(0, timeLeft / seconds)})`;
+        if (timeLeft <= 10) bar.classList.add('critical');
+        if (timeLeft <= 0) clearInterval(caseTimerInterval);
       }, 1000);
     }, 50);
   }
@@ -754,24 +511,24 @@
   function backToDocket() {
     clearInterval(caseTimerInterval);
     document.getElementById('phaseStory').classList.remove('active');
-    setTimeout(() => {
-      document.getElementById('phaseDocket').classList.add('active');
-    }, 400);
+    setTimeout(() => document.getElementById('phaseDocket').classList.add('active'), 400);
   }
 
-  // Voting Functions
   function castVote(verdict) {
+    if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+    gavelAudio.currentTime = 0;
+    gavelAudio.play().catch(e => console.log("Audio play blocked."));
+
     const card = document.getElementById('verdictCard');
     const text = document.getElementById('verdictText');
-
-    card.classList.remove('aita-red', 'aita-green');
+    card.classList.remove('red', 'green');
 
     if (verdict === 'YTA') {
       text.textContent = 'ASSHOLE';
-      card.classList.add('aita-red');
+      card.classList.add('red');
     } else {
       text.innerHTML = 'NOT THE<br>ASSHOLE';
-      card.classList.add('aita-green');
+      card.classList.add('green');
     }
 
     card.style.display = 'flex';
@@ -782,20 +539,12 @@
   function changeVote() {
     const card = document.getElementById('verdictCard');
     card.classList.remove('visible');
-    
-    setTimeout(() => {
-      card.style.display = 'none';
-    }, 500);
+    setTimeout(() => card.style.display = 'none', 500);
   }
 
   function closeVerdict() {
-    const card = document.getElementById('verdictCard');
-    card.classList.remove('visible');
-
-    setTimeout(() => {
-      card.style.display = 'none';
-      backToDocket(); 
-    }, 500);
+    changeVote();
+    setTimeout(() => backToDocket(), 500);
   }
 </script>
 </body>
