@@ -26,7 +26,7 @@
     --gold:#f2c14e;
     --mist:#f4e9ff;
     --dim:#d1c1e0; /* Brightened from #b9a3d1 */
-    --vh:100vh;
+    --vh:100dvh;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 
@@ -243,7 +243,7 @@
   }
   .screen.active{
     opacity:1; visibility:visible; pointer-events:auto;
-    transform: scale(1);
+    transform: none;
     filter: none;
   }
 
@@ -1335,9 +1335,39 @@
 
   /* --- THE BOUQUET SCENE --- */
   .bouquet-scene {
-    position: relative; width: 100%; min-height: 450px;
+    position: relative; width: 100%; min-height: 360px;
     display: flex; justify-content: center; align-items: flex-end;
-    padding-bottom: 60px; margin-top: auto;
+    padding-bottom: 0; margin-top: auto;
+    margin-bottom: 40px; /* Lifts the garden slightly, without pushing it too high */
+  }
+
+  /* A quiet strip of night sky above the flowers — minimal moon + a few stars */
+  .garden-sky {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+    background: radial-gradient(120% 100% at 50% -10%, rgba(124,47,110,0.35) 0%, transparent 60%);
+  }
+  .garden-moon {
+    position: absolute; top: 14px; right: 10%;
+    width: 30px; height: 30px;
+    filter: drop-shadow(0 0 10px rgba(244,233,255,0.55)) drop-shadow(0 0 18px rgba(242,193,78,0.3));
+    animation: moon-glow-pulse 6s ease-in-out infinite alternate;
+  }
+  .garden-star {
+    position: absolute; width: 2px; height: 2px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 6px 1px rgba(255,255,255,0.8);
+    animation: sky-twinkle 4s ease-in-out infinite alternate;
+  }
+
+  /* The ground the flowers grow out of — sits above the stem bases so the
+     roots read as "planted" rather than just floating on a fixed anchor. */
+  .garden-ground {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 64px; z-index: 55; pointer-events: none;
+    background: linear-gradient(180deg, transparent 0%, rgba(18,8,33,0.55) 35%, rgba(18,8,33,0.92) 70%, var(--ink) 100%);
   }
 
   /* The Flowers */
@@ -1454,17 +1484,17 @@
   }
 
   .question-panel{
-    position:fixed; bottom:0; left:0; right:0; z-index:10;
+    position:fixed; bottom: var(--vv-bottom-offset, 0px); left:0; right:0; z-index:100;
     padding:30px 26px 24px; text-align:center;
     background:linear-gradient(180deg, rgba(18,8,33,0.55) 0%, rgba(18,8,33,.85) 40%, rgba(18,8,33,.97) 100%);
     backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-    border-top: 1px solid rgba(242, 193, 78, 0.25);
     box-shadow: 0 -6px 20px rgba(0,0,0,0.4);
   }
   .question-eyebrow{font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; color:var(--gold); text-transform:uppercase;}
   .question-text{
     font-family:'Cormorant Garamond',serif; font-style:italic; font-size:21px; line-height:1.42;
     margin-top:8px; min-height:58px; opacity:1; transition:opacity .25s ease;
+    overflow-wrap: break-word; word-wrap: break-word;
   }
   .question-text.swap{opacity:0;}
 
@@ -3830,7 +3860,6 @@ body[data-phase="closer"] .sky {
 
     <div class="match-header" style="padding-top: 30px; position: relative; z-index: 10;">
       <h1 class="display" style="font-size:36px;">The Midnight Garden</h1>
-      <p class="sub" style="margin-top:6px; font-size: 14px; opacity: 0.7;">Pick a flower together to reveal your next question.</p>
     </div>
 
     <!-- The Bouquet Scene -->
@@ -3843,7 +3872,6 @@ body[data-phase="closer"] .sky {
     <div class="question-panel" id="questionPanel">
       <div class="question-eyebrow" id="questionCounter" style="display:none;"></div>
       <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
-      <div class="ember-line"></div>
       <p class="sub" id="questionHint" style="margin-top:10px; font-size: 12px; opacity: 0.65; font-style: italic;">If a question doesn't feel comfortable, feel free to pick another one.</p>
     </div>
   </div>
@@ -4188,6 +4216,26 @@ function spawnStardust(){
 spawnStardust(); // more sparkles drifting through the sky
 
 /* ---------- application routing & VIP bypass ---------- */
+// --- FIX: keep fixed bottom bars above browser/OS chrome ---
+// Some mobile browsers (especially in-app/file-viewer WebViews) size
+// `position:fixed` elements against the full page height instead of the
+// actually-visible area once their own toolbars are on screen. This tracks
+// the real visible area via the VisualViewport API and nudges any
+// bottom-anchored fixed bar up by exactly however much is currently hidden.
+function pinFixedBottomBars(){
+  if (!window.visualViewport) return;
+  const vv = window.visualViewport;
+  const hiddenBelow = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+  document.querySelectorAll('.question-panel').forEach(el => {
+    el.style.setProperty('--vv-bottom-offset', hiddenBelow + 'px');
+  });
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', pinFixedBottomBars);
+  window.visualViewport.addEventListener('scroll', pinFixedBottomBars);
+  pinFixedBottomBars();
+}
+
 document.addEventListener('DOMContentLoaded', ()=>{
   if(isHost){
     // The host sees the exact same lounge experience as everyone else,
@@ -5078,21 +5126,24 @@ window.addEventListener('keydown', (e)=>{
   }
 });
 
-/* ---------- bouquet builder ---------- */
+/* ---------- garden row builder ---------- */
 function buildGarden(){
   const bed = document.getElementById('gardenBed');
   if(!bed) return;
-  // Layered paper folds
+  // Just the flowers and a strip of ground beneath them — no bouquet wrap
   bed.innerHTML = `
-    <img class="bouquet-bow-img" loading="lazy" decoding="async" src="bow.png" alt="" onerror="this.style.display='none'">
-    <div id="bouquetFlowers"></div>
-    <div class="bouquet-wrap-left-fold"></div>
-    <div class="bouquet-wrap-right-fold"></div>
-    <div class="bouquet-ribbon-base">
-       <div class="ribbon-tail left"></div><div class="ribbon-tail right"></div>
-       <div class="ribbon-loop left"></div><div class="ribbon-loop right"></div>
-       <div class="ribbon-knot"></div>
+    <div class="garden-sky">
+      <span class="garden-star" style="top:10%; left:12%;"></span>
+      <span class="garden-star" style="top:22%; left:34%; animation-delay:.6s;"></span>
+      <span class="garden-star" style="top:8%; left:58%; animation-delay:1.1s;"></span>
+      <span class="garden-star" style="top:28%; left:76%; animation-delay:1.6s;"></span>
+      <span class="garden-star" style="top:16%; left:90%; animation-delay:2.1s;"></span>
+      <svg class="garden-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#f4e9ff"/>
+      </svg>
     </div>
+    <div id="bouquetFlowers"></div>
+    <div class="garden-ground"></div>
   `;
   const flowersContainer = document.getElementById('bouquetFlowers');
 
@@ -5110,17 +5161,15 @@ function buildGarden(){
     const q = QUESTIONS[originalIndex];
     const displayPos = shuffledIndices.indexOf(idx);
 
-    // TIGHT CLUSTER: Confined inside the paper wrap
-    const spread = 55;
-    const angle = -27.5 + (displayPos / (items - 1)) * spread + (Math.random() * 8 - 4);
+    // ROW: spread evenly left-to-right, standing upright in the garden bed
+    const leftPercent = 6 + (displayPos / (items - 1)) * 88;
+    const wobble = (Math.random() * 6 - 3); // a few degrees of natural lean, not a fan
 
-    // COMPACT STEMS
-    const centerProximity = 1 - Math.abs((displayPos / (items - 1)) - 0.5) * 2;
-    const stemH = 140 + (centerProximity * 50) + (Math.random() * 20);
+    const stemH = 120 + (Math.random() * 50);
     const scale = (0.7 + Math.random() * 0.25).toFixed(2);
 
-    // ANCHOR — filling the gap under the subtitle, well clear of the title
-    const bottom = 240;
+    // ANCHOR — raised higher in the scene, roots tucked behind the ground strip
+    const bottom = 70;
 
     const cluster = CLUSTERS[originalIndex % CLUSTERS.length];
     const color = cluster[originalIndex % 2];
@@ -5145,11 +5194,13 @@ function buildGarden(){
     plant.dataset.i = originalIndex;
     plant.style.color = color;
     plant.style.setProperty('--fscale', scale);
+    plant.style.left = leftPercent + '%';
+    plant.style.marginLeft = '0';
     plant.style.bottom = bottom + 'px';
 
-    // Set the base rotation and height
-    plant.style.setProperty('--base-transform', `rotate(${angle}deg) scale(${scale})`);
-    plant.style.transform = `rotate(${angle}deg) scale(${scale})`;
+    // Set the base position/rotation
+    plant.style.setProperty('--base-transform', `translateX(-50%) rotate(${wobble}deg) scale(${scale})`);
+    plant.style.transform = `translateX(-50%) rotate(${wobble}deg) scale(${scale})`;
 
     // Mix up the z-index so stems overlap naturally
     plant.style.zIndex = 1 + Math.floor(Math.random() * 50);
@@ -5226,7 +5277,7 @@ function pickFlower(i, pairId, plant, color){
     textEl.classList.add('swap');
     setTimeout(() => {
       textEl.textContent = QUESTIONS[i];
-      counterEl.textContent = `Answer it yourself, or ask your partner`;
+      counterEl.innerHTML = `Ask your partner:<br><span style="color:var(--dim); text-transform:none; letter-spacing:normal; font-size:11px;">... or answer it yourself if you want (˶ᵔ ᵕ ᵔ˶)</span>`;
       counterEl.style.display = 'block';
       textEl.classList.remove('swap');
 
