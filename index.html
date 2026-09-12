@@ -1341,14 +1341,17 @@
     margin-bottom: 40px; /* Lifts the garden slightly, without pushing it too high */
   }
 
-  /* A quiet strip of night sky above the flowers — minimal moon + a few stars */
+  /* A quiet strip of night sky above the flowers — minimal moon + stars */
   .garden-sky {
     position: fixed;
     inset: 0;
     z-index: 1;
     pointer-events: none;
     overflow: hidden;
-    background: radial-gradient(120% 100% at 50% -10%, rgba(124,47,110,0.35) 0%, transparent 60%);
+    background:
+      radial-gradient(90% 60% at 50% 0%, rgba(242,193,78,0.10) 0%, transparent 45%),
+      radial-gradient(120% 100% at 50% -10%, rgba(124,47,110,0.35) 0%, transparent 60%),
+      radial-gradient(140% 90% at 20% 15%, rgba(217,79,140,0.12) 0%, transparent 55%);
   }
   .garden-moon {
     position: absolute; top: 14px; right: 10%;
@@ -1361,6 +1364,9 @@
     background: #fff; box-shadow: 0 0 6px 1px rgba(255,255,255,0.8);
     animation: sky-twinkle 4s ease-in-out infinite alternate;
   }
+  .garden-star.dim { opacity: 0.6; }
+  .garden-star.small { width: 1.5px; height: 1.5px; box-shadow: 0 0 4px 1px rgba(255,255,255,0.65); }
+  .garden-star.gold { background: #f2c14e; box-shadow: 0 0 6px 1px rgba(242,193,78,0.75); }
 
   /* The ground the flowers grow out of — sits above the stem bases so the
      roots read as "planted" rather than just floating on a fixed anchor. */
@@ -3858,10 +3864,6 @@ body[data-phase="closer"] .sky {
     <div class="shooting-star"></div>
 
 
-    <div class="match-header" style="padding-top: 30px; position: relative; z-index: 10;">
-      <h1 class="display" style="font-size:36px;">The Midnight Garden</h1>
-    </div>
-
     <!-- The Bouquet Scene -->
     <div class="bouquet-scene" id="gardenBed">
       <!-- Flowers will fan out from here -->
@@ -5134,10 +5136,17 @@ function buildGarden(){
   bed.innerHTML = `
     <div class="garden-sky">
       <span class="garden-star" style="top:10%; left:12%;"></span>
-      <span class="garden-star" style="top:22%; left:34%; animation-delay:.6s;"></span>
+      <span class="garden-star small dim" style="top:22%; left:34%; animation-delay:.6s;"></span>
       <span class="garden-star" style="top:8%; left:58%; animation-delay:1.1s;"></span>
-      <span class="garden-star" style="top:28%; left:76%; animation-delay:1.6s;"></span>
+      <span class="garden-star small" style="top:28%; left:76%; animation-delay:1.6s;"></span>
       <span class="garden-star" style="top:16%; left:90%; animation-delay:2.1s;"></span>
+      <span class="garden-star gold small" style="top:6%; left:24%; animation-delay:.3s;"></span>
+      <span class="garden-star small dim" style="top:34%; left:6%; animation-delay:2.6s;"></span>
+      <span class="garden-star" style="top:4%; left:44%; animation-delay:1.9s;"></span>
+      <span class="garden-star small" style="top:18%; left:66%; animation-delay:.9s;"></span>
+      <span class="garden-star gold small" style="top:30%; left:84%; animation-delay:2.3s;"></span>
+      <span class="garden-star small dim" style="top:12%; left:2%; animation-delay:1.3s;"></span>
+      <span class="garden-star" style="top:26%; left:50%; animation-delay:.4s;"></span>
       <svg class="garden-moon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#f4e9ff"/>
       </svg>
