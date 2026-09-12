@@ -3667,6 +3667,12 @@ body[data-phase="closer"] .sky {
           </div>
         </div>
 
+        <!-- NEW LOCATION: HOST ONLY: Match Control -->
+        <div id="hostControlsSpin" class="host-inline-controls" style="display:none; margin: 0 auto 16px; border-color:var(--gold); width: 100%; flex-direction: column; gap: 8px;">
+          <button class="host-inline-btn action" id="btnMatchPeople" style="width:100%; padding: 12px; font-size: 15px;">Match People</button>
+          <button class="btn ghost" id="btnUnmatchPeople" style="width:100%; margin: 0; padding: 10px; font-size: 12px; border-color: rgba(255, 255, 255, 0.2); color: var(--dim);">Unmatch Everyone</button>
+        </div>
+
         <div class="host-map-deck-row">
           <span class="host-map-deck-label">Midnight Garden</span>
           <!-- HOST ONLY: Minimal Pairs Controls -->
@@ -3812,12 +3818,6 @@ body[data-phase="closer"] .sky {
     <div class="leaderboard-container" style="margin-bottom: 40px;">
       <div class="eyebrow" style="text-align:center; margin-bottom:12px;">Top Scores</div>
       <div id="gameLeaderboard" class="leaderboard-list"></div>
-    </div>
-
-    <!-- HOST ONLY: Match Control -->
-    <div id="hostControlsSpin" class="host-inline-controls" style="display:none; margin: 0 auto 40px; border-color:var(--gold); width: 100%; max-width: 320px; flex-direction: column; gap: 8px;">
-      <button class="host-inline-btn action" id="btnMatchPeople" style="width:100%; padding: 14px; font-size: 16px;">Match People</button>
-      <button class="btn ghost" id="btnUnmatchPeople" style="width:100%; margin: 0; padding: 10px; font-size: 12px; border-color: rgba(255, 255, 255, 0.2); color: var(--dim);">Unmatch Everyone</button>
     </div>
   </div>
 
