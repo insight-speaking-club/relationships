@@ -3841,7 +3841,7 @@ body[data-phase="closer"] .sky {
     </div>
 
     <div class="question-panel" id="questionPanel">
-      <div class="question-eyebrow" id="questionCounter">Your question</div>
+      <div class="question-eyebrow" id="questionCounter" style="display:none;"></div>
       <div class="question-text" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
       <div class="ember-line"></div>
       <p class="sub" id="questionHint" style="margin-top:10px; font-size: 12px; opacity: 0.65; font-style: italic;">If a question doesn't feel comfortable, feel free to pick another one.</p>
@@ -5226,7 +5226,8 @@ function pickFlower(i, pairId, plant, color){
     textEl.classList.add('swap');
     setTimeout(() => {
       textEl.textContent = QUESTIONS[i];
-      counterEl.textContent = `Your question`;
+      counterEl.textContent = `Answer it yourself, or ask your partner`;
+      counterEl.style.display = 'block';
       textEl.classList.remove('swap');
 
       // Reset any previous burns
@@ -5515,10 +5516,54 @@ function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5
     setTimeout(() => el.remove(), 400);
   };
 
-  el.addEventListener('click', () => {
-    if (onAction) onAction();
-    dismiss();
-  });
+  // Swipe-to-dismiss (left or right), tap still triggers onAction
+  el.style.touchAction = 'pan-y';
+  const SWIPE_THRESHOLD = 60;
+  let dragging = false, moved = false, startX = 0, currentX = 0;
+
+  const getX = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
+
+  const onDragStart = (e) => {
+    if (dismissed) return;
+    dragging = true;
+    moved = false;
+    startX = currentX = getX(e);
+    el.style.transition = 'none';
+  };
+  const onDragMove = (e) => {
+    if (!dragging) return;
+    currentX = getX(e);
+    const dx = currentX - startX;
+    if (Math.abs(dx) > 4) moved = true;
+    el.style.transform = `translateX(${dx}px)`;
+    el.style.opacity = String(Math.max(1 - Math.abs(dx) / 200, 0.15));
+  };
+  const onDragEnd = () => {
+    if (!dragging) return;
+    dragging = false;
+    const dx = currentX - startX;
+    el.style.transition = 'transform .3s ease, opacity .3s ease';
+    if (Math.abs(dx) > SWIPE_THRESHOLD) {
+      // Swiped far enough: dismiss without firing the action
+      el.style.transform = `translateX(${dx > 0 ? '120%' : '-120%'})`;
+      el.style.opacity = '0';
+      dismissed = true;
+      setTimeout(() => el.remove(), 300);
+    } else if (moved) {
+      // Snap back into place
+      el.style.transform = 'translateX(0)';
+      el.style.opacity = '1';
+    } else {
+      // A simple tap, not a drag
+      if (onAction) onAction();
+      dismiss();
+    }
+  };
+
+  el.addEventListener('pointerdown', onDragStart);
+  el.addEventListener('pointermove', onDragMove);
+  el.addEventListener('pointerup', onDragEnd);
+  el.addEventListener('pointercancel', onDragEnd);
 
   setTimeout(dismiss, holdMs);
   return { dismiss };
