@@ -181,9 +181,11 @@
   .eye-toggle svg { width: 18px; height: 18px; }
   .global-timer-badge {
     display: none; align-items: baseline; gap: 6px;
-    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--gold);
-    background: rgba(0,0,0,0.4); border: 1px solid rgba(223, 177, 74, 0.25);
-    border-radius: 999px; padding: 6px 14px; margin: 0 20px 12px;
+    position: fixed; top: 24px; right: 24px; z-index: 600;
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--gold);
+    background: rgba(13, 6, 20, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(223, 177, 74, 0.3);
+    border-radius: 999px; padding: 8px 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.5);
   }
   .global-timer-badge.visible { display: flex; }
 
@@ -198,6 +200,27 @@
   }
   .picked-banner.visible { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
   .picked-banner b { color: var(--gold); font-style: normal; }
+
+  /* --- SESSION OVER SEQUENCE (fires when the global timer hits 0) --- */
+  .session-over-screen {
+    position: fixed; inset: 0; z-index: 9999999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    background: var(--ink); opacity: 0; pointer-events: none; padding: 20px; text-align: center;
+    transition: opacity 1.2s ease, background-color 2s ease 3.2s;
+  }
+  .session-over-screen.visible { opacity: 1; pointer-events: auto; }
+  .session-over-screen.fade-black { background: #000; }
+  .session-over-title {
+    font-family: 'Playfair Display', serif; font-style: italic; font-weight: 800;
+    font-size: clamp(28px, 8vw, 40px); color: var(--gold); line-height: 1.3;
+    text-shadow: 0 8px 30px rgba(0,0,0,0.8); transition: opacity 1.5s ease;
+  }
+  .session-over-sub {
+    font-family: 'Montserrat', sans-serif; font-size: 15px; color: var(--mist);
+    opacity: 0.85; max-width: 320px; transition: opacity 1.5s ease;
+  }
+  .session-over-screen.fade-black .session-over-title,
+  .session-over-screen.fade-black .session-over-sub { opacity: 0; }
 
   .inbox-instruction {
     padding: 14px 20px; background: rgba(223, 177, 74, 0.05);
@@ -302,6 +325,7 @@
   .aita-btn:active { transform: scale(0.97); filter: brightness(0.8); }
   .aita-btn-red { background: linear-gradient(135deg, var(--crimson), #5c081b); box-shadow: 0 6px 20px rgba(158, 20, 50, 0.3); }
   .aita-btn-green { background: linear-gradient(135deg, var(--emerald), #073823); box-shadow: 0 6px 20px rgba(18, 110, 71, 0.3); }
+  .aita-btn.my-vote { box-shadow: 0 0 0 3px var(--gold), 0 6px 20px rgba(0,0,0,0.4); }
 
   .back-link { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--dim); text-decoration: underline; margin-top: 24px; cursor: pointer; background: none; border: none; padding: 8px; }
 
@@ -349,6 +373,8 @@
     Return to Itinerary
   </a>
 
+  <div class="global-timer-badge visible" id="globalTimerBadge">⏱ <span id="globalTimerText">00:00</span></div>
+
   <!-- Opening Door Animation -->
   <div class="doors-wrapper" id="doors">
     <div class="door left"><div class="door-handle"></div></div>
@@ -374,8 +400,6 @@
           <div class="me-avatar" id="meAvatar">JS</div>
         </div>
 
-        <div class="global-timer-badge" id="globalTimerBadge">⏱ <span id="globalTimerText">00:00</span></div>
-
         <div class="host-panel" id="hostPanel">
           <div class="host-panel-label">Host tools</div>
           <div class="host-row">
@@ -387,7 +411,7 @@
             <button class="host-btn" onclick="startGlobalTimer()">Start</button>
             <button class="host-btn" style="background:transparent; border:1px solid var(--dim); color:var(--dim);" onclick="stopGlobalTimer()">Reset</button>
             <div class="host-timer-display" id="hostTimerDisplay">00:00</div>
-            <button class="eye-toggle" id="eyeToggle" onclick="toggleTimerVisibility()" title="Show/hide timer for the group">
+            <button class="eye-toggle active" id="eyeToggle" onclick="toggleTimerVisibility()" title="Show/hide timer for the group">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </button>
           </div>
@@ -452,6 +476,12 @@
 
   <!-- "Pick Someone" Banner -->
   <div id="pickedBanner" class="picked-banner"></div>
+
+  <!-- Session Over Sequence -->
+  <div id="sessionOverScreen" class="session-over-screen">
+    <div class="session-over-title">The court session<br>is now over.</div>
+    <div class="session-over-sub">We have one more important place to go to.</div>
+  </div>
 
 <script>
   const LORE_MESSAGES = [
@@ -594,7 +624,7 @@
   // --- GLOBAL TIMER (host-controlled, hideable via the eye icon) ---
   let timerInterval = null;
   let timerRemaining = 0;
-  let timerVisibleToGroup = false;
+  let timerVisibleToGroup = true;
 
   function formatTime(totalSeconds) {
     const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
@@ -605,6 +635,13 @@
   function renderTimer() {
     document.getElementById('hostTimerDisplay').textContent = formatTime(timerRemaining);
     document.getElementById('globalTimerText').textContent = formatTime(timerRemaining);
+  }
+
+  function triggerSessionOver() {
+    const screen = document.getElementById('sessionOverScreen');
+    screen.classList.add('visible');
+    setTimeout(() => screen.classList.add('fade-black'), 3200);
+    setTimeout(() => { window.location.href = 'index.html'; }, 5600);
   }
 
   function startGlobalTimer() {
@@ -618,6 +655,9 @@
         timerRemaining = 0;
         clearInterval(timerInterval);
         if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+        renderTimer();
+        triggerSessionOver();
+        return;
       }
       renderTimer();
     }, 1000);
@@ -695,13 +735,64 @@
     setTimeout(() => document.getElementById('phaseDocket').classList.add('active'), 400); 
   }
 
+  let currentStoryIndex = null;
+  let votesListenerRef = null;
+  let myLocalVote = null; // used only if Firebase is unavailable
+
+  function getVoterId() {
+    // Reuse the identity from the main event site if this browser already joined there.
+    try {
+      const guest = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
+      if (guest && guest.id) return guest.id;
+    } catch (e) {}
+    let id = localStorage.getItem('pc_voter_id');
+    if (!id) {
+      id = 'guest_' + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem('pc_voter_id', id);
+    }
+    return id;
+  }
+
+  function updateMyVoteHighlight(myVote) {
+    document.querySelectorAll('.aita-btn').forEach(b => b.classList.remove('my-vote'));
+    if (myVote === 'YTA') document.querySelector('.aita-btn-red').classList.add('my-vote');
+    if (myVote === 'NTA') document.querySelector('.aita-btn-green').classList.add('my-vote');
+  }
+
+  function detachVotesListener() {
+    if (votesListenerRef) { votesListenerRef.off(); votesListenerRef = null; }
+  }
+
+  function attachVotesListener(storyIndex) {
+    detachVotesListener();
+    myLocalVote = null;
+
+    if (!db) {
+      // No shared database available — falls back to a local-only tally for this device.
+      voteCounts = { YTA: 0, NTA: 0 };
+      updateTallyDisplay();
+      updateMyVoteHighlight(null);
+      return;
+    }
+
+    votesListenerRef = db.ref(`events/${EVENT_ID}/court/votes/${storyIndex}`);
+    votesListenerRef.on('value', snap => {
+      const val = snap.val() || {};
+      const counts = { YTA: 0, NTA: 0 };
+      Object.values(val).forEach(v => { if (counts[v] !== undefined) counts[v]++; });
+      voteCounts = counts;
+      updateTallyDisplay();
+      updateMyVoteHighlight(val[getVoterId()] || null);
+    });
+  }
+
   function openStory(index) {
     const story = DOCKET_STORIES[index];
     document.getElementById(`emailRow_${index}`).classList.add('read');
 
-    // Reset the jury tally for this story
-    voteCounts = { YTA: 0, NTA: 0 };
-    updateTallyDisplay();
+    // Each person gets exactly one vote per story, synced live for everyone.
+    currentStoryIndex = index;
+    attachVotesListener(index);
     document.getElementById('storySubject').textContent = story.subject;
     document.getElementById('storySender').textContent = `${story.name} <${story.sender}>`;
     document.getElementById('storyDate').textContent = story.date;
@@ -760,14 +851,28 @@
   }
 
   function backToDocket() {
+    detachVotesListener();
     document.getElementById('phaseStory').classList.remove('active');
     setTimeout(() => document.getElementById('phaseDocket').classList.add('active'), 400);
   }
 
   function registerVote(verdict) {
     if (navigator.vibrate) navigator.vibrate(60);
-    voteCounts[verdict]++;
-    updateTallyDisplay();
+
+    if (db && currentStoryIndex !== null) {
+      // Writing here just overwrites this person's previous vote (if any) —
+      // one vote per person, and switching sides moves it rather than adding to it.
+      db.ref(`events/${EVENT_ID}/court/votes/${currentStoryIndex}/${getVoterId()}`).set(verdict);
+      // The live listener attached in openStory() updates the tally and highlight for everyone.
+    } else {
+      // Local-only fallback when no shared database is available.
+      if (myLocalVote === verdict) return;
+      if (myLocalVote) voteCounts[myLocalVote]--;
+      voteCounts[verdict]++;
+      myLocalVote = verdict;
+      updateTallyDisplay();
+      updateMyVoteHighlight(myLocalVote);
+    }
   }
 
   function revealVerdict() {
