@@ -144,6 +144,61 @@
   }
   .me-avatar:active { transform: scale(0.9); }
 
+  /* --- HOST PANEL (unlocked by tapping the JS avatar 5x) --- */
+  .host-panel {
+    display: none; flex-direction: column; gap: 14px;
+    padding: 16px 20px; background: rgba(223, 177, 74, 0.06);
+    border-bottom: 1px solid rgba(223, 177, 74, 0.2);
+  }
+  .host-panel.unlocked { display: flex; }
+  .host-panel-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold); opacity: 0.8;
+  }
+  .host-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .host-btn {
+    background: linear-gradient(135deg, #f2d48f 0%, var(--gold) 100%);
+    color: var(--ink); border: none; border-radius: 8px;
+    padding: 10px 16px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.03em; cursor: pointer; transition: transform 0.15s ease, filter 0.15s ease;
+  }
+  .host-btn:active { transform: scale(0.96); filter: brightness(0.92); }
+  .host-timer-input {
+    width: 60px; background: rgba(0,0,0,0.4); border: 1px solid rgba(223, 177, 74, 0.3);
+    border-radius: 6px; color: var(--mist); font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; padding: 8px; text-align: center;
+  }
+  .host-timer-display {
+    font-family: 'JetBrains Mono', monospace; font-size: 20px; color: var(--mist);
+    min-width: 60px; text-align: center; font-variant-numeric: tabular-nums;
+  }
+  .eye-toggle {
+    background: none; border: none; cursor: pointer; color: var(--dim);
+    display: flex; align-items: center; justify-content: center; padding: 6px;
+    transition: color 0.15s ease;
+  }
+  .eye-toggle.active { color: var(--gold); }
+  .eye-toggle svg { width: 18px; height: 18px; }
+  .global-timer-badge {
+    display: none; align-items: baseline; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--gold);
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(223, 177, 74, 0.25);
+    border-radius: 999px; padding: 6px 14px; margin: 0 20px 12px;
+  }
+  .global-timer-badge.visible { display: flex; }
+
+  /* --- CHOSEN-PERSON BANNER --- */
+  .picked-banner {
+    position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-30px);
+    background: rgba(13, 6, 20, 0.97); border: 1px solid var(--gold); border-radius: 10px;
+    padding: 18px 28px; z-index: 999999; opacity: 0; pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    font-family: 'Playfair Display', serif; font-style: italic; font-size: 17px;
+    color: var(--mist); text-align: center; max-width: 90%; box-shadow: 0 15px 45px rgba(0,0,0,0.8);
+  }
+  .picked-banner.visible { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  .picked-banner b { color: var(--gold); font-style: normal; }
+
   .inbox-instruction {
     padding: 14px 20px; background: rgba(223, 177, 74, 0.05);
     border-bottom: 1px solid rgba(240, 230, 250, 0.05);
@@ -276,6 +331,9 @@
   .btn-ghost:active { background: rgba(255,255,255,0.1); }
   .verdict-button-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
 </style>
+<!-- Firebase (shared with the main event site — read-only lookup of attendee names) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -313,7 +371,26 @@
             <div class="email-title">People's Court Inbox</div>
             <div class="email-count">6 unread</div>
           </div>
-          <div class="me-avatar">JS</div>
+          <div class="me-avatar" id="meAvatar">JS</div>
+        </div>
+
+        <div class="global-timer-badge" id="globalTimerBadge">⏱ <span id="globalTimerText">00:00</span></div>
+
+        <div class="host-panel" id="hostPanel">
+          <div class="host-panel-label">Host tools</div>
+          <div class="host-row">
+            <button class="host-btn" onclick="pickSomeone()">Pick someone to choose</button>
+          </div>
+          <div class="host-row">
+            <input type="number" class="host-timer-input" id="timerMinutes" min="1" max="60" value="5">
+            <span style="color:var(--dim); font-size:12px;">min</span>
+            <button class="host-btn" onclick="startGlobalTimer()">Start</button>
+            <button class="host-btn" style="background:transparent; border:1px solid var(--dim); color:var(--dim);" onclick="stopGlobalTimer()">Reset</button>
+            <div class="host-timer-display" id="hostTimerDisplay">00:00</div>
+            <button class="eye-toggle" id="eyeToggle" onclick="toggleTimerVisibility()" title="Show/hide timer for the group">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
         </div>
         
         <div class="inbox-instruction">We choose one submission together and review it.</div>
@@ -372,6 +449,9 @@
 
   <!-- Translation Toast Container -->
   <div id="translationToast" class="translation-toast"></div>
+
+  <!-- "Pick Someone" Banner -->
+  <div id="pickedBanner" class="picked-banner"></div>
 
 <script>
   const LORE_MESSAGES = [
@@ -443,6 +523,116 @@
   function updateTallyDisplay() {
     document.getElementById('ytaCount').textContent = voteCounts.YTA;
     document.getElementById('ntaCount').textContent = voteCounts.NTA;
+  }
+
+  // --- FIREBASE (shared, read-only lookup of attendee names) ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyDv47HEwF9APQLLoLdJgHwdLHzoYfTawyQ",
+    authDomain: "relationships-d8119.firebaseapp.com",
+    databaseURL: "https://relationships-d8119-default-rtdb.firebaseio.com",
+    projectId: "relationships-d8119",
+    storageBucket: "relationships-d8119.firebasestorage.app"
+  };
+  let db = null;
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+  } catch (e) { console.warn('Firebase init failed, name picker will be empty.', e); }
+
+  const EVENT_ID = "default";
+
+  async function getAttendeeNames() {
+    if (!db) return [];
+    try {
+      const snap = await db.ref(`events/${EVENT_ID}/attendees`).once('value');
+      const val = snap.val() || {};
+      return Object.values(val)
+        .map(a => a && a.name)
+        .filter(Boolean);
+    } catch (e) {
+      console.warn('Could not read attendee names.', e);
+      return [];
+    }
+  }
+
+  // --- SECRET HOST UNLOCK: tap the "JS" avatar 5x within 2s ---
+  let avatarTapCount = 0;
+  let avatarTapTimer = null;
+  document.addEventListener('DOMContentLoaded', () => {
+    const avatar = document.getElementById('meAvatar');
+    if (!avatar) return;
+    avatar.addEventListener('click', () => {
+      avatarTapCount++;
+      clearTimeout(avatarTapTimer);
+      avatarTapTimer = setTimeout(() => { avatarTapCount = 0; }, 2000);
+      if (avatarTapCount >= 5) {
+        avatarTapCount = 0;
+        document.getElementById('hostPanel').classList.toggle('unlocked');
+      }
+    });
+  });
+
+  function showPickedBanner(html) {
+    const banner = document.getElementById('pickedBanner');
+    banner.innerHTML = html;
+    banner.classList.add('visible');
+    clearTimeout(banner._hideTimer);
+    banner._hideTimer = setTimeout(() => banner.classList.remove('visible'), 6000);
+  }
+
+  async function pickSomeone() {
+    const names = await getAttendeeNames();
+    if (!names.length) {
+      showPickedBanner("No names found yet — make sure everyone has joined the event first.");
+      return;
+    }
+    const chosen = names[Math.floor(Math.random() * names.length)];
+    if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+    showPickedBanner(`<b>${chosen}</b>, please choose one story and read it for the rest of us.`);
+  }
+
+  // --- GLOBAL TIMER (host-controlled, hideable via the eye icon) ---
+  let timerInterval = null;
+  let timerRemaining = 0;
+  let timerVisibleToGroup = false;
+
+  function formatTime(totalSeconds) {
+    const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const s = Math.floor(totalSeconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function renderTimer() {
+    document.getElementById('hostTimerDisplay').textContent = formatTime(timerRemaining);
+    document.getElementById('globalTimerText').textContent = formatTime(timerRemaining);
+  }
+
+  function startGlobalTimer() {
+    const minutes = parseFloat(document.getElementById('timerMinutes').value) || 5;
+    timerRemaining = Math.round(minutes * 60);
+    renderTimer();
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timerRemaining--;
+      if (timerRemaining <= 0) {
+        timerRemaining = 0;
+        clearInterval(timerInterval);
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+      }
+      renderTimer();
+    }, 1000);
+  }
+
+  function stopGlobalTimer() {
+    clearInterval(timerInterval);
+    timerRemaining = 0;
+    renderTimer();
+  }
+
+  function toggleTimerVisibility() {
+    timerVisibleToGroup = !timerVisibleToGroup;
+    document.getElementById('eyeToggle').classList.toggle('active', timerVisibleToGroup);
+    document.getElementById('globalTimerBadge').classList.toggle('visible', timerVisibleToGroup);
   }
 
   window.addEventListener('DOMContentLoaded', () => {
