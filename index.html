@@ -3164,10 +3164,10 @@ body[data-phase="closer"] .sky {
 </div>
 
 <!-- Time's Up Screen -->
-<div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.3s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
-  <div style="font-family:'Cormorant Garamond', serif; font-size:46px; font-style:italic; color:var(--gold); text-align: center; line-height: 1.1; text-shadow: 0 0 30px rgba(242,193,78,0.3);">
-    Time's up.<br>
-    <span style="color:var(--mist); font-family:'Jost', sans-serif; font-size:22px; font-style:normal; display:block; margin-top:16px;">Please come to the table.</span>
+<div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.8s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+  <div style="font-family:'Cormorant Garamond', serif; font-size:38px; font-style:italic; color:var(--gold); text-align: center; line-height: 1.2; text-shadow: 0 0 30px rgba(242,193,78,0.3); padding: 0 20px;">
+    Thank you for sharing your thoughts.<br>
+    <span style="color:var(--mist); font-family:'Jost', sans-serif; font-size:20px; font-style:normal; display:block; margin-top:16px;">Now, please come to the table. We've got somewhere else to be.</span>
   </div>
 </div>
 
@@ -4546,7 +4546,27 @@ function listenHubs() {
         if (!hubsPrevState[key] && hubs[key]) {
           const options = HUB_UNLOCK_MESSAGES[key] || [`${HUB_SECTION_NAMES[key]} is now open.`];
           const body = options[Math.floor(Math.random() * options.length)];
-          showSashaToast({ title: 'Sasha', body, vibrateMs: 50 });
+
+          showSashaToast({ 
+            title: 'Sasha', 
+            body: body, 
+            vibrateMs: 50, 
+            actionLabel: 'Enter location',
+            onAction: () => {
+              // Routes the guest perfectly to the correct spot
+              if (key === 'roulette') {
+                setLoungeState('state-roulette');
+              } else if (key === 'garden') {
+                setLoungeState('state-garden');
+                const bed = document.getElementById('gardenBed');
+                if (bed && !bed.querySelector('.flower-plant')) buildGarden();
+              } else if (key === 'aita') {
+                window.location.href = 'peoples-court.html';
+              } else if (key === 'closer') {
+                window.location.href = 'the-post-office.html';
+              }
+            }
+          });
         }
       });
     }
@@ -5327,11 +5347,12 @@ function listenTimer() {
         // Auto transition back to lounge after 6 seconds of holding the message
         if (timeLeft < -6000) {
            clearInterval(timerInterval);
+
+           // Switch to the itinerary UNDERNEATH the overlay right before it fades out
+           setLoungeState('state-gathering');
+
            overlayEl.style.opacity = '0';
            overlayEl.style.pointerEvents = 'none';
-           if (document.getElementById('state-garden').classList.contains('active')) {
-             setLoungeState('state-gathering');
-           }
         }
       }
     }, 100);
@@ -5477,12 +5498,19 @@ function listenMessages(){
 
 // Shared little "text from Sasha" popup — used for host messages, locked-card
 // nudges, and unlock announcements so they all look/feel the same.
-function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5000 } = {}){
+function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5000, actionLabel, onAction } = {}){
   const stack = document.getElementById('toastStack');
   if(!stack) return;
 
   const el = document.createElement('div');
   el.className = 'imessage-toast';
+
+  let actionHtml = '';
+  if (actionLabel) {
+    holdMs = 9999999; // Keep it on screen until they click it
+    actionHtml = `<div style="margin-top: 10px; color: var(--gold); font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; display: flex; align-items: center; gap: 4px;">↳ ${escapeHtml(actionLabel)}</div>`;
+  }
+
   el.innerHTML = `
     <div class="toast-top">
       <img class="toast-icon" src="sasha.png" alt="">
@@ -5490,7 +5518,7 @@ function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5
       <span class="toast-time">now</span>
     </div>
     <div class="toast-title">${escapeHtml(title)}</div>
-    <div class="toast-body">${escapeHtml(body)}</div>
+    <div class="toast-body">${escapeHtml(body)}${actionHtml}</div>
   `;
   stack.appendChild(el);
   requestAnimationFrame(() => el.classList.add('show'));
@@ -5503,7 +5531,12 @@ function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5
     el.classList.remove('show');
     setTimeout(() => el.remove(), 400);
   };
-  el.addEventListener('click', dismiss);
+
+  el.addEventListener('click', () => {
+    if (onAction) onAction();
+    dismiss();
+  });
+
   setTimeout(dismiss, holdMs);
   return { dismiss };
 }
@@ -5923,7 +5956,9 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
     // Update the grammar if it is a trio (odd number of guests)
     const eyebrow = document.getElementById('partnerRevealEyebrow');
     if (eyebrow) {
-      eyebrow.textContent = myPartners.length > 1 ? "Your partners are" : "Your partner is";
+      eyebrow.textContent = myPartners.length > 1 
+        ? 'In the "Midnight Garden", your partners are you knoww...' 
+        : 'In the "Midnight Garden", your partner is you knoww...';
     }
 
     // Simple: just the partner's name(s), nothing else
