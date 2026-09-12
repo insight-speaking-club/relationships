@@ -175,6 +175,7 @@
   .star-icon { color: var(--dim); opacity: 0.4; cursor: pointer; transition: all 0.2s ease; }
   .star-icon:active { transform: scale(1.2); }
   .star-icon.starred { opacity: 1; color: var(--gold); filter: drop-shadow(0 0 5px var(--gold-glow)); fill: var(--gold); }
+  .attachment-clip { opacity: 0.5; width: 14px; height: 14px; }
 
   /* --- PHASE 3: OPEN EMAIL & VOTING --- */
   .open-email-header { padding: 24px; border-bottom: 1px solid rgba(223, 177, 74, 0.15); background: rgba(0,0,0,0.4); }
@@ -182,17 +183,47 @@
   .oe-meta-grid { display: grid; grid-template-columns: 50px 1fr; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mist); }
   .meta-label { color: var(--dim); }
 
-  /* Burning Fuse Timer */
-  .fuse-container { width: 100%; height: 4px; background: rgba(255,255,255,0.05); position: relative; }
-  .fuse-bar { height: 100%; width: 100%; background: var(--gold); transform-origin: left; box-shadow: 0 0 10px var(--gold-glow); position: relative; }
-  .fuse-bar::after { 
-    content: ''; position: absolute; right: 0; top: -3px; width: 10px; height: 10px; 
-    background: #fff; border-radius: 50%; box-shadow: 0 0 15px 5px var(--gold-glow);
-  }
-  .fuse-bar.critical { background: var(--crimson); box-shadow: 0 0 15px var(--crimson); }
-  .fuse-bar.critical::after { box-shadow: 0 0 20px 8px var(--crimson); background: #ffb3b3; }
+  .open-email-body { padding: 32px 24px; font-family: 'Playfair Display', serif; font-size: 19px; font-style: italic; line-height: 1.6; color: rgba(240, 230, 250, 0.95); white-space: pre-wrap; }
+  .story-attachment-img { width: 100%; border-radius: 8px; margin-top: 24px; border: 1px solid rgba(223, 177, 74, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); object-fit: contain; background: #000; }
 
-  .open-email-body { padding: 32px 24px; font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; line-height: 1.6; color: rgba(240, 230, 250, 0.95); }
+  /* --- UKRAINIAN TRANSLATION TOAST (NEW) --- */
+  .hint-word {
+    border-bottom: 1px dashed rgba(223, 177, 74, 0.6);
+    cursor: help;
+    color: var(--gold);
+    transition: background 0.2s ease;
+  }
+  .hint-word.active-word {
+    background: rgba(223, 177, 74, 0.2);
+    border-radius: 2px;
+  }
+
+  .translation-toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(13, 6, 20, 0.95);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    max-width: 90%;
+    width: max-content;
+  }
+  .translation-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 
   .voting-dock { padding: 24px; background: rgba(0,0,0,0.5); border-top: 1px solid rgba(223, 177, 74, 0.15); }
   .aita-buttons { display: flex; flex-direction: column; gap: 14px; width: 100%; margin-top: 16px; }
@@ -230,21 +261,6 @@
   }
   .btn-ghost:active { background: rgba(255,255,255,0.1); }
   .verdict-button-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
-
-  /* --- GLOBAL TIMER --- */
-  .court-timer-wrap {
-    position: fixed; top: 16px; right: 16px; z-index: 9999; display: flex; align-items: center; gap: 8px;
-    background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(223, 177, 74, 0.3); border-radius: 999px; padding: 6px 14px 6px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    transition: all 0.3s ease;
-  }
-  .court-timer-wrap.is-hidden { border-color: rgba(240, 230, 250, 0.1); padding-right: 10px; }
-  .timer-toggle-btn { background: none; border: none; color: var(--dim); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; }
-  .court-timer-text { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--mist); transition: opacity 0.3s ease, width 0.3s ease; opacity: 1; width: 45px; text-align: right; overflow: hidden; }
-  .court-timer-wrap.is-hidden .court-timer-text { opacity: 0; width: 0; margin-left: -8px; }
-  @keyframes timerPulse { 0%, 100% { box-shadow: 0 0 0 rgba(158, 20, 50, 0); } 50% { box-shadow: 0 0 20px rgba(158, 20, 50, 0.6); } }
-  .court-timer-wrap.is-warning { border-color: var(--crimson); animation: timerPulse 2s infinite; }
-  .court-timer-wrap.is-warning .court-timer-text { color: #ffb3b3; }
 </style>
 </head>
 <body>
@@ -303,12 +319,13 @@
             <div class="meta-label">Date:</div><div id="storyDate"></div>
           </div>
         </div>
-        
-        <div class="fuse-container">
-          <div id="caseTimerBar" class="fuse-bar"></div>
-        </div>
 
         <div class="open-email-body" id="storyDisplay"></div>
+        
+        <!-- Render attachment if one exists -->
+        <div id="storyAttachmentContainer" style="padding: 0 24px 24px; display: none;">
+          <img id="storyAttachmentImg" class="story-attachment-img" src="" alt="Case Attachment">
+        </div>
 
         <div class="voting-dock">
           <p style="text-align: center; color: var(--dim); font-size: 14px; margin-bottom: 12px;">After we review this story, the court proceeds to vote and discuss to deliver the final verdict.</p>
@@ -333,64 +350,10 @@
     </div>
   </div>
 
-  <!-- Global Timer -->
-  <div id="courtTimerWrapper" class="court-timer-wrap" style="display: none;">
-    <button id="btnToggleTimer" class="timer-toggle-btn">
-      <svg id="iconEyeOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c3-6 7-8 10-8s7 2 10 8-7 8-10 8-7-2-10-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-      <svg id="iconEyeClosed" style="display: none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-    </button>
-    <div id="globalCourtTimerText" class="court-timer-text">00:00</div>
-  </div>
-
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <!-- Translation Toast Container -->
+  <div id="translationToast" class="translation-toast"></div>
 
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDv47HEwF9APQLLoLdJgHwdLHzoYfTawyQ",
-    authDomain: "relationships-d8119.firebaseapp.com",
-    databaseURL: "https://relationships-d8119-default-rtdb.firebaseio.com",
-    projectId: "relationships-d8119",
-    storageBucket: "relationships-d8119.firebasestorage.app",
-    messagingSenderId: "852389788989",
-    appId: "1:852389788989:web:6c79282e08c665b54dd954"
-  };
-  const EVENT_ID = "default";
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  const gavelAudio = document.getElementById('gavelSound');
-
-  const timerWrapper = document.getElementById('courtTimerWrapper');
-  const btnToggleTimer = document.getElementById('btnToggleTimer');
-  let isTimerHidden = false;
-  btnToggleTimer.addEventListener('click', () => {
-    isTimerHidden = !isTimerHidden;
-    timerWrapper.classList.toggle('is-hidden', isTimerHidden);
-    document.getElementById('iconEyeOpen').style.display = isTimerHidden ? 'none' : 'block';
-    document.getElementById('iconEyeClosed').style.display = isTimerHidden ? 'block' : 'none';
-  });
-
-  let globalTimerInterval;
-  db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).on('value', snap => {
-    const endTime = snap.val();
-    clearInterval(globalTimerInterval);
-    if (!endTime) { timerWrapper.style.display = 'none'; return; }
-    timerWrapper.style.display = 'flex';
-    globalTimerInterval = setInterval(() => {
-      const timeLeft = endTime - Date.now();
-      if (timeLeft > 0) {
-        timerWrapper.classList.toggle('is-warning', timeLeft <= 180000);
-        document.getElementById('globalCourtTimerText').textContent = `${Math.floor(timeLeft / 60000)}:${Math.floor((timeLeft % 60000) / 1000).toString().padStart(2, '0')}`;
-      } else {
-        clearInterval(globalTimerInterval);
-        document.getElementById('globalCourtTimerText').textContent = "0:00";
-        db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).set(null);
-        window.location.href = 'index.html';
-      }
-    }, 100);
-  });
-
   const LORE_MESSAGES = [
     "Welcome to the People's Court, loves.",
     "We've been judging strangers from a renowned Parisian courtroom since 1986. We once received letters by carrier pigeon; now, they simply arrive by email. Our generation has inherited the gavel.",
@@ -398,46 +361,87 @@
   ];
 
   const DOCKET_STORIES = [
-    { sender: "lucie_radine_99@gmail.com", name: "Lucie Dubois", time: "10:15 AM", date: "Today, 10:15 AM", subject: "AITA for making my friends pay at a 'free' dinner?", text: "I won a $500 restaurant voucher online. I invited three friends and said dinner was on me. I assumed we'd eat normally, but they treated it like a blank check, ordering wagyu, double sides, and top-shelf cocktails. The bill came to $830. I put the $500 voucher down and told them we needed to split the remaining $330. They got furious, saying I invited them to a 'free dinner' and I should have warned them there was a budget." },
-    { sender: "espionne_bilingue@orange.fr", name: "Camille Laurent", time: "09:42 AM", date: "Today, 09:42 AM", subject: "AITA for hiding that I speak his language?", text: "I've been dating my boyfriend for 6 months. His family speaks Spanish. I'm actually fluent, but I never brought it up because I'm shy about my accent. At dinner, his mom made a passive-aggressive comment in Spanish about my job being a dead end. I instinctively replied in Spanish to defend myself. The table went dead silent. My boyfriend is furious and says I 'spied' on them for half a year just to trap them." },
-    { sender: "elodie_cherche_cdi@laposte.net", name: "Élodie Martin", time: "Yesterday", date: "Yesterday, 19:30", subject: "AITA for taking a job interview at a wedding?", text: "I've been unemployed and struggling financially for 8 months. I was the Maid of Honor at my best friend's wedding. Right as dinner started, a recruiter from my dream company called. She said the hiring manager was jumping on a flight and needed a 10-minute chat right now, or they were moving on. I stepped into the hallway to take it. The bride realized I was missing during a group toast and says I selfishly ruined her moment." },
-    { sender: "survivant.du.teletravail@free.fr", name: "Antoine Rousseau", time: "Yesterday", date: "Yesterday, 14:10", subject: "AITA for locking my roommate's cat in the bathroom?", text: "My roommate got a cat that constantly screams and knocks over my laptop while I work from home. I had the most important client presentation of my career, and the cat wouldn't stop attacking my camera. Desperate, I locked it in our small, windowless bathroom for two hours. I didn't put a litter box in there because I didn't want the smell. My roommate came home, found the cat stressed and crying in the dark, and is now calling me abusive." },
-    { sender: "julien_sans_husky@hotmail.fr", name: "Julien Leroy", time: "Tuesday", date: "Tuesday, 11:05", subject: "AITA for refusing to keep a surprise puppy?", text: "My partner and I agreed to adopt a dog, but I specifically said I only wanted a calm, older rescue dog. I went out of town for a weekend, and my partner surprised me by buying a 10-week-old Husky puppy from a breeder. I am exhausted just looking at it, and I told my partner they have to return or rehome it because I did not agree to this lifestyle change. They are crying and saying I'm heartless." },
-    { sender: "garde_robe_fermee@yahoo.fr", name: "Chloé Dupont", time: "Monday", date: "Monday, 08:20", subject: "AITA for refusing to lend my sister a backup wedding dress?", text: "My sister's wedding dress was ruined by a spilled coffee on the morning of her wedding. Panicking, she begged to wear my white silk designer gown as an emergency backup. I said no. It cost me €2,000, and she has a history of ruining clothes. She cried and pleaded, but I locked it in my car. She ended up walking down the aisle in a mismatched bridesmaid dress. My family says I ruined her wedding over a piece of fabric." }
+    { 
+      sender: "dyke_drama_22@gmail.com", 
+      name: "Samira K.", 
+      time: "10:15 AM", 
+      date: "Today, 10:15 AM", 
+      subject: "AITA for refusing to put my gf of 4 months on my rent-controlled lease?", 
+      text: "I (28F) have an insanely cheap, <span class='hint-word' data-ukr='з фіксованою орендною платою'>rent-controlled</span> apartment in the city. I've been dating my gf 'Alex' (26F) for about 4 months. Things moved fast (classic <span class='hint-word' data-ukr='стереотип про швидкий переїзд лесбійок'>U-Haul trope</span>, I know), and she practically lives here anyway. \n\nLast week, Alex lost her service industry job. She was crying and stressed about her upcoming rent. I offered to let her officially move in, but I explicitly said I am NOT adding her to the actual lease document because if we break up, my landlord would use it as an excuse to hike the rent up to market rate and I'd lose the place I've had for 5 years.\n\nShe got furious, saying that I am treating her like a 'temporary guest' in our relationship and that true community care means sharing resources without '<span class='hint-word' data-ukr='капіталістичне накопичення'>capitalist hoarding</span>.' She's currently ignoring my texts and staying on our mutual friend's couch. Her friends are calling me a toxic landlord-sympathizer. AITA?",
+      attachment: "lease-text.png"
+    },
+    { 
+      sender: "polyscheduling_hell@protonmail.com", 
+      name: "Marcus T.", 
+      time: "09:42 AM", 
+      date: "Today, 09:42 AM", 
+      subject: "AITA for cancelling on my metamour's birthday for my primary?", 
+      text: "I practice hierarchical polyamory. My primary partner, 'Leo', has severe anxiety. I also have a newer partner, 'Ben', who I've been seeing for 8 months. \n\nBen's husband (my <span class='hint-word' data-ukr='метамур (партнер твого партнера)'>metamour</span>) was throwing a huge 30th birthday dinner for Ben on Saturday. It’s been on the Google Calendar for literally two months. On Friday night, Leo got incredibly overwhelmed by a work situation and had a massive panic attack. He asked me to stay in and <span class='hint-word' data-ukr='спільно заспокоїтися / врегулювати емоції'>co-regulate</span> with him on Saturday instead of going out.\n\nI texted Ben Saturday morning to say I couldn't make the dinner. Ben blew up, saying I constantly use Leo's mental health as an excuse to deprioritize our relationship and that I embarrassed him in front of his friends. Leo thinks Ben is being deeply <span class='hint-word' data-ukr='дискримінаційний до людей з ментальними проблемами'>ableist</span>. AITA?",
+      attachment: "calendar-screenshot.png"
+    },
+    { 
+      sender: "queerspaces_throwaway@yahoo.com", 
+      name: "Elena V.", 
+      time: "Yesterday", 
+      date: "Yesterday, 19:30", 
+      subject: "AITA for bringing my cishet boyfriend to a strictly T4T/Queer DIY show?", 
+      text: "I'm a bi cis woman. I recently started dating a straight cis guy, 'Dave'. Dave is super supportive, goes to pride, completely gets it. \n\nMy local scene was hosting a <span class='hint-word' data-ukr='підпільний концерт'>DIY basement show</span>. The flyer explicitly said 'Prioritizing Queer, Trans, and QTPOC bodies. No cops, no <span class='hint-word' data-ukr='ТЕРФ (трансфобні феміністки)'>terfs</span>.' I brought Dave because I wanted to show him my community. We paid the cover and stood in the back. \n\nMidway through, the lead singer (someone I know casually) stopped the set, pointed right at Dave, and said 'Hey frat boy, who are you here with?' I stepped in and said he was with me. The singer said 'This space isn't a zoo for straight people to gawk at us' and asked him to leave. \n\nI was so humiliated that I left with him. Now people are texting me saying I violated the sanctity of a safe space. AITA for thinking I can bring my partner to my own community events?",
+      attachment: "gig-poster.jpg"
+    },
+    { 
+      sender: "drag_roast_survivor@icloud.com", 
+      name: "Julian B.", 
+      time: "Yesterday", 
+      date: "Yesterday, 14:10", 
+      subject: "AITA for walking out of my partner's ex's drag show?", 
+      text: "My partner 'Chris' has an ex who is a very prominent local drag queen. They broke up on okay terms but it’s always been slightly awkward. Chris begged me to go to her new cabaret show to 'support local art.'\n\nWe sat in the front row. The queen zeroed in on me instantly. She spent a solid 10 minutes roasting my outfit, my job, and jokingly asked Chris 'Is this really the downgrade you left me for?' The crowd was howling. I know drag is all about <span class='hint-word' data-ukr='висміювання та сарказм'>reading and shade</span>, but it felt incredibly pointed and personal. \n\nChris was laughing along and didn't defend me. I got up, paid my tab, and took an Uber home in the middle of her set. Chris came home screaming that I lack a sense of humor and completely embarrassed them in front of the entire local queer scene by throwing a 'straight-guy temper tantrum.' AITA?",
+      attachment: "drag-flyer.jpg"
+    },
+    { 
+      sender: "firstclass_traitor@gmail.com", 
+      name: "Tariq H.", 
+      time: "Tuesday", 
+      date: "Tuesday, 11:05", 
+      subject: "AITA for secretly upgrading my flight on a chosen family trip?", 
+      text: "My queer friend group (6 of us) planned a trip to Mexico. We all have wildly different incomes. A few are struggling freelancers, and I work a boring corporate tech job. We agreed to book the absolute cheapest economy flights so we could all travel together on the same plane.\n\nTwo days before the flight, I logged into the airline portal. There was an option to use my personal <span class='hint-word' data-ukr='милі постійного клієнта'>frequent flyer miles</span> to upgrade my specific seat to First Class for basically nothing. I did it because I have terrible back pain.\n\nWhen we got to the gate, the group realized my boarding pass said Group 1. I tried to explain I used my own points and it didn't cost them anything. My best friend called me a classist traitor and said it ruined the 'solidarity' of the trip because they were all crammed in the back while I was drinking free champagne. Half the group refused to talk to me for the first two days of the vacation. AITA?",
+      attachment: "boarding-pass.jpg"
+    },
+    { 
+      sender: "debt_gofundme@hotmail.com", 
+      name: "Riley M.", 
+      time: "Monday", 
+      date: "Monday, 08:20", 
+      subject: "AITA for refusing to donate to a friend's top surgery fund over an old debt?", 
+      text: "Three years ago, my friend 'Ash' started a <span class='hint-word' data-ukr='колектив авторів зінів (незалежних журналів)'>zine collective</span>. I lent them $1,200 to cover printing costs. The zine folded after two issues. Ash never paid me back and honestly just kind of acted like the debt didn't exist because 'art is a risk.' I let it go to keep the peace.\n\nNow, Ash is raising money for top surgery. They posted a GoFundMe and tagged literally everyone in our circle, including me, pushing people to donate and share. I didn't donate. \n\nAsh confronted me at a party, publicly asking why I wasn't supporting their <span class='hint-word' data-ukr='гендерно-підтверджуюча терапія'>gender-affirming care</span> when I make a decent salary. I snapped and said 'I essentially gave you a $1,200 donation three years ago, I think I've contributed enough to your journey.' The room went dead silent. Now half the friend group says I am holding gender-affirming care hostage over a petty financial grudge. AITA?",
+      attachment: "gofundme-screenshot.jpg"
+    }
   ];
 
-  window.addEventListener('DOMContentLoaded', () => {
-    let avatarClickCount = 0, avatarClickTimeout;
-    const jsAvatar = document.querySelector('.me-avatar');
-    if (jsAvatar) {
-      jsAvatar.addEventListener('click', () => {
-        avatarClickCount++;
-        clearTimeout(avatarClickTimeout);
-        avatarClickTimeout = setTimeout(() => avatarClickCount = 0, 2000); 
-        if (avatarClickCount >= 5) {
-          avatarClickCount = 0;
-          const mins = prompt("Host Override: Set global timer (minutes):", "15");
-          if (mins && !isNaN(mins)) db.ref(`events/${EVENT_ID}/peoplesCourtTimer`).set(Date.now() + parseFloat(mins) * 60000);
-        }
-      });
-    }
+  const gavelAudio = document.getElementById('gavelSound');
 
+  window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => document.getElementById('doors').classList.add('open'), 700);
     setTimeout(() => document.getElementById('doors').style.display = 'none', 4200);
     setTimeout(() => { document.getElementById('phaseIntro').classList.add('active'); playLoreThread(); }, 1400);
 
     const AVATAR_COLORS = ['#38030f', '#2a113a', '#5c3a11', '#1a0b1d', '#5c081b', '#073823'];
     const list = document.getElementById('emailList');
+    
     DOCKET_STORIES.forEach((story, index) => {
+      // Strip HTML tags for the inbox preview snippet
+      const plainSnippet = story.text.replace(/<[^>]*>?/gm, '');
       const initials = story.name.split(' ').slice(0, 2).map(w => w[0]).join('');
       const row = document.createElement('div');
       row.className = 'email-row';
       row.id = `emailRow_${index}`;
+      
+      const attachIcon = story.attachment ? `<svg class="attachment-clip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>` : '';
+
       row.innerHTML = `
         <div class="email-avatar" style="background:${AVATAR_COLORS[index % AVATAR_COLORS.length]}">${initials}</div>
         <div class="email-content">
           <div class="email-subject">${story.subject}</div>
-          <div class="email-snippet">${story.text}</div>
+          <div class="email-snippet">${attachIcon} ${plainSnippet}</div>
         </div>
         <div class="email-meta">
           <div class="email-time">${story.time}</div>
@@ -475,41 +479,67 @@
     setTimeout(() => document.getElementById('phaseDocket').classList.add('active'), 400); 
   }
 
-  let caseTimerInterval;
   function openStory(index) {
     const story = DOCKET_STORIES[index];
     document.getElementById(`emailRow_${index}`).classList.add('read');
     document.getElementById('storySubject').textContent = story.subject;
     document.getElementById('storySender').textContent = `${story.name} <${story.sender}>`;
     document.getElementById('storyDate').textContent = story.date;
-    document.getElementById('storyDisplay').textContent = story.text;
+    
+    // Inject HTML text so tooltips render
+    document.getElementById('storyDisplay').innerHTML = story.text;
+
+    // --- TOAST LOGIC ---
+    const hints = document.querySelectorAll('.hint-word');
+    const toast = document.getElementById('translationToast');
+    let toastTimeout;
+
+    hints.forEach(hint => {
+      hint.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        // Highlight tapped word
+        hints.forEach(h => h.classList.remove('active-word'));
+        this.classList.add('active-word');
+
+        // Show Toast
+        toast.textContent = this.getAttribute('data-ukr');
+        toast.classList.add('visible');
+
+        // Auto-hide after 4 seconds
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toast.classList.remove('visible');
+          this.classList.remove('active-word');
+        }, 4000);
+      });
+    });
+
+    // Dismiss toast when tapping anywhere else on the screen
+    document.addEventListener('click', () => {
+      toast.classList.remove('visible');
+      hints.forEach(h => h.classList.remove('active-word'));
+    });
+    // -------------------
+
+    const attachmentContainer = document.getElementById('storyAttachmentContainer');
+    const attachmentImg = document.getElementById('storyAttachmentImg');
+    
+    if (story.attachment) {
+      attachmentImg.src = story.attachment;
+      attachmentContainer.style.display = 'block';
+    } else {
+      attachmentImg.src = '';
+      attachmentContainer.style.display = 'none';
+    }
 
     document.getElementById('phaseDocket').classList.remove('active');
     setTimeout(() => {
       document.getElementById('phaseStory').classList.add('active');
-      startCaseTimer(60); 
     }, 400);
   }
 
-  function startCaseTimer(seconds) {
-    clearInterval(caseTimerInterval);
-    const bar = document.getElementById('caseTimerBar');
-    let timeLeft = seconds;
-    bar.style.transition = 'none'; bar.style.transform = 'scaleX(1)'; bar.classList.remove('critical');
-
-    setTimeout(() => {
-      bar.style.transition = 'transform 1s linear';
-      caseTimerInterval = setInterval(() => {
-        timeLeft--;
-        bar.style.transform = `scaleX(${Math.max(0, timeLeft / seconds)})`;
-        if (timeLeft <= 10) bar.classList.add('critical');
-        if (timeLeft <= 0) clearInterval(caseTimerInterval);
-      }, 1000);
-    }, 50);
-  }
-
   function backToDocket() {
-    clearInterval(caseTimerInterval);
     document.getElementById('phaseStory').classList.remove('active');
     setTimeout(() => document.getElementById('phaseDocket').classList.add('active'), 400);
   }
