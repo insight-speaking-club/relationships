@@ -4498,26 +4498,10 @@ const HUB_SECTION_NAMES = {
   closer: 'The Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
-  roulette: [
-    "Darling, The Driveway is open. Gather 'round and let's get you paired up 💋",
-    "The doors are open, mon chéri. Time to see who you're riding with, tap The Driveway 🤭",
-    "The Driveway's unlocked! Tap in, chop chop darling, it's time to match up 🐇"
-  ],
-  garden: [
-    "Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
-    "Simply blooming out here. Tap the Garden, partner in hand, chop chop 🤭",
-    "The Garden's unlocked, love. Tap in, romance waits for no one, especially not me 💋"
-  ],
-  aita: [
-    "People's Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
-    "Court's open! Tap People's Court™ and serve your verdict with the drama it deserves 🤭",
-    "We are PARKED, darling. Tap in, it's time to decide who's simply wrong here 🐇"
-  ],
-  closer: [
-    "The Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌",
-    "Doors open at the Post Office. Pick up a pen and let it reveal itself 🤭",
-    "The Post Office is calling. Go write something... you'll understand once you start 💋"
-  ]
+  roulette: "The Driveway's unlocked! Tap in, chop chop darling, it's time to match up 🐇",
+  garden: "Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
+  aita: "People's Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
+  closer: "The Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌"
 };
 let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
 let previousActiveHub = null; // tracks hubs.current so we can fire a synchronized haptic pulse on room changes
@@ -4544,8 +4528,7 @@ function listenHubs() {
     if (hubsPrevState) {
       Object.keys(HUB_SECTION_NAMES).forEach(key => {
         if (!hubsPrevState[key] && hubs[key]) {
-          const options = HUB_UNLOCK_MESSAGES[key] || [`${HUB_SECTION_NAMES[key]} is now open.`];
-          const body = options[Math.floor(Math.random() * options.length)];
+          const body = HUB_UNLOCK_MESSAGES[key] || `${HUB_SECTION_NAMES[key]} is now open.`;
 
           showSashaToast({ 
             title: 'Sasha', 
