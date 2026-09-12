@@ -632,7 +632,6 @@
   // --- GLOBAL TIMER (synced for everyone via Firebase; the eye only hides it on *your* screen) ---
   let timerEndTime = null;      // synced end timestamp, shared by everyone
   let localTickInterval = null;
-  let sessionOverTriggered = false;
   let timerRef = null;
 
   function formatTime(totalSeconds) {
@@ -654,6 +653,15 @@
     setTimeout(() => { window.location.href = 'index.html'; }, 5600);
   }
 
+  function hasHandledTimerEnd(endTime) {
+    try { return localStorage.getItem('pc_last_handled_timer_end') === String(endTime); }
+    catch (e) { return false; }
+  }
+  function markTimerEndHandled(endTime) {
+    try { localStorage.setItem('pc_last_handled_timer_end', String(endTime)); }
+    catch (e) {}
+  }
+
   function tickTimer() {
     if (timerEndTime === null) return;
     const remaining = Math.max(0, Math.round((timerEndTime - Date.now()) / 1000));
@@ -661,10 +669,20 @@
     if (remaining <= 0) {
       clearInterval(localTickInterval);
       localTickInterval = null;
-      if (!sessionOverTriggered) {
-        sessionOverTriggered = true;
+      const endTimeThatJustFired = timerEndTime;
+      timerEndTime = null; // stop this tick loop from firing again immediately
+
+      // Persisted across reloads — so even if the Firebase delete below fails
+      // (e.g. security rules don't allow writing to this new path), this exact
+      // expired timer will never trigger the sequence again on this device.
+      if (!hasHandledTimerEnd(endTimeThatJustFired)) {
+        markTimerEndHandled(endTimeThatJustFired);
         if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
         triggerSessionOver();
+        if (db) {
+          db.ref(`events/${EVENT_ID}/court/timer`).remove()
+            .catch(err => console.error('[People\'s Court] Could not clear the shared timer — check that your Firebase rules allow writes under events/*/court/. Error:', err));
+        }
       }
     }
   }
@@ -681,7 +699,6 @@
     timerRef = db.ref(`events/${EVENT_ID}/court/timer`);
     timerRef.on('value', snap => {
       const val = snap.val();
-      sessionOverTriggered = false;
       if (val && val.endTime) {
         timerEndTime = val.endTime;
         startLocalTick();
