@@ -175,19 +175,26 @@
   .eye-toggle {
     background: none; border: none; cursor: pointer; color: var(--dim);
     display: flex; align-items: center; justify-content: center; padding: 6px;
-    transition: color 0.15s ease;
   }
-  .eye-toggle.active { color: var(--gold); }
   .eye-toggle svg { width: 18px; height: 18px; }
   .global-timer-badge {
-    display: none; align-items: baseline; gap: 6px;
+    display: none; align-items: center; gap: 10px;
     position: fixed; top: 24px; right: 24px; z-index: 600;
     font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--gold);
     background: rgba(13, 6, 20, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(223, 177, 74, 0.3);
-    border-radius: 999px; padding: 8px 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    border-radius: 999px; padding: 8px 10px 8px 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.5);
   }
   .global-timer-badge.visible { display: flex; }
+  .global-timer-badge.hidden-for-me { padding: 8px; }
+  .global-timer-badge.hidden-for-me #globalTimerText { display: none; }
+  .eye-toggle-self {
+    background: none; border: none; cursor: pointer; color: var(--gold);
+    display: flex; align-items: center; justify-content: center; padding: 4px;
+    opacity: 0.85; transition: opacity 0.15s ease;
+  }
+  .eye-toggle-self:active { transform: scale(0.9); }
+  .eye-toggle-self svg { width: 16px; height: 16px; }
 
   /* --- CHOSEN-PERSON BANNER --- */
   .picked-banner {
@@ -373,7 +380,13 @@
     Return to Itinerary
   </a>
 
-  <div class="global-timer-badge visible" id="globalTimerBadge">⏱ <span id="globalTimerText">00:00</span></div>
+  <div class="global-timer-badge visible" id="globalTimerBadge">
+    <span id="globalTimerText">⏱ 00:00</span>
+    <button class="eye-toggle-self" id="eyeToggleSelf" onclick="toggleMyTimerVisibility()" title="Hide timer from my screen">
+      <svg id="eyeIconOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      <svg id="eyeIconClosed" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.9 18.9 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+    </button>
+  </div>
 
   <!-- Opening Door Animation -->
   <div class="doors-wrapper" id="doors">
@@ -411,9 +424,6 @@
             <button class="host-btn" onclick="startGlobalTimer()">Start</button>
             <button class="host-btn" style="background:transparent; border:1px solid var(--dim); color:var(--dim);" onclick="stopGlobalTimer()">Reset</button>
             <div class="host-timer-display" id="hostTimerDisplay">00:00</div>
-            <button class="eye-toggle active" id="eyeToggle" onclick="toggleTimerVisibility()" title="Show/hide timer for the group">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            </button>
           </div>
         </div>
         
@@ -621,10 +631,11 @@
     showPickedBanner(`<b>${chosen}</b>, please choose one story and read it for the rest of us.`);
   }
 
-  // --- GLOBAL TIMER (host-controlled, hideable via the eye icon) ---
-  let timerInterval = null;
-  let timerRemaining = 0;
-  let timerVisibleToGroup = true;
+  // --- GLOBAL TIMER (synced for everyone via Firebase; the eye only hides it on *your* screen) ---
+  let timerEndTime = null;      // synced end timestamp, shared by everyone
+  let localTickInterval = null;
+  let sessionOverTriggered = false;
+  let timerRef = null;
 
   function formatTime(totalSeconds) {
     const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
@@ -632,9 +643,10 @@
     return `${m}:${s}`;
   }
 
-  function renderTimer() {
-    document.getElementById('hostTimerDisplay').textContent = formatTime(timerRemaining);
-    document.getElementById('globalTimerText').textContent = formatTime(timerRemaining);
+  function renderTimer(seconds) {
+    const label = `⏱ ${formatTime(seconds)}`;
+    document.getElementById('hostTimerDisplay').textContent = formatTime(seconds);
+    document.getElementById('globalTimerText').textContent = label;
   }
 
   function triggerSessionOver() {
@@ -644,38 +656,87 @@
     setTimeout(() => { window.location.href = 'index.html'; }, 5600);
   }
 
+  function tickTimer() {
+    if (timerEndTime === null) return;
+    const remaining = Math.max(0, Math.round((timerEndTime - Date.now()) / 1000));
+    renderTimer(remaining);
+    if (remaining <= 0) {
+      clearInterval(localTickInterval);
+      localTickInterval = null;
+      if (!sessionOverTriggered) {
+        sessionOverTriggered = true;
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+        triggerSessionOver();
+      }
+    }
+  }
+
+  function startLocalTick() {
+    clearInterval(localTickInterval);
+    tickTimer();
+    localTickInterval = setInterval(tickTimer, 1000);
+  }
+
+  // Every device listens to the same timer state so everyone's countdown matches exactly.
+  function attachGlobalTimerListener() {
+    if (!db) return; // offline fallback: timer just won't sync across devices
+    timerRef = db.ref(`events/${EVENT_ID}/court/timer`);
+    timerRef.on('value', snap => {
+      const val = snap.val();
+      sessionOverTriggered = false;
+      if (val && val.endTime) {
+        timerEndTime = val.endTime;
+        startLocalTick();
+      } else {
+        timerEndTime = null;
+        clearInterval(localTickInterval);
+        localTickInterval = null;
+        renderTimer(0);
+      }
+    });
+  }
+
   function startGlobalTimer() {
     const minutes = parseFloat(document.getElementById('timerMinutes').value) || 5;
-    timerRemaining = Math.round(minutes * 60);
-    renderTimer();
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-      timerRemaining--;
-      if (timerRemaining <= 0) {
-        timerRemaining = 0;
-        clearInterval(timerInterval);
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
-        renderTimer();
-        triggerSessionOver();
-        return;
-      }
-      renderTimer();
-    }, 1000);
+    const endTime = Date.now() + Math.round(minutes * 60 * 1000);
+    if (db) {
+      db.ref(`events/${EVENT_ID}/court/timer`).set({ endTime, startedAt: Date.now() });
+      // The listener above (running on every device) picks this up and starts ticking for everyone.
+    } else {
+      timerEndTime = endTime;
+      startLocalTick();
+    }
   }
 
   function stopGlobalTimer() {
-    clearInterval(timerInterval);
-    timerRemaining = 0;
-    renderTimer();
+    if (db) {
+      db.ref(`events/${EVENT_ID}/court/timer`).remove();
+    } else {
+      timerEndTime = null;
+      clearInterval(localTickInterval);
+      localTickInterval = null;
+      renderTimer(0);
+    }
   }
 
-  function toggleTimerVisibility() {
-    timerVisibleToGroup = !timerVisibleToGroup;
-    document.getElementById('eyeToggle').classList.toggle('active', timerVisibleToGroup);
-    document.getElementById('globalTimerBadge').classList.toggle('visible', timerVisibleToGroup);
+  // Purely personal — hides the badge on this device/browser only, remembered locally.
+  function toggleMyTimerVisibility() {
+    const hidden = document.getElementById('globalTimerBadge').classList.toggle('hidden-for-me');
+    document.getElementById('eyeIconOpen').style.display = hidden ? 'none' : '';
+    document.getElementById('eyeIconClosed').style.display = hidden ? '' : 'none';
+    try { localStorage.setItem('pc_timer_hidden_for_me', hidden ? '1' : '0'); } catch (e) {}
   }
 
   window.addEventListener('DOMContentLoaded', () => {
+    attachGlobalTimerListener();
+    try {
+      if (localStorage.getItem('pc_timer_hidden_for_me') === '1') {
+        document.getElementById('globalTimerBadge').classList.add('hidden-for-me');
+        document.getElementById('eyeIconOpen').style.display = 'none';
+        document.getElementById('eyeIconClosed').style.display = '';
+      }
+    } catch (e) {}
+
     setTimeout(() => document.getElementById('doors').classList.add('open'), 700);
     setTimeout(() => document.getElementById('doors').style.display = 'none', 4200);
     setTimeout(() => { document.getElementById('phaseIntro').classList.add('active'); playLoreThread(); }, 1400);
