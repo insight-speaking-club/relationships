@@ -226,6 +226,18 @@
   }
 
   .voting-dock { padding: 24px; background: rgba(0,0,0,0.5); border-top: 1px solid rgba(223, 177, 74, 0.15); }
+
+  .vote-tally { display: flex; gap: 12px; width: 100%; margin-bottom: 4px; }
+  .tally-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 10px 8px; border-radius: 8px; background: rgba(240, 230, 250, 0.04);
+    font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 11px; color: var(--dim); border: 1px solid rgba(240, 230, 250, 0.08);
+  }
+  .tally-item span { font-family: 'Playfair Display', serif; font-size: 26px; font-style: normal; font-weight: 700; color: var(--mist); line-height: 1.1; }
+  .tally-item.tally-red span { color: var(--crimson); }
+  .tally-item.tally-green span { color: var(--emerald); }
+
   .aita-buttons { display: flex; flex-direction: column; gap: 14px; width: 100%; margin-top: 16px; }
   .aita-btn {
     border: none; border-radius: 8px; cursor: pointer; display: block; width: 100%;
@@ -253,7 +265,9 @@
     font-size: 16vw; max-font-size: 90px; line-height: 1.1; color: #fff; text-shadow: 0 10px 30px rgba(0,0,0,0.6);
     margin-bottom: 10px; text-transform: uppercase; white-space: pre-line;
   }
+  .verdict-tally { color: rgba(255,255,255,0.95); font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 0.05em; margin-bottom: 14px; }
   .verdict-instruction { color: rgba(255,255,255,0.85); font-family: 'Montserrat', sans-serif; font-size: 18px; margin-bottom: 50px; }
+  .reveal-btn { margin-top: 16px; width: 100%; border-color: var(--gold); color: var(--gold); }
 
   .btn-ghost {
     background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.6); border-radius: 999px;
@@ -328,11 +342,16 @@
         </div>
 
         <div class="voting-dock">
-          <p style="text-align: center; color: var(--dim); font-size: 14px; margin-bottom: 12px;">After we review this story, the court proceeds to vote and discuss to deliver the final verdict.</p>
-          <div class="aita-buttons">
-            <button class="aita-btn aita-btn-red" onclick="castVote('YTA')">ASSHOLE</button>
-            <button class="aita-btn aita-btn-green" onclick="castVote('NTA')">NOT THE ASSHOLE</button>
+          <p style="text-align: center; color: var(--dim); font-size: 14px; margin-bottom: 12px;">After we review this story, each juror taps their verdict below, then we reveal the result together.</p>
+          <div class="vote-tally" id="voteTally">
+            <div class="tally-item tally-red"><span id="ytaCount">0</span>Asshole</div>
+            <div class="tally-item tally-green"><span id="ntaCount">0</span>Not The Asshole</div>
           </div>
+          <div class="aita-buttons">
+            <button class="aita-btn aita-btn-red" onclick="registerVote('YTA')">ASSHOLE</button>
+            <button class="aita-btn aita-btn-green" onclick="registerVote('NTA')">NOT THE ASSHOLE</button>
+          </div>
+          <button class="btn-ghost reveal-btn" onclick="revealVerdict()">Reveal Verdict</button>
         </div>
       </div>
       <button class="back-link" onclick="backToDocket()">Back to the inbox</button>
@@ -343,9 +362,10 @@
   <!-- Full Screen Verdict -->
   <div class="verdict-card" id="verdictCard">
     <div class="verdict-text" id="verdictText"></div>
+    <div class="verdict-tally" id="verdictTally"></div>
     <p class="verdict-instruction">Hold your phone up so everyone can see.</p>
     <div class="verdict-button-group">
-      <button class="btn-ghost" onclick="closeVerdict()">Return to the docket</button>
+      <button class="btn-ghost" onclick="closeVerdict()">Return to the inbox</button>
       <button class="btn-ghost" style="border-color: rgba(255,255,255,0.3);" onclick="changeVote()">Change my vote</button>
     </div>
   </div>
@@ -418,6 +438,12 @@
   ];
 
   const gavelAudio = document.getElementById('gavelSound');
+  let voteCounts = { YTA: 0, NTA: 0 };
+
+  function updateTallyDisplay() {
+    document.getElementById('ytaCount').textContent = voteCounts.YTA;
+    document.getElementById('ntaCount').textContent = voteCounts.NTA;
+  }
 
   window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => document.getElementById('doors').classList.add('open'), 700);
@@ -482,6 +508,10 @@
   function openStory(index) {
     const story = DOCKET_STORIES[index];
     document.getElementById(`emailRow_${index}`).classList.add('read');
+
+    // Reset the jury tally for this story
+    voteCounts = { YTA: 0, NTA: 0 };
+    updateTallyDisplay();
     document.getElementById('storySubject').textContent = story.subject;
     document.getElementById('storySender').textContent = `${story.name} <${story.sender}>`;
     document.getElementById('storyDate').textContent = story.date;
@@ -544,16 +574,28 @@
     setTimeout(() => document.getElementById('phaseDocket').classList.add('active'), 400);
   }
 
-  function castVote(verdict) {
+  function registerVote(verdict) {
+    if (navigator.vibrate) navigator.vibrate(60);
+    voteCounts[verdict]++;
+    updateTallyDisplay();
+  }
+
+  function revealVerdict() {
     if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
     gavelAudio.currentTime = 0;
     gavelAudio.play().catch(e => console.log("Audio play blocked."));
 
     const card = document.getElementById('verdictCard');
     const text = document.getElementById('verdictText');
+    const tally = document.getElementById('verdictTally');
     card.classList.remove('red', 'green');
 
-    if (verdict === 'YTA') {
+    tally.textContent = `${voteCounts.YTA} ASSHOLE — ${voteCounts.NTA} NOT THE ASSHOLE`;
+
+    if (voteCounts.YTA === voteCounts.NTA) {
+      text.textContent = "IT'S A TIE";
+      card.classList.add('red');
+    } else if (voteCounts.YTA > voteCounts.NTA) {
       text.textContent = 'ASSHOLE';
       card.classList.add('red');
     } else {
