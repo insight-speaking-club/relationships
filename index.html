@@ -3904,7 +3904,6 @@ body[data-phase="closer"] .sky {
     <div class="question-panel" id="questionPanel">
       <div class="question-eyebrow" id="questionCounter" style="display:none;"></div>
       <div class="question-text is-placeholder" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
-      <div class="question-hint-chip" id="questionHint">(If a question doesn't feel right, feel free to pick a different one)</div>
     </div>
   </div>
 
@@ -5416,7 +5415,7 @@ function pickFlower(i, pairId, plant, color){
     setTimeout(() => {
       textEl.textContent = QUESTIONS[i].q;
       textEl.classList.remove('is-placeholder'); // it's a real question now, not the instruction text
-      counterEl.innerHTML = `Ask your partner:<br><span style="color:var(--dim); text-transform:none; letter-spacing:normal; font-size:11px;">... or answer it yourself if you want (˶ᵔ ᵕ ᵔ˶)</span>`;
+      counterEl.innerHTML = `Ask your partner:`;
       counterEl.style.display = 'block';
       textEl.classList.remove('swap');
 
