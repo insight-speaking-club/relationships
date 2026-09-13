@@ -1155,26 +1155,6 @@
     0%,100%{transform:translate(0,0); opacity:.3;}
     50%{transform:translate(8px,-14px); opacity:1;}
   }
-  /* Floating whispers — love quotes that drift up through the garden.
-     Rare, faint, and slow, so they read as a gift rather than wallpaper. */
-  .garden-whisper{
-    position:absolute; bottom:-30px; left:50%;
-    transform:translateX(-50%);
-    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:400;
-    font-size:15px; line-height:1.5; text-align:center;
-    color:rgba(244,233,255,0.4);
-    text-shadow:0 0 14px rgba(244,233,255,0.2);
-    max-width:200px; padding:0 12px;
-    pointer-events:none; z-index:6;
-    animation:whisper-rise linear forwards;
-    will-change:transform,opacity;
-  }
-  @keyframes whisper-rise{
-    0%{ transform:translateX(-50%) translateY(0); opacity:0; }
-    12%{ opacity:.75; }
-    88%{ opacity:.75; }
-    100%{ transform:translateX(-50%) translateY(-115vh); opacity:0; }
-  }
   .sparkle{
     position:absolute; width:6px; height:6px; pointer-events:none; z-index:2;
     background:radial-gradient(circle, #fff, currentColor 45%, transparent 72%);
@@ -3904,6 +3884,7 @@ body[data-phase="closer"] .sky {
     <div class="question-panel" id="questionPanel">
       <div class="question-eyebrow" id="questionCounter" style="display:none;"></div>
       <div class="question-text is-placeholder" id="questionText">Tap any glowing flower to pick your first question&hellip;</div>
+      <div class="question-hint-chip">if a question doesn't feel right, feel free to pick a different one<br>(ᵔ ᵕ ᵔ)</div>
     </div>
   </div>
 
@@ -4169,50 +4150,7 @@ function updateGardenAtmosphere(globalBloomCount) {
 }
 function seeded(n){ const x = Math.sin(n*12.9898)*43758.5453; return x - Math.floor(x); }
 
-/* ---------- garden whispers: floating love quotes ---------- */
-const WHISPER_LINES = [
-  "Love is not a finite resource. The more you give, the more you have.",
-  "To love oneself is the beginning of a lifelong romance. — Oscar Wilde",
-  "We love because it's the only true adventure. — Nikki Giovanni",
-  "Let yourself be silently drawn by the strange pull of what you really love. It will not lead you astray. — Rumi",
-  "The greatest thing you'll ever learn is just to love and be loved in return. — Eden Ahbez",
-  "You don't love someone for their looks, or their clothes, or for their fancy car, but because they sing a song only you can hear. — Oscar Wilde",
-  "Love is not about how much you say 'I love you,' but how much you prove that it's true. — Anonymous"
-];
-
-let whisperTimer = null;
-let whisperContainer = null;
 let lastKnownBloomCount = 0;
-
-function spawnGardenWhisper(){
-  if (!whisperContainer) whisperContainer = document.getElementById('state-garden');
-  if (!whisperContainer) return;
-
-  const line = WHISPER_LINES[Math.floor(Math.random() * WHISPER_LINES.length)];
-  const el = document.createElement('div');
-  el.className = 'garden-whisper';
-  el.textContent = line;
-  el.style.left = (20 + Math.random() * 60) + '%'; // keep clear of screen edges
-  el.style.animationDuration = (18 + Math.random() * 4) + 's';
-  whisperContainer.appendChild(el);
-  el.addEventListener('animationend', () => el.remove());
-}
-
-// Ambient whispers while the garden is on screen: rare (every 45-60s) so each
-// one lands as a small surprise rather than a repeating notification.
-function startGardenWhispers(){
-  whisperContainer = document.getElementById('state-garden');
-  if (!whisperContainer || whisperTimer) return;
-  whisperTimer = setTimeout(function loop(){
-    spawnGardenWhisper();
-    whisperTimer = setTimeout(loop, 45000 + Math.random() * 15000);
-  }, 8000); // first one arrives a little early so the garden doesn't feel silent
-}
-
-function stopGardenWhispers(){
-  clearTimeout(whisperTimer);
-  whisperTimer = null;
-}
 
 let me = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
 // Migrate any previously-cached identity that still has an old <img> sprite
@@ -4255,9 +4193,6 @@ function setLoungeState(stateId) {
   document.querySelectorAll('.lounge-state').forEach(s => s.classList.remove('active'));
   document.getElementById(stateId).classList.add('active');
 
-  // Whispers only drift while the garden itself is on screen.
-  if (stateId === 'state-garden') startGardenWhispers();
-  else stopGardenWhispers();
 
   // Red Flag Rally is now fully open on the Driveway screen (no toggle),
   // so entering the state is enough to start it. Deferred a frame so the
@@ -4414,12 +4349,6 @@ function enterLounge(){
       if (pair.bloomed) totalBlooms += Object.keys(pair.bloomed).length;
     });
     updateGardenAtmosphere(totalBlooms);
-
-    // Reward a freshly-picked flower with an extra whisper, on top of the
-    // ambient timer, whenever the garden is the one on screen.
-    if (totalBlooms > lastKnownBloomCount && document.getElementById('state-garden')?.classList.contains('active')) {
-      spawnGardenWhisper();
-    }
     lastKnownBloomCount = totalBlooms;
   });
 
@@ -5007,6 +4936,17 @@ function startBunnyGame(){
       "You wrecked the car over a bunny. And you wonder why you're not allowed to plan group trips."
     ];
 
+    const messagesSweet = [
+      "Okay, breaking character for a second — you have great taste, terrible reflexes, and I adore you anyway.",
+      "Score aside, you looked so cute playing that. 10/10, no notes.",
+      "Real talk: you deserve every single green flag out there. I mean that.",
+      "No sass this round. You're doing better than you think you are.",
+      "Just checking in — you're one of the good ones. Don't let anyone convince you otherwise.",
+      "I only roast you because I love you. Proud of you, actually.",
+      "Plot twist: you're loved, you're valued, and this game means nothing about your worth.",
+      "Okay but genuinely — you're going to be so happy one day, and it's going to make so much sense."
+    ];
+
     const messagesLow = [
       // Original 6
       "That score is lower than your standards, and we both know how tragic those are.",
@@ -5031,8 +4971,13 @@ function startBunnyGame(){
     let sassyMessage = "";
     let activeArray = [];
 
+    // Every once in a while, drop the bully act and just be sweet instead
+    const isSweetRoll = Math.random() < 0.15; // ~15% of the time
+
     // Determine which pool of roasts to pull from based on the crash reason and score
-    if (finalScore < 300 && Math.random() > 0.5) {
+    if (isSweetRoll) {
+      activeArray = messagesSweet;
+    } else if (finalScore < 300 && Math.random() > 0.5) {
       activeArray = messagesLow;
     } else if (reason === 'flag') {
       activeArray = messagesFlag;
@@ -5060,7 +5005,7 @@ function startBunnyGame(){
 
     // The roast lands as a text-from-Sasha notification instead of living
     // inside the score card.
-    showSashaToast({ title: 'Sasha', body: sassyMessage, vibrateMs: 50, holdMs: 4200 });
+    showSashaToast({ title: 'Sasha', body: sassyMessage, vibrateMs: 50, holdMs: 4200, appName: 'Bullying Committee Headquarters' });
   }
   function loop(timestamp){
     if(!bg || !bg.running) return;
@@ -5671,7 +5616,7 @@ function listenMessages(){
 
 // Shared little "text from Sasha" popup — used for host messages, locked-card
 // nudges, and unlock announcements so they all look/feel the same.
-function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5000, actionLabel, onAction } = {}){
+function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5000, actionLabel, onAction, appName = 'Vogue Committee Headquarters' } = {}){
   const stack = document.getElementById('toastStack');
   if(!stack) return;
 
@@ -5687,7 +5632,7 @@ function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5
   el.innerHTML = `
     <div class="toast-top">
       <img class="toast-icon" src="sasha.png" alt="">
-      <span class="toast-appname">Vogue Committee Headquarters</span>
+      <span class="toast-appname">${escapeHtml(appName)}</span>
       <span class="toast-time">now</span>
     </div>
     <div class="toast-title">${escapeHtml(title)}</div>
