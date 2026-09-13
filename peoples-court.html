@@ -503,7 +503,7 @@
           <div class="inbox-title-block">
             <div class="docket-eyebrow">Docket &nbsp;·&nbsp; In Session</div>
             <div class="email-title">The People's Court Inbox</div>
-            <div class="email-count">6 cases unread</div>
+            <div class="email-count" id="emailCount">6 cases unread</div>
           </div>
           <div class="me-avatar" id="meAvatar">JS</div>
         </div>
@@ -649,6 +649,42 @@
       subject: "AITA for refusing to donate to a friend's top surgery fund over an old debt?", 
       text: "Three years ago, my friend 'Ash' started a <span class='hint-word' data-ukr='колектив авторів зінів (незалежних журналів)'>zine collective</span>. I lent them $1,200 to cover printing costs. The zine folded after two issues. Ash never paid me back and honestly just kind of acted like the debt didn't exist because 'art is a risk.' I let it go to keep the peace.\n\nNow, Ash is raising money for top surgery. They posted a GoFundMe and tagged literally everyone in our circle, including me, pushing people to donate and share. I didn't donate. \n\nAsh confronted me at a party, publicly asking why I wasn't supporting their <span class='hint-word' data-ukr='гендерно-підтверджуюча терапія'>gender-affirming care</span> when I make a decent salary. I snapped and said 'I essentially gave you a $1,200 donation three years ago, I think I've contributed enough to your journey.' The room went dead silent. Now half the friend group says I am holding gender-affirming care hostage over a petty financial grudge. AITA?",
       attachment: "gofundme-screenshot.jpg"
+    },
+    { 
+      sender: "quiet_escape@gmail.com", 
+      name: "David R.", 
+      time: "Last Week", 
+      date: "Last Week, 14:30", 
+      subject: "AITA for lying to my wife about a work trip to avoid her rowdy family?", 
+      text: "My (34M) wife's family is <span class='hint-word' data-ukr='галасливі та безпардонні'>VERY rowdy</span>. They yell, have no respect for privacy, and ask <span class='hint-word' data-ukr='безтактні питання'>invasive questions</span> (e.g., my father-in-law asked about my 'moves' on our wedding night). My wife gets defensive and insists I attend all their events.\n\nI had a 2-day work trip during their 5-day family vacation. I decided to <span class='hint-word' data-ukr='збрехати / прикрасити'>fib to my wife</span>, claiming the trip was 4 days so it wouldn't make sense to join them at the Airbnb for just one night. I enjoyed a few days of peace at home.\n\nWeeks later, my coworkers came over for drinks and accidentally revealed to my wife that the trip was only 2 days. The look on her face was murderous. She yelled at me, and her parents sent angry messages saying they couldn’t believe I lied just to avoid them. AITA?",
+      attachment: ""
+    },
+    { 
+      sender: "twin_test@outlook.com", 
+      name: "Mark T.", 
+      time: "Last Week", 
+      date: "Last Week, 19:15", 
+      subject: "AITA for replacing myself with my identical twin at an in-law party to see if they'd notice?", 
+      text: "I (31M) have an identical twin brother, 'Steve'. I’ve told my wife that none of her family members actually talk to me or notice me at their Christmas Eve party. She insists they genuinely like me. \n\nAs a test, I made a wager. I paid Steve $20 to go instead of me. I didn't prep him at all; he went in completely clueless. As I suspected, nobody noticed the <span class='hint-word' data-ukr='рокіровка / підміна'>switcheroo</span>, and Steve admitted he felt entirely ignored the whole night.\n\nThe next morning, I brought Steve to Christmas dinner. I revealed that 'I' was actually Steve the night prior, expressing disappointment that nobody noticed I was missing. My wife <span class='hint-word' data-ukr='встановила межу / категорично заперечила'>drew the line</span> here, saying she wanted to keep it a private <span class='hint-word' data-ukr='розіграш'>funny prank</span> between us. But how else will they see how terribly they treat me? AITA?",
+      attachment: ""
+    },
+    { 
+      sender: "grieving_dad99@yahoo.com", 
+      name: "Robert H.", 
+      time: "Nov 28", 
+      date: "Nov 28, 08:45", 
+      subject: "AITA for stopping my daughter’s tuition over a fatphobic comment to my new GF?", 
+      text: "My wife passed away, and after a year in <span class='hint-word' data-ukr='в жалобі'>deep mourning</span>, I (56M) met 'C' (43F). She’s smart, funny, and brought me back to life. My son gets along with her, but my daughter 'A' (19F) has been terribly <span class='hint-word' data-ukr='непривітна / відсторонена'>standoffish</span>. C is on the heavier side.\n\nDuring Thanksgiving dinner, C went to grab her third helping of potatoes. A glared at her and loudly said, 'Don’t you think you’ve eaten enough, you fat pig?' C ran off sobbing. I kicked A out of the house immediately.\n\nLater, I texted A that I’d stop paying her university tuition unless she apologized and C accepted it. A <span class='hint-word' data-ukr='наполягала на своєму'>doubled down</span> on her behavior. I logged in, canceled her next semester's tuition, and sent her the screenshots. She’s now calling me crying and begging me to reconsider. AITA?",
+      attachment: ""
+    },
+    { 
+      sender: "dinner_disaster@protonmail.com", 
+      name: "Chloe W.", 
+      time: "Oct 12", 
+      date: "Oct 12, 22:10", 
+      subject: "AITA for exposing my sister's body count after she outed our brother as a virgin?", 
+      text: "At a large family dinner (including extended family and spouses), my elder sister (29F) and youngest brother (22M) got into a mild disagreement. My sister is a <span class='hint-word' data-ukr='агресивна в стані сп\\'яніння'>mean drunk</span> and was losing the argument.\n\nOut of nowhere, she blurted out, 'Shut up, I’m not going to argue with a 22-year-old virgin.' My brother has confidence issues, and this was completely <span class='hint-word' data-ukr='безпідставно'>unprovoked</span>. I told her to grow up, but she replied, 'Everyone knows he's a virgin, I didn't say anything wrong.'\n\nI was furious, so I responded that she slept with well over a hundred men in college, and since 'everyone knows,' it's not a big deal, right? Turns out her new husband didn't know. He left the party angrily, saying she <span class='hint-word' data-ukr='ввела в оману'>misled</span> him about her past. Now my family is blaming me for their marital problems. AITA?",
+      attachment: ""
     }
   ];
 
@@ -855,6 +891,7 @@
 
     const AVATAR_COLORS = ['#38030f', '#2a113a', '#5c3a11', '#1a0b1d', '#5c081b', '#073823'];
     const list = document.getElementById('emailList');
+    document.getElementById('emailCount').textContent = `${DOCKET_STORIES.length} cases unread`;
     
     DOCKET_STORIES.forEach((story, index) => {
       // Strip HTML tags for the inbox preview snippet
