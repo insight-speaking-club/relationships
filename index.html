@@ -1155,6 +1155,26 @@
     0%,100%{transform:translate(0,0); opacity:.3;}
     50%{transform:translate(8px,-14px); opacity:1;}
   }
+  /* Floating whispers — love quotes that drift up through the garden.
+     Rare, faint, and slow, so they read as a gift rather than wallpaper. */
+  .garden-whisper{
+    position:absolute; bottom:-30px; left:50%;
+    transform:translateX(-50%);
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:400;
+    font-size:15px; line-height:1.5; text-align:center;
+    color:rgba(244,233,255,0.4);
+    text-shadow:0 0 14px rgba(244,233,255,0.2);
+    max-width:200px; padding:0 12px;
+    pointer-events:none; z-index:6;
+    animation:whisper-rise linear forwards;
+    will-change:transform,opacity;
+  }
+  @keyframes whisper-rise{
+    0%{ transform:translateX(-50%) translateY(0); opacity:0; }
+    12%{ opacity:.75; }
+    88%{ opacity:.75; }
+    100%{ transform:translateX(-50%) translateY(-115vh); opacity:0; }
+  }
   .sparkle{
     position:absolute; width:6px; height:6px; pointer-events:none; z-index:2;
     background:radial-gradient(circle, #fff, currentColor 45%, transparent 72%);
@@ -4135,12 +4155,57 @@ function updateGardenAtmosphere(globalBloomCount) {
 }
 function seeded(n){ const x = Math.sin(n*12.9898)*43758.5453; return x - Math.floor(x); }
 
+/* ---------- garden whispers: floating love quotes ---------- */
+const WHISPER_LINES = [
+  "Love is not a finite resource. The more you give, the more you have.",
+  "To love oneself is the beginning of a lifelong romance. — Oscar Wilde",
+  "We love because it's the only true adventure. — Nikki Giovanni",
+  "Let yourself be silently drawn by the strange pull of what you really love. It will not lead you astray. — Rumi",
+  "The greatest thing you'll ever learn is just to love and be loved in return. — Eden Ahbez",
+  "You don't love someone for their looks, or their clothes, or for their fancy car, but because they sing a song only you can hear. — Oscar Wilde",
+  "Love is not about how much you say 'I love you,' but how much you prove that it's true. — Anonymous"
+];
+
+let whisperTimer = null;
+let whisperContainer = null;
+let lastKnownBloomCount = 0;
+
+function spawnGardenWhisper(){
+  if (!whisperContainer) whisperContainer = document.getElementById('state-garden');
+  if (!whisperContainer) return;
+
+  const line = WHISPER_LINES[Math.floor(Math.random() * WHISPER_LINES.length)];
+  const el = document.createElement('div');
+  el.className = 'garden-whisper';
+  el.textContent = line;
+  el.style.left = (20 + Math.random() * 60) + '%'; // keep clear of screen edges
+  el.style.animationDuration = (18 + Math.random() * 4) + 's';
+  whisperContainer.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+// Ambient whispers while the garden is on screen: rare (every 45-60s) so each
+// one lands as a small surprise rather than a repeating notification.
+function startGardenWhispers(){
+  whisperContainer = document.getElementById('state-garden');
+  if (!whisperContainer || whisperTimer) return;
+  whisperTimer = setTimeout(function loop(){
+    spawnGardenWhisper();
+    whisperTimer = setTimeout(loop, 45000 + Math.random() * 15000);
+  }, 8000); // first one arrives a little early so the garden doesn't feel silent
+}
+
+function stopGardenWhispers(){
+  clearTimeout(whisperTimer);
+  whisperTimer = null;
+}
+
 let me = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
 // Migrate any previously-cached identity that still has an old <img> sprite
 // avatar (from before the emoji switch) to a fresh animal emoji, and migrate
-// the old host crown avatar to the bunny.
+// the old host crown avatar to the swan.
 if (me && me.avatar === '👑') {
-  me.avatar = '🐇';
+  me.avatar = '🦢';
   localStorage.setItem('fsc_guest', JSON.stringify(me));
   if (me.id) {
     ref(`events/${EVENT_ID}/attendees/${me.id}/avatar`).set(me.avatar);
@@ -4171,6 +4236,10 @@ function setLoungeState(stateId) {
 
   document.querySelectorAll('.lounge-state').forEach(s => s.classList.remove('active'));
   document.getElementById(stateId).classList.add('active');
+
+  // Whispers only drift while the garden itself is on screen.
+  if (stateId === 'state-garden') startGardenWhispers();
+  else stopGardenWhispers();
 
   // Red Flag Rally is now fully open on the Driveway screen (no toggle),
   // so entering the state is enough to start it. Deferred a frame so the
@@ -4243,7 +4312,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     // The host sees the exact same lounge experience as everyone else,
     // plus a floating control button that opens the admin drawer.
     if(!me){
-      me = { id: 'host_'+Math.random().toString(36).slice(2,9), name:'Sasha', avatar:'🐇' };
+      me = { id: 'host_'+Math.random().toString(36).slice(2,9), name:'Sasha', avatar:'🦢' };
       localStorage.setItem('fsc_guest', JSON.stringify(me));
     }
     initHost();
@@ -4327,6 +4396,13 @@ function enterLounge(){
       if (pair.bloomed) totalBlooms += Object.keys(pair.bloomed).length;
     });
     updateGardenAtmosphere(totalBlooms);
+
+    // Reward a freshly-picked flower with an extra whisper, on top of the
+    // ambient timer, whenever the garden is the one on screen.
+    if (totalBlooms > lastKnownBloomCount && document.getElementById('state-garden')?.classList.contains('active')) {
+      spawnGardenWhisper();
+    }
+    lastKnownBloomCount = totalBlooms;
   });
 
   // Auto-start the spotlight tour the first time a guest arrives
@@ -4548,7 +4624,7 @@ const HUB_SECTION_NAMES = {
   closer: 'The Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
-  roulette: "The Driveway's unlocked! Tap in, chop chop darling, it's time to match up 🐇",
+  roulette: "The Driveway's unlocked! Tap in, chop chop darling, it's time to match up 🦢",
   garden: "Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
   aita: "People's Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
   closer: "The Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌"
@@ -4662,13 +4738,13 @@ function listenHubs() {
 const PATIENCE_MESSAGES = [
   "Darling, this one's locked. Sit tight, I'll unlock it myself when it's time 💋",
   "Not yet, mon chéri. I'm the one who opens the doors, so watch for the ping 🤭",
-  "Still closed, darling. I'll swing it open for everyone the moment we're ready. 🐇",
+  "Still closed, darling. I'll swing it open for everyone the moment we're ready. 🦢",
   "Locked for now, love. I'll unlock it and you'll get a little tap on the shoulder. 💋",
   "Patience, darling. I open every door myself, no need to keep knocking 🤭",
-  "Simply not open yet. I'll flip the lock when it's go time, promise. 🐇",
+  "Simply not open yet. I'll flip the lock when it's go time, promise. 🦢",
   "Not so fast, love. I'll unlock this one, and you'll know the second it's ready 💋",
   "Still waiting on me, darling. I'll open it for the whole room at once. 🤭",
-  "Locked, darling. I'll take care of it, no tapping required 🐇",
+  "Locked, darling. I'll take care of it, no tapping required 🦢",
   "Not yet, love. I open these myself, and you'll feel the buzz when it's time 💋"
 ];
 let lastPatienceIndex = -1;
@@ -5895,7 +5971,7 @@ listenRoster = function() {
     const ANIMAL_EMOJIS_NORMALIZE = ['🐇', '🐈', '🦊', '🐻', '🐼', '🐨', '🐹', '🐶', '🐯', '🦁'];
     stateGuests.forEach(g => {
       if (g && g.avatar === '👑') {
-        g.avatar = '🐇';
+        g.avatar = '🦢';
         if (g.id) ref(`events/${EVENT_ID}/attendees/${g.id}/avatar`).set(g.avatar);
       } else if (g && typeof g.avatar === 'string' && g.avatar.includes('<img')) {
         g.avatar = ANIMAL_EMOJIS_NORMALIZE[Math.floor(Math.random() * ANIMAL_EMOJIS_NORMALIZE.length)];
