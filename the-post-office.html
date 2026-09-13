@@ -212,6 +212,10 @@
   .success-msg.show { opacity: 1; pointer-events: auto; }
   .success-msg h1 { transform: translateY(8px); opacity: 0; transition: opacity 1.4s ease 0.3s, transform 1.4s ease 0.3s; margin: 0 0 16px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 42px; color: var(--gold); }
   .success-msg.show h1 { opacity: 1; transform: translateY(0); }
+  .success-thanks { font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; color: var(--dim); margin: 0 0 40px; opacity: 0; transform: translateY(8px); transition: opacity 1.4s ease 1.8s, transform 1.4s ease 1.8s; }
+  .success-msg.show .success-thanks { opacity: 1; transform: translateY(0); }
+  .success-followup { display: flex; flex-direction: column; align-items: center; opacity: 0; transform: translateY(8px); transition: opacity 1.4s ease 3.6s, transform 1.4s ease 3.6s; }
+  .success-msg.show .success-followup { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
@@ -313,14 +317,13 @@
   
   <div class="success-msg" id="successOverlay">
     <h1>The letter is sealed.</h1>
-    <p style="font-size: 16px; color: var(--dim); margin: 0 0 40px; line-height: 1.5; font-weight: 300; max-width: 400px;">
-      One more thing:
-      <br><br>
-      If you'd like, consider leaving something on the Memory Wall.<br>
-      Down the line, you might just be glad you did.<br><br>
-      <a href="https://padlet.com/speakingclub_sasha/memory-wall-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener noreferrer" style="color: var(--gold);">https://padlet.com/speakingclub_sasha/memory-wall-nwbq1n7nb2y6cu8t</a>
-    </p>
-    <a href="https://padlet.com/speakingclub_sasha/memory-wall-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener noreferrer" class="btn-delicate" style="max-width: 280px;">Head to the Memory Wall</a>
+    <p class="success-thanks">Thank you for writing it.</p>
+    <div class="success-followup">
+      <p style="font-size: 16px; color: var(--dim); margin: 0 0 24px; line-height: 1.5; font-weight: 300; max-width: 400px;">
+        One more thing: if you'd like, consider leaving something on the Memory Wall. This is kind of our digital scrapbook.
+      </p>
+      <a href="https://padlet.com/speakingclub_sasha/memory-wall-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener noreferrer" class="btn-delicate" style="max-width: 280px;">Head to the Memory Wall</a>
+    </div>
   </div>
 
 
