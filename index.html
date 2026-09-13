@@ -2829,9 +2829,10 @@ body[data-phase="closer"] .sky {
   #hubCardAita     { top: 60%; left: 22%; }
   #hubCardCloser   { top: 72%; left: 48%; }
 
-  /* Position Memory Wall — a real teardrop stop like the other pins
-     (Roulette, Garden, Post Office), just scaled down a bit so it reads
-     as a lighter, secondary stop rather than a full main destination.
+  /* Position Memory Wall — visually a teardrop pin like the other
+     locations (Roulette, Garden, Post Office), just scaled down a bit
+     so it reads as a lighter, secondary spot rather than a scheduled
+     stop on the route — it's an open archive, not part of the tour.
      It still inherits the base .hub-card-icon teardrop shape + the
      "unlocked" gold-glow treatment, same as every other active stop on
      the map — just smaller. */
@@ -3666,12 +3667,13 @@ body[data-phase="closer"] .sky {
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Closer Activity</div>
               <div class="hub-card-title">The Post Office</div>
-              <div class="hub-card-desc">Step into the Post Office and write a letter. We won't tell you what kind. You'll find out once you're inside.</div>
+              <div class="hub-card-desc">Our final stop of the night. Step into the Post Office and write a letter. We won't tell you what kind. You'll find out once you're inside.</div>
               <div class="hub-card-lock-note">The Post Office remains closed for now.</div>
             </div>
           </div>
 
-          <!-- Always-open side stop: Memory Wall (Recap) -->
+          <!-- Not a stop on the route — an always-open archive people can
+               drop into (or skip) whenever they feel like it -->
           <div class="hub-card" id="hubCardRecap" onclick="window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank')">
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
@@ -3687,7 +3689,7 @@ body[data-phase="closer"] .sky {
             </div>
             <div>
               <div class="hub-card-title">Memory Wall</div>
-              <div class="hub-card-desc">This is the final stop, darling. Pin up photos with the people you met, drop those Instagram handles, and leave a little note. This is our digital scrapbook.</div>
+              <div class="hub-card-desc">The Memory Wall is our little digital scrapbook. You can post whatever you want there.</div>
             </div>
           </div>
 
@@ -4363,6 +4365,7 @@ function enterLounge(){
 let tourIdx = 0;
 let typeInterval;
 let isTyping = false;
+let isTourOnBonusStep = false;
 
 const TOUR_STEPS = [
   // Step 1: Highlights the whole Itinerary section first
@@ -4372,12 +4375,17 @@ const TOUR_STEPS = [
   // The rest remain the same
   { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
   { selector: '#hubCardAita', title: 'People\'s Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
-  { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Third stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.', pad: 8 },
-  { selector: '#hubCardRecap', title: 'Memory Wall', desc: 'This is the final stop, darling. Pin up photos with the people you met, drop those Instagram handles, and leave a little note. This is our digital scrapbook.', pad: 8 }
+  { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Our final stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.', pad: 8 }
 ];
+
+// Not an official tour stop — the Memory Wall is an open archive, not a
+// scheduled activity, so it gets a quick "one more thing" aside after the
+// real tour ends instead of taking a numbered slot alongside the stops.
+const ONE_MORE_THING_STEP = { selector: '#hubCardRecap', title: 'Oh, and one more thing...', desc: 'The Memory Wall is our little digital scrapbook. You can pin up photos or leave a note. It\'s always open, so post whenever you like.', pad: 8 };
 
 function startTour() {
   tourIdx = 0;
+  isTourOnBonusStep = false;
 
   // Dynamically set the Welcome Step (which is now Step 1: The Itinerary)
   TOUR_STEPS[0].title = `Welcome aboard, ${me.name.split(' ')[0]}`;
@@ -4388,15 +4396,18 @@ function startTour() {
   showTourStep();
 }
 
-function showTourStep() {
-  const step = TOUR_STEPS[tourIdx];
+function showTourStep(bonus) {
+  const step = bonus ? ONE_MORE_THING_STEP : TOUR_STEPS[tourIdx];
   const target = document.querySelector(step.selector);
-  if (!target) { tourNext(); return; }
+  if (!target) { bonus ? endTour() : tourNext(); return; }
 
   // Scroll the targeted element into the center of the screen
   target.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  document.getElementById('tour-step-label').textContent = `Step ${tourIdx + 1} of ${TOUR_STEPS.length}`;
+  // The "one more thing" aside isn't a numbered stop — hide the step
+  // counter and progress dots so it doesn't read as part of the tour.
+  document.getElementById('tour-step-label').textContent = bonus ? '' : `Step ${tourIdx + 1} of ${TOUR_STEPS.length}`;
+  document.getElementById('tour-dots').style.display = bonus ? 'none' : '';
   document.querySelectorAll('#tour-dots span').forEach((d, i) => d.classList.toggle('tour-dot-done', i <= tourIdx));
 
   // Typewriter Setup
@@ -4427,7 +4438,7 @@ function showTourStep() {
       clearInterval(typeInterval);
       isTyping = false;
       descEl.classList.remove('typing');
-      nextBtn.textContent = tourIdx === TOUR_STEPS.length - 1 ? 'Got it' : 'Next';
+      nextBtn.textContent = (bonus || tourIdx === TOUR_STEPS.length - 1) ? 'Got it' : 'Next';
     }
   }, 25);
 
@@ -4458,20 +4469,26 @@ function showTourStep() {
 }
 
 function tourNext() {
+  const onBonusStep = isTourOnBonusStep;
+
   // If the text is still typing, clicking the button just fast-forwards to the end
   if (isTyping) {
     clearInterval(typeInterval);
     isTyping = false;
-    const step = TOUR_STEPS[tourIdx];
+    const step = onBonusStep ? ONE_MORE_THING_STEP : TOUR_STEPS[tourIdx];
     document.getElementById('tour-title').textContent = step.title;
     document.getElementById('tour-desc').textContent = step.desc;
     document.getElementById('tour-desc').classList.remove('typing');
-    document.getElementById('tour-next').textContent = tourIdx === TOUR_STEPS.length - 1 ? 'Got it' : 'Next';
+    document.getElementById('tour-next').textContent = (onBonusStep || tourIdx === TOUR_STEPS.length - 1) ? 'Got it' : 'Next';
     return;
   }
-  
+
+  // Once the last real stop is dismissed, drop in the unnumbered "one more
+  // thing" aside for the Memory Wall before actually ending the tour.
+  if (onBonusStep) { endTour(); return; }
+
   tourIdx++;
-  if (tourIdx >= TOUR_STEPS.length) { endTour(); return; }
+  if (tourIdx >= TOUR_STEPS.length) { isTourOnBonusStep = true; showTourStep(true); return; }
   showTourStep();
 }
 
@@ -4479,6 +4496,8 @@ function endTour() {
   document.getElementById('tour-overlay').classList.remove('show');
   if (typeInterval) clearInterval(typeInterval);
   if (window.tourTrackRAF) cancelAnimationFrame(window.tourTrackRAF);
+  isTourOnBonusStep = false;
+  document.getElementById('tour-dots').style.display = '';
 }
 
 let stateGuests = [];
