@@ -4204,7 +4204,11 @@ let me = JSON.parse(localStorage.getItem('fsc_guest') || 'null');
 // Migrate any previously-cached identity that still has an old <img> sprite
 // avatar (from before the emoji switch) to a fresh animal emoji, and migrate
 // the old host crown avatar to the swan.
-if (me && me.avatar === '👑') {
+if (me && me.id && me.id.startsWith('host_') && me.avatar === '🐇') {
+  me.avatar = '🦢';
+  localStorage.setItem('fsc_guest', JSON.stringify(me));
+  ref(`events/${EVENT_ID}/attendees/${me.id}/avatar`).set(me.avatar);
+} else if (me && me.avatar === '👑') {
   me.avatar = '🦢';
   localStorage.setItem('fsc_guest', JSON.stringify(me));
   if (me.id) {
@@ -5970,7 +5974,10 @@ listenRoster = function() {
     // or the old host crown avatar.
     const ANIMAL_EMOJIS_NORMALIZE = ['🐇', '🐈', '🦊', '🐻', '🐼', '🐨', '🐹', '🐶', '🐯', '🦁'];
     stateGuests.forEach(g => {
-      if (g && g.avatar === '👑') {
+      if (g && g.id && g.id.startsWith('host_') && g.avatar === '🐇') {
+        g.avatar = '🦢';
+        ref(`events/${EVENT_ID}/attendees/${g.id}/avatar`).set(g.avatar);
+      } else if (g && g.avatar === '👑') {
         g.avatar = '🦢';
         if (g.id) ref(`events/${EVENT_ID}/attendees/${g.id}/avatar`).set(g.avatar);
       } else if (g && typeof g.avatar === 'string' && g.avatar.includes('<img')) {
