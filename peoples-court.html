@@ -176,6 +176,8 @@
   }
   .email-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; font-style: italic; color: var(--mist); letter-spacing: 0.01em; }
   .email-count { font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--gold); margin-top: 5px; letter-spacing: 0.03em; }
+  .aita-explainer { font-family: 'Montserrat', sans-serif; font-size: 10.5px; color: var(--dim); margin-top: 6px; line-height: 1.4; max-width: 340px; }
+  .aita-explainer b { color: var(--mist); font-weight: 600; }
   .justice-seal { width: 22px; height: 22px; color: var(--gold); opacity: 0.85; flex-shrink: 0; filter: drop-shadow(0 0 6px var(--gold-glow)); }
   
   .me-avatar {
@@ -303,6 +305,19 @@
   .email-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
   .email-time { font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--dim); }
   
+  .verdict-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 20px; white-space: nowrap;
+  }
+  .verdict-tag-red { background: rgba(158, 20, 50, 0.25); color: #ff9db3; border: 1px solid rgba(158, 20, 50, 0.55); }
+  .verdict-tag-green { background: rgba(18, 110, 71, 0.25); color: #8fe3c0; border: 1px solid rgba(18, 110, 71, 0.55); }
+
+  .oe-source-link { margin-top: 14px; }
+  .oe-source-link a {
+    color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+    text-decoration: none; border-bottom: 1px dashed var(--gold-dim); padding-bottom: 2px;
+  }
+
   .star-icon { color: var(--dim); opacity: 0.4; cursor: pointer; transition: all 0.2s ease; }
   .star-icon:active { transform: scale(1.2); }
   .star-icon.starred { opacity: 1; color: var(--gold); filter: drop-shadow(0 0 5px var(--gold-glow)); fill: var(--gold); }
@@ -438,9 +453,12 @@
     font-size: 16vw; max-font-size: 90px; line-height: 1.1; color: #fff; text-shadow: 0 10px 30px rgba(0,0,0,0.6);
     margin-bottom: 10px; text-transform: uppercase; white-space: pre-line;
   }
-  .verdict-tally { color: rgba(255,255,255,0.95); font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 0.05em; margin-bottom: 14px; }
-  .verdict-instruction { color: rgba(255,255,255,0.85); font-family: 'Montserrat', sans-serif; font-size: 18px; margin-bottom: 50px; }
+  .verdict-tally { color: rgba(255,255,255,0.95); font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .verdict-real { color: rgba(255,255,255,0.65); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; margin-bottom: 18px; display: none; }
+  .verdict-instruction { color: rgba(255,255,255,0.85); font-family: 'Montserrat', sans-serif; font-size: 18px; margin-bottom: 22px; }
   .reveal-btn { margin-top: 16px; width: 100%; border-color: var(--gold); color: var(--gold); }
+  .btn-secondary-row { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+  .btn-secondary-row .btn-ghost { font-size: 13px; padding: 10px 22px; border-color: rgba(255,255,255,0.3); }
 
   .btn-ghost {
     background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.6); border-radius: 999px;
@@ -504,6 +522,7 @@
             <div class="docket-eyebrow">Docket &nbsp;·&nbsp; In Session</div>
             <div class="email-title">The People's Court Inbox</div>
             <div class="email-count" id="emailCount">6 cases unread</div>
+            <div class="aita-explainer"><b>AITA</b> = "Am I The Asshole" — each case below is someone asking a jury of strangers whether they were wrong.</div>
           </div>
           <div class="me-avatar" id="meAvatar">JS</div>
         </div>
@@ -537,6 +556,9 @@
             <div class="meta-label">To:</div><div>Honorable Judge Sasha</div>
             <div class="meta-label">Date:</div><div id="storyDate"></div>
           </div>
+          <div class="oe-source-link" id="storySourceLink" style="display:none;">
+            <a href="" id="storySourceLinkAnchor" target="_blank" rel="noopener">View the real thread ↗</a>
+          </div>
         </div>
 
         <div class="open-email-body" id="storyDisplay"></div>
@@ -569,10 +591,10 @@
     <div class="verdict-eyebrow">The Court Finds</div>
     <div class="verdict-text" id="verdictText"></div>
     <div class="verdict-tally" id="verdictTally"></div>
-    <p class="verdict-instruction">Hold your phone up so everyone can see.</p>
-    <div class="verdict-button-group">
-      <button class="btn-ghost" onclick="closeVerdict()">Return to the inbox</button>
-      <button class="btn-ghost" style="border-color: rgba(255,255,255,0.3);" onclick="changeVote()">Change my vote</button>
+    <div class="verdict-real" id="verdictReal"></div>
+    <div class="btn-secondary-row">
+      <button class="btn-ghost" onclick="changeVote()">Change my vote</button>
+      <button class="btn-ghost" onclick="closeVerdict()">Back to the case</button>
     </div>
   </div>
 
@@ -596,94 +618,108 @@
   ];
 
   const DOCKET_STORIES = [
-    { 
-      sender: "dyke_drama_22@gmail.com", 
-      name: "Samira K.", 
-      time: "10:15 AM", 
-      date: "Today, 10:15 AM", 
-      subject: "AITA for refusing to put my gf of 4 months on my rent-controlled lease?", 
-      text: "I (28F) have an insanely cheap, <span class='hint-word' data-ukr='з фіксованою орендною платою'>rent-controlled</span> apartment in the city. I've been dating my gf 'Alex' (26F) for about 4 months. Things moved fast (classic <span class='hint-word' data-ukr='стереотип про швидкий переїзд лесбійок'>U-Haul trope</span>, I know), and she practically lives here anyway. \n\nLast week, Alex lost her service industry job. She was crying and stressed about her upcoming rent. I offered to let her officially move in, but I explicitly said I am NOT adding her to the actual lease document because if we break up, my landlord would use it as an excuse to hike the rent up to market rate and I'd lose the place I've had for 5 years.\n\nShe got furious, saying that I am treating her like a 'temporary guest' in our relationship and that true community care means sharing resources without '<span class='hint-word' data-ukr='капіталістичне накопичення'>capitalist hoarding</span>.' She's currently ignoring my texts and staying on our mutual friend's couch. Her friends are calling me a toxic landlord-sympathizer. AITA?",
-      attachment: "lease-text.png"
-    },
-    { 
-      sender: "polyscheduling_hell@protonmail.com", 
-      name: "Marcus T.", 
-      time: "09:42 AM", 
-      date: "Today, 09:42 AM", 
-      subject: "AITA for cancelling on my metamour's birthday for my primary?", 
-      text: "I practice hierarchical polyamory. My primary partner, 'Leo', has severe anxiety. I also have a newer partner, 'Ben', who I've been seeing for 8 months. \n\nBen's husband (my <span class='hint-word' data-ukr='метамур (партнер твого партнера)'>metamour</span>) was throwing a huge 30th birthday dinner for Ben on Saturday. It’s been on the Google Calendar for literally two months. On Friday night, Leo got incredibly overwhelmed by a work situation and had a massive panic attack. He asked me to stay in and <span class='hint-word' data-ukr='спільно заспокоїтися / врегулювати емоції'>co-regulate</span> with him on Saturday instead of going out.\n\nI texted Ben Saturday morning to say I couldn't make the dinner. Ben blew up, saying I constantly use Leo's mental health as an excuse to deprioritize our relationship and that I embarrassed him in front of his friends. Leo thinks Ben is being deeply <span class='hint-word' data-ukr='дискримінаційний до людей з ментальними проблемами'>ableist</span>. AITA?",
-      attachment: "calendar-screenshot.png"
-    },
-    { 
-      sender: "queerspaces_throwaway@yahoo.com", 
-      name: "Elena V.", 
-      time: "Yesterday", 
-      date: "Yesterday, 19:30", 
-      subject: "AITA for bringing my cishet boyfriend to a strictly T4T/Queer DIY show?", 
-      text: "I'm a bi cis woman. I recently started dating a straight cis guy, 'Dave'. Dave is super supportive, goes to pride, completely gets it. \n\nMy local scene was hosting a <span class='hint-word' data-ukr='підпільний концерт'>DIY basement show</span>. The flyer explicitly said 'Prioritizing Queer, Trans, and QTPOC bodies. No cops, no <span class='hint-word' data-ukr='ТЕРФ (трансфобні феміністки)'>terfs</span>.' I brought Dave because I wanted to show him my community. We paid the cover and stood in the back. \n\nMidway through, the lead singer (someone I know casually) stopped the set, pointed right at Dave, and said 'Hey frat boy, who are you here with?' I stepped in and said he was with me. The singer said 'This space isn't a zoo for straight people to gawk at us' and asked him to leave. \n\nI was so humiliated that I left with him. Now people are texting me saying I violated the sanctity of a safe space. AITA for thinking I can bring my partner to my own community events?",
-      attachment: "gig-poster.jpg"
-    },
-    { 
-      sender: "drag_roast_survivor@icloud.com", 
-      name: "Julian B.", 
-      time: "Yesterday", 
-      date: "Yesterday, 14:10", 
-      subject: "AITA for walking out of my partner's ex's drag show?", 
-      text: "My partner 'Chris' has an ex who is a very prominent local drag queen. They broke up on okay terms but it’s always been slightly awkward. Chris begged me to go to her new cabaret show to 'support local art.'\n\nWe sat in the front row. The queen zeroed in on me instantly. She spent a solid 10 minutes roasting my outfit, my job, and jokingly asked Chris 'Is this really the downgrade you left me for?' The crowd was howling. I know drag is all about <span class='hint-word' data-ukr='висміювання та сарказм'>reading and shade</span>, but it felt incredibly pointed and personal. \n\nChris was laughing along and didn't defend me. I got up, paid my tab, and took an Uber home in the middle of her set. Chris came home screaming that I lack a sense of humor and completely embarrassed them in front of the entire local queer scene by throwing a 'straight-guy temper tantrum.' AITA?",
-      attachment: "drag-flyer.jpg"
-    },
-    { 
-      sender: "firstclass_traitor@gmail.com", 
-      name: "Tariq H.", 
-      time: "Tuesday", 
-      date: "Tuesday, 11:05", 
-      subject: "AITA for secretly upgrading my flight on a chosen family trip?", 
-      text: "My queer friend group (6 of us) planned a trip to Mexico. We all have wildly different incomes. A few are struggling freelancers, and I work a boring corporate tech job. We agreed to book the absolute cheapest economy flights so we could all travel together on the same plane.\n\nTwo days before the flight, I logged into the airline portal. There was an option to use my personal <span class='hint-word' data-ukr='милі постійного клієнта'>frequent flyer miles</span> to upgrade my specific seat to First Class for basically nothing. I did it because I have terrible back pain.\n\nWhen we got to the gate, the group realized my boarding pass said Group 1. I tried to explain I used my own points and it didn't cost them anything. My best friend called me a classist traitor and said it ruined the 'solidarity' of the trip because they were all crammed in the back while I was drinking free champagne. Half the group refused to talk to me for the first two days of the vacation. AITA?",
-      attachment: "boarding-pass.jpg"
-    },
-    { 
-      sender: "debt_gofundme@hotmail.com", 
-      name: "Riley M.", 
-      time: "Monday", 
-      date: "Monday, 08:20", 
-      subject: "AITA for refusing to donate to a friend's top surgery fund over an old debt?", 
-      text: "Three years ago, my friend 'Ash' started a <span class='hint-word' data-ukr='колектив авторів зінів (незалежних журналів)'>zine collective</span>. I lent them $1,200 to cover printing costs. The zine folded after two issues. Ash never paid me back and honestly just kind of acted like the debt didn't exist because 'art is a risk.' I let it go to keep the peace.\n\nNow, Ash is raising money for top surgery. They posted a GoFundMe and tagged literally everyone in our circle, including me, pushing people to donate and share. I didn't donate. \n\nAsh confronted me at a party, publicly asking why I wasn't supporting their <span class='hint-word' data-ukr='гендерно-підтверджуюча терапія'>gender-affirming care</span> when I make a decent salary. I snapped and said 'I essentially gave you a $1,200 donation three years ago, I think I've contributed enough to your journey.' The room went dead silent. Now half the friend group says I am holding gender-affirming care hostage over a petty financial grudge. AITA?",
-      attachment: "gofundme-screenshot.jpg"
-    },
-    { 
-      sender: "quiet_escape@gmail.com", 
-      name: "David R.", 
-      time: "Last Week", 
-      date: "Last Week, 14:30", 
-      subject: "AITA for lying to my wife about a work trip to avoid her rowdy family?", 
-      text: "My (34M) wife's family is <span class='hint-word' data-ukr='галасливі та безпардонні'>VERY rowdy</span>. They yell, have no respect for privacy, and ask <span class='hint-word' data-ukr='безтактні питання'>invasive questions</span> (e.g., my father-in-law asked about my 'moves' on our wedding night). My wife gets defensive and insists I attend all their events.\n\nI had a 2-day work trip during their 5-day family vacation. I decided to <span class='hint-word' data-ukr='збрехати / прикрасити'>fib to my wife</span>, claiming the trip was 4 days so it wouldn't make sense to join them at the Airbnb for just one night. I enjoyed a few days of peace at home.\n\nWeeks later, my coworkers came over for drinks and accidentally revealed to my wife that the trip was only 2 days. The look on her face was murderous. She yelled at me, and her parents sent angry messages saying they couldn’t believe I lied just to avoid them. AITA?",
+    {
+      sender: "throwaway_groom91@gmail.com",
+      name: "Anonymous Groom",
+      time: "Today",
+      date: "Today, 8:02 AM",
+      subject: "AITA for asking my brother not to bring his boyfriend to my wedding?",
+      redditUrl: "https://www.reddit.com/r/AmItheAsshole/comments/cs0bfh/aita_for_asking_my_brother_not_to_bring_his/",
+      actualVerdict: null,
+      text: `I'm getting married in a week to an awesome woman, and I can't wait. But I'm losing sleep over something else.
+
+My brother is gay, but my family doesn't know — only me and my parents. We come from a very <span class='hint-word' data-ukr='старомодна, консервативна'>old school</span> family; some older relatives wouldn't accept it, though the younger cousins are open-minded.
+
+He's been dating his boyfriend for 6 months. I've told him for years he should <span class='hint-word' data-ukr='публічно розкрити свою орієнтацію'>come out</span>, since I'd rather know now who in the family is going to be ugly about it. He always said it wasn't worth the drama.
+
+Then a few weeks ago, out of nowhere, he said he wants to bring his boyfriend to my wedding — <span class='hint-word' data-ukr='різка зміна, з нуля до максимуму'>0 to 100</span>. I said no. I don't want drama and gossip taking attention away from my fiancée on her day, and I haven't even told her about any of this because she's already stressed enough.
+
+With a <span class='hint-word' data-ukr='дуже неохоче, з болем у серці'>heavy heart</span>, I asked him to come alone. He started crying and left without a word. The next day he texted "don't worry, going alone" and wouldn't answer my calls for days. We eventually talked — he says he understands, but things are still weird between us.
+
+Am I the asshole for handling it this way?`,
       attachment: ""
     },
-    { 
-      sender: "twin_test@outlook.com", 
-      name: "Mark T.", 
-      time: "Last Week", 
-      date: "Last Week, 19:15", 
-      subject: "AITA for replacing myself with my identical twin at an in-law party to see if they'd notice?", 
-      text: "I (31M) have an identical twin brother, 'Steve'. I’ve told my wife that none of her family members actually talk to me or notice me at their Christmas Eve party. She insists they genuinely like me. \n\nAs a test, I made a wager. I paid Steve $20 to go instead of me. I didn't prep him at all; he went in completely clueless. As I suspected, nobody noticed the <span class='hint-word' data-ukr='рокіровка / підміна'>switcheroo</span>, and Steve admitted he felt entirely ignored the whole night.\n\nThe next morning, I brought Steve to Christmas dinner. I revealed that 'I' was actually Steve the night prior, expressing disappointment that nobody noticed I was missing. My wife <span class='hint-word' data-ukr='встановила межу / категорично заперечила'>drew the line</span> here, saying she wanted to keep it a private <span class='hint-word' data-ukr='розіграш'>funny prank</span> between us. But how else will they see how terribly they treat me? AITA?",
+    {
+      sender: "essence_of_tomato@yahoo.com",
+      name: "Noodle Purist",
+      time: "Today",
+      date: "Today, 10:47 AM",
+      subject: "AITA for being mad my bf won't make noodles the way I like",
+      redditUrl: "https://www.reddit.com/r/AmItheAsshole/comments/tmxe42/aita_for_being_mad_my_bf_wont_make_noodles_the/",
+      actualVerdict: "Everyone Sucks",
+      text: `I've always been a picky eater, especially about tomatoes. As a kid, my dad would put sauce on my spaghetti, then rinse most of it back off — just enough tomato flavor without drowning the noodles in it. I love pasta this way.
+
+My boyfriend (26) has known about this the whole three years we've dated, and always said it was cute. We moved in together during the pandemic; he took over all the cooking, I handle most of the cleaning.
+
+Last week after dinner, he started teasing me with <span class='hint-word' data-ukr='іронічні лапки пальцями (сарказм)'>finger quotes</span> about my tomato "essence." Turns out he'd never actually been rinsing the sauce off — the whole time we've lived together, he'd just been skipping the sauce entirely and letting me think it was the same. He said if I never noticed, it shouldn't matter.
+
+I think lying about it for years is a <span class='hint-word' data-ukr='порушення довіри'>breach of trust</span>. He thinks I'm overreacting. AITA?
+
+Edit: He found this post. We had a huge <span class='hint-word' data-ukr='гучна, емоційна сварка'>blowup fight</span> and broke up. Turns out he also lied about being a pharmacist (he actually works at CVS), cheated on me multiple times, and was never allergic to dogs — he just doesn't like them.`,
       attachment: ""
     },
-    { 
-      sender: "grieving_dad99@yahoo.com", 
-      name: "Robert H.", 
-      time: "Nov 28", 
-      date: "Nov 28, 08:45", 
-      subject: "AITA for stopping my daughter’s tuition over a fatphobic comment to my new GF?", 
-      text: "My wife passed away, and after a year in <span class='hint-word' data-ukr='в жалобі'>deep mourning</span>, I (56M) met 'C' (43F). She’s smart, funny, and brought me back to life. My son gets along with her, but my daughter 'A' (19F) has been terribly <span class='hint-word' data-ukr='непривітна / відсторонена'>standoffish</span>. C is on the heavier side.\n\nDuring Thanksgiving dinner, C went to grab her third helping of potatoes. A glared at her and loudly said, 'Don’t you think you’ve eaten enough, you fat pig?' C ran off sobbing. I kicked A out of the house immediately.\n\nLater, I texted A that I’d stop paying her university tuition unless she apologized and C accepted it. A <span class='hint-word' data-ukr='наполягала на своєму'>doubled down</span> on her behavior. I logged in, canceled her next semester's tuition, and sent her the screenshots. She’s now calling me crying and begging me to reconsider. AITA?",
+    {
+      sender: "maid_of_honor_2022@gmail.com",
+      name: "Bride-to-be",
+      time: "Yesterday",
+      date: "Yesterday, 6:18 PM",
+      subject: "AITA for spoiling my best friend's proposal?",
+      redditUrl: "https://www.reddit.com/r/AmItheAsshole/comments/vj1yz8/aita_for_spoiling_my_best_friends_proposal/",
+      actualVerdict: "Not the A-hole",
+      text: `I'm getting married in under three weeks. My best friend since childhood, "Cassie," is my <span class='hint-word' data-ukr='головна дружка нареченої'>maid of honor</span> and has been amazing through the whole planning process. I've never loved her girlfriend "Sophie" though — she's very withdrawn, which Cassie says can come off as rude.
+
+A few days ago, Sophie asked if she could propose to Cassie during my wedding reception, to "link our weddings." I said no — this is my day. Sophie got <span class='hint-word' data-ukr='роздратована, ображена'>pissy</span> and stormed off, saying she didn't need my permission anyway. Worried she'd do it regardless, I warned Cassie, who was <span class='hint-word' data-ukr='несамовито розлючена'>livid</span> and apologized on Sophie's behalf.
+
+Days later Sophie called to berate me — and mentioned Cassie was now coming to the wedding alone, and wasn't speaking to her. I called Cassie, who's since moved in with me, a total mess, saying these huge fights with Sophie happen often. I feel awful for potentially wrecking both the proposal and the relationship. AITA?
+
+Edit: Cassie finally told me how Sophie really treated her, and called her to end things for good. She's staying with me while she gets her stuff back, and I'm having her housesit during our honeymoon.`,
       attachment: ""
     },
-    { 
-      sender: "dinner_disaster@protonmail.com", 
-      name: "Chloe W.", 
-      time: "Oct 12", 
-      date: "Oct 12, 22:10", 
-      subject: "AITA for exposing my sister's body count after she outed our brother as a virgin?", 
-      text: "At a large family dinner (including extended family and spouses), my elder sister (29F) and youngest brother (22M) got into a mild disagreement. My sister is a <span class='hint-word' data-ukr='агресивна в стані сп\\'яніння'>mean drunk</span> and was losing the argument.\n\nOut of nowhere, she blurted out, 'Shut up, I’m not going to argue with a 22-year-old virgin.' My brother has confidence issues, and this was completely <span class='hint-word' data-ukr='безпідставно'>unprovoked</span>. I told her to grow up, but she replied, 'Everyone knows he's a virgin, I didn't say anything wrong.'\n\nI was furious, so I responded that she slept with well over a hundred men in college, and since 'everyone knows,' it's not a big deal, right? Turns out her new husband didn't know. He left the party angrily, saying she <span class='hint-word' data-ukr='ввела в оману'>misled</span> him about her past. Now my family is blaming me for their marital problems. AITA?",
+    {
+      sender: "dinner_disaster99@protonmail.com",
+      name: "Frustrated Sibling",
+      time: "Yesterday",
+      date: "Yesterday, 9:40 PM",
+      subject: "AITA for telling my extended family how many men (roughly) my sister has slept with after she outed our youngest brother as a virgin?",
+      redditUrl: "https://www.reddit.com/r/AmItheAsshole/comments/cihc3z/aita_for_telling_my_extended_family_how_many_men/",
+      actualVerdict: "Everyone Sucks",
+      text: `At a big family dinner tonight, my older sister (29F) and younger brother (22M) got into an argument. She was already losing it and being unnecessarily aggressive — she's a <span class='hint-word' data-ukr='людина, яка стає злою, коли п’яна'>mean drunk</span> — when she suddenly snapped, "Shut up, I'm not going to argue with a 22-year-old virgin," completely <span class='hint-word' data-ukr='без будь-якого приводу'>unprovoked</span>.
+
+I told her to grow up. She said everyone already knows he's a virgin, so it's not a big deal. So I shot back that she'd slept with well over a hundred men in college, and since "everyone knows" anyway, that shouldn't be a big deal either. Except her husband didn't know, and he left the party furious that she'd <span class='hint-word' data-ukr='ввела в оману'>misled</span> him about her past.
+
+Now the family's blaming me for their marriage problems. I think I just gave her a <span class='hint-word' data-ukr='відплатила тим самим, чим вона діяла'>taste of her own medicine</span>. AITA?`,
+      attachment: ""
+    },
+    {
+      sender: "not_a_nepo_baby@gmail.com",
+      name: "Anonymous Employee",
+      time: "Monday",
+      date: "Monday, 3:55 PM",
+      subject: `AITA for calling my stepcousin a jealous bitch because she said I get everything because of "nepo privilege"?`,
+      redditUrl: "https://www.reddit.com/r/AmItheAsshole/comments/11r4kdh/aita_for_calling_my_stepcousin_a_jealous_bitch/",
+      actualVerdict: "Everyone Sucks",
+      text: `My stepcousin "Lia" and I work in the same field, at a company co-owned by my boyfriend's dad. She thinks I get everything handed to me, and it's made her jealous — especially since I just got a promotion.
+
+We were both job-hunting elsewhere — she got an offer and is moving; I got one too but stayed for the promotion. At a family potluck, my aunt (Lia's stepmom) was praising my success, and I mentioned I'd had another offer but chose to stay. Lia overheard and snapped that it's not about my "options" but my "<span class='hint-word' data-ukr='переваги завдяки сімейним зв’язкам'>nepo privilege</span>," complaining that everyone's <span class='hint-word' data-ukr='підлещуватися до когось'>kissing up</span> to me over my new job while ignoring hers.
+
+I told her to stop acting like a jealous bitch and focus on herself. She <span class='hint-word' data-ukr='розлючено пішла геть'>stormed off</span> and hasn't responded to my texts since. A mutual friend says I was way out of line. AITA?`,
+      attachment: ""
+    },
+    {
+      sender: "quiet_escape_2018@gmail.com",
+      name: "Falsely Accused",
+      time: "Last Week",
+      date: "Last Week, 1:15 PM",
+      subject: "AITA for keeping my website up after being asked to remove it?",
+      redditUrl: "https://www.reddit.com/r/AmItheAsshole/comments/cbybhq/aita_for_keeping_my_website_up_after_being_asked/",
+      actualVerdict: "Not the A-hole",
+      text: `Back in 2018, I was arrested at work in front of my boss and coworkers on multiple felony charges — completely out of nowhere. I managed to <span class='hint-word' data-ukr='найняти адвоката'>lawyer up</span> instead of talking to the detective, which wiped out my savings ($13,000). I couldn't afford <span class='hint-word' data-ukr='застава (сума для звільнення до суду)'>bond</span>, so I sat in jail for 54 days until my lawyer proved with video evidence that I was three hours away when the crime happened. All charges were dropped.
+
+By then I'd lost my job, was being evicted, and my son had been taken into state care — his mom is a heroin addict, and my own parents wouldn't take him in either. I couldn't sue the police, and the local press never followed up, so I built a website telling my story and posted the police report and case documents.
+
+Recently the site started ranking near the top of search results for my town, and I got a <span class='hint-word' data-ukr='офіційна вимога негайно припинити дію'>cease and desist letter</span>. My lawyer confirmed everything on the site is fact or opinion, so it's not defamation. Then the detective who arrested me showed up, apologized ("mistakes can happen"), and asked me to take the site down. I said I would — if he quit police work for good. That's obviously not happening.
+
+My friends think I'm being <span class='hint-word' data-ukr='мстивий, злопам’ятний'>spiteful</span> and should just delete it. My girlfriend's the only one on my side. AITA for keeping my website up?`,
       attachment: ""
     }
   ];
@@ -918,6 +954,8 @@
       row.addEventListener('click', () => openStory(index));
       list.appendChild(row);
     });
+
+    attachAllVotesTallyListener();
   });
 
   function toggleStar(evt, iconEl, rowId) {
@@ -1012,6 +1050,16 @@
     // Inject HTML text so tooltips render
     document.getElementById('storyDisplay').innerHTML = story.text;
 
+    // --- SOURCE LINK ---
+    const sourceLinkContainer = document.getElementById('storySourceLink');
+    const sourceLinkAnchor = document.getElementById('storySourceLinkAnchor');
+    if (story.redditUrl) {
+      sourceLinkAnchor.href = story.redditUrl;
+      sourceLinkContainer.style.display = 'block';
+    } else {
+      sourceLinkContainer.style.display = 'none';
+    }
+
     // --- TOAST LOGIC ---
     const hints = document.querySelectorAll('.hint-word');
     const toast = document.getElementById('translationToast');
@@ -1084,6 +1132,8 @@
       myLocalVote = verdict;
       updateTallyDisplay();
       updateMyVoteHighlight(myLocalVote);
+      localVoteCounts[currentStoryIndex] = { ...voteCounts };
+      updateInboxVerdictTag(currentStoryIndex, localVoteCounts[currentStoryIndex]);
     }
   }
 
@@ -1098,6 +1148,17 @@
     card.classList.remove('red', 'green');
 
     tally.textContent = `${voteCounts.YTA} ASSHOLE — ${voteCounts.NTA} NOT THE ASSHOLE`;
+
+    // Show what Reddit's actual jury ruled, if we know it, as a fun point of comparison.
+    const realEl = document.getElementById('verdictReal');
+    const story = currentStoryIndex !== null ? DOCKET_STORIES[currentStoryIndex] : null;
+    if (story && story.actualVerdict) {
+      realEl.textContent = `Reddit's real jury ruled: ${story.actualVerdict}`;
+      realEl.style.display = 'block';
+    } else {
+      realEl.textContent = '';
+      realEl.style.display = 'none';
+    }
 
     if (voteCounts.YTA === voteCounts.NTA) {
       text.textContent = "IT'S A TIE";
@@ -1125,6 +1186,64 @@
   function closeVerdict() {
     changeVote();
     setTimeout(() => backToDocket(), 500);
+  }
+
+  // --- LIVE INBOX VERDICT TAGS ---
+  // No manual "final vote" step: each case's tag in the inbox is just whatever
+  // the tally currently says, and it appears as soon as there's at least one vote.
+  let localVoteCounts = {}; // fallback per-story tally for when no shared database is available
+
+  function computeVerdictFromCounts(counts) {
+    if (!counts) return null;
+    const total = (counts.YTA || 0) + (counts.NTA || 0);
+    if (total === 0) return null;
+    if (counts.YTA === counts.NTA) return 'TIE';
+    return counts.YTA > counts.NTA ? 'YTA' : 'NTA';
+  }
+
+  function updateInboxVerdictTag(index, counts) {
+    const row = document.getElementById(`emailRow_${index}`);
+    if (!row) return;
+    const meta = row.querySelector('.email-meta');
+    if (!meta) return;
+    let tag = meta.querySelector('.verdict-tag');
+    const verdict = computeVerdictFromCounts(counts);
+
+    if (!verdict) {
+      // Fewer than one vote in — no tag yet.
+      if (tag) tag.remove();
+      return;
+    }
+
+    if (!tag) {
+      tag = document.createElement('div');
+      tag.className = 'verdict-tag';
+      meta.appendChild(tag);
+    }
+    tag.classList.remove('verdict-tag-red', 'verdict-tag-green');
+    if (verdict === 'YTA') {
+      tag.textContent = 'Asshole';
+      tag.classList.add('verdict-tag-red');
+    } else if (verdict === 'NTA') {
+      tag.textContent = 'Not TA';
+      tag.classList.add('verdict-tag-green');
+    } else {
+      tag.textContent = 'Tie';
+    }
+  }
+
+  function attachAllVotesTallyListener() {
+    if (!db) return;
+    // Listens to every story's votes at once and keeps each inbox tag live-updated.
+    db.ref(`events/${EVENT_ID}/court/votes`).on('value', snap => {
+      const all = snap.val() || {};
+      DOCKET_STORIES.forEach((_, idx) => {
+        const votesForStory = all[idx] || {};
+        const counts = { YTA: 0, NTA: 0 };
+        Object.values(votesForStory).forEach(v => { if (counts[v] !== undefined) counts[v]++; });
+        updateInboxVerdictTag(idx, counts);
+      });
+    });
   }
 </script>
 </body>
