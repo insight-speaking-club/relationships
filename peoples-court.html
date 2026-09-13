@@ -18,6 +18,8 @@
     --dim: #a69bb5;
     --crimson: #9e1432;
     --emerald: #126e47;
+    --gold-dim: rgba(223, 177, 74, 0.35);
+    --gold-hairline: rgba(223, 177, 74, 0.22);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -44,6 +46,17 @@
     opacity: 0.5; animation: sky-twinkle 7s ease-in-out infinite alternate;
   }
   @keyframes sky-twinkle { 0% { opacity: 0.3; } 100% { opacity: 0.7; } }
+
+  /* --- FILM GRAIN + VIGNETTE (adds density/expense to the atmosphere) --- */
+  .grain-overlay {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background-image: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+  }
+  .grain-overlay::after {
+    content: ''; position: absolute; inset: -100px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    opacity: 0.6; mix-blend-mode: overlay;
+  }
 
   /* --- MINIMALIST ITINERARY LINK --- */
   .itinerary-link {
@@ -108,32 +121,62 @@
     line-height: 1.6; color: rgba(240, 230, 250, 0.85); text-align: center;
     text-shadow: 0 4px 20px rgba(0,0,0,0.9);
   }
-  .lore-paragraph:first-child { font-size: 32px; color: var(--gold); font-weight: 600; margin-bottom: 5px; }
+  .lore-paragraph:first-child { font-size: 34px; color: var(--gold); font-weight: 600; margin-bottom: 12px; position: relative; padding-bottom: 18px; }
+  .lore-paragraph:first-child::after {
+    content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 70px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
 
   .btn-gold {
-    background: linear-gradient(135deg, #f2d48f 0%, var(--gold) 100%);
-    color: var(--ink); border: none; border-radius: 999px;
-    padding: 16px 36px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 15px;
-    letter-spacing: 0.05em; cursor: pointer; 
-    box-shadow: 0 8px 25px var(--gold-glow); transition: transform 0.2s ease, filter 0.2s ease;
+    background: linear-gradient(135deg, #f7e0a8 0%, var(--gold) 45%, #b5872e 100%);
+    color: var(--ink); border: 1px solid rgba(255,255,255,0.4); border-radius: 999px;
+    padding: 16px 36px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px;
+    letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; position: relative; overflow: hidden;
+    box-shadow: 0 8px 25px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -2px 4px rgba(0,0,0,0.25);
+    transition: transform 0.2s ease, filter 0.2s ease;
     display: inline-flex; align-items: center; gap: 10px; animation: fade-up 0.6s ease forwards;
   }
+  .btn-gold::after {
+    content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(115deg, transparent, rgba(255,255,255,0.55), transparent);
+    animation: gold-sheen 3.2s ease-in-out infinite;
+  }
+  @keyframes gold-sheen { 0% { left: -60%; } 45%, 100% { left: 130%; } }
   .btn-gold:active { transform: scale(0.96); filter: brightness(0.9); }
 
   /* --- PHASE 2: THE EMAIL INBOX --- */
   .email-client {
     width: 100%; background: rgba(13, 6, 20, 0.75);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(223, 177, 74, 0.2); border-radius: 12px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.9); overflow: hidden; display: flex; flex-direction: column;
+    border: 1px solid var(--gold-dim); border-radius: 4px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.9), 0 0 0 5px rgba(13,6,20,0.6), 0 0 0 6px var(--gold-hairline),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+    overflow: hidden; display: flex; flex-direction: column; position: relative;
   }
+  /* gilded corner flourishes */
+  .email-client::before, .email-client::after {
+    content: ''; position: absolute; width: 22px; height: 22px; z-index: 5; pointer-events: none;
+    border: 1.5px solid var(--gold); opacity: 0.55;
+  }
+  .email-client::before { top: 7px; left: 7px; border-right: none; border-bottom: none; }
+  .email-client::after { bottom: 7px; right: 7px; border-left: none; border-top: none; }
   .inbox-toolbar {
     display: flex; align-items: center; gap: 10px; padding: 16px 20px;
     background: rgba(0,0,0,0.6); border-bottom: 1px solid rgba(223, 177, 74, 0.15);
   }
+  .inbox-toolbar { position: relative; }
+  .inbox-toolbar::after {
+    content: ''; position: absolute; left: 20px; right: 20px; bottom: 0; height: 1px;
+    background: linear-gradient(90deg, var(--gold) 0%, transparent 70%); opacity: 0.35;
+  }
   .inbox-title-block { flex: 1; }
-  .email-title { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 600; color: var(--mist); letter-spacing: 0.02em; }
-  .email-count { font-family: 'Montserrat', sans-serif; font-size: 12px; color: var(--gold); margin-top: 4px; }
+  .docket-eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--gold); opacity: 0.7; margin-bottom: 5px;
+  }
+  .email-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; font-style: italic; color: var(--mist); letter-spacing: 0.01em; }
+  .email-count { font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--gold); margin-top: 5px; letter-spacing: 0.03em; }
+  .justice-seal { width: 22px; height: 22px; color: var(--gold); opacity: 0.85; flex-shrink: 0; filter: drop-shadow(0 0 6px var(--gold-glow)); }
   
   .me-avatar {
     width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
@@ -238,10 +281,13 @@
   .email-row {
     display: flex; align-items: flex-start; gap: 14px;
     padding: 18px 20px; border-bottom: 1px solid rgba(240, 230, 250, 0.05);
-    cursor: pointer; transition: background 0.3s ease, border-left 0.2s ease;
+    cursor: pointer; transition: background 0.3s ease, border-left 0.2s ease, transform 0.15s ease;
     border-left: 3px solid transparent;
+    opacity: 0; animation: row-file-in 0.5s ease forwards;
   }
+  @keyframes row-file-in { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
   .email-row:hover { background: rgba(223, 177, 74, 0.08); }
+  .email-row:active { transform: scale(0.99); }
   .email-row.read { opacity: 0.6; }
   .email-row.selected { border-left-color: var(--gold); background: rgba(223, 177, 74, 0.04); }
 
@@ -252,7 +298,7 @@
     box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
   }
   .email-content { flex: 1; min-width: 0; }
-  .email-subject { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: var(--mist); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .email-subject { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: var(--mist); margin-bottom: 6px; white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.35; }
   .email-snippet { font-size: 13px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 400; line-height: 1.4; }
   .email-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
   .email-time { font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--dim); }
@@ -263,8 +309,14 @@
   .attachment-clip { opacity: 0.5; width: 14px; height: 14px; }
 
   /* --- PHASE 3: OPEN EMAIL & VOTING --- */
-  .open-email-header { padding: 24px; border-bottom: 1px solid rgba(223, 177, 74, 0.15); background: rgba(0,0,0,0.4); }
-  .oe-subject { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 600; color: var(--mist); margin-bottom: 20px; line-height: 1.3; }
+  .open-email-header { padding: 24px; border-bottom: 1px solid rgba(223, 177, 74, 0.15); background: rgba(0,0,0,0.4); position: relative; }
+  .case-number {
+    display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold);
+    border: 1px solid var(--gold-dim); border-radius: 3px; padding: 5px 10px;
+    margin-bottom: 16px; opacity: 0.9;
+  }
+  .oe-subject { font-family: 'Playfair Display', serif; font-style: italic; font-size: 22px; font-weight: 600; color: var(--mist); margin-bottom: 20px; line-height: 1.35; }
   .oe-meta-grid { display: grid; grid-template-columns: 50px 1fr; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mist); }
   .meta-label { color: var(--dim); }
 
@@ -349,13 +401,13 @@
 
   .aita-buttons { display: flex; flex-direction: column; gap: 14px; width: 100%; margin-top: 16px; }
   .aita-btn {
-    border: none; border-radius: 8px; cursor: pointer; display: block; width: 100%;
-    font-family: 'Montserrat', sans-serif; font-weight: 700; padding: 22px 18px; font-size: 16px; 
-    letter-spacing: 0.15em; color: #fff; text-transform: uppercase; transition: transform 0.2s ease, filter 0.2s ease;
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; cursor: pointer; display: block; width: 100%;
+    font-family: 'Montserrat', sans-serif; font-weight: 700; padding: 22px 18px; font-size: 15px; 
+    letter-spacing: 0.18em; color: #fff; text-transform: uppercase; transition: transform 0.2s ease, filter 0.2s ease;
   }
   .aita-btn:active { transform: scale(0.97); filter: brightness(0.8); }
-  .aita-btn-red { background: linear-gradient(135deg, var(--crimson), #5c081b); box-shadow: 0 6px 20px rgba(158, 20, 50, 0.3); }
-  .aita-btn-green { background: linear-gradient(135deg, var(--emerald), #073823); box-shadow: 0 6px 20px rgba(18, 110, 71, 0.3); }
+  .aita-btn-red { background: linear-gradient(135deg, var(--crimson), #5c081b); box-shadow: 0 6px 20px rgba(158, 20, 50, 0.35), inset 0 1px 0 rgba(255,255,255,0.15); }
+  .aita-btn-green { background: linear-gradient(135deg, var(--emerald), #073823); box-shadow: 0 6px 20px rgba(18, 110, 71, 0.35), inset 0 1px 0 rgba(255,255,255,0.15); }
   .aita-btn.my-vote { box-shadow: 0 0 0 3px var(--gold), 0 6px 20px rgba(0,0,0,0.4); }
 
   .back-link { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--dim); text-decoration: underline; margin-top: 24px; cursor: pointer; background: none; border: none; padding: 8px; }
@@ -370,6 +422,17 @@
   .verdict-card.green { background-image: linear-gradient(45deg, #126e47, #073823, #1ea36b, #032114); }
   @keyframes gradientMesh { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
+  .verdict-eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 14px;
+  }
+  .verdict-card.shake { animation: gavel-shake 0.5s cubic-bezier(0.36,0.07,0.19,0.97); }
+  @keyframes gavel-shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+  }
   .verdict-text {
     font-family: 'Playfair Display', serif; font-style: italic; font-weight: 800;
     font-size: 16vw; max-font-size: 90px; line-height: 1.1; color: #fff; text-shadow: 0 10px 30px rgba(0,0,0,0.6);
@@ -393,6 +456,7 @@
 <body>
 
   <div class="sky"></div>
+  <div class="grain-overlay"></div>
 
   <!-- Audio Asset for Gavel Strike -->
   <audio id="gavelSound" preload="auto">
@@ -422,6 +486,9 @@
 
     <!-- Phase 1: Lore -->
     <div class="section-layer" id="phaseIntro">
+      <svg class="justice-seal" style="width:36px; height:36px; margin-bottom: 22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0zM19 7l-3 6a3.5 3.5 0 0 0 7 0zM5 7h14M9 21h6M3 3l9 4 9-4"></path>
+      </svg>
       <div class="thread" id="loreThread"></div>
       <div id="introCta" style="display:flex; flex-direction:column; align-items:center;"></div>
     </div>
@@ -430,9 +497,13 @@
     <div class="section-layer" id="phaseDocket">
       <div class="email-client">
         <div class="inbox-toolbar">
+          <svg class="justice-seal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0zM19 7l-3 6a3.5 3.5 0 0 0 7 0zM5 7h14M9 21h6M3 3l9 4 9-4"></path>
+          </svg>
           <div class="inbox-title-block">
-            <div class="email-title">People's Court Inbox</div>
-            <div class="email-count">6 unread</div>
+            <div class="docket-eyebrow">Docket &nbsp;·&nbsp; In Session</div>
+            <div class="email-title">The People's Court Inbox</div>
+            <div class="email-count">6 cases unread</div>
           </div>
           <div class="me-avatar" id="meAvatar">JS</div>
         </div>
@@ -459,6 +530,7 @@
     <div class="section-layer" id="phaseStory">
       <div class="email-client">
         <div class="open-email-header">
+          <div class="case-number" id="storyCaseNumber"></div>
           <div class="oe-subject" id="storySubject"></div>
           <div class="oe-meta-grid">
             <div class="meta-label">From:</div><div id="storySender"></div>
@@ -494,6 +566,7 @@
 
   <!-- Full Screen Verdict -->
   <div class="verdict-card" id="verdictCard">
+    <div class="verdict-eyebrow">The Court Finds</div>
     <div class="verdict-text" id="verdictText"></div>
     <div class="verdict-tally" id="verdictTally"></div>
     <p class="verdict-instruction">Hold your phone up so everyone can see.</p>
@@ -790,6 +863,7 @@
       const row = document.createElement('div');
       row.className = 'email-row';
       row.id = `emailRow_${index}`;
+      row.style.animationDelay = `${index * 90}ms`;
       
       const attachIcon = story.attachment ? `<svg class="attachment-clip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>` : '';
 
@@ -893,6 +967,7 @@
     // Each person gets exactly one vote per story, synced live for everyone.
     currentStoryIndex = index;
     attachVotesListener(index);
+    document.getElementById('storyCaseNumber').textContent = `Case No. ${String(index + 1).padStart(3, '0')} of ${String(DOCKET_STORIES.length).padStart(3, '0')}`;
     document.getElementById('storySubject').textContent = story.subject;
     document.getElementById('storySender').textContent = `${story.name} <${story.sender}>`;
     document.getElementById('storyDate').textContent = story.date;
@@ -1000,7 +1075,8 @@
 
     card.style.display = 'flex';
     void card.offsetWidth;
-    card.classList.add('visible');
+    card.classList.add('visible', 'shake');
+    setTimeout(() => card.classList.remove('shake'), 550);
   }
 
   function changeVote() {
