@@ -176,8 +176,8 @@
   }
   .email-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; font-style: italic; color: var(--mist); letter-spacing: 0.01em; }
   .email-count { font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--gold); margin-top: 5px; letter-spacing: 0.03em; }
-  .aita-explainer { font-family: 'Montserrat', sans-serif; font-size: 10.5px; color: var(--dim); margin-top: 6px; line-height: 1.4; max-width: 340px; }
-  .aita-explainer b { color: var(--mist); font-weight: 600; }
+  .aita-footnote { font-family: 'Montserrat', sans-serif; font-size: 11px; color: var(--dim); margin-top: 18px; line-height: 1.5; max-width: 320px; text-align: center; }
+  .aita-footnote b { color: var(--gold); font-weight: 600; }
   .justice-seal { width: 22px; height: 22px; color: var(--gold); opacity: 0.85; flex-shrink: 0; filter: drop-shadow(0 0 6px var(--gold-glow)); }
   
   .me-avatar {
@@ -457,6 +457,7 @@
   .verdict-real { color: rgba(255,255,255,0.65); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; margin-bottom: 18px; display: none; }
   .verdict-instruction { color: rgba(255,255,255,0.85); font-family: 'Montserrat', sans-serif; font-size: 18px; margin-bottom: 22px; }
   .reveal-btn { margin-top: 16px; width: 100%; border-color: var(--gold); color: var(--gold); }
+  .remove-vote-btn { margin-top: 10px; width: 100%; font-size: 12px; padding: 8px 20px; border-color: rgba(255,255,255,0.25); color: var(--dim); }
   .btn-secondary-row { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
   .btn-secondary-row .btn-ghost { font-size: 13px; padding: 10px 22px; border-color: rgba(255,255,255,0.3); }
 
@@ -519,10 +520,8 @@
             <path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0zM19 7l-3 6a3.5 3.5 0 0 0 7 0zM5 7h14M9 21h6M3 3l9 4 9-4"></path>
           </svg>
           <div class="inbox-title-block">
-            <div class="docket-eyebrow">Docket &nbsp;·&nbsp; In Session</div>
             <div class="email-title">The People's Court Inbox</div>
             <div class="email-count" id="emailCount">6 cases unread</div>
-            <div class="aita-explainer"><b>AITA</b> = "Am I The Asshole" — each case below is someone asking a jury of strangers whether they were wrong.</div>
           </div>
           <div class="me-avatar" id="meAvatar">JS</div>
         </div>
@@ -578,6 +577,7 @@
             <button class="aita-btn aita-btn-red" onclick="registerVote('YTA')">ASSHOLE</button>
             <button class="aita-btn aita-btn-green" onclick="registerVote('NTA')">NOT THE ASSHOLE</button>
           </div>
+          <button class="btn-ghost remove-vote-btn" id="removeVoteBtn" onclick="clearVote()" style="display:none;">Remove my vote</button>
           <button class="btn-ghost reveal-btn" onclick="revealVerdict()">Reveal Verdict</button>
         </div>
       </div>
@@ -795,7 +795,7 @@ My friends think I'm being <span class='hint-word' data-ukr='мстивий, з�
     }
     const chosen = names[Math.floor(Math.random() * names.length)];
     if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
-    showPickedBanner(`<b>${chosen}</b>, please choose one story and read it for the rest of us.`);
+    showPickedBanner(`<b>${chosen}</b>, please explain your position to us.`);
   }
 
   // --- GLOBAL TIMER (synced for everyone via Firebase; the eye only hides it on *your* screen) ---
@@ -976,6 +976,7 @@ My friends think I'm being <span class='hint-word' data-ukr='мстивий, з�
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
         Open the inbox
       </button>
+      <div class="aita-footnote"><b>AITA</b> = "Am I The Asshole" — each case inside is someone asking a jury of strangers whether they were wrong.</div>
     `;
   }
 
@@ -1006,6 +1007,8 @@ My friends think I'm being <span class='hint-word' data-ukr='мстивий, з�
     document.querySelectorAll('.aita-btn').forEach(b => b.classList.remove('my-vote'));
     if (myVote === 'YTA') document.querySelector('.aita-btn-red').classList.add('my-vote');
     if (myVote === 'NTA') document.querySelector('.aita-btn-green').classList.add('my-vote');
+    const removeBtn = document.getElementById('removeVoteBtn');
+    if (removeBtn) removeBtn.style.display = myVote ? 'block' : 'none';
   }
 
   function detachVotesListener() {
@@ -1132,6 +1135,25 @@ My friends think I'm being <span class='hint-word' data-ukr='мстивий, з�
       myLocalVote = verdict;
       updateTallyDisplay();
       updateMyVoteHighlight(myLocalVote);
+      localVoteCounts[currentStoryIndex] = { ...voteCounts };
+      updateInboxVerdictTag(currentStoryIndex, localVoteCounts[currentStoryIndex]);
+    }
+  }
+
+  function clearVote() {
+    if (navigator.vibrate) navigator.vibrate(40);
+
+    if (db && currentStoryIndex !== null) {
+      // Removes this person's vote entirely for this story — not a switch, a delete.
+      db.ref(`events/${EVENT_ID}/court/votes/${currentStoryIndex}/${getVoterId()}`).remove();
+      // The live listener updates the tally, highlight, and inbox tag for everyone.
+    } else {
+      // Local-only fallback when no shared database is available.
+      if (!myLocalVote) return;
+      voteCounts[myLocalVote]--;
+      myLocalVote = null;
+      updateTallyDisplay();
+      updateMyVoteHighlight(null);
       localVoteCounts[currentStoryIndex] = { ...voteCounts };
       updateInboxVerdictTag(currentStoryIndex, localVoteCounts[currentStoryIndex]);
     }
