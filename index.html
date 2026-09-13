@@ -1721,8 +1721,7 @@
   #tour-tooltip .tt-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--mist); line-height: 1.1; }
   #tour-tooltip .tt-desc { font-family: 'Jost', sans-serif; font-size: 14px; color: #d1c5df; line-height: 1.5; margin-bottom: 16px; }
 
-  #tour-tooltip .tt-row { display: flex; align-items: center; justify-content: space-between; }
-  #tour-skip { background: none; border: none; color: var(--dim); font-size: 12px; text-decoration: underline; cursor: pointer; }
+  #tour-tooltip .tt-row { display: flex; align-items: center; justify-content: flex-end; }
   #tour-next { background: var(--gold); color: var(--ink); border: none; border-radius: 20px; padding: 8px 18px; font-weight: 600; cursor: pointer; }
 
   #tour-dots { display: flex; gap: 6px; margin-top: 12px; }
@@ -3136,7 +3135,6 @@ body[data-phase="closer"] .sky {
     </div>
     <div class="tt-desc" id="tour-desc"></div>
     <div class="tt-row">
-      <button id="tour-skip" onclick="endTour()">Skip</button>
       <button id="tour-next" onclick="tourNext()">Next</button>
     </div>
     <div id="tour-dots"></div>
@@ -3564,7 +3562,7 @@ body[data-phase="closer"] .sky {
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Matching Activity</div>
               <div class="hub-card-title">The Driveway</div>
-              <div class="hub-card-desc">We're idling right here in the driveway. Gather 'round the car and wait to see who you're paired with.</div>
+              <div class="hub-card-desc">We're idling right here in the driveway. Play a mini-game called Red Flag Rally to help Sasha drive safely.</div>
               <div class="hub-card-lock-note">The host will assign partners soon.</div>
             </div>
           </div>
@@ -4371,9 +4369,9 @@ const TOUR_STEPS = [
   // Step 1: Highlights the whole Itinerary section first
   { selector: '#activitiesSection', title: 'The Itinerary', desc: 'Here\'s the full route for the night. Watch it light up as we go. We\'ll be traveling together, so sit tight until we pull up to the first stop.', pad: 10 },
   // Step 2: Zooms into the current stop
-  { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We are currently gathered right here in the driveway. Before we hit the road, the host will match everyone up—wait here to see who you\'re riding with.', pad: 8 },
+  { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We\'re gathered in the driveway. While we wait for everyone to arrive, play a mini-game called Red Flag Rally to help Sasha drive safely.', pad: 8 },
   // The rest remain the same
-  { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
+  { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. This is where the host will pair you up with someone. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
   { selector: '#hubCardAita', title: 'People\'s Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
   { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Our final stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.', pad: 8 }
 ];
