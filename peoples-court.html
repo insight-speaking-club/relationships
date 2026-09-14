@@ -208,10 +208,6 @@
     letter-spacing: 0.03em; cursor: pointer; transition: transform 0.15s ease, filter 0.15s ease;
   }
   .host-btn:active { transform: scale(0.96); filter: brightness(0.92); }
-  .host-btn.force-active {
-    background: linear-gradient(135deg, #ffd57a 0%, var(--rose) 100%);
-    box-shadow: 0 0 14px var(--gold-glow);
-  }
   .host-timer-input {
     width: 60px; background: rgba(0,0,0,0.4); border: 1px solid rgba(223, 177, 74, 0.3);
     border-radius: 6px; color: var(--mist); font-family: 'JetBrains Mono', monospace;
@@ -572,10 +568,6 @@
             <button class="host-btn" onclick="pickSomeone()">Pick someone to choose</button>
           </div>
           <div class="host-row">
-            <button class="host-btn" id="forceS2Btn" onclick="toggleForceS2()">Force Story 2 Next</button>
-            <span id="forceS2Status" style="color:var(--dim); font-size:12px;"></span>
-          </div>
-          <div class="host-row">
             <input type="number" class="host-timer-input" id="timerMinutes" min="1" max="60" value="5">
             <span style="color:var(--dim); font-size:12px;">min</span>
             <button class="host-btn" onclick="startGlobalTimer()">Start</button>
@@ -902,81 +894,96 @@ I get that weddings are expensive, but I don't see why my education should be th
   }
 
   // --- CASE RANDOMIZER ---
-  // Normally the button picks a fully random case. But a host toggle ("Force
-  // Story 2 Next") can queue up the teacher story specifically for the very
-  // next click — after that one pick, it automatically turns back off and
-  // picks go back to being random. The toggle state is shared via Firebase so
-  // it's visible/consistent across every device at the event; if Firebase
-  // isn't available it falls back to a per-device localStorage flag.
-  const FORCED_PICK_SENDER = "objective_english_teach@gmail.com"; // the teacher story
+  // The very first time anyone at this event clicks the button, it locks onto the
+  // teacher story on purpose. After that one guaranteed pick, every click is a fair
+  // random draw. The "used" flag is shared via Firebase so it's a one-time thing for
+  // the whole room, not per-device — if Firebase isn't available it falls back to a
+  // per-device localStorage flag instead.
+  const FEATURED_FIRST_PICK_SENDER = "objective_english_teach@gmail.com";
 
-  async function isForceS2Queued() {
+  async function hasRandomizerBeenUsed() {
     if (db) {
       try {
-        const snap = await db.ref(`events/${EVENT_ID}/court/forcedPick`).once('value');
+        const snap = await db.ref(`events/${EVENT_ID}/court/randomizerUsed`).once('value');
         return !!snap.val();
       } catch (e) {
-        console.warn('Could not read the forced-pick flag.', e);
+        console.warn('Could not read randomizer flag, falling back to allowing the featured pick.', e);
         return false;
       }
     }
-    try { return localStorage.getItem('pc_force_s2') === '1'; }
+    try { return localStorage.getItem('pc_randomizer_used') === '1'; }
     catch (e) { return false; }
   }
 
-  async function setForceS2(active) {
+  async function markRandomizerUsed() {
     if (db) {
-      const ref = db.ref(`events/${EVENT_ID}/court/forcedPick`);
-      if (active) await ref.set(true).catch(e => console.warn('Could not set forced-pick flag.', e));
-      else await ref.remove().catch(e => console.warn('Could not clear forced-pick flag.', e));
+      db.ref(`events/${EVENT_ID}/court/randomizerUsed`).set(true)
+        .catch(err => console.warn('Could not persist randomizer flag.', err));
     }
-    try {
-      if (active) localStorage.setItem('pc_force_s2', '1');
-      else localStorage.removeItem('pc_force_s2');
-    } catch (e) {}
-  }
-
-  async function toggleForceS2() {
-    const currentlyOn = await isForceS2Queued();
-    await setForceS2(!currentlyOn);
-    if (!db) updateForceS2ButtonUI(!currentlyOn); // no live listener without Firebase, so update manually
-  }
-
-  function updateForceS2ButtonUI(active) {
-    const btn = document.getElementById('forceS2Btn');
-    const status = document.getElementById('forceS2Status');
-    if (!btn || !status) return;
-    btn.classList.toggle('force-active', active);
-    btn.textContent = active ? 'Force Story 2 Next: ON' : 'Force Story 2 Next';
-    status.textContent = active ? 'Queued — next pick will be the teacher story' : '';
-  }
-
-  function attachForceS2Listener() {
-    if (db) {
-      db.ref(`events/${EVENT_ID}/court/forcedPick`).on('value', snap => {
-        updateForceS2ButtonUI(!!snap.val());
-      });
-      return;
-    }
-    try { updateForceS2ButtonUI(localStorage.getItem('pc_force_s2') === '1'); }
-    catch (e) { updateForceS2ButtonUI(false); }
+    try { localStorage.setItem('pc_randomizer_used', '1'); } catch (e) {}
   }
 
   async function pickRandomCaseIndex() {
-    const forced = await isForceS2Queued();
-    if (forced) {
-      await setForceS2(false); // one-time use — consume it so the toggle resets itself
-      const forcedIndex = DOCKET_STORIES.findIndex(s => s.sender === FORCED_PICK_SENDER);
-      if (forcedIndex !== -1) return forcedIndex;
-      // Fallback in case that story is ever removed from the docket.
+    const alreadyUsed = await hasRandomizerBeenUsed();
+    if (!alreadyUsed) {
+      const featuredIndex = DOCKET_STORIES.findIndex(s => s.sender === FEATURED_FIRST_PICK_SENDER);
+      await markRandomizerUsed();
+      if (featuredIndex !== -1) return featuredIndex;
+      // Fallback in case the featured story ever gets removed from the docket.
     }
     return Math.floor(Math.random() * DOCKET_STORIES.length);
   }
 
   let randomizerRunning = false;
 
+  // Clicking the button no longer runs the animation itself — it just decides
+  // the target case and broadcasts that choice via Firebase. Every device
+  // (including the one that clicked) plays the animation off that broadcast,
+  // via attachRandomizerListener() below, so the whole room sees the same
+  // slot-machine spin land on the same case at the same time.
   async function pickRandomCase() {
     if (randomizerRunning) return;
+
+    if (!db) {
+      // No shared database available — fall back to a local-only spin.
+      const targetIndex = await pickRandomCaseIndex();
+      runRandomizerAnimation(targetIndex);
+      return;
+    }
+
+    const btn = document.getElementById('randomizerBtn');
+    btn.disabled = true; // prevent double-fires while we write; listener re-enables it
+    const targetIndex = await pickRandomCaseIndex();
+    db.ref(`events/${EVENT_ID}/court/randomizerEvent`)
+      .set({ targetIndex, ts: Date.now() })
+      .catch(err => {
+        console.warn('[People\'s Court] Could not broadcast the randomizer pick, spinning locally instead.', err);
+        btn.disabled = false;
+        runRandomizerAnimation(targetIndex);
+      });
+  }
+
+  let randomizerListenerReady = false;
+  let lastHandledRandomizerTs = null;
+
+  function attachRandomizerListener() {
+    if (!db) return;
+    db.ref(`events/${EVENT_ID}/court/randomizerEvent`).on('value', snap => {
+      const data = snap.val();
+      // Skip whatever value was already sitting there when we first connected —
+      // we only want to react to *new* picks broadcast after this device joined.
+      if (!randomizerListenerReady) {
+        randomizerListenerReady = true;
+        if (data) lastHandledRandomizerTs = data.ts;
+        return;
+      }
+      if (!data || data.ts === lastHandledRandomizerTs) return;
+      lastHandledRandomizerTs = data.ts;
+      runRandomizerAnimation(data.targetIndex);
+    });
+  }
+
+  function runRandomizerAnimation(targetIndex) {
     randomizerRunning = true;
 
     const btn = document.getElementById('randomizerBtn');
@@ -986,7 +993,6 @@ I get that weddings are expensive, but I don't see why my education should be th
     dice.classList.add('spinning');
     label.textContent = 'Choosing…';
 
-    const targetIndex = await pickRandomCaseIndex();
     const rows = DOCKET_STORIES.map((_, i) => document.getElementById(`emailRow_${i}`)).filter(Boolean);
 
     if (!rows.length) {
@@ -1145,7 +1151,7 @@ I get that weddings are expensive, but I don't see why my education should be th
 
   window.addEventListener('DOMContentLoaded', () => {
     attachGlobalTimerListener();
-    attachForceS2Listener();
+    attachRandomizerListener();
     try {
       if (localStorage.getItem('pc_timer_hidden_for_me') === '1') {
         document.getElementById('globalTimerBadge').classList.add('hidden-for-me');
@@ -1343,6 +1349,10 @@ I get that weddings are expensive, but I don't see why my education should be th
     document.getElementById('phaseDocket').classList.remove('active');
     setTimeout(() => {
       document.getElementById('phaseStory').classList.add('active');
+      // phaseStory shares the one scrollable container with the docket list, so
+      // without this it opens wherever the docket happened to be scrolled to —
+      // reset it so the case always lands at the top, title visible immediately.
+      document.getElementById('courtContainer').scrollTop = 0;
     }, 400);
   }
 
