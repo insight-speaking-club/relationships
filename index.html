@@ -3839,7 +3839,7 @@ body[data-phase="closer"] .sky {
         </div>
 
         <div class="lounge-game" id="loungeGame">
-          <div class="game-instructions">jump the pets • run over the red flags</div>
+          <div class="game-instructions">collect green flags • jump red flags</div>
           <div class="game-score" id="gameScore">0</div>
           <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
           <div class="game-track" id="gameTrack">
@@ -3848,7 +3848,7 @@ body[data-phase="closer"] .sky {
               <span class="game-wisp-fallback"></span>
             </div>
             <div class="game-overlay" id="gameOverlay">
-              <div>Help Sasha jump over cats and bunnies and run over red flags!</div>
+              <div>Help Sasha collect green flags and jump over red flags to find a good boyfriend!</div>
               <button class="btn" id="gameStartBtn">Play</button>
             </div>
             <button class="game-replay-btn" id="gameReplayBtn">
@@ -4833,6 +4833,12 @@ function handleRedFlagImgError(img){
   span.style.cssText = 'font-size:32px; line-height:40px; display:block; text-align:center;';
   img.replaceWith(span);
 }
+function handleGreenFlagImgError(img){
+  const span = document.createElement('span');
+  span.textContent = '🟩';
+  span.style.cssText = 'font-size:32px; line-height:40px; display:block; text-align:center;';
+  img.replaceWith(span);
+}
 function startBunnyGame(){
   stopBunnyGame();
   const track = document.getElementById('gameTrack');
@@ -4854,7 +4860,7 @@ function startBunnyGame(){
   scoreEl.textContent = high ? `best ${high}` : '0';
   bunnyEl.style.transform = 'translateY(0)';
   overlay.classList.remove('hidden');
-  overlay.innerHTML = '<div>Help Sasha jump over cats and bunnies and run over red flags!</div><button class="btn" id="gameStartBtn">Play</button>';
+  overlay.innerHTML = '<div>Help Sasha collect green flags and jump over red flags to find a good boyfriend!</div><button class="btn" id="gameStartBtn">Play</button>';
 
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
@@ -4942,26 +4948,19 @@ function startBunnyGame(){
       "You're perfect, but your score is a cry for help."
     ];
 
-    const messagesPet = [
-      // Original 7
-      "You ran over the only pure thing on this road. Honestly, your self-sabotage is showing.",
-      "Destroying something innocent while chasing red flags. A perfect metaphor for your twenties.",
-      "You swerved into a kitten? I didn't think it was possible to have worse reflexes than taste in men.",
-      "I asked you to dodge the good things, not treat them like people who actually treat you well.",
-      "Running over cute things while entirely focused on garbage. Put that in your journal tonight.",
-      "You just hit a pet. Honestly, the only thing more tragic than your driving is your dating history.",
-      "I did not put on this much lip gloss to be an accessory to your terrible life choices. Give me the keys.",
-      // 10 New
-      "You ran over the cute thing while staring at the red flags. Honestly, poetry.",
-      "If you applied the brakes to your bad decisions instead of the kittens, we wouldn't be here.",
-      "Another innocent casualty of your inability to steer your life properly.",
-      "You hit the pet. Your emotional unavailability is officially a danger to society.",
-      "You pushed away the healthy option and crashed. We call that 'your standard Tuesday'.",
-      "We dodge the good things and run straight into disaster. Do you need me to call your therapist?",
-      "I'm confiscating your keys and your dating apps. You're a menace to anything wholesome.",
-      "You just plowed through the greenest flag on this road. Classic you.",
-      "Hitting the sweet thing because you panicked? The metaphors write themselves, darling.",
-      "You wrecked the car over a bunny. And you wonder why you're not allowed to plan group trips."
+    const messagesMissed = [
+      "You jumped clean over a good one. Groundbreaking self-sabotage.",
+      "That was a green flag and you hurdled it like it owed you money.",
+      "Didn't even give the good option a chance. Very on-brand.",
+      "You have got to stop treating healthy choices like obstacles.",
+      "He was kind, consistent, and available. Naturally, you dodged.",
+      "The bar was on the floor and you still pole-vaulted over it.",
+      "You leapt right over stability. Bold. Tragic. Predictable.",
+      "That green flag deserved better than getting jumped like a hurdle.",
+      "You skipped the healthy one to keep chasing the chaos. Iconic, in the worst way.",
+      "Congratulations, you just avoided the one good thing on this road.",
+      "You're allergic to nice, apparently. Noted.",
+      "A perfectly good option, gone, because you couldn't just run it over."
     ];
 
     const messagesSweet = [
@@ -5009,8 +5008,10 @@ function startBunnyGame(){
       activeArray = messagesLow;
     } else if (reason === 'flag') {
       activeArray = messagesFlag;
+    } else if (reason === 'missed') {
+      activeArray = messagesMissed;
     } else {
-      activeArray = messagesPet;
+      activeArray = messagesFlag;
     }
 
     // Initialize the global tracker if it doesn't exist yet
@@ -5081,8 +5082,8 @@ function startBunnyGame(){
         el.dataset.type = 'bad';
       } else {
         // Good: Green Flag (Run over this!)
-        el.className = 'obs-basic';
-        el.textContent = '🟩';
+        el.className = 'obs-iconic';
+        el.innerHTML = '<img src="green-flag-1.png" alt="green flag" onerror="handleGreenFlagImgError(this)">';
         el.dataset.type = 'good';
       }
 
@@ -5134,7 +5135,14 @@ function startBunnyGame(){
         }
       } else if (o.x + 40 < bunnyLeft) {
         // Passed the item!
-        // If they jump over a red flag or miss a green flag, it just goes off-screen
+        if (o.el.dataset.type === 'good') {
+          // Jumped clean over a green flag instead of collecting it = LOSE (unless invincible)
+          if (!isInvincible) {
+            if(navigator.vibrate) navigator.vibrate([100, 50, 150]);
+            gameOver('missed'); return;
+          }
+        }
+        // A dodged red flag (or a pardoned miss) just goes off-screen
         o.el.remove();
         bg.obstacles.splice(idx, 1);
         continue;
