@@ -4929,50 +4929,32 @@ function startBunnyGame(){
     ];
 
     const messagesMissed = [
-      "You are so strong and independent! I love how you treat emotional intimacy like a hostage situation.",
-      "You are completely worthy of a healthy love! So naturally, you dodged it because they didn't trigger your anxiety.",
-      "You are a fierce, self-sufficient icon. It is actually hilarious how terrified you are of someone just being nice to you.",
-      "You deserve the absolute world! Which is why you sprint in the opposite direction the second a secure attachment style texts you back.",
-      "You have such a vibrant, beautiful soul. Have you considered asking your therapist why you just hurdled over a perfectly good match?",
-      "You are a total catch. It’s so sad that you only feel 'butterflies' when your nervous system is in a state of sheer panic.",
-      "It’s beautiful how you protect your peace. Just barricaded in a fortress, dodging green flags like they're sniper fire.",
-      "You are so incredibly worthy of being adored. So it's tragic that you're clinically allergic to people who actually follow through.",
-      "I admire a self-made icon, but you don't actually *have* to manufacture your own heartbreak every single time.",
-      "You glow with such fierce independence! Mostly because you treat someone respecting your boundaries like a jump scare."
-    ];
-
-    const messagesSweet = [
-      "Okay, breaking character for a second — you have great taste, terrible reflexes, and I adore you anyway.",
-      "Score aside, you looked so cute playing that. 10/10, no notes.",
-      "Real talk: you deserve every single green flag out there. I mean that.",
-      "No sass this round. You're doing better than you think you are.",
-      "Just checking in — you're one of the good ones. Don't let anyone convince you otherwise.",
-      "I only roast you because I love you. Proud of you, actually.",
-      "Plot twist: you're loved, you're valued, and this game means nothing about your worth.",
-      "Okay but genuinely — you're going to be so happy one day, and it's going to make so much sense."
+      "You’re a tier-one prize, darling. It’s fascinating watching you swerve a healthy connection like it just asked you to join a pyramid scheme.",
+      "You have VIP written all over you, yet you just leaped over bare-minimum human decency like it was a puddle of acid.",
+      "You are the absolute whole package. Stop intentionally getting yourself lost in the mail.",
+      "Gorgeous, brilliant, and terrifyingly allergic to being treated right. You can't have it all, I guess!",
+      "You are far too stunning to be treating green flags like a cease and desist letter. Let people love you.",
+      "I love a self-made icon, but manufacturing your own heartbreak is getting exhausting to watch.",
+      "You're glowing! Must be the sheer adrenaline of outrunning someone who actually respects your boundaries.",
+      "A 10/10 face with a 0/10 capacity to accept affection. A healthy relationship is not a trap, babe."
     ];
 
     const messagesLow = [
-      "I expect nothing but excellence from someone with your bone structure. This score is a personal attack on me.",
-      "You are an absolute gem, which makes it physically painful to witness this bare-minimum performance.",
-      "Your standard of excellence usually intimidates people, so I can only assume you played this round blindfolded.",
-      "You radiate such a calming, magnetic energy. Your brain waves must literally be a flat line.",
-      "I know you're used to carrying the entire group project, but letting this game disrespect you like this is a tragedy.",
-      "You are way too beautiful to be this unapologetically terrible at a simple game. Just smile and hand the phone over.",
-      "You carry yourself with such unearned confidence. It’s actually inspiring.",
-      "I absolutely adore your outfit tonight! Your reaction time, however, is a hate crime."
+      "You are living proof that pretty privilege is real, because this hand-eye coordination would not survive in the wild.",
+      "Usually you serve, but right now you just tripped and threw the entire tray at the wall.",
+      "Your bone structure is flawless. Your reaction time, however, is a federal offense.",
+      "I know you're used to getting by on pure charisma, but this car actually requires steering.",
+      "I'm obsessed with your confidence. To play this terribly and still look this unbothered is genuinely an art form.",
+      "You have a masterclass personality, which makes this preschool-level performance absolutely baffling.",
+      "You're incredibly charming. Let's just pray you never have to operate heavy machinery to save your life.",
+      "It’s a really good thing you're gorgeous, because your survival instincts are currently fighting for their lives."
     ];
 
     let sassyMessage = "";
     let activeArray = [];
 
-    // Every once in a while, drop the bully act and just be sweet instead
-    const isSweetRoll = Math.random() < 0.15; // ~15% of the time
-
-    // Determine which pool of roasts to pull from based on the crash reason and score
-    if (isSweetRoll) {
-      activeArray = messagesSweet;
-    } else if (finalScore < 300 && Math.random() > 0.5) {
+    // Select the right pool of roasts based on the crash reason
+    if (finalScore < 300 && Math.random() > 0.6) {
       activeArray = messagesLow;
     } else if (reason === 'flag') {
       activeArray = messagesFlag;
