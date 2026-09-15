@@ -11,13 +11,14 @@
 <link rel="preload" href="sasha.png" as="image" fetchpriority="high">
 <link rel="preload" href="map.png" as="image" fetchpriority="high">
 <link rel="preload" href="sashas-car.png" as="image" fetchpriority="high">
-<link rel="preload" href="sashas-car-bunny1.png" as="image">
-<link rel="preload" href="red-flag.png" as="image">
-<link rel="preload" href="home-icon.jpg" as="image">
-<link rel="preload" href="night-garden-icon.jpg" as="image">
-<link rel="preload" href="relationships-court-icon.jpg" as="image">
-<link rel="preload" href="post-office-icon.jpg" as="image">
-<link rel="preload" href="wall-of-memories-icon.jpg" as="image">
+<link rel="preload" href="sashas-car-bunny1.png" as="image" fetchpriority="high">
+<link rel="preload" href="red-flag.png" as="image" fetchpriority="high">
+<link rel="preload" href="green-flag-1.png" as="image" fetchpriority="high">
+<link rel="preload" href="home-icon.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="night-garden-icon.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="relationships-court-icon.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="post-office-icon.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="wall-of-memories-icon.jpg" as="image" fetchpriority="high">
 <style>
   :root{
     --ink:#120821;
@@ -4882,6 +4883,32 @@ function handleGreenFlagImgError(img){
   span.textContent = '🟩';
   span.style.cssText = 'font-size:32px; line-height:40px; display:block; text-align:center;';
   img.replaceWith(span);
+}
+
+// Meme roast images are only ever seen after a crash, well after someone's
+// already in the driveway — so they don't need to compete with the car,
+// flags, and location icons for bandwidth on first load. Quietly warm the
+// browser cache for them in the background once everything critical is
+// done, so by the time a meme roast actually shows up it's already there.
+function prefetchMemeImages(){
+  const memeFiles = [
+    'meme-self-respect.png', 'meme-future.png',
+    'meme-deer.png', 'meme-embarrassing.png',
+    'meme-cows.png', 'meme-idontknowher.png'
+  ];
+  memeFiles.forEach(src => {
+    const img = new Image();
+    img.decoding = 'async';
+    if ('fetchPriority' in img) img.fetchPriority = 'low';
+    img.src = src;
+  });
+}
+if (document.readyState === 'complete') {
+  ('requestIdleCallback' in window) ? requestIdleCallback(prefetchMemeImages, { timeout: 4000 }) : setTimeout(prefetchMemeImages, 2000);
+} else {
+  window.addEventListener('load', () => {
+    ('requestIdleCallback' in window) ? requestIdleCallback(prefetchMemeImages, { timeout: 4000 }) : setTimeout(prefetchMemeImages, 2000);
+  });
 }
 function startBunnyGame(){
   stopBunnyGame();
