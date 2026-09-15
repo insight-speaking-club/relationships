@@ -11,6 +11,7 @@
 <link rel="preload" href="sasha.png" as="image" fetchpriority="high">
 <link rel="preload" href="map.png" as="image" fetchpriority="high">
 <link rel="preload" href="sashas-car.png" as="image" fetchpriority="high">
+<link rel="preload" href="sashas-car-bunny.png" as="image">
 <link rel="preload" href="red-flag.png" as="image">
 <link rel="preload" href="home-icon.jpg" as="image">
 <link rel="preload" href="night-garden-icon.jpg" as="image">
@@ -1027,7 +1028,11 @@
     50%{transform:translateY(-12px) scale(1.1);}
   }
 
-  /* Invincibility state */
+  /* Invincibility state: swap Sasha's sprite to her bunny-eared form */
+  .game-bunny .sprite-bunny { display: none; }
+  .game-bunny.invincible .sprite-normal { display: none; }
+  .game-bunny.invincible .sprite-bunny { display: block; }
+
   .game-bunny.invincible {
     filter: drop-shadow(0 10px 20px #00f0ff) drop-shadow(0 0 30px #f2c14e);
     animation: power-pulse 0.5s ease-in-out infinite alternate;
@@ -3844,8 +3849,9 @@ body[data-phase="closer"] .sky {
           <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
           <div class="game-track" id="gameTrack">
             <div class="game-bunny" id="gameBunny">
-              <img decoding="async" src="sashas-car.png" alt="Sasha in Car" onerror="if(!this.dataset.retried){this.dataset.retried='1'; this.src='sashas-car.png?retry=' + Date.now();} else {this.style.display='none'; this.nextElementSibling.style.display='block';}">
+              <img class="sprite-normal" decoding="async" src="sashas-car.png" alt="Sasha in Car" onerror="if(!this.dataset.retried){this.dataset.retried='1'; this.src='sashas-car.png?retry=' + Date.now();} else {this.style.display='none'; this.nextElementSibling.style.display='block';}">
               <span class="game-wisp-fallback"></span>
+              <img class="sprite-bunny" decoding="async" src="sashas-car-bunny.png" alt="Sasha in Bunny Form">
             </div>
             <div class="game-overlay" id="gameOverlay">
               <div>Help Sasha collect green flags and jump over red flags to find true love!</div>
@@ -5071,7 +5077,7 @@ function startBunnyGame(){
         } else if (o.el.dataset.type === 'powerup') {
           // Caught the bunny: ~6 seconds of invincibility
           if(navigator.vibrate) navigator.vibrate([30, 40, 50]);
-          bg.invincibleUntil = bg.frame + 350;
+          bg.invincibleUntil = bg.frame + 250;
           o.el.remove();
           bg.obstacles.splice(idx, 1);
           continue;
