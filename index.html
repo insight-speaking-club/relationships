@@ -1519,7 +1519,7 @@
     padding:2px 4px;
   }
 
-  /* -- State 3: People's Court™ (AITA) -- */
+  /* -- State 3: Bunny Court™ (AITA) -- */
   #state-aita { padding: 40px 26px; justify-content: center; height: auto; overflow: visible; }
   #state-aita .eyebrow, #state-aita h1.display, #state-aita p.sub { display: block; }
   .aita-buttons{
@@ -3495,7 +3495,7 @@ body[data-phase="closer"] .sky {
             <!-- near Midnight Garden -->
             <use href="#mapPark" transform="translate(302,138) scale(1.15)"/>
 
-            <!-- near People's Court -->
+            <!-- near Bunny Court™ -->
             <use href="#mapCourt" transform="translate(38,262) scale(1.05)"/>
 
             <!-- near The Post Office -->
@@ -3641,7 +3641,7 @@ body[data-phase="closer"] .sky {
             </div>
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Group Activity</div>
-              <div class="hub-card-title">People's Court™</div>
+              <div class="hub-card-title">Bunny Court™</div>
               <div class="hub-card-desc">We're parked. Step inside, take your seat, and prepare to cast your vote.</div>
               <div class="hub-card-lock-note">The doors are currently closed.</div>
             </div>
@@ -3743,7 +3743,7 @@ body[data-phase="closer"] .sky {
         </div>
 
         <div class="host-map-deck-row">
-          <span class="host-map-deck-label">People's Court™</span>
+          <span class="host-map-deck-label">Bunny Court™</span>
           <!-- HOST ONLY: Minimal Court Controls -->
           <div id="hostControlsAita" class="host-inline-controls" style="display:none; justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightCourt">Toggle "We're here"</button>
@@ -3897,7 +3897,7 @@ body[data-phase="closer"] .sky {
   <!-- STATE 3: RELATIONSHIPS COMMITTEE™ (AITA) -->
   <div id="state-aita" class="lounge-state">
     <button class="back-btn" id="btnBackToGatheringAita" onclick="setLoungeState('state-gathering')">‹</button>
-    <div class="eyebrow">People's Court™</div>
+    <div class="eyebrow">Bunny Court™</div>
     <h1 class="display" style="font-size:28px;">Cast Your Verdict</h1>
     <p class="sub" style="margin-bottom: 24px;">The Host will present a real-life relationship conflict. Listen to the evidence, evaluate the boundaries crossed, and cast your official vote below.</p>
     <div class="aita-buttons">
@@ -4378,7 +4378,7 @@ const TOUR_STEPS = [
   { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We\'re gathered in the driveway. While we wait for everyone to arrive, play a mini-game called Red Flag Rally to help Sasha drive safely.', pad: 8 },
   // The rest remain the same
   { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. This is where the host will pair you up with someone. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
-  { selector: '#hubCardAita', title: 'People\'s Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
+  { selector: '#hubCardAita', title: 'Bunny Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
   { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Our final stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.', pad: 8 }
 ];
 
@@ -4590,13 +4590,13 @@ function listenPhase(){
 const HUB_SECTION_NAMES = {
   roulette: 'The Driveway',
   garden: 'Midnight Garden',
-  aita: 'People\'s Court™',
+  aita: 'Bunny Court™',
   closer: 'The Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
   roulette: "The Driveway's unlocked! Tap in, chop chop darling, it's time to match up 🦢",
   garden: "Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
-  aita: "People's Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
+  aita: "Bunny Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
   closer: "The Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌"
 };
 let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
@@ -5802,7 +5802,7 @@ document.getElementById('btnTimerGarden').addEventListener('click', () => {
 });
 
 document.getElementById('btnTimerCourt').addEventListener('click', () => {
-  const mins = prompt("Set a timer for People's Court (in minutes). Leave blank to clear/skip.", "25");
+  const mins = prompt("Set a timer for Bunny Court™ (in minutes). Leave blank to clear/skip.", "25");
   if (mins === null) return;
   if (mins.trim() === "") {
     ref(`events/${EVENT_ID}/aitaTimerEnd`).set(null);
@@ -5852,7 +5852,7 @@ document.getElementById('btnPickElaborate').addEventListener('click', ()=>{
   ref(`events/${EVENT_ID}/messages/${id}`).set({
     text: `${pick.name}, please defend your position! 🎙️`,
     target: pick.id,
-    from: 'People\'s Court™',
+    from: 'Bunny Court™',
     avatar: '⚖️',
     senderId: me && me.id,
     ts: Date.now()
