@@ -1671,6 +1671,12 @@
     font-family:'Jost',sans-serif; font-size:13.5px; line-height:1.4; color:var(--mist);
     display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
   }
+  /* Meme roasts embed an <img> in the toast body — the 3-line text clamp
+     above would crop the image down to a sliver, so image toasts get a
+     normal block body instead of the clamped one. */
+  .imessage-toast.has-image .toast-body{
+    display:block; -webkit-line-clamp:unset; overflow:visible;
+  }
   .host-section-label{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
     color:var(--dim); margin:30px 0 12px; text-align:center;
@@ -4990,27 +4996,17 @@ function startBunnyGame(){
     // Save the new message to check against next time
     window.lastRoastMessage = sassyMessage;
 
-    // Meme roasts carry raw <img> markup — those render full-size right on
-    // the dark overlay as a jumpscare. Plain-text roasts still land as a
-    // text-from-Sasha toast (an <img> tag would just get HTML-escaped and
-    // show as broken text if it were squeezed into that tiny toast body).
-    const isMemeRoast = /<img/i.test(sassyMessage);
-
     overlay.innerHTML = `
       <div style="font-size: 22px; color: var(--gold); font-weight: 600; margin-bottom: 8px;">Score: ${finalScore}</div>
-      ${isMemeRoast ? `<div style="margin: 4px 0 16px;">${sassyMessage}</div>` : ''}
       <button class="btn" id="gameStartBtn">Play Again</button>
     `;
     overlay.classList.remove('hidden');
     scoreEl.textContent = `best ${best}`;
 
-    if (isMemeRoast) {
-      if (navigator.vibrate) navigator.vibrate([50, 30, 80, 30, 150]); // jumpscare buzz
-    } else {
-      // The roast lands as a text-from-Sasha notification instead of living
-      // inside the score card.
-      showSashaToast({ title: 'Sasha', body: sassyMessage, vibrateMs: 50, holdMs: 4200, appName: 'Bullying Committee Headquarters' });
-    }
+    // The roast lands as a text-from-Sasha notification instead of living
+    // inside the score card. Meme roasts carry raw <img> markup, which
+    // showSashaToast renders as an actual image inline in the bubble.
+    showSashaToast({ title: 'Sasha', body: sassyMessage, vibrateMs: 50, holdMs: 4200, appName: 'Bullying Committee Headquarters' });
   }
   function loop(timestamp){
     if(!bg || !bg.running) return;
@@ -5624,6 +5620,12 @@ function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5
   const el = document.createElement('div');
   el.className = 'imessage-toast';
 
+  // Meme roasts pass an <img> tag as part of the body — render that markup
+  // as an actual image instead of escaping it into visible tag text.
+  const hasImage = /<img/i.test(body);
+  if (hasImage) el.classList.add('has-image');
+  const bodyHtml = hasImage ? body : escapeHtml(body);
+
   let actionHtml = '';
   if (actionLabel) {
     holdMs = 9999999; // Keep it on screen until they click it
@@ -5637,7 +5639,7 @@ function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5
       <span class="toast-time">now</span>
     </div>
     <div class="toast-title">${escapeHtml(title)}</div>
-    <div class="toast-body">${escapeHtml(body)}${actionHtml}</div>
+    <div class="toast-body">${bodyHtml}${actionHtml}</div>
   `;
   stack.appendChild(el);
   requestAnimationFrame(() => el.classList.add('show'));
