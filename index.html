@@ -3848,7 +3848,7 @@ body[data-phase="closer"] .sky {
               <span class="game-wisp-fallback"></span>
             </div>
             <div class="game-overlay" id="gameOverlay">
-              <div>Help Sasha collect green flags and jump over red flags to find a good boyfriend!</div>
+              <div>Help Sasha collect green flags and jump over red flags to find true love!</div>
               <button class="btn" id="gameStartBtn">Play</button>
             </div>
             <button class="game-replay-btn" id="gameReplayBtn">
@@ -4860,7 +4860,7 @@ function startBunnyGame(){
   scoreEl.textContent = high ? `best ${high}` : '0';
   bunnyEl.style.transform = 'translateY(0)';
   overlay.classList.remove('hidden');
-  overlay.innerHTML = '<div>Help Sasha collect green flags and jump over red flags to find a good boyfriend!</div><button class="btn" id="gameStartBtn">Play</button>';
+  overlay.innerHTML = '<div>Help Sasha collect green flags and jump over red flags to find true love!</div><button class="btn" id="gameStartBtn">Play</button>';
 
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
@@ -4916,28 +4916,29 @@ function startBunnyGame(){
     }
 
     const messagesFlag = [
-      "You are literally an angel. Which makes sense, because you drive like you're ready to meet God.",
-      "You have such a big heart. It’s basically a wildlife preserve for toxic behavior.",
-      "I love how inclusive you are! You literally don't let basic standards exclude anybody.",
-      "It’s so sweet how you always support local disasters.",
-      "You have an incredible eye for potential. Specifically in people who will ruin your life.",
-      "You’re like a superhero, but your only power is rolling out the red carpet for red flags.",
-      "I admire your bravery. Who else would look at a fatal warning sign and see a finish line?",
-      "You’re so deeply empathetic. You really felt the need to connect with that catastrophic mistake.",
-      "You have such a forgiving soul. A literal recycling bin for second chances.",
-      "I love that you're not superficial. You completely ignored the neon warning signs to focus on the inside."
+      "You're a literal angel. Makes sense why you drive like you're ready to meet God.",
+      "You have such a flawless eye for aesthetics. Are you clinically colorblind, or did that giant red flag actually look sage green to you?",
+      "You’re a luxury experience, darling. Stop accepting people who treat you like a 7-day free trial.",
+      "I love that you run a charity! I just don't think your dating life should be the main beneficiary.",
+      "You always see the best in people! Have you considered seeing an optometrist?",
+      "I love how inclusive you are! You literally don't let basic human standards exclude anybody.",
+      "You look like a million dollars, which makes it deeply tragic that you're out here accepting pocket change.",
+      "You are an absolute masterpiece! Stop trying to be a general contractor for people who don't even own a bed frame.",
+      "You are a brilliant, gorgeous prize. So why are you writing three-paragraph texts to someone who responds with 'yeah'?",
+      "You have incredible taste, babe. So we're just going to pretend that crimson-red warning sign looked like a fun little quirk?"
     ];
 
     const messagesMissed = [
-      "I deeply admire your strict diet. You are so good at avoiding anything healthy.",
-      "You have impeccable boundaries! Especially against people who would actually treat you right.",
-      "I love how fiercely loyal you are to your own trauma.",
-      "You are so incredibly focused on your goals. Specifically, the goal of dying alone.",
-      "It’s beautiful how protective you are of your peace. And by peace, I mean your isolated delusion.",
-      "You have such a clear type! Absolute emotional unavailability looks so good on you.",
-      "I love that you don't let things like 'a healthy option' or 'mutual respect' distract you.",
-      "You’re so athletic! The way you just hurdled over a stable relationship was Olympic-level.",
-      "You have such high standards. So high that you successfully avoid anyone who meets them."
+      "You are so strong and independent! I love how you treat emotional intimacy like a hostage situation.",
+      "You are completely worthy of a healthy love! So naturally, you dodged it because they didn't trigger your anxiety.",
+      "You are a fierce, self-sufficient icon. It is actually hilarious how terrified you are of someone just being nice to you.",
+      "You deserve the absolute world! Which is why you sprint in the opposite direction the second a secure attachment style texts you back.",
+      "You have such a vibrant, beautiful soul. Have you considered asking your therapist why you just hurdled over a perfectly good match?",
+      "You are a total catch. It’s so sad that you only feel 'butterflies' when your nervous system is in a state of sheer panic.",
+      "It’s beautiful how you protect your peace. Just barricaded in a fortress, dodging green flags like they're sniper fire.",
+      "You are so incredibly worthy of being adored. So it's tragic that you're clinically allergic to people who actually follow through.",
+      "I admire a self-made icon, but you don't actually *have* to manufacture your own heartbreak every single time.",
+      "You glow with such fierce independence! Mostly because you treat someone respecting your boundaries like a jump scare."
     ];
 
     const messagesSweet = [
@@ -4952,14 +4953,14 @@ function startBunnyGame(){
     ];
 
     const messagesLow = [
-      "You have such a calming energy. Your brain waves must literally be a flat line.",
-      "I love how you refuse to participate in hustle culture. You really just let the game play you.",
-      "You carry yourself with the unwavering confidence of someone who is actually good at this.",
-      "You are a true visionary. You found a path to failure that no one else even considered.",
-      "You’re so incredibly grounded. Absolutely nothing, not even basic motor skills, can elevate you.",
-      "I love that you're breaking boundaries. Who says you need a double-digit score to have value?",
-      "You are so wonderfully consistent! Literally zero improvement, but we love a reliable queen.",
-      "You have such a minimalist approach to success. You just completely opted out."
+      "I expect nothing but excellence from someone with your bone structure. This score is a personal attack on me.",
+      "You are an absolute gem, which makes it physically painful to witness this bare-minimum performance.",
+      "Your standard of excellence usually intimidates people, so I can only assume you played this round blindfolded.",
+      "You radiate such a calming, magnetic energy. Your brain waves must literally be a flat line.",
+      "I know you're used to carrying the entire group project, but letting this game disrespect you like this is a tragedy.",
+      "You are way too beautiful to be this unapologetically terrible at a simple game. Just smile and hand the phone over.",
+      "You carry yourself with such unearned confidence. It’s actually inspiring.",
+      "I absolutely adore your outfit tonight! Your reaction time, however, is a hate crime."
     ];
 
     let sassyMessage = "";
