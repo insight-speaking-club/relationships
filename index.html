@@ -4910,25 +4910,36 @@ function startBunnyGame(){
     }
 
     const messagesFlag = [
-      // Original 7
-      "We *run over* the red flags, sweetheart. We don't save them for a 2 AM text.",
-      "Oh, so you swerved to avoid the red flag? Let me guess, you think you can 'fix' it.",
-      "You let the red flag live. The absolute lack of judgment is stunning to me.",
-      "Dodging red flags instead of crushing them? Your therapist is going to hear about this.",
-      "You don't have a type. You have a collection of red flags you call exceptions. Run them over!",
-      "Something tells me your group chat calls this 'giving him grace.' Babe, it's avoidance.",
-      "You're not colorblind. You're red-flag blind. Very different, much more expensive.",
-      // 10 New
-      "You let another red flag slide? This is why your friends drink before you talk about your dating life.",
-      "Missing that red flag just cost you five years of peace. I hope you're happy.",
-      "I told you to run it over, not take it home to meet your mother.",
-      "That red flag was practically begging to be crushed, but you just gave it a second chance.",
-      "Swerving around a red flag is just putting a bow on a toxic trait.",
-      "You missed. Did you suddenly think you could communicate through its issues?",
-      "We don't 'hold space' for red flags, darling. We accelerate.",
-      "You treating that red flag like a minor detour is exactly why you're still single.",
-      "Another red flag ignored. Are you building a collection, or is it a lifestyle brand now?",
-      "That was a textbook red flag and you just waved at it. My God, the delusion."
+      // 80% Sweet / 20% Savage
+      "You're an absolute angel, which perfectly explains why you can't drive.",
+      "Such a pure, trusting soul. So easily destroyed.",
+      "You have the biggest heart! And absolutely zero survival instincts.",
+      "I love your relentless optimism. It's going to get you killed, but I love it.",
+      "You're doing amazing, sweetie! At hitting rock bottom.",
+      "A beautiful spirit, tragically let down by terrible reflexes.",
+      // 60% Sweet / 40% Savage
+      "You look gorgeous today. I guess we can't have talent too.",
+      "I adore you, but that was physically painful to watch.",
+      "You are so brave for playing this in public.",
+      "It's so cute how you just welcome disaster with open arms.",
+      "Flawless makeup, deeply tragic life choices.",
+      "You have a great personality. Let's focus on that instead of your score.",
+      "So sweet, so kind, so completely doomed.",
+      // 40% Sweet / 60% Savage
+      "I love your outfit, but your reaction time is a hate crime.",
+      "You're so pretty! Please never get behind the wheel of a real car.",
+      "I respect your dedication to making the worst possible choice.",
+      "You have such a calming presence. I assume that's why you didn't even try to swerve.",
+      "It is genuinely inspiring how unbothered you are by your own failure.",
+      "You glow differently when you're self-sabotaging.",
+      // 20% Sweet / 80% Savage
+      "You are a treasure. Please hand me the phone before you embarrass us both.",
+      "I love how you give exactly 10% effort to everything you do.",
+      "You have amazing taste in everything except how to navigate this road.",
+      "It's beautiful how you just accept defeat. So zen, so tragic.",
+      "You're a 10, but you drive like a 2.",
+      "A stunning display of absolute mediocrity. Proud of you!",
+      "You're perfect, but your score is a cry for help."
     ];
 
     const messagesPet = [
@@ -5053,24 +5064,25 @@ function startBunnyGame(){
       if(navigator.vibrate) navigator.vibrate([40, 60, 40, 60, 100]);
     }
 
-    // SPAWN LOGIC (Protect the pets, run over the red flags)
-    const BAD_ITEMS = ['🐈', '🐇']; // Pets: Jump over them so you don't crash!
+    // SPAWN LOGIC (Jump over red flags, collect green flags)
     if(bg.frame >= bg.nextSpawn){
       const roll = Math.random();
       const el = document.createElement('div');
 
       if (roll < 0.10) {
-        // Power-up: wire-rimmed glasses grant temporary invincibility
+        // Power-up: bunny grants temporary invincibility
         el.className = 'obs-powerup';
-        el.textContent = '👓';
+        el.textContent = '🐇';
         el.dataset.type = 'powerup';
       } else if (roll < 0.55) {
-        el.className = 'obs-basic';
-        el.textContent = BAD_ITEMS[Math.floor(Math.random()*BAD_ITEMS.length)];
+        // Bad: Red Flag (Jump over this!)
+        el.className = 'obs-basic'; // Changed from obs-iconic so it matches text styling
+        el.textContent = '🚩'; // Replaced the <img> tag with the emoji
         el.dataset.type = 'bad';
       } else {
-        el.className = 'obs-iconic';
-        el.innerHTML = '<img src="red-flag.png" alt="red flag" onerror="handleRedFlagImgError(this)">';
+        // Good: Green Flag (Run over this!)
+        el.className = 'obs-basic';
+        el.textContent = '🟩';
         el.dataset.type = 'good';
       }
 
@@ -5100,20 +5112,20 @@ function startBunnyGame(){
 
       if (overlapX && isGrounded) {
         if (o.el.dataset.type === 'bad') {
-          // Crashed into a pet = LOSE (unless invincible)
+          // Crashed into a red flag = LOSE (unless invincible)
           if (!isInvincible) {
             if(navigator.vibrate) navigator.vibrate([100, 50, 150]);
-            gameOver('pet'); return;
+            gameOver('flag'); return;
           }
         } else if (o.el.dataset.type === 'powerup') {
-          // Caught the power-up: ~6 seconds of invincibility
+          // Caught the bunny: ~6 seconds of invincibility
           if(navigator.vibrate) navigator.vibrate([30, 40, 50]);
           bg.invincibleUntil = bg.frame + 350;
           o.el.remove();
           bg.obstacles.splice(idx, 1);
           continue;
         } else {
-          // Ran over a red flag/clown/trash = +50 POINTS!
+          // Ran over a green flag = +50 POINTS!
           if(navigator.vibrate) navigator.vibrate(30);
           bg.score += 50;
           o.el.remove();
@@ -5122,22 +5134,10 @@ function startBunnyGame(){
         }
       } else if (o.x + 40 < bunnyLeft) {
         // Passed the item!
-        if (o.el.dataset.type === 'good') {
-          // Missed a hater target = LOSE (unless invincible pardons it)
-          if (!isInvincible) {
-            if(navigator.vibrate) navigator.vibrate([100, 50, 150]);
-            gameOver('flag'); return;
-          } else {
-            o.el.remove();
-            bg.obstacles.splice(idx, 1);
-            continue;
-          }
-        } else {
-          // Jumped over a pet safely
-          o.el.remove();
-          bg.obstacles.splice(idx, 1);
-          continue;
-        }
+        // If they jump over a red flag or miss a green flag, it just goes off-screen
+        o.el.remove();
+        bg.obstacles.splice(idx, 1);
+        continue;
       }
     }
 
