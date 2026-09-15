@@ -3216,8 +3216,8 @@ body[data-phase="closer"] .sky {
 <!-- Time's Up Screen -->
 <div id="countdownOverlay" style="position:fixed; inset:0; z-index:100; background:rgba(18,8,33,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition: opacity 0.8s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
   <div style="font-family:'Cormorant Garamond', serif; font-size:38px; font-style:italic; color:var(--gold); text-align: center; line-height: 1.2; text-shadow: 0 0 30px rgba(242,193,78,0.3); padding: 0 20px;">
-    Thank you for sharing your thoughts.<br>
-    <span style="color:var(--mist); font-family:'Jost', sans-serif; font-size:20px; font-style:normal; display:block; margin-top:16px;">Now, please come to the table. We've got somewhere else to be.</span>
+    Time's up, darlings.<br>
+    <span style="color:var(--mist); font-family:'Jost', sans-serif; font-size:20px; font-style:normal; display:block; margin-top:16px;">Wrap up those thoughts and come to the table—we have places to be.</span>
   </div>
 </div>
 
@@ -3567,7 +3567,7 @@ body[data-phase="closer"] .sky {
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Matching Activity</div>
               <div class="hub-card-title">The Driveway</div>
-              <div class="hub-card-desc">We're idling right here in the driveway. Play a mini-game called Red Flag Rally to help Sasha drive safely.</div>
+              <div class="hub-card-desc">We're gathered in the driveway. While we wait for the stragglers, play a quick game of Red Flag Rally to help me drive safely and find my true love.</div>
               <div class="hub-card-lock-note">The host will assign partners soon.</div>
             </div>
           </div>
@@ -3670,7 +3670,7 @@ body[data-phase="closer"] .sky {
             <div>
               <div class="hub-card-sub" style="color:var(--gold);">Closer Activity</div>
               <div class="hub-card-title">The Post Office</div>
-              <div class="hub-card-desc">Our final stop of the night. Step into the Post Office and write a letter. We won't tell you what kind. You'll find out once you're inside.</div>
+              <div class="hub-card-desc">Our final stop. Step inside and write a letter. What kind? You'll just have to wait and see.</div>
               <div class="hub-card-lock-note">The Post Office remains closed for now.</div>
             </div>
           </div>
@@ -3854,7 +3854,7 @@ body[data-phase="closer"] .sky {
               <img class="sprite-bunny" decoding="async" src="sashas-car-bunny1.png" alt="Sasha in Bunny Form">
             </div>
             <div class="game-overlay" id="gameOverlay">
-              <div>Help Sasha collect green flags and jump over red flags to find true love!</div>
+              <div>Help me collect green flags and jump over the red ones. Keep me driving safely so I can find true love.</div>
               <button class="btn" id="gameStartBtn">Play</button>
             </div>
             <button class="game-replay-btn" id="gameReplayBtn">
@@ -3912,7 +3912,7 @@ body[data-phase="closer"] .sky {
     
     <div class="match-header" style="padding-top: 30px; position: relative; z-index: 10;">
       <h1 class="display" style="font-size:36px;">The Archive</h1>
-      <p class="sub" style="margin-top:6px; font-size: 14px; opacity: 0.7;">The archives of Sasha's previous events.</p>
+      <p class="sub" style="margin-top:6px; font-size: 14px; opacity: 0.7;">A look back at our past eras.</p>
     </div>
 
     <!-- The timeline goes directly in here -->
@@ -3985,7 +3985,7 @@ body[data-phase="closer"] .sky {
 
     <div id="partnerName" class="partner-name" style="font-size: 20px; line-height: 1.3; margin-bottom: 16px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto;"></div>
 
-    <button id="btnDontShowReveal" style="background: none; border: none; color: var(--dim); font-size: 10px; opacity: 0.6; cursor: pointer; padding: 4px; text-decoration: underline; margin: 0 auto; display: block;">Do not show this again</button>
+    <button id="btnDontShowReveal" style="background: none; border: none; color: var(--dim); font-size: 10px; opacity: 0.6; cursor: pointer; padding: 4px; text-decoration: underline; margin: 0 auto; display: block;">Got it, don't remind me.</button>
   </div>
 
 </div>
@@ -4011,7 +4011,7 @@ body[data-phase="closer"] .sky {
       The first Vogue Committee™ members earned their status styling looks at our last event. Missed out? Click below to complete tonight's special challenge and claim your membership. 💋
     </div>
     <button class="btn-close" onclick="proceedToVogueHQ()" style="margin-bottom: 12px;">Proceed to Challenge</button>
-    <button onclick="dismissVogueLoreForever()" style="background: none; border: none; color: var(--dim); font-size: 10px; opacity: 0.6; cursor: pointer; padding: 4px; text-decoration: underline; margin: 0 auto; display: block;">Do not show this again</button>
+    <button onclick="dismissVogueLoreForever()" style="background: none; border: none; color: var(--dim); font-size: 10px; opacity: 0.6; cursor: pointer; padding: 4px; text-decoration: underline; margin: 0 auto; display: block;">I remember, darling.</button>
   </div>
 </div>
 
@@ -4375,9 +4375,9 @@ const TOUR_STEPS = [
   // Step 1: Highlights the whole Itinerary section first
   { selector: '#activitiesSection', title: 'The Itinerary', desc: 'Here\'s the full route for the night. Watch it light up as we go. We\'ll be traveling together, so sit tight until we pull up to the first stop.', pad: 10 },
   // Step 2: Zooms into the current stop
-  { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We\'re gathered in the driveway. While we wait for everyone to arrive, play a mini-game called Red Flag Rally to help Sasha drive safely.', pad: 8 },
+  { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We\'re gathered in the driveway. While we wait for the stragglers, play a quick game of Red Flag Rally to help me drive safely and find my true love.', pad: 8 },
   // The rest remain the same
-  { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. This is where the host will pair you up with someone. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
+  { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. This is where I\'ll pair you up with someone. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
   { selector: '#hubCardAita', title: 'Bunny Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
   { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Our final stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.', pad: 8 }
 ];
@@ -4594,7 +4594,7 @@ const HUB_SECTION_NAMES = {
   closer: 'The Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
-  roulette: "The Driveway's unlocked! Tap in, chop chop darling, it's time to match up 🦢",
+  roulette: "The Driveway's unlocked! Tap in and help me drive safely so I can find true love.",
   garden: "Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
   aita: "Bunny Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
   closer: "The Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌"
@@ -4866,7 +4866,7 @@ function startBunnyGame(){
   scoreEl.textContent = high ? `best ${high}` : '0';
   bunnyEl.style.transform = 'translateY(0)';
   overlay.classList.remove('hidden');
-  overlay.innerHTML = '<div>Help Sasha collect green flags and jump over red flags to find true love!</div><button class="btn" id="gameStartBtn">Play</button>';
+  overlay.innerHTML = '<div>Help me collect green flags and jump over the red ones. Keep me driving safely so I can find true love.</div><button class="btn" id="gameStartBtn">Play</button>';
 
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
