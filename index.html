@@ -4931,7 +4931,10 @@ function startBunnyGame(){
       "You look like a million dollars, which makes it deeply tragic that you're out here accepting pocket change.",
       "You are an absolute masterpiece! Stop trying to be a general contractor for people who don't even own a bed frame.",
       "You are a brilliant, gorgeous prize. So why are you writing three-paragraph texts to someone who responds with 'yeah'?",
-      "You have incredible taste, babe. So we're just going to pretend that crimson-red warning sign looked like a fun little quirk?"
+      "You have incredible taste, babe. So we're just going to pretend that crimson-red warning sign looked like a fun little quirk?",
+      // --- THE NEW MEME ROASTS ---
+      `<img src="meme-self-respect.png" style="width: 100%; max-width: 200px; border-radius: 8px; margin: 0 auto 10px; display: block;">I am prescribing you one chapter a day until you stop steering into toxic disasters.`,
+      `<img src="meme-future.png" style="width: 100%; max-width: 200px; border-radius: 8px; margin: 0 auto 10px; display: block;">Hitting a giant red flag on purpose? A bold strategy.`
     ];
 
     const messagesMissed = [
@@ -4942,7 +4945,10 @@ function startBunnyGame(){
       "You are far too stunning to be treating green flags like a cease and desist letter. Let people love you.",
       "I love a self-made icon, but manufacturing your own heartbreak is getting exhausting to watch.",
       "You're glowing! Must be the sheer adrenaline of outrunning someone who actually respects your boundaries.",
-      "A 10/10 face with a 0/10 capacity to accept affection. A healthy relationship is not a trap, babe."
+      "A 10/10 face with a 0/10 capacity to accept affection. A healthy relationship is not a trap, babe.",
+      // --- THE NEW MEME ROASTS ---
+      `<img src="meme-deer.png" style="width: 100%; max-width: 200px; border-radius: 8px; margin: 0 auto 10px; display: block;">Me watching you actively swerve away from a healthy, loving connection.`,
+      `<img src="meme-embarrassing.png" style="width: 100%; max-width: 200px; border-radius: 8px; margin: 0 auto 10px; display: block;">Did you really just dodge a green flag? We need to talk.`
     ];
 
     const messagesLow = [
@@ -4953,7 +4959,10 @@ function startBunnyGame(){
       "I'm obsessed with your confidence. To play this terribly and still look this unbothered is genuinely an art form.",
       "You have a masterclass personality, which makes this preschool-level performance absolutely baffling.",
       "You're incredibly charming. Let's just pray you never have to operate heavy machinery to save your life.",
-      "It’s a really good thing you're gorgeous, because your survival instincts are currently fighting for their lives."
+      "It’s a really good thing you're gorgeous, because your survival instincts are currently fighting for their lives.",
+      // --- THE NEW MEME ROASTS ---
+      `<img src="meme-cows.png" style="width: 100%; max-width: 200px; border-radius: 8px; margin: 0 auto 10px; display: block;">Scores this low? Not in my driveway, darling.`,
+      `<img src="meme-idontknowher.png" style="width: 100%; max-width: 200px; border-radius: 8px; margin: 0 auto 10px; display: block;">Me when someone asks about your driving skills today.`
     ];
 
     let sassyMessage = "";
@@ -4981,16 +4990,27 @@ function startBunnyGame(){
     // Save the new message to check against next time
     window.lastRoastMessage = sassyMessage;
 
+    // Meme roasts carry raw <img> markup — those render full-size right on
+    // the dark overlay as a jumpscare. Plain-text roasts still land as a
+    // text-from-Sasha toast (an <img> tag would just get HTML-escaped and
+    // show as broken text if it were squeezed into that tiny toast body).
+    const isMemeRoast = /<img/i.test(sassyMessage);
+
     overlay.innerHTML = `
       <div style="font-size: 22px; color: var(--gold); font-weight: 600; margin-bottom: 8px;">Score: ${finalScore}</div>
+      ${isMemeRoast ? `<div style="margin: 4px 0 16px;">${sassyMessage}</div>` : ''}
       <button class="btn" id="gameStartBtn">Play Again</button>
     `;
     overlay.classList.remove('hidden');
     scoreEl.textContent = `best ${best}`;
 
-    // The roast lands as a text-from-Sasha notification instead of living
-    // inside the score card.
-    showSashaToast({ title: 'Sasha', body: sassyMessage, vibrateMs: 50, holdMs: 4200, appName: 'Bullying Committee Headquarters' });
+    if (isMemeRoast) {
+      if (navigator.vibrate) navigator.vibrate([50, 30, 80, 30, 150]); // jumpscare buzz
+    } else {
+      // The roast lands as a text-from-Sasha notification instead of living
+      // inside the score card.
+      showSashaToast({ title: 'Sasha', body: sassyMessage, vibrateMs: 50, holdMs: 4200, appName: 'Bullying Committee Headquarters' });
+    }
   }
   function loop(timestamp){
     if(!bg || !bg.running) return;
