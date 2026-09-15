@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>People's Court™ | The Archives</title>
+<title>Bunny Court™ | The Archives</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -35,7 +35,7 @@
     position: fixed; inset: 0; z-index: 0;
     background-image:
       linear-gradient(200deg, rgba(13,6,20,0.7) 0%, rgba(20,9,30,0.8) 40%, rgba(42,17,58,0.85) 100%),
-      url('background-court.png');
+      url('court-background-1.png');
     background-size: cover; background-position: center top; background-color: #0d0614;
   }
   .sky::before {
@@ -278,6 +278,35 @@
     padding: 14px 20px; background: rgba(223, 177, 74, 0.05);
     border-bottom: 1px solid rgba(240, 230, 250, 0.05);
     font-family: 'Playfair Display', serif; font-style: italic; font-size: 17px; color: var(--gold); text-align: center;
+  }
+
+  .inbox-explainer {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(223, 177, 74, 0.05);
+    border-bottom: 1px solid rgba(223, 177, 74, 0.15);
+  }
+  .inbox-explainer-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--gold);
+    padding: 4px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .inbox-explainer-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: rgba(240, 230, 250, 0.82);
   }
 
   .randomizer-bar {
@@ -549,7 +578,7 @@
             <path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0zM19 7l-3 6a3.5 3.5 0 0 0 7 0zM5 7h14M9 21h6M3 3l9 4 9-4"></path>
           </svg>
           <div class="inbox-title-block">
-            <div class="email-title">The People's Court Inbox</div>
+            <div class="email-title">The Bunny Court Inbox</div>
             <div class="email-count" id="emailCount">6 cases unread</div>
           </div>
           <div class="me-avatar" id="meAvatar">JS</div>
@@ -575,7 +604,12 @@
             <div class="host-timer-display" id="hostTimerDisplay">00:00</div>
           </div>
         </div>
-        
+
+        <div class="inbox-explainer">
+          <span class="inbox-explainer-label">AITA</span>
+          <span class="inbox-explainer-text">"Am I The Asshole" — each case below is someone asking a jury of strangers whether they were wrong. Read it. Judge them. Cast your vote.</span>
+        </div>
+
         <div id="emailList"></div>
       </div>
     </div>
@@ -604,7 +638,7 @@
         </div>
 
         <div class="voting-dock">
-          <p style="text-align: center; color: var(--dim); font-size: 14px; margin-bottom: 12px;">After we review this story, each juror taps their verdict below, then we reveal the result together.</p>
+          <p style="text-align: center; color: var(--dim); font-size: 14px; margin-bottom: 12px;">Read the case, cast your vote, then reveal your choice — and hold your phone up so the room can see.</p>
           <div class="vote-tally" id="voteTally">
             <div class="tally-item tally-red"><span id="ytaCount">0</span>Asshole</div>
             <div class="tally-item tally-green"><span id="ntaCount">0</span>Not The Asshole</div>
@@ -614,7 +648,7 @@
             <button class="aita-btn aita-btn-green" onclick="registerVote('NTA')">NOT THE ASSHOLE</button>
           </div>
           <button class="btn-ghost remove-vote-btn" id="removeVoteBtn" onclick="clearVote()" style="display:none;">Remove my vote</button>
-          <button class="btn-ghost reveal-btn" onclick="revealVerdict()">Reveal Verdict</button>
+          <button class="btn-ghost reveal-btn" onclick="revealVerdict()">Reveal my vote</button>
         </div>
       </div>
       <button class="back-link" onclick="backToDocket()">Back to the inbox</button>
@@ -624,10 +658,8 @@
 
   <!-- Full Screen Verdict -->
   <div class="verdict-card" id="verdictCard">
-    <div class="verdict-eyebrow">The Court Finds</div>
+    <div class="verdict-eyebrow">You voted</div>
     <div class="verdict-text" id="verdictText"></div>
-    <div class="verdict-tally" id="verdictTally"></div>
-    <div class="verdict-real" id="verdictReal"></div>
     <div class="btn-secondary-row">
       <button class="btn-ghost" onclick="changeVote()">Change my vote</button>
       <button class="btn-ghost" onclick="closeVerdict()">Back to the case</button>
@@ -648,7 +680,7 @@
 
 <script>
   const LORE_MESSAGES = [
-    "Welcome to the People's Court, loves.",
+    "Welcome to the Bunny Court, loves. I'll be your judge — yes, the ears are part of the uniform.",
     "We've been judging strangers from a renowned Parisian courtroom since 1986. We once received letters by carrier pigeon; now, they simply arrive by email. Our generation has inherited the gavel.",
     "Tonight, we're dissecting strangers. Deliver your verdict with grace... or be absolutely ruthless. We're making history."
   ];
@@ -687,11 +719,11 @@ Am I the asshole for handling it this way?`,
 
 Back in November, our class discussed the European Court of Justice ruling on same-sex marriage. During the discussion, I expressed my views based on my Christian beliefs. I mentioned Becket Cook (a man who used to live an SSA lifestyle but found Christ) and his interview with Dr. Nicolosi Jr. One of my students, Ivan, expressed interest in the video, so I shared it in our class group chat. It was not an assignment and had no educational purpose — just one of many perspectives out there.
 
-Fast forward <span class='hint-word' data-ukr='два місяці потому'>two months</span>. Another student, Oleksandr, sends me a massive email citing the UN, WHO, and APA. He calls the video "conversion therapy," claims it causes harm and "torture," and demands I send a follow-up message to the class with "evidence-based resources" to protect student wellbeing. He even says he knows a girl whose parents wanted to institutionalize her for being lesbian, and says he's doing this for "justice."
+Fast forward <span class='hint-word' data-ukr='два місяці потому'>two months</span>. Another student sends me a massive email citing the UN, WHO, and APA. He calls the video "conversion therapy," claims it causes harm and "torture," and demands I send a follow-up message to the class with "evidence-based resources" to protect student wellbeing. He even says he knows a girl whose parents wanted to institutionalize her for being lesbian, and says he's doing this for "justice."
 
 Honestly, I was annoyed. Two months later? It felt like he was trying to force me to take my words back. I told him I have no idea what conversion therapy even means. I'm not a medical expert; as my own doctor says, "Medicine is the second exact science after the chiromancy." Different doctors use different approaches. Dr. Nicolosi is still a licensed clinical psychologist, so I assume his work is legitimate. Right now, I'm listening to Michael Gasparro, another licensed therapist, and the comments below prove his similar ideas help many people.
 
-I told Oleksandr I won't take my words back. I just believe in healthy discussion and Christian values. I told him he's free to send his links to the group himself, but I won't do it.
+I told him I won't take my words back. I just believe in healthy discussion and Christian values. I told him he's free to send his links to the group himself, but I won't do it.
 
 AITA?`,
       attachment: ""
@@ -957,7 +989,7 @@ I get that weddings are expensive, but I don't see why my education should be th
     db.ref(`events/${EVENT_ID}/court/randomizerEvent`)
       .set({ targetIndex, ts: Date.now() })
       .catch(err => {
-        console.warn('[People\'s Court] Could not broadcast the randomizer pick, spinning locally instead.', err);
+        console.warn('[Bunny Court] Could not broadcast the randomizer pick, spinning locally instead.', err);
         btn.disabled = false;
         runRandomizerAnimation(targetIndex);
       });
@@ -1088,7 +1120,7 @@ I get that weddings are expensive, but I don't see why my education should be th
         triggerSessionOver();
         if (db) {
           db.ref(`events/${EVENT_ID}/court/timer`).remove()
-            .catch(err => console.error('[People\'s Court] Could not clear the shared timer — check that your Firebase rules allow writes under events/*/court/. Error:', err));
+            .catch(err => console.error('[Bunny Court] Could not clear the shared timer — check that your Firebase rules allow writes under events/*/court/. Error:', err));
         }
       }
     }
@@ -1215,7 +1247,6 @@ I get that weddings are expensive, but I don't see why my education should be th
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
         Open the inbox
       </button>
-      <div class="aita-footnote"><b>AITA</b> = "Am I The Asshole" — each case inside is someone asking a jury of strangers whether they were wrong.</div>
     `;
   }
 
@@ -1227,6 +1258,7 @@ I get that weddings are expensive, but I don't see why my education should be th
   let currentStoryIndex = null;
   let votesListenerRef = null;
   let myLocalVote = null; // used only if Firebase is unavailable
+let myCurrentVote = null; // tracks this user's vote regardless of Firebase state — used by revealVerdict
 
   function getVoterId() {
     // Reuse the identity from the main event site if this browser already joined there.
@@ -1243,6 +1275,7 @@ I get that weddings are expensive, but I don't see why my education should be th
   }
 
   function updateMyVoteHighlight(myVote) {
+    myCurrentVote = myVote;
     document.querySelectorAll('.aita-btn').forEach(b => b.classList.remove('my-vote'));
     if (myVote === 'YTA') document.querySelector('.aita-btn-red').classList.add('my-vote');
     if (myVote === 'NTA') document.querySelector('.aita-btn-green').classList.add('my-vote');
@@ -1257,6 +1290,7 @@ I get that weddings are expensive, but I don't see why my education should be th
   function attachVotesListener(storyIndex) {
     detachVotesListener();
     myLocalVote = null;
+    myCurrentVote = null;
 
     if (!db) {
       // No shared database available — falls back to a local-only tally for this device.
@@ -1403,32 +1437,24 @@ I get that weddings are expensive, but I don't see why my education should be th
   }
 
   function revealVerdict() {
+    // Personal reveal: show THIS user's vote, not the room's aggregate.
+    if (!myCurrentVote) {
+      showPickedBanner("Cast your vote first, darling. 💋");
+      return;
+    }
+
     if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
     gavelAudio.currentTime = 0;
     gavelAudio.play().catch(e => console.log("Audio play blocked."));
 
     const card = document.getElementById('verdictCard');
     const text = document.getElementById('verdictText');
-    const tally = document.getElementById('verdictTally');
+    const eyebrow = card.querySelector('.verdict-eyebrow');
     card.classList.remove('red', 'green');
 
-    tally.textContent = `${voteCounts.YTA} ASSHOLE — ${voteCounts.NTA} NOT THE ASSHOLE`;
+    eyebrow.textContent = 'You voted';
 
-    // Show what Reddit's actual jury ruled, if we know it, as a fun point of comparison.
-    const realEl = document.getElementById('verdictReal');
-    const story = currentStoryIndex !== null ? DOCKET_STORIES[currentStoryIndex] : null;
-    if (story && story.actualVerdict) {
-      realEl.textContent = `Reddit's real jury ruled: ${story.actualVerdict}`;
-      realEl.style.display = 'block';
-    } else {
-      realEl.textContent = '';
-      realEl.style.display = 'none';
-    }
-
-    if (voteCounts.YTA === voteCounts.NTA) {
-      text.textContent = "IT'S A TIE";
-      card.classList.add('red');
-    } else if (voteCounts.YTA > voteCounts.NTA) {
+    if (myCurrentVote === 'YTA') {
       text.textContent = 'ASSHOLE';
       card.classList.add('red');
     } else {
