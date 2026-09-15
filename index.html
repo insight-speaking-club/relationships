@@ -2814,6 +2814,26 @@ body[data-phase="closer"] .sky {
     object-fit: cover;
     z-index: 1;
   }
+  /* Sleek "still loading" shimmer — shows while the location photo is
+     fetching, so a slow connection reads as "loading" instead of
+     "broken". Once the image loads, .img-loaded stops the sweep and
+     the loaded photo fully covers the placeholder anyway. */
+  .hub-card-photo {
+    background: linear-gradient(100deg,
+      rgba(255,255,255,0.05) 30%,
+      rgba(255,255,255,0.18) 50%,
+      rgba(255,255,255,0.05) 70%);
+    background-size: 200% 100%;
+    animation: shimmer-sweep 1.4s ease-in-out infinite;
+  }
+  .hub-card-photo.img-loaded {
+    animation: none;
+    background: none;
+  }
+  @keyframes shimmer-sweep {
+    0% { background-position: 150% 0; }
+    100% { background-position: -150% 0; }
+  }
   /* Glowing Neon State when Unlocked */
   .hub-card:not(.locked) .hub-card-icon {
     background: linear-gradient(135deg, var(--gold), #ff8c00) !important;
@@ -4075,6 +4095,18 @@ function localRef(path){
 function ref(path){ return usingFirebase ? db.ref(path) : localRef(path); }
 
 if(!usingFirebase){ document.getElementById('offlineBadge').style.display='block'; }
+
+// Stop the shimmer placeholder on each location icon once it's actually
+// loaded (or failed) — a slow connection shows "still loading" instead of
+// a blank/broken-looking pin.
+document.querySelectorAll('.hub-card-photo').forEach(img => {
+  const markLoaded = () => img.classList.add('img-loaded');
+  if (img.complete && img.naturalWidth > 0) markLoaded();
+  else {
+    img.addEventListener('load', markLoaded, { once: true });
+    img.addEventListener('error', markLoaded, { once: true });
+  }
+});
 
 /* ---------- state & data ---------- */
 const AVATARS = ['✦','🏮','🌸','🌙','✧','🪻'];
