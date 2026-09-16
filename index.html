@@ -515,6 +515,44 @@
   .field input:focus{border-color:var(--gold); background:rgba(255,255,255,.1);}
   .field input::placeholder{color:rgba(244,233,255,.4);}
 
+  /* --- DRIVEWAY TAB TOGGLE --- */
+  .driveway-toggle {
+    display: flex;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(244,233,255,0.15);
+    border-radius: 999px;
+    padding: 4px;
+    margin: 0 auto 20px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .driveway-toggle-btn {
+    flex: 1;
+    background: transparent;
+    color: var(--dim);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .driveway-toggle-btn.active {
+    background: var(--gold);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(242, 193, 78, 0.3);
+  }
+  .driveway-tab-content {
+    display: none;
+    width: 100%;
+  }
+  .driveway-tab-content.active {
+    display: block;
+  }
+
   /* ---------- MASTER LOUNGE & INTERNAL STATES ---------- */
   #screen-lounge{justify-content:flex-start; padding:0; overflow:hidden;}
   
@@ -3841,11 +3879,11 @@ body[data-phase="closer"] .sky {
 
   </div> <!-- CLOSES #state-gathering -->
 
-  <!-- STATE 1.5: THE DRIVEWAY (Passenger List & Red Flag Rally) -->
+  <!-- STATE 1.5: THE DRIVEWAY (Passenger List, Rally & Closet) -->
   <div id="state-roulette" class="lounge-state">
     <button class="back-btn" id="btnBackToGatheringRoulette" onclick="setLoungeState('state-gathering')">‹</button>
     <h1 class="display" style="margin-top: 40px; font-size:34px; font-style:italic; color:#fff;">The Driveway</h1>
-    <p class="sub" style="margin-bottom: 20px; padding: 0 20px;">Gather around. Check out who's on board and jump into the Red Flag Rally while we wait.</p>
+    <p class="sub" style="margin-bottom: 20px; padding: 0 20px;">Gather around. Check out who's on board and choose your pre-game: dodge red flags on the road, or step into the Glass Closet to style a look.</p>
 
     <!-- SLEEK PASSENGER LIST -->
     <div class="dashboard-section" style="width: 100%; max-width: 420px; margin: 0 auto 16px;">
@@ -3858,46 +3896,68 @@ body[data-phase="closer"] .sky {
       </div>
     </div>
 
-    <!-- RED FLAG RALLY GAME (Always Open, the star of this section) -->
-    <div class="dashboard-section" style="width: 100%; max-width: 420px; margin: 0 auto 24px; padding: 16px;">
-      <div class="eyebrow" style="text-align: center; margin-bottom: 12px; color: var(--gold);">Red Flag Rally</div>
+    <!-- DRIVEWAY TOGGLE -->
+    <div class="driveway-toggle">
+      <button class="driveway-toggle-btn active" id="btnTabRally" onclick="switchDrivewayTab('rally')">Red Flag Rally</button>
+      <button class="driveway-toggle-btn" id="btnTabCloset" onclick="switchDrivewayTab('closet')">The Glass Closet</button>
+    </div>
 
-      <div class="game-section" id="gameSection" style="margin-top: 0;">
-        <div class="lounge-ground" aria-hidden="true" id="loungeGround">
-          <div class="ground-sky-fade"></div>
-          <div class="parallax-layer layer-back" id="parallaxBack"></div>
-          <div class="parallax-layer layer-mid" id="parallaxMid"></div>
-          <div class="ground-grass" id="parallaxFront"></div>
-        </div>
-
-        <div class="lounge-game" id="loungeGame">
-          <div class="game-instructions">collect green flags • jump red flags</div>
-          <div class="game-score" id="gameScore">0</div>
-          <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
-          <div class="game-track" id="gameTrack">
-            <div class="game-bunny" id="gameBunny">
-              <img class="sprite-normal" decoding="async" src="sashas-car.png" alt="Sasha in Car" onerror="if(!this.dataset.retried){this.dataset.retried='1'; this.src='sashas-car.png?retry=' + Date.now();} else {this.style.display='none'; this.nextElementSibling.style.display='block';}">
-              <span class="game-wisp-fallback"></span>
-              <img class="sprite-bunny" decoding="async" src="sashas-car-bunny1.png" alt="Sasha in Bunny Form">
+    <!-- TAB 1: RED FLAG RALLY -->
+    <div id="tabRally" class="driveway-tab-content active">
+      <div class="dashboard-section" style="width: 100%; max-width: 420px; margin: 0 auto 24px; padding: 16px;">
+        <div class="eyebrow" style="text-align: center; margin-bottom: 12px; color: var(--gold);">Red Flag Rally</div>
+        <div class="game-section" id="gameSection" style="margin-top: 0;">
+          <div class="lounge-ground" aria-hidden="true" id="loungeGround">
+            <div class="ground-sky-fade"></div>
+            <div class="parallax-layer layer-back" id="parallaxBack"></div>
+            <div class="parallax-layer layer-mid" id="parallaxMid"></div>
+            <div class="ground-grass" id="parallaxFront"></div>
+          </div>
+          <div class="lounge-game" id="loungeGame">
+            <div class="game-instructions">collect green flags • jump red flags</div>
+            <div class="game-score" id="gameScore">0</div>
+            <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
+            <div class="game-track" id="gameTrack">
+              <div class="game-bunny" id="gameBunny">
+                <img class="sprite-normal" decoding="async" src="sashas-car.png" alt="Sasha in Car" onerror="if(!this.dataset.retried){this.dataset.retried='1'; this.src='sashas-car.png?retry=' + Date.now();} else {this.style.display='none'; this.nextElementSibling.style.display='block';}">
+                <span class="game-wisp-fallback"></span>
+                <img class="sprite-bunny" decoding="async" src="sashas-car-bunny1.png" alt="Sasha in Bunny Form">
+              </div>
+              <div class="game-overlay" id="gameOverlay">
+                <div>Help me collect green flags and jump over the red ones. Keep me driving safely so I can find true love.</div>
+                <button class="btn" id="gameStartBtn">Play</button>
+              </div>
+              <button class="game-replay-btn" id="gameReplayBtn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+                <span>Play again</span>
+              </button>
             </div>
-            <div class="game-overlay" id="gameOverlay">
-              <div>Help me collect green flags and jump over the red ones. Keep me driving safely so I can find true love.</div>
-              <button class="btn" id="gameStartBtn">Play</button>
-            </div>
-            <button class="game-replay-btn" id="gameReplayBtn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
-              <span>Play again</span>
-            </button>
           </div>
         </div>
       </div>
+      <!-- LEADERBOARD -->
+      <div class="leaderboard-container" style="margin-bottom: 40px;">
+        <div class="eyebrow" style="text-align:center; margin-bottom:12px;">Top Scores</div>
+        <div id="gameLeaderboard" class="leaderboard-list"></div>
+      </div>
     </div>
 
-    <!-- LEADERBOARD -->
-    <div class="leaderboard-container" style="margin-bottom: 40px;">
-      <div class="eyebrow" style="text-align:center; margin-bottom:12px;">Top Scores</div>
-      <div id="gameLeaderboard" class="leaderboard-list"></div>
+    <!-- TAB 2: THE GLASS CLOSET -->
+    <div id="tabCloset" class="driveway-tab-content">
+      <div class="dashboard-section" style="width: 100%; max-width: 420px; margin: 0 auto 40px; padding: 20px 16px; text-align: center;">
+        <div class="eyebrow" style="margin-bottom: 8px; color: var(--gold);">The Glass Closet</div>
+        <p class="sub" style="margin-bottom: 20px; font-size: 13.5px;">Style your own look for tonight's journey, or dress Sasha for his first date. The choice is yours, darling.</p>
+
+        <div style="border-radius: 14px; overflow: hidden; border: 1px solid rgba(244, 233, 255, 0.12); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); margin-bottom: 16px; background: var(--ink);">
+          <iframe src="https://insight-speaking-club.github.io/glass-closet/" style="width: 100%; height: 550px; border: none; display: block;"></iframe>
+        </div>
+
+        <button class="btn ghost" onclick="window.open('https://insight-speaking-club.github.io/glass-closet/', '_blank')" style="font-size: 13px; padding: 10px 20px; width: 100%;">
+          Pop out to full screen ⛶
+        </button>
+      </div>
     </div>
+
   </div>
 
   <!-- STATE 2: THE BOUQUET -->
@@ -4414,7 +4474,7 @@ const TOUR_STEPS = [
   // Step 1: Highlights the whole Itinerary section first
   { selector: '#activitiesSection', title: 'The Itinerary', desc: 'Here\'s the full route for the night. Watch it light up as we go. We\'ll be traveling together, so sit tight until we pull up to the first stop.', pad: 10 },
   // Step 2: Zooms into the current stop
-  { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We\'re gathered in the driveway. While we wait for the stragglers, play a quick game of Red Flag Rally to help me drive safely and find my true love.', pad: 8 },
+  { selector: '#hubCardRoulette', title: 'The Driveway', desc: 'We\'re gathered in the driveway. While we wait for the stragglers, play a quick game of Red Flag Rally or style a fit in the Glass Closet.', pad: 8 },
   // The rest remain the same
   { selector: '#hubCardGarden', title: 'Midnight Garden', desc: 'First stop. This is where I\'ll pair you up with someone. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.', pad: 8 },
   { selector: '#hubCardAita', title: 'Bunny Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.', pad: 8 },
@@ -4633,7 +4693,7 @@ const HUB_SECTION_NAMES = {
   closer: 'The Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
-  roulette: "The Driveway's unlocked! Tap in and help me drive safely so I can find true love.",
+  roulette: "The Driveway's unlocked! Tap in to help me drive safely, or head to the closet and style a fit for the night 💋",
   garden: "Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
   aita: "Bunny Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
   closer: "The Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌"
@@ -5215,6 +5275,25 @@ function stopBunnyGame(){
 
   bg = null;
 }
+
+// --- DRIVEWAY TAB SWITCHING ---
+function switchDrivewayTab(tabId) {
+  // Update toggle buttons
+  document.getElementById('btnTabRally').classList.toggle('active', tabId === 'rally');
+  document.getElementById('btnTabCloset').classList.toggle('active', tabId === 'closet');
+
+  // Update content visibility
+  document.getElementById('tabRally').classList.toggle('active', tabId === 'rally');
+  document.getElementById('tabCloset').classList.toggle('active', tabId === 'closet');
+
+  // Performance logic: Pause Red Flag Rally if they are looking at the closet
+  if (tabId === 'rally' && document.getElementById('state-roulette').classList.contains('active')) {
+    if (!bg) requestAnimationFrame(startBunnyGame);
+  } else {
+    stopBunnyGame();
+  }
+}
+
 window.addEventListener('keydown', (e)=>{
   // Only trigger if they press Spacebar AND the game is actually running
   if(e.code === 'Space' && bg && bg.running && document.getElementById('screen-lounge').classList.contains('active')){
