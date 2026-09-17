@@ -3914,7 +3914,7 @@ body[data-phase="closer"] .sky {
             <div class="ground-grass" id="parallaxFront"></div>
           </div>
           <div class="lounge-game" id="loungeGame">
-            <div class="game-instructions">collect green flags • jump red flags</div>
+            <div class="game-instructions">tap to jump • collect green flags • dodge red flags</div>
             <div class="game-score" id="gameScore">0</div>
             <button class="game-fullscreen-btn" id="btnGameFullscreen" title="Fullscreen">⛶</button>
             <div class="game-track" id="gameTrack">
@@ -3924,7 +3924,7 @@ body[data-phase="closer"] .sky {
                 <img class="sprite-bunny" decoding="async" src="sashas-car-bunny1.png" alt="Sasha in Bunny Form">
               </div>
               <div class="game-overlay" id="gameOverlay">
-                <div>Help me collect green flags and jump over the red ones. Keep me driving safely so I can find true love.</div>
+                <div>Help me collect green flags and jump over the red ones. Tap the screen to jump. Keep me driving safely so I can find true love.</div>
                 <button class="btn" id="gameStartBtn">Play</button>
               </div>
               <button class="game-replay-btn" id="gameReplayBtn">
@@ -4991,7 +4991,7 @@ function startBunnyGame(){
   scoreEl.textContent = high ? `best ${high}` : '0';
   bunnyEl.style.transform = 'translateY(0)';
   overlay.classList.remove('hidden');
-  overlay.innerHTML = '<div>Help me collect green flags and jump over the red ones. Keep me driving safely so I can find true love.</div><button class="btn" id="gameStartBtn">Play</button>';
+  overlay.innerHTML = '<div>Help me collect green flags and jump over the red ones. Tap the screen to jump. Keep me driving safely so I can find true love.</div><button class="btn" id="gameStartBtn">Play</button>';
 
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
