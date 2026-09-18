@@ -21,7 +21,7 @@
 <link rel="preload" href="wall-of-memories-icon.jpg" as="image" fetchpriority="high">
 <style>
   :root{
-    --ink:#0b0415; /* Darkened from #120821 */
+    --ink:#120821;
     --twilight:#341251;
     --magenta:#7c2f6e;
     --rose:#d94f8c;
@@ -107,9 +107,9 @@
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(150% 100% at 50% 0%, rgba(242, 193, 78, 0.08) 0%, transparent 35%),
-      radial-gradient(120% 90% at 50% -10%, #3a0d54 0%, transparent 55%),
-      linear-gradient(200deg, #0c0314 0%, #1d092e 25%, #4a1146 60%, #913462 100%);
+      radial-gradient(150% 100% at 50% 0%, rgba(242, 193, 78, 0.12) 0%, transparent 35%), /* Soft gold top glow */
+      radial-gradient(120% 90% at 50% -10%, #5a1c7a 0%, transparent 55%), /* Brighter purple peak */
+      linear-gradient(200deg, #180624 0%, #2a0e3f 25%, #60185b 60%, #b8447e 100%); /* Deep space fading to rose */
     overflow: hidden;
     z-index: 0;
   }
@@ -154,14 +154,17 @@
   /* Crescent moon, top right corner */
   .crescent-moon {
     position: absolute;
-    top: 30px; right: 24px;
-    width: 84px; height: 84px;
+    top: 34px; right: 28px;
+    width: 46px; height: 46px;
     z-index: 2;
-    /* Single static drop-shadow — no keyframe loop, so this costs one paint
-       instead of a running animation on every guest's phone. */
     filter:
-      drop-shadow(0 0 12px rgba(244, 233, 255, 0.5))
-      drop-shadow(0 0 26px rgba(242, 193, 78, 0.32));
+      drop-shadow(0 0 10px rgba(244, 233, 255, 0.55))
+      drop-shadow(0 0 22px rgba(242, 193, 78, 0.35));
+    animation: moon-glow-pulse 6s ease-in-out infinite alternate;
+  }
+  @keyframes moon-glow-pulse {
+    0% { filter: drop-shadow(0 0 8px rgba(244,233,255,0.45)) drop-shadow(0 0 18px rgba(242,193,78,0.28)); }
+    100% { filter: drop-shadow(0 0 14px rgba(244,233,255,0.7)) drop-shadow(0 0 28px rgba(242,193,78,0.45)); }
   }
   .lantern {
     position: absolute; bottom: -60px;
@@ -634,7 +637,7 @@
 
   /* ---------- Personal greeting, sits above the itinerary ---------- */
   .personal-greeting{
-    width:100%; max-width:420px; text-align:left;
+    width:100%; max-width:420px; text-align:center;
     margin: 4px 0 18px;
   }
   .personal-greeting-text{
@@ -821,28 +824,10 @@
     background: #1c0e2c !important; /* Dark, unlit color */
     border-color: rgba(255, 255, 255, 0.15) !important;
     box-shadow: inset 0 4px 12px rgba(0,0,0,0.8) !important;
-    position: relative;
   }
   .hub-card.locked .hub-card-icon .icon-normal {
     display: block !important;
     opacity: 0.3; /* Dim the normal icon */
-  }
-  /* The small lock badge overlay */
-  .hub-card.locked .hub-card-icon .icon-lock {
-    display: block !important;
-    position: absolute;
-    bottom: -4px;
-    right: -4px;
-    width: 20px !important;
-    height: 20px !important;
-    background: #1c0e2c;
-    border: 1px solid rgba(244, 233, 255, 0.4);
-    border-radius: 50%;
-    padding: 3px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.8);
-    transform: rotate(45deg); /* Keeps the icon upright against the pin's -45deg rotation */
-    color: rgba(244, 233, 255, 0.8);
-    z-index: 10;
   }
   .hub-card.shake-reject {
     animation: hub-reject 0.4s cubic-bezier(.36,.07,.19,.97) both;
@@ -1414,8 +1399,8 @@
   }
   .garden-moon {
     position: absolute; top: 14px; right: 10%;
-    width: 64px; height: 64px; /* Increased size to reveal craters */
-    filter: drop-shadow(0 0 12px rgba(244,233,255,0.5)) drop-shadow(0 0 20px rgba(242,193,78,0.3));
+    width: 30px; height: 30px;
+    filter: drop-shadow(0 0 10px rgba(244,233,255,0.55)) drop-shadow(0 0 18px rgba(242,193,78,0.3));
     animation: moon-glow-pulse 6s ease-in-out infinite alternate;
   }
   .garden-star {
@@ -1891,20 +1876,6 @@
   right: 0;
   height: 90px;
   background: radial-gradient(ellipse at 50% 100%, rgba(242, 193, 78, 0.25) 0%, rgba(217, 79, 140, 0.12) 50%, transparent 80%);
-}
-
-/* Glassy water strip at the very base of the skyline — static gradients only,
-   mirrors the warm city-glow colors upward into a dark "water" band.
-   No blur/filter/animation, so it costs nothing per frame. */
-.river-reflection {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 26px;
-  background:
-    linear-gradient(180deg, rgba(242, 193, 78, 0.16) 0%, rgba(217, 79, 140, 0.08) 40%, rgba(18, 8, 33, 0.9) 100%);
-  border-top: 1px solid rgba(244, 233, 255, 0.08);
 }
 
 /* --- ATMOSPHERIC PHASE TRANSITIONS --- */
@@ -2854,27 +2825,33 @@ body[data-phase="closer"] .sky {
     height: 54px;
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
-    /* Base locked/inactive color */
-    background: #1a0b2e !important;
-    border: 2px solid rgba(244, 233, 255, 0.15) !important;
-    box-shadow: inset 0 4px 12px rgba(0,0,0,0.8) !important;
+    background: linear-gradient(135deg, var(--gold), var(--rose)) !important;
+    border: 2px solid rgba(255,255,255,0.85) !important;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.45), inset 0 0 10px rgba(255,255,255,0.15);
     filter: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
-  /* Counter-rotate icons so they stay upright */
+  /* Counter-rotate the contents so the icon/photo stays upright */
   .hub-card-icon svg,
   .hub-card-icon img {
     transform: rotate(45deg);
   }
-  .hub-card-icon svg { width: 26px; height: 26px; z-index: 2; }
-
+  /* Until you have custom picture icons per stop, scale up the existing
+     built-in SVGs so they fill the pin instead of looking lost/tiny */
+  .hub-card-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+  /* Photo placeholders: sit centered inside the pin, cropped into a
+     circle. Recommended source images: square, at least 200x200px. */
   .hub-card-photo {
     position: absolute;
-    inset: 0; margin: auto;
-    width: 42px; height: 42px;
-    border-radius: 50%; object-fit: cover; z-index: 1;
+    inset: 0;
+    margin: auto;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 1;
   }
   /* Sleek "still loading" shimmer — shows while the location photo is
      fetching, so a slow connection reads as "loading" instead of
@@ -2896,46 +2873,22 @@ body[data-phase="closer"] .sky {
     0% { background-position: 150% 0; }
     100% { background-position: -150% 0; }
   }
-
-  /* --- LUXURY UNLOCKED STATE (Not Glowing, Just Polished) --- */
+  /* Glowing Neon State when Unlocked */
   .hub-card:not(.locked) .hub-card-icon {
-    background: linear-gradient(135deg, #4a1a49, #2a0e3f) !important;
-    border: 2px solid var(--gold) !important;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1) !important;
-  }
-
-  /* --- "WE'RE HERE" ACTIVE STATE (Elegant Pulsing Glow) --- */
-  .hub-card.is-current .hub-card-icon {
-    background: linear-gradient(135deg, var(--rose), var(--twilight)) !important;
+    background: linear-gradient(135deg, var(--gold), #ff8c00) !important;
+    box-shadow: 0 0 20px 4px rgba(242, 193, 78, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.8) !important;
     border: 2px solid #fff !important;
-    animation: luxurious-pin-glow 2.5s infinite alternate !important;
+    animation: pin-glow 2.5s infinite alternate;
+  }
+  @keyframes pin-glow {
+    0% { box-shadow: 0 0 15px 2px rgba(242, 193, 78, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.6); }
+    100% { box-shadow: 0 0 30px 8px rgba(242, 193, 78, 0.9), inset 0 0 20px rgba(255, 255, 255, 1); }
   }
 
-  @keyframes luxurious-pin-glow {
-    0% { box-shadow: 0 0 15px 2px rgba(242, 193, 78, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.4); }
-    100% { box-shadow: 0 0 35px 8px rgba(242, 193, 78, 0.75), inset 0 0 20px rgba(255, 255, 255, 0.8); }
-  }
-
-  /* --- THE INTERIOR LOCK DESIGN --- */
-  .hub-card.locked .hub-card-icon .icon-normal {
-    display: none !important; /* Hide the standard icon entirely */
-  }
-  .hub-card.locked .hub-card-icon .icon-lock {
+  /* Make locked photos look like unlit windows instead of hiding them */
+  .hub-card.locked .hub-card-icon .hub-card-photo {
     display: block !important;
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 22px !important; height: 22px !important;
-    margin-top: -11px; margin-left: -11px;
-    color: rgba(244, 233, 255, 0.35); /* Subtle, elegant dimming */
-    transform: rotate(45deg);
-    background: transparent; border: none; box-shadow: none; padding: 0;
-    z-index: 10;
-  }
-
-  /* Dim background photos in locked pins so the lock icon pops */
-  .hub-card.locked .hub-card-photo {
-    opacity: 0.15 !important;
-    filter: grayscale(100%);
+    filter: brightness(0.25) grayscale(85%);
   }
 
   /* 7. Position each stop on the map — these are CENTER points now.
@@ -3051,37 +3004,6 @@ body[data-phase="closer"] .sky {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     display: block;
-  }
-  /* --- PARISIAN MAP BACKGROUND LANDMARKS --- */
-  .map-bg-landmark {
-    position: absolute;
-    z-index: 0; /* Keeps them behind the roads and interactive pins */
-    pointer-events: none; /* Guests can't click them */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    opacity: 0.45; /* Fades them into the background */
-    transform: translate(-50%, -50%);
-  }
-
-  .map-bg-landmark img {
-    width: 80px; /* Adjust size based on your PNGs */
-    height: auto;
-    object-fit: contain;
-    /* Gives the images a cohesive, dark-amethyst blueprint tint to blend into the map */
-    filter: sepia(1) hue-rotate(240deg) saturate(0.8) opacity(0.6) drop-shadow(0 4px 10px rgba(0,0,0,0.6));
-    margin-bottom: 6px;
-  }
-
-  .map-bg-landmark-text {
-    /* Uses the typewriter font to look like architectural map labels */
-    font-family: 'Space Mono', monospace;
-    font-size: 8px;
-    color: rgba(244, 233, 255, 0.5);
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    white-space: nowrap;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
   }
   .hub-road-svg {
     position: absolute; inset: 0;
@@ -3227,20 +3149,12 @@ body[data-phase="closer"] .sky {
   /* 1. Kill infinite shadow repaints on the map pins to free up the main thread */
   .hub-card.is-current {
     animation: none !important;
-    box-shadow: none !important; /* Remove glow from the invisible card wrapper */
-  }
-
-  .hub-card.is-current .hub-card-icon {
-    /* Only the active "We're here" pin gets the heavy ambient glow */
-    box-shadow: 0 0 25px 6px rgba(242, 193, 78, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 0 25px rgba(242, 193, 78, 0.4) !important;
   }
 
   .hub-card:not(.locked) .hub-card-icon {
     animation: none !important;
-    background: linear-gradient(135deg, var(--gold), #ff8c00) !important;
-    border: 2px solid #fff !important;
-    /* Normal bright pin, no outer neon glow */
-    box-shadow: 0 6px 14px rgba(0,0,0,0.45), inset 0 0 10px rgba(255,255,255,0.15) !important; 
+    box-shadow: 0 0 20px 4px rgba(242, 193, 78, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.8) !important;
   }
 
   /* 2. Global touch optimization to instantly register all taps across the app */
@@ -3303,21 +3217,9 @@ body[data-phase="closer"] .sky {
        so nothing ever visibly parks up there -->
   <div class="sky-top-mask"></div>
 
-  <!-- Moon, top right corner: single static SVG (gradient + baked-in craters,
-       no extra animated layers) so detail comes for free at paint time -->
-  <svg class="crescent-moon" viewBox="0 0 100 100" aria-hidden="true">
-    <defs>
-      <radialGradient id="moonBodyGrad" cx="35%" cy="32%" r="75%">
-        <stop offset="0%" stop-color="#fffdf6" />
-        <stop offset="55%" stop-color="#f9edcf" />
-        <stop offset="100%" stop-color="#e9d4a3" />
-      </radialGradient>
-    </defs>
-    <circle cx="50" cy="50" r="46" fill="url(#moonBodyGrad)" />
-    <circle cx="34" cy="40" r="9" fill="#dcc493" opacity="0.35" />
-    <circle cx="63" cy="30" r="5" fill="#dcc493" opacity="0.3" />
-    <circle cx="66" cy="58" r="11" fill="#dcc493" opacity="0.3" />
-    <circle cx="42" cy="68" r="5" fill="#dcc493" opacity="0.28" />
+  <!-- Crescent moon, top right corner -->
+  <svg class="crescent-moon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#f4e9ff"/>
   </svg>
 
   <!-- PARIS SKYLINE HORIZON -->
@@ -3349,10 +3251,6 @@ body[data-phase="closer"] .sky {
 
     <!-- Warm amber street-level haze -->
     <div class="paris-city-glow"></div>
-
-    <!-- Glassy water reflection strip — pure static gradients, no filters
-         or animation, so it's effectively free to render -->
-    <div class="river-reflection"></div>
   </div>
 
   <div id="stardust-container" style="position: absolute; inset: 0; pointer-events: none; z-index: 1;"></div>
@@ -3499,7 +3397,7 @@ body[data-phase="closer"] .sky {
         </div>
         
         <p class="sub" style="margin-bottom: 20px; text-align: center; font-size: 14px;">
-          The itinerary is set. I'll guide us through when the moment is right.
+          Our roadmap for tonight, darling. Each stop's its own activity. 💋
         </p>
 
         <div class="hub-sections">
@@ -3512,32 +3410,6 @@ body[data-phase="closer"] .sky {
                stars, matching the app's existing palette. Uses a
                real-proportioned viewBox + "slice" so circles stay
                round instead of stretching to fill the container. -->
-          <!-- Parisian Background Landmarks -->
-          <div class="map-bg-landmark" style="top: 52%; left: 80%;">
-            <img src="eiffel-tower.png" alt="Tour Eiffel" onerror="this.style.display='none'">
-            <div class="map-bg-landmark-text">Tour Eiffel</div>
-          </div>
-
-          <div class="map-bg-landmark" style="top: 15%; left: 75%;">
-            <img src="sacre-coeur.png" alt="Sacré-Cœur" onerror="this.style.display='none'">
-            <div class="map-bg-landmark-text">Sacré-Cœur</div>
-          </div>
-
-          <div class="map-bg-landmark" style="top: 40%; left: 20%;">
-            <img src="arc-de-triomphe.png" alt="Arc de Triomphe" onerror="this.style.display='none'">
-            <div class="map-bg-landmark-text">Arc de Triomphe</div>
-          </div>
-
-          <div class="map-bg-landmark" style="top: 85%; left: 20%;">
-            <img src="louvre.png" alt="Musée du Louvre" onerror="this.style.display='none'">
-            <div class="map-bg-landmark-text">Musée du Louvre</div>
-          </div>
-
-          <div class="map-bg-landmark" style="top: 25%; left: 45%;">
-            <img src="notre-dame.png" alt="Notre-Dame" onerror="this.style.display='none'">
-            <div class="map-bg-landmark-text">Notre-Dame</div>
-          </div>
-
           <svg class="hub-map-bg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <linearGradient id="hubMapGround" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -3673,6 +3545,12 @@ body[data-phase="closer"] .sky {
             <!-- Little landmarks scattered around the route, so each stop
                  sits in its own "neighborhood" instead of empty space -->
             <use href="#mapCompass" transform="translate(355,42)"/>
+
+            <!-- Iconic Paris skyline pieces, tucked into open ground so
+                 the map itself says "Paris" at a glance -->
+            <use href="#mapArc" transform="translate(200,55) scale(1.0)"/>
+            <use href="#mapEiffel" transform="translate(378,255) scale(1.3)"/>
+            <use href="#mapLouvre" transform="translate(112,468) scale(1.0)"/>
 
             <!-- near Home -->
             <use href="#mapHouse" transform="translate(38,118) scale(0.9)"/>
@@ -4557,7 +4435,7 @@ function renderPersonalGreeting(){
   if(!el || !me || !me.name) return;
 
   const firstName = me.name.split(' ')[0];
-  el.innerHTML = `Good evening, <span class="name">${escapeHtml(firstName)}</span>!<br>We're in the City of Love. 🥂`;
+  el.innerHTML = `Good evening, <span class="name">${escapeHtml(firstName)}</span>! We're in the City of Love. 🥂`;
 }
 
 function enterLounge(){
@@ -4817,10 +4695,10 @@ const HUB_SECTION_NAMES = {
   closer: 'The Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
-  roulette: "The Driveway is open. The road, or the mirror — your call.",
-  garden:   "Midnight Garden is open. Your bouquet is waiting.",
-  aita:     "Court is in session. Take your seat.",
-  closer:   "The Post Office is open. Come write."
+  roulette: "The Driveway's unlocked! Tap in to help me drive safely, or head to the closet and style a fit for the night 💋",
+  garden: "Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
+  aita: "Bunny Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
+  closer: "The Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌"
 };
 let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
 let previousActiveHub = null; // tracks hubs.current so we can fire a synchronized haptic pulse on room changes
@@ -4929,16 +4807,16 @@ function listenHubs() {
 // each one names the section and treats it like a real venue we haven't
 // arrived at yet, not a door Sasha personally unlocks.
 const PATIENCE_MESSAGES = [
-  "Not yet. I'll open it when we arrive.",
-  "Locked. No need to knock — I'll come get you.",
-  "Not this one. Patience, darling.",
-  "Hold. The doors open on my cue.",
-  "Closed for now. You'll feel the buzz when it opens.",
-  "Not yet. Every door tonight opens in its own time.",
-  "Locked. Watch for the ping.",
-  "Not this one yet. Sit tight.",
-  "Still closed. It opens the moment the room is ready.",
-  "Not yet. I'm opening these myself, in order."
+  "Darling, this one's locked. Sit tight, I'll unlock it myself when it's time 💋",
+  "Not yet, mon chéri. I'm the one who opens the doors, so watch for the ping 🤭",
+  "Still closed, darling. I'll swing it open for everyone the moment we're ready. 🦢",
+  "Locked for now, love. I'll unlock it and you'll get a little tap on the shoulder. 💋",
+  "Patience, darling. I open every door myself, no need to keep knocking 🤭",
+  "Simply not open yet. I'll flip the lock when it's go time, promise. 🦢",
+  "Not so fast, love. I'll unlock this one, and you'll know the second it's ready 💋",
+  "Still waiting on me, darling. I'll open it for the whole room at once. 🤭",
+  "Locked, darling. I'll take care of it, no tapping required 🦢",
+  "Not yet, love. I open these myself, and you'll feel the buzz when it's time 💋"
 ];
 let lastPatienceIndex = -1;
 function showPatienceToast(){
@@ -5445,19 +5323,8 @@ function buildGarden(){
       <span class="garden-star gold small" style="top:30%; left:84%; animation-delay:2.3s;"></span>
       <span class="garden-star small dim" style="top:12%; left:2%; animation-delay:1.3s;"></span>
       <span class="garden-star" style="top:26%; left:50%; animation-delay:.4s;"></span>
-      <svg class="garden-moon" viewBox="0 0 100 100" aria-hidden="true">
-        <defs>
-          <radialGradient id="gardenMoonGrad" cx="35%" cy="32%" r="75%">
-            <stop offset="0%" stop-color="#fffdf6" />
-            <stop offset="55%" stop-color="#f9edcf" />
-            <stop offset="100%" stop-color="#e9d4a3" />
-          </radialGradient>
-        </defs>
-        <circle cx="50" cy="50" r="46" fill="url(#gardenMoonGrad)" />
-        <circle cx="34" cy="40" r="9" fill="#dcc493" opacity="0.35" />
-        <circle cx="63" cy="30" r="5" fill="#dcc493" opacity="0.3" />
-        <circle cx="66" cy="58" r="11" fill="#dcc493" opacity="0.3" />
-        <circle cx="42" cy="68" r="5" fill="#dcc493" opacity="0.28" />
+      <svg class="garden-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#f4e9ff"/>
       </svg>
     </div>
     <div id="bouquetFlowers"></div>
