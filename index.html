@@ -3561,31 +3561,28 @@ body[data-phase="closer"] .sky {
       </div>
 
       <!-- TODAY'S ACTIVITIES -->
-      <div class="dashboard-section" id="activitiesSection">
+      <div class="dashboard-section" id="activitiesSection" style="padding-top: 60px;">
 
-        <!-- Symmetrical, anchored header with integrated skyline -->
-        <div class="section-header" style="display: flex; flex-direction: column; align-items: center; border-bottom: none; padding-bottom: 0; margin-bottom: 12px;">
+        <!-- The Skyline Frame: Spans the top edge and melts seamlessly into the dark glass -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 150px; background: url('paris-skyline-3.png') center center / cover no-repeat; opacity: 0.55; border-radius: 24px 24px 0 0; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%); mask-image: linear-gradient(to bottom, black 30%, transparent 100%); z-index: 0;"></div>
 
-          <!-- Skyline acting as a crown for the text -->
-          <div style="display: flex; flex-direction: column; align-items: center;">
-            <img src="paris-skyline-2.png" alt="Paris Skyline" onerror="this.style.display='none'" style="height: 42px; width: auto; margin-bottom: -6px; opacity: 0.95; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); z-index: 2; pointer-events: none;">
+        <!-- Symmetrical, anchored header -->
+        <div class="section-header" style="position: relative; display: flex; flex-direction: column; align-items: center; border-bottom: none; padding-bottom: 0; margin-bottom: 14px; z-index: 2;">
 
-            <!-- Typography -->
-            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; font-style: normal; text-transform: uppercase; letter-spacing: 0.12em; color: var(--mist); margin: 0; text-align: center; line-height: 1.15; text-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 1;">
-              <span style="display: block;">City of Love</span>
-              <span style="display: block; color: var(--gold);">Tour</span>
-            </h2>
-          </div>
-
+          <!-- Typography -->
+          <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; font-style: normal; text-transform: uppercase; letter-spacing: 0.12em; color: var(--mist); margin: 0; text-align: center; line-height: 1.15; text-shadow: 0 4px 15px rgba(0,0,0,0.85);">
+            <span style="display: block;">City of Love</span>
+            <span style="display: block; color: var(--gold);">Tour</span>
+          </h2>
         </div>
 
         <!-- Subtitle -->
-        <p class="sub" style="text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 270px; margin: 0 auto 16px; line-height: 1.5;">
+        <p class="sub" style="position: relative; z-index: 2; text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.85); max-width: 270px; margin: 0 auto 18px; line-height: 1.5; text-shadow: 0 2px 10px rgba(0,0,0,0.85);">
           The night is mapped out for us, love. Each stop brings its own little piece of magic. ✨
         </p>
 
         <!-- Sleek Route Guide Button -->
-        <button type="button" id="routeGuideBtn" onclick="openRouteGuide()" style="background: rgba(242,193,78,0.08); border: 1px solid rgba(242,193,78,0.3); color: var(--gold); border-radius: 20px; padding: 6px 16px; font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 auto 24px; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s ease;">
+        <button type="button" id="routeGuideBtn" onclick="openRouteGuide()" style="position: relative; z-index: 2; background: rgba(242,193,78,0.08); border: 1px solid rgba(242,193,78,0.3); color: var(--gold); border-radius: 20px; padding: 7px 18px; font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 auto 24px; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
           View Route Guide
         </button>
