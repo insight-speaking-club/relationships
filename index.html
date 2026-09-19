@@ -18,7 +18,8 @@
 <link rel="preload" href="night-garden-icon.jpg" as="image" fetchpriority="high">
 <link rel="preload" href="relationships-court-icon.jpg" as="image" fetchpriority="high">
 <link rel="preload" href="post-office-icon.jpg" as="image" fetchpriority="high">
-<link rel="preload" href="the-museum-of-memories.png" as="image" fetchpriority="high">
+<link rel="preload" href="the-museum-of-memories-1.png" as="image" fetchpriority="high">
+<link rel="preload" href="paris-skyline.png" as="image" fetchpriority="high">
 <style>
   :root{
     --ink:#120821;
@@ -857,6 +858,11 @@
   /* --- DIEGETIC LOCKED STATE (Unlit Buildings) --- */
   .hub-card.locked { opacity: 0.9; cursor: pointer; background: transparent; border: none; box-shadow: none; filter: none; }
   .hub-card-icon .icon-lock { display: none !important; }
+  /* If a stop has a real photo, the built-in icon stays out of the way
+     (it only shows when there is no photo, or the photo failed to load) */
+  .hub-card .hub-card-icon.has-photo .icon-normal,
+  .hub-card.locked .hub-card-icon.has-photo .icon-normal,
+  #hubCardRecap .hub-card-icon.has-photo .icon-normal { display: none !important; }
   .hub-card.locked .hub-card-icon {
     background: #1c0e2c !important; /* Dark, unlit color */
     border-color: rgba(255, 255, 255, 0.15) !important;
@@ -1908,43 +1914,15 @@
   overflow: hidden;
 }
 
-.paris-skyline-svg {
+.paris-skyline-img {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
   filter: drop-shadow(0 -4px 15px rgba(242, 193, 78, 0.15));
-}
-
-/* Eiffel Tower rotating beacon ray */
-.eiffel-beacon {
-  position: absolute;
-  bottom: 222px;
-  left: 50%;
-  width: 400px;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(242, 193, 78, 0.8) 0%, rgba(242, 193, 78, 0) 100%);
-  transform-origin: left center;
-  filter: blur(1px);
-  animation: beacon-sweep 12s linear infinite;
-}
-
-@keyframes beacon-sweep {
-  0% { transform: rotate(-25deg) scaleX(0.7); opacity: 0.2; }
-  50% { transform: rotate(35deg) scaleX(1.2); opacity: 0.85; }
-  100% { transform: rotate(-25deg) scaleX(0.7); opacity: 0.2; }
-}
-
-.eiffel-tower-icon {
-  position: absolute;
-  left: 50%;
-  bottom: 35px;
-  transform: translateX(-50%);
-  width: 68px;
-  height: 188px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 14px rgba(242, 193, 78, 0.3));
 }
 
 /* Warm, romantic city lights glow behind the buildings */
@@ -3346,7 +3324,6 @@ body[data-phase="closer"] .sky {
   .sky::before,
   .crescent-moon,
   .moonglow,
-  .eiffel-beacon,
   .hub-waiting-avatar,
   .passenger-orb {
     animation: none !important;
@@ -3426,30 +3403,8 @@ body[data-phase="closer"] .sky {
 
   <!-- PARIS SKYLINE HORIZON -->
   <div class="paris-horizon">
-    <!-- Sweeping Eiffel Tower Beacon Light -->
-    <div class="eiffel-beacon"></div>
-
-    <!-- Eiffel Tower image (host eiffel-tower.png alongside this file) -->
-    <img class="eiffel-tower-icon" src="eiffel-tower.png" alt="">
-
-    <!-- Silhouette SVG (Parisian Rooftops) -->
-    <svg class="paris-skyline-svg" viewBox="0 0 1200 320" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="parisSilhouetteGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#2a0e3f" stop-opacity="0.9" />
-          <stop offset="100%" stop-color="#120821" stop-opacity="1" />
-        </linearGradient>
-      </defs>
-      <!-- Haussmannian chimneys, rooftops & Eiffel Tower silhouette -->
-      <path fill="url(#parisSilhouetteGrad)" d="
-        M0,320 L0,270
-        L60,270 L60,250 L80,250 L80,270 L140,270 L140,235 L150,235 L150,270
-        L230,270 L260,240 L290,270 L380,270 L380,260 L400,260 L400,270
-        L520,270
-        L780,270 L780,245 L790,245 L790,270 L870,270 L910,230 L950,270
-        L1030,270 L1030,255 L1050,255 L1050,270 L1120,270 L1120,240 L1140,240 L1140,270 L1200,270
-        L1200,320 Z" />
-    </svg>
+    <!-- Paris skyline image (host paris-skyline.png alongside this file) -->
+    <img class="paris-skyline-img" src="paris-skyline.png" alt="" decoding="async" onerror="this.style.display='none'">
 
     <!-- Warm amber street-level haze -->
     <div class="paris-city-glow"></div>
@@ -3982,7 +3937,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the museum icon -->
-              <img class="hub-card-photo" decoding="async" src="the-museum-of-memories.png" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" decoding="async" src="the-museum-of-memories-1.png" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Museum Facade SVG (pediment + columns) -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 9.5L12 3l10 6.5"/>
@@ -4417,9 +4372,15 @@ if(!usingFirebase){ document.getElementById('offlineBadge').style.display='block
 // a blank/broken-looking pin.
 document.querySelectorAll('.hub-card-photo').forEach(img => {
   const markLoaded = () => img.classList.add('img-loaded');
-  if (img.complete && img.naturalWidth > 0) markLoaded();
+  // Photo really loaded -> hide that stop's built-in icon (see .has-photo)
+  const markHasPhoto = () => {
+    markLoaded();
+    const pin = img.closest('.hub-card-icon');
+    if (pin) pin.classList.add('has-photo');
+  };
+  if (img.complete && img.naturalWidth > 0) markHasPhoto();
   else {
-    img.addEventListener('load', markLoaded, { once: true });
+    img.addEventListener('load', markHasPhoto, { once: true });
     img.addEventListener('error', markLoaded, { once: true });
   }
 });
@@ -4958,21 +4919,25 @@ function openRouteGuide() {
 
     const photo = document.createElement('div');
     photo.className = 'rg-photo';
-    // Fallback: the stop's own icon shows if the photo is missing
-    if (fallbackIcon) {
+    // The stop's own icon is only a fallback: it shows when there is no
+    // photo, or when the photo fails to load. A photo never gets an icon on top.
+    const addFallbackIcon = () => {
+      if (!fallbackIcon || photo.querySelector('svg')) return;
       const svg = fallbackIcon.cloneNode(true);
       svg.removeAttribute('class');
       svg.setAttribute('width', '30');
       svg.setAttribute('height', '30');
       photo.appendChild(svg);
-    }
+    };
     if (photoSrc) {
       const img = new Image();
       img.decoding = 'async';
       img.alt = name;
-      img.onerror = () => img.remove();
+      img.onerror = () => { img.remove(); addFallbackIcon(); };
       img.src = photoSrc;
       photo.appendChild(img);
+    } else {
+      addFallbackIcon();
     }
 
     const nameEl = document.createElement('div');
