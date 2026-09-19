@@ -6,7 +6,7 @@
 <title>Relationships | Vogue Committee Headquarters</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <link rel="preload" href="sasha-car-front-1.png" as="image" fetchpriority="high">
 <link rel="preload" href="sasha.png" as="image" fetchpriority="high">
 <link rel="preload" href="map.png" as="image" fetchpriority="high">
@@ -921,16 +921,29 @@
   .game-section{
     position: relative;
     width: 100%;
-    max-width: 420px;
-    height: 190px;
+    max-width: 560px;
+    height: 260px;
     margin: 14px auto 0;
     border-radius: 22px;
     overflow: hidden;
     border: 1px solid rgba(244, 233, 255, 0.12);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
   }
+  /* Optional custom background behind the road/parallax layers.
+     Drop an image named "game-background.png" or "game-background.jpg"
+     in the same folder as this file and it will appear automatically.
+     Recommended size: 1120x520px (2x the game window, landscape) so it
+     stays sharp on retina screens. It's stretched to cover the window
+     and centered, so keep the important part of the image centered too. */
+  .game-custom-bg{
+    position:absolute; inset:0; z-index:0;
+    background-image: var(--game-bg-image, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
   .lounge-ground{
-    position:absolute; left:0; right:0; bottom:0; height:190px; z-index:10;
+    position:absolute; left:0; right:0; bottom:0; height:260px; z-index:10;
     pointer-events:none; overflow:hidden;
   }
   .ground-sky-fade{
@@ -949,7 +962,7 @@
     opacity: 0.8;
   }
   .lounge-game{
-    position:absolute; left:0; right:0; bottom:0; height:190px; z-index:11;
+    position:absolute; left:0; right:0; bottom:0; height:260px; z-index:11;
   }
   .while-you-wait{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em;
@@ -4161,10 +4174,11 @@ body[data-phase="closer"] .sky {
     </div>
 
     <!-- RED FLAG RALLY -->
-    <div class="dashboard-section" style="width: 100%; max-width: 420px; margin: 0 auto 24px; padding: 16px;">
+    <div class="dashboard-section" style="width: 100%; max-width: 560px; margin: 0 auto 24px; padding: 16px;">
       <div class="eyebrow" style="text-align: center; margin-bottom: 12px; color: var(--gold);">Red Flag Rally</div>
       <div class="game-section" id="gameSection" style="margin-top: 0;">
         <div class="lounge-ground" aria-hidden="true" id="loungeGround">
+          <div class="game-custom-bg" id="gameCustomBg"></div>
           <div class="ground-sky-fade"></div>
           <div class="parallax-layer layer-back" id="parallaxBack"></div>
           <div class="parallax-layer layer-mid" id="parallaxMid"></div>
@@ -4350,7 +4364,9 @@ body[data-phase="closer"] .sky {
 
     <div id="partnerRevealEyebrow" class="eyebrow" style="margin-bottom: 10px; color: var(--gold); font-size: 10px; letter-spacing: 0.12em;">Your partner is</div>
 
-    <div id="partnerName" class="partner-name" style="font-size: 20px; line-height: 1.3; margin-bottom: 16px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto;"></div>
+    <div id="partnerName" class="partner-name" style="font-family: 'Playfair Display', 'Cormorant Garamond', serif; font-weight: 600; font-style: normal; font-size: 24px; line-height: 1.3; margin-bottom: 14px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto; background: linear-gradient(90deg, var(--gold), var(--rose)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></div>
+
+    <div id="partnerRevealInstruction" style="font-family: 'Jost', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--dim); margin-bottom: 16px; padding: 0 4px;">Find them somewhere in the room and have a one-on-one conversation in the Midnight Garden.</div>
 
     <button id="btnDontShowReveal" style="background: none; border: none; color: var(--dim); font-size: 10px; opacity: 0.6; cursor: pointer; padding: 4px; text-decoration: underline; margin: 0 auto; display: block;">Got it, don't remind me.</button>
   </div>
@@ -5377,6 +5393,27 @@ function handleRedFlagImgError(img){
   span.style.cssText = 'font-size:32px; line-height:40px; display:block; text-align:center;';
   img.replaceWith(span);
 }
+
+// Optional custom background for Red Flag Rally: drop a file named
+// "game-background" (png or jpg) next to this HTML file and it shows up
+// automatically behind the road. If no such file exists, this quietly
+// does nothing and the game looks exactly as it did before.
+(function loadCustomGameBackground(){
+  const candidates = ['game-background.png', 'game-background.jpg', 'game-background.jpeg'];
+  let i = 0;
+  function tryNext(){
+    if (i >= candidates.length) return;
+    const url = candidates[i++];
+    const testImg = new Image();
+    testImg.onload = () => {
+      const el = document.getElementById('gameCustomBg');
+      if (el) el.style.setProperty('--game-bg-image', `url("${url}")`);
+    };
+    testImg.onerror = tryNext;
+    testImg.src = url;
+  }
+  tryNext();
+})();
 function handleGreenFlagImgError(img){
   const span = document.createElement('span');
   span.textContent = '🟩';
@@ -6727,7 +6764,7 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
     // Simple: just the partner's name(s), nothing else
     document.getElementById('partnerName').innerHTML = myPartners.map(p =>
       escapeHtml(p.name)
-    ).join('<div style="font-size: 12px; color: rgba(255,255,255,0.3); margin: 4px 0;">&amp;</div>');
+    ).join('<div style="font-size: 12px; -webkit-text-fill-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.3); margin: 4px 0;">&amp;</div>');
 
     if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
   }
