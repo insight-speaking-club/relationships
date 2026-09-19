@@ -1953,7 +1953,7 @@
   .route-guide-card .rg-head { text-align: center; margin-bottom: 14px; flex-shrink: 0; }
   .route-guide-card .rg-eyebrow { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
   .route-guide-card .rg-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--mist); line-height: 1.1; }
-  .route-guide-card .rg-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .route-guide-card .rg-list { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .rg-stop {
     display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center;
     padding: 14px 0; border-top: 1px solid rgba(244,233,255,0.1);
@@ -1977,6 +1977,12 @@
     cursor: pointer; box-shadow: 0 4px 15px rgba(242, 193, 78, 0.2);
   }
   .route-guide-card .rg-close:active { transform: scale(0.97); }
+  .route-guide-card .rg-close:disabled {
+    opacity: 0.4; cursor: default; box-shadow: none; transform: none;
+  }
+  /* First-time reveal: stops start invisible and fade in one by one. */
+  .rg-stop.rg-reveal { transition: opacity 0.9s ease, transform 0.9s ease; }
+  .rg-stop.rg-await { opacity: 0; transform: translateY(14px); }
 
   /* --- SASHA'S GAME STYLES --- */
   .obs-basic {
@@ -3478,6 +3484,107 @@ body[data-phase="closer"] .sky {
     from { opacity: 0; transform: translate(-50%, -50%) scale(0.5) translateY(10px); }
     to { opacity: 1; transform: translate(-50%, -50%) scale(1) translateY(0); }
   }
+
+  /* ==========================================================
+     THE ITINERARY AS A FOUND OBJECT: an unfolded tourist map.
+     Blush-rose paper (warm, echoing the pink horizon), softened
+     quarter-fold creases, deckled edges, worn corners and one
+     dog-eared corner. The dark night map sits inside it like the
+     printed panel of a real map.
+     The creases live IN the paper, under the printed map panel, so
+     they show on the paper margins/header/footer but never run
+     across the map itself.
+     Everything is static (nothing animates, no backdrop blur), so it
+     is rasterised once and costs nothing on a phone.
+     Swap the whole paper colour by editing the --paper-* values below.
+     ========================================================== */
+  #activitiesSection {
+    --paper-hi: #f6e3e6;          /* paper, lightest (top) */
+    --paper-mid: #eed0d8;         /* paper, middle */
+    --paper-lo: #e2bcc9;          /* paper, deepest (bottom) */
+    --paper-gap: #efd3db;         /* the gap ring around the map: match the paper */
+    --paper-edge: 170, 80, 100;   /* sun-aged edges (r,g,b) */
+    --paper-shade: 90, 30, 60;    /* crease + panel shading (r,g,b) */
+    --paper-light: 255, 248, 255; /* crease highlight + worn corners (r,g,b) */
+    --paper-flap-a: #fcf0f2; --paper-flap-b: #f0d9df; --paper-flap-c: #d2aab9; --paper-flap-d: #bc93a4;
+    --paper-ink-rgb: 58, 18, 48;
+    --paper-ink: #3a1230;
+    --paper-ink-soft: rgba(58, 18, 48, 0.62);
+    --paper-accent: #a02a5c;
+    isolation: isolate;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 3px;
+    box-shadow: none !important;
+  }
+  /* the old glowing "crystal edge" and the top-layer creases are retired */
+  #activitiesSection::before,
+  #activitiesSection::after { content: none !important; display: none !important; }
+  .map-paper {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    /* the shadow follows the torn edge and the dog-ear cut */
+    filter: drop-shadow(0 12px 12px rgba(0,0,0,0.42)) drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+  }
+  .map-paper::before {
+    content: '';
+    position: absolute; inset: 0;
+    clip-path: polygon(0px 10px, 0.7px 5.6px, 2.4px 2.6px, 5.4px 0.7px, 2.0% 1.8px, 4.5% 1.7px, 6.9% 1.9px, 9.4% 1.9px, 11.8% 2.6px, 14.3% 2.1px, 16.8% 2.9px, 19.2% 1.8px, 21.7% 2.9px, 24.2% 3.0px, 26.6% 1.9px, 29.1% 0.9px, 31.5% 1.8px, 34.0% 0.5px, 36.5% 1.3px, 38.9% 1.6px, 41.4% 2.0px, 43.8% 1.5px, 46.3% 2.6px, 48.8% 3.0px, 51.2% 2.4px, 53.7% 1.4px, 56.2% 1.2px, 58.6% 0.9px, 61.1% 3.0px, 63.5% 1.0px, 66.0% 1.0px, 68.5% 0.7px, 70.9% 1.0px, 73.4% 0.5px, 75.8% 0.5px, 78.3% 1.1px, 80.8% 0.5px, 83.2% 0.5px, 85.7% 0.5px, 88.2% 0.5px, 90.6% 1.0px, 93.1% 1.4px, 95.5% 1.2px, 98.0% 0.7px, calc(100% - 3.4px) 1.4px, calc(100% - 1.2px) 3.4px, calc(100% - 0.4px) 6.2px, calc(100% - 2.1px) 1.6%, calc(100% - 1.4px) 3.2%, calc(100% - 2.2px) 4.8%, calc(100% - 1.3px) 6.4%, calc(100% - 0.6px) 7.9%, calc(100% - 1.3px) 9.5%, calc(100% - 0.8px) 11.1%, calc(100% - 0.5px) 12.7%, calc(100% - 0.5px) 14.3%, calc(100% - 0.5px) 15.9%, calc(100% - 1.6px) 17.5%, calc(100% - 1.7px) 19.0%, calc(100% - 1.0px) 20.6%, calc(100% - 1.9px) 22.2%, calc(100% - 1.4px) 23.8%, calc(100% - 1.9px) 25.4%, calc(100% - 1.2px) 27.0%, calc(100% - 2.1px) 28.6%, calc(100% - 1.9px) 30.1%, calc(100% - 0.9px) 31.7%, calc(100% - 0.5px) 33.3%, calc(100% - 0.5px) 34.9%, calc(100% - 0.7px) 36.5%, calc(100% - 0.5px) 38.1%, calc(100% - 0.5px) 39.7%, calc(100% - 0.6px) 41.2%, calc(100% - 0.9px) 42.8%, calc(100% - 1.9px) 44.4%, calc(100% - 0.7px) 46.0%, calc(100% - 1.9px) 47.6%, calc(100% - 0.5px) 49.2%, calc(100% - 0.7px) 50.8%, calc(100% - 0.5px) 52.4%, calc(100% - 1.6px) 53.9%, calc(100% - 2.0px) 55.5%, calc(100% - 2.5px) 57.1%, calc(100% - 0.5px) 58.7%, calc(100% - 1.0px) 60.3%, calc(100% - 0.5px) 61.9%, calc(100% - 0.5px) 63.5%, calc(100% - 0.5px) 65.0%, calc(100% - 0.5px) 66.6%, calc(100% - 1.0px) 68.2%, calc(100% - 1.6px) 69.8%, calc(100% - 2.3px) 71.4%, calc(100% - 1.9px) 73.0%, calc(100% - 2.8px) 74.6%, calc(100% - 2.7px) 76.1%, calc(100% - 3.0px) 77.7%, calc(100% - 3.0px) 79.3%, calc(100% - 3.0px) 80.9%, calc(100% - 2.0px) 82.5%, calc(100% - 3.0px) 84.1%, calc(100% - 3.0px) 85.7%, calc(100% - 3.0px) 87.2%, calc(100% - 2.9px) 88.8%, calc(100% - 1.9px) 90.4%, calc(100% - 0.8px) 92.0%, calc(100% - 0.6px) calc(100% - 36px), calc(100% - 36px) calc(100% - 0.6px), 80.0% calc(100% - 1.1px), 77.9% calc(100% - 1.1px), 75.8% calc(100% - 2.0px), 73.7% calc(100% - 0.9px), 71.6% calc(100% - 1.3px), 69.5% calc(100% - 0.6px), 67.4% calc(100% - 0.9px), 65.2% calc(100% - 1.8px), 63.1% calc(100% - 2.2px), 61.0% calc(100% - 2.1px), 58.9% calc(100% - 3.0px), 56.8% calc(100% - 2.7px), 54.7% calc(100% - 2.3px), 52.6% calc(100% - 2.3px), 50.5% calc(100% - 3.0px), 48.4% calc(100% - 3.0px), 46.3% calc(100% - 2.2px), 44.2% calc(100% - 1.7px), 42.1% calc(100% - 1.5px), 39.9% calc(100% - 1.5px), 37.8% calc(100% - 2.3px), 35.7% calc(100% - 2.2px), 33.6% calc(100% - 1.1px), 31.5% calc(100% - 0.5px), 29.4% calc(100% - 0.7px), 27.3% calc(100% - 2.6px), 25.2% calc(100% - 0.5px), 23.1% calc(100% - 0.5px), 21.0% calc(100% - 0.5px), 18.9% calc(100% - 0.5px), 16.8% calc(100% - 0.5px), 14.6% calc(100% - 0.9px), 12.5% calc(100% - 1.9px), 10.4% calc(100% - 1.2px), 8.3% calc(100% - 1.8px), 6.2% calc(100% - 0.5px), 4.1% calc(100% - 0.5px), 2.0% calc(100% - 0.5px), 5.8px calc(100% - 0.9px), 2.5px calc(100% - 3.2px), 0.7px calc(100% - 7px), 0px calc(100% - 12px), 2.1px 97.4%, 1.8px 95.7%, 2.8px 94.1%, 3.0px 92.4%, 2.1px 90.7%, 2.4px 89.0%, 2.2px 87.4%, 3.0px 85.7%, 3.0px 84.0%, 3.0px 82.3%, 3.0px 80.7%, 3.0px 79.0%, 2.3px 77.3%, 3.0px 75.6%, 3.0px 74.0%, 2.6px 72.3%, 3.0px 70.6%, 2.0px 68.9%, 2.2px 67.3%, 3.4px 65.6%, 3.7px 63.9%, 3.0px 62.3%, 2.6px 60.6%, 1.8px 58.9%, 1.8px 57.2%, 2.6px 55.6%, 3.0px 53.9%, 3.0px 52.2%, 2.4px 50.5%, 1.9px 48.9%, 2.2px 47.2%, 3.0px 45.5%, 2.6px 43.8%, 3.0px 42.2%, 2.3px 40.5%, 3.0px 38.8%, 3.0px 37.1%, 3.0px 35.5%, 3.7px 33.8%, 3.0px 32.1%, 2.8px 30.5%, 2.9px 28.8%, 3.7px 27.1%, 3.0px 25.4%, 3.0px 23.8%, 2.5px 22.1%, 1.6px 20.4%, 2.3px 18.7%, 2.3px 17.1%, 1.6px 15.4%, 2.6px 13.7%, 3.7px 12.0%, 2.3px 10.4%, 2.7px 8.7%, 2.4px 7.0%, 1.5px 5.3%, 0.6px 3.7%, 0.5px 2.0%);
+    background:
+      /* worn corners: fibres rubbed pale */
+      radial-gradient(circle at 0 0, rgba(var(--paper-light), .55) 0, transparent 26px),
+      radial-gradient(circle at 100% 0, rgba(var(--paper-light), .45) 0, transparent 20px),
+      radial-gradient(circle at 0 100%, rgba(var(--paper-light), .6) 0, transparent 32px),
+      /* the quarter-fold creases (soft, a little off-centre) */
+      linear-gradient(90deg, transparent calc(49.6% - 9px), rgba(var(--paper-shade), .07) calc(49.6% - 3px), rgba(var(--paper-light), .18) calc(49.6% - 1px), rgba(var(--paper-shade), .30) 49.6%, rgba(var(--paper-light), .12) calc(49.6% + 1.5px), rgba(var(--paper-shade), .05) calc(49.6% + 5px), transparent calc(49.6% + 10px)),
+      linear-gradient(180deg, transparent calc(47.5% - 9px), rgba(var(--paper-shade), .07) calc(47.5% - 3px), rgba(var(--paper-light), .18) calc(47.5% - 1px), rgba(var(--paper-shade), .30) 47.5%, rgba(var(--paper-light), .12) calc(47.5% + 1.5px), rgba(var(--paper-shade), .05) calc(47.5% + 5px), transparent calc(47.5% + 10px)),
+      /* the panels catch the light a touch differently across each crease */
+      linear-gradient(90deg, transparent 49.6%, rgba(var(--paper-shade), .05) 49.6%),
+      linear-gradient(180deg, transparent 47.5%, rgba(var(--paper-shade), .04) 47.5%),
+      /* edges sun-aged and handled */
+      radial-gradient(ellipse 125% 100% at 50% 50%, transparent 58%, rgba(var(--paper-edge), .22) 100%),
+      /* paper fibre */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.05' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .28  0 0 0 0 .16  0 0 0 0 .34  .5 0 0 0 -.17'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23n%29'/%3E%3C/svg%3E"),
+      linear-gradient(172deg, var(--paper-hi) 0%, var(--paper-mid) 45%, var(--paper-lo) 100%);
+    background-size: auto, auto, auto, auto, auto, auto, auto, auto, 160px 160px, auto;
+  }
+
+  /* the dog-ear: flap (paper's back side) folded over the cut-away corner */
+  .map-dogear {
+    position: absolute; right: 0; bottom: 0; width: 36px; height: 36px;
+    z-index: 3; pointer-events: none;
+    filter: drop-shadow(-1.5px -1.5px 2.5px rgba(30,10,45,.4));
+  }
+  .map-dogear::before {
+    content: ''; position: absolute; inset: 0;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    background: linear-gradient(135deg, var(--paper-flap-a) 0%, var(--paper-flap-b) 38%, var(--paper-flap-c) 49%, var(--paper-flap-d) 50%);
+  }
+
+  /* printed ink instead of glowing light */
+  #activitiesSection .map-title {
+    color: var(--paper-ink) !important;
+    text-shadow: 0 1px 0 rgba(255,255,255,.35) !important;
+  }
+  #activitiesSection .map-title-accent { color: var(--paper-accent) !important; }
+  #activitiesSection .map-title img {
+    filter: brightness(0) !important; /* printed-ink silhouettes */
+    mix-blend-mode: multiply;
+  }
+  #activitiesSection .map-sub { color: var(--paper-ink-soft) !important; text-shadow: none !important; }
+  #activitiesSection .map-credit-by,
+  #activitiesSection .map-credit-label { color: var(--paper-ink-soft) !important; opacity: 1 !important; }
+  #activitiesSection .map-credit-link { color: var(--paper-accent) !important; opacity: 1 !important; }
+  #activitiesSection .footer-logo {
+    mix-blend-mode: multiply; filter: none !important; opacity: .9 !important;
+  }
+
+  /* the night map is the map's printed panel: neatline instead of a gold glow */
+  #activitiesSection .hub-sections {
+    border: 1.5px solid rgba(var(--paper-ink-rgb), 0.75);
+    border-radius: 8px;
+    box-shadow: 0 0 0 3px var(--paper-gap), 0 0 0 4px rgba(var(--paper-ink-rgb), .5), inset 0 0 20px rgba(217,79,140,.15);
+  }
 </style>
 </head>
 <body>
@@ -3490,7 +3597,7 @@ body[data-phase="closer"] .sky {
       <div class="rg-title" id="route-guide-title">The Itinerary</div>
     </div>
     <div class="rg-list" id="route-guide-list"></div>
-    <button type="button" class="rg-close" onclick="closeRouteGuide()">Got it</button>
+    <button type="button" class="rg-close" id="route-guide-close" onclick="closeRouteGuide()">Got it</button>
   </div>
 </div>
 
@@ -3700,12 +3807,14 @@ body[data-phase="closer"] .sky {
 
       <!-- TODAY'S ACTIVITIES -->
       <div class="dashboard-section" id="activitiesSection">
+        <!-- The paper itself: ragged outline + drop shadow live on this layer -->
+        <span class="map-paper" aria-hidden="true"></span>
 
         <!-- Symmetrical, anchored header with integrated skyline & couples -->
         <div class="section-header" style="position: relative; display: flex; flex-direction: column; align-items: center; border-bottom: none; padding-bottom: 0; margin-bottom: 12px; padding-top: 30px; z-index: 2;">
 
           <!-- Typography -->
-          <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; font-style: normal; text-transform: uppercase; letter-spacing: 0.12em; color: var(--mist); margin: 0; text-align: center; line-height: 1.15; text-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 1;">
+          <h2 class="map-title" style="font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; font-style: normal; text-transform: uppercase; letter-spacing: 0.12em; color: var(--mist); margin: 0; text-align: center; line-height: 1.15; text-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 1;">
             
             <!-- LINE 1: CITY OF LOVE -->
             <span style="display: block; margin-bottom: 2px;">
@@ -3733,13 +3842,13 @@ body[data-phase="closer"] .sky {
             </span>
             
             <!-- LINE 2: TOUR -->
-            <span style="display: block; color: var(--gold);">Tour</span>
+            <span class="map-title-accent" style="display: block; color: var(--gold);">Tour</span>
             
           </h2>
         </div>
 
         <!-- Subtitle -->
-        <p class="sub" style="text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 270px; margin: 0 auto 24px; line-height: 1.5;">
+        <p class="sub map-sub" style="text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 270px; margin: 0 auto 24px; line-height: 1.5;">
           The night is mapped out for us, love. Each stop brings its own little piece of magic. ✨
         </p>
 
@@ -4144,15 +4253,23 @@ body[data-phase="closer"] .sky {
 
         </div>
 
-        <!-- Credit -->
-        <div style="text-align: left; margin-top: 14px; padding-left: 2px;">
-          <img class="footer-logo" src="logo.png" alt="" style="width: 28px; margin: 0 0 8px; opacity: 0.85; filter: drop-shadow(0 0 10px rgba(242, 193, 78, 0.2));" onerror="this.style.display='none'">
-          <div style="font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.04em; color: rgba(244, 233, 255, 0.35); opacity: 0.85;">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
-          <a href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); text-decoration: none; opacity: 0.8;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            @z3xhwi14
-          </a>
+        <!-- Credit: logo on the left, credit + Instagram stacked beside it -->
+        <div style="display: flex; align-items: center; gap: 12px; text-align: left; margin-top: 14px; padding-left: 2px;">
+          <img class="footer-logo" src="logo.png" alt="" style="width: 28px; margin: 0; flex: none; opacity: 0.85; filter: drop-shadow(0 0 10px rgba(242, 193, 78, 0.2));" onerror="this.style.display='none'">
+          <div style="min-width: 0;">
+            <div class="map-credit-by" style="font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.04em; color: rgba(244, 233, 255, 0.35); opacity: 0.85;">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 6px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;">
+              <span class="map-credit-label" style="color: rgba(244, 233, 255, 0.35);">My instagram:</span>
+              <a class="map-credit-link" href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 5px; color: var(--gold); text-decoration: none; opacity: 0.8;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                @z3xhwi14
+              </a>
+            </div>
+          </div>
         </div>
+
+        <!-- Dog-eared bottom-right corner (the flap; the cut-away is in the paper layer) -->
+        <span class="map-dogear" aria-hidden="true"></span>
       </div>
 
       <!-- HOST ONLY: Run of Show. One card per stop, in route order.
@@ -4970,14 +5087,17 @@ function enterLounge(tourDelayMs){
   // to a short 600ms delay, but a caller that just triggered the entrance
   // heart animation should pass a longer delay so the tour doesn't pop up
   // on top of it — see playEntranceMagic/btnJoin below.
-  if(!isHost && !localStorage.getItem('fsc_tour_seen')){
-    localStorage.setItem('fsc_tour_seen', '1');
+  // The map is REQUIRED viewing for guests: this repeats on every visit until
+  // they have actually sat through the whole reveal (see closeRouteGuide).
+  if(!isHost && !localStorage.getItem('fsc_route_seen') && !tourQueued){
+    tourQueued = true;
     setTimeout(startTour, tourDelayMs ?? 600);
   }
 }
 
 /* --- DYNAMIC SPOTLIGHT TOUR --- */
 let tourIdx = 0;
+let tourQueued = false;
 let typeInterval;
 let isTyping = false;
 let isTourOnBonusStep = false;
@@ -5014,7 +5134,7 @@ function startTour() {
 function showTourStep(bonus) {
   const step = TOUR_STEPS[tourIdx];
   const target = document.querySelector(step.selector);
-  if (!target) { endTour(); return; }
+  if (!target) { finishTour(); return; }
 
   // Scroll the targeted element into the center of the screen
   target.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -5051,7 +5171,7 @@ function showTourStep(bonus) {
       clearInterval(typeInterval);
       isTyping = false;
       descEl.classList.remove('typing');
-      nextBtn.textContent = 'Got it';
+      nextBtn.textContent = 'Show me the map';
     }
   }, 25);
 
@@ -5090,12 +5210,20 @@ function tourNext() {
     document.getElementById('tour-title').textContent = step.title;
     document.getElementById('tour-desc').textContent = step.desc;
     document.getElementById('tour-desc').classList.remove('typing');
-    document.getElementById('tour-next').textContent = 'Got it';
+    document.getElementById('tour-next').textContent = 'Show me the map';
     return;
   }
 
-  // Single step: dismissing it ends the tour.
+  // Single step: finishing it opens the (required) map.
+  finishTour();
+}
+
+// Ends the pointer tooltip and drops the guest straight into the map, which
+// they can't close until every stop has been revealed.
+function finishTour() {
   endTour();
+  tourQueued = false;
+  openRouteGuide({ required: true });
 }
 
 /* --- ROUTE GUIDE (the "?" button) ---
@@ -5103,8 +5231,18 @@ function tourNext() {
    the left, the description on the right. Everything is pulled from
    ROUTE_STOPS and the hub cards themselves, so editing the copy or a
    stop's photo updates this window automatically. */
-function openRouteGuide() {
+let routeGuideLocked = false;   // true while the first-time reveal is still running
+let routeGuideRequired = false; // true when this open counts as "they've seen it"
+let routeGuideTimers = [];
+
+function openRouteGuide(opts) {
+  const required = !!(opts && opts.required);
+  routeGuideRequired = required;
+  routeGuideTimers.forEach(clearTimeout);
+  routeGuideTimers = [];
+
   const list = document.getElementById('route-guide-list');
+  const closeBtn = document.getElementById('route-guide-close');
   list.innerHTML = '';
 
   ROUTE_STOPS.forEach(step => {
@@ -5157,14 +5295,55 @@ function openRouteGuide() {
 
     row.appendChild(left);
     row.appendChild(desc);
+    // First time: every stop starts hidden and fades in on its own.
+    if (required) row.classList.add('rg-reveal', 'rg-await');
     list.appendChild(row);
   });
 
   list.scrollTop = 0;
+
+  if (required) {
+    routeGuideLocked = true;
+    closeBtn.disabled = true;
+    closeBtn.textContent = 'Revealing the route\u2026';
+
+    const rows = Array.from(list.querySelectorAll('.rg-stop'));
+    const FIRST_DELAY = 600;   // beat before the first stop appears
+    const GAP = 1900;          // time between stops, enough to actually read one
+    rows.forEach((row, i) => {
+      routeGuideTimers.push(setTimeout(() => {
+        row.classList.remove('rg-await');
+        // Keep the newest stop in view as the list grows past the card.
+        const bottom = row.offsetTop + row.offsetHeight;
+        if (bottom > list.scrollTop + list.clientHeight) {
+          list.scrollTo({ top: bottom - list.clientHeight, behavior: 'smooth' });
+        }
+      }, FIRST_DELAY + i * GAP));
+    });
+    // Only after the last stop has faded in can they continue.
+    routeGuideTimers.push(setTimeout(() => {
+      routeGuideLocked = false;
+      closeBtn.disabled = false;
+      closeBtn.textContent = "I'm ready";
+    }, FIRST_DELAY + rows.length * GAP));
+  } else {
+    routeGuideLocked = false;
+    closeBtn.disabled = false;
+    closeBtn.textContent = 'Got it';
+  }
+
   document.getElementById('route-guide').classList.add('show');
 }
 
 function closeRouteGuide() {
+  if (routeGuideLocked) return; // required first look: no escaping mid-reveal
+  routeGuideTimers.forEach(clearTimeout);
+  routeGuideTimers = [];
+  // They sat through the whole reveal, so it never has to be forced again.
+  if (routeGuideRequired) {
+    localStorage.setItem('fsc_route_seen', '1');
+    routeGuideRequired = false;
+  }
   document.getElementById('route-guide').classList.remove('show');
 }
 
@@ -6653,6 +6832,7 @@ document.getElementById('btnResetEvent').addEventListener('click', async () => {
   localStorage.removeItem('fsc_guest');
   localStorage.removeItem('fsc_bunny_high');
   localStorage.removeItem('fsc_tour_seen');
+  localStorage.removeItem('fsc_route_seen');
   localStorage.removeItem('fsc_hide_partner_reveal');
 
   // 3. Force a hard page reload to reset the UI completely
