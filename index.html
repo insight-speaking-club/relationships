@@ -930,7 +930,7 @@
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
   }
   /* Optional custom background behind the road/parallax layers.
-     Drop an image named "game-background.png" or "game-background.jpg"
+     Drop an image named "game-background-2.png" or "game-background-2.jpg"
      in the same folder as this file and it will appear automatically.
      Recommended size: 1120x520px (2x the game window, landscape) so it
      stays sharp on retina screens. It's stretched to cover the window
@@ -5395,11 +5395,11 @@ function handleRedFlagImgError(img){
 }
 
 // Optional custom background for Red Flag Rally: drop a file named
-// "game-background" (png or jpg) next to this HTML file and it shows up
+// "game-background-2" (png or jpg) next to this HTML file and it shows up
 // automatically behind the road. If no such file exists, this quietly
 // does nothing and the game looks exactly as it did before.
 (function loadCustomGameBackground(){
-  const candidates = ['game-background.png', 'game-background.jpg', 'game-background.jpeg'];
+  const candidates = ['game-background-2.png', 'game-background-2.jpg', 'game-background-2.jpeg'];
   let i = 0;
   function tryNext(){
     if (i >= candidates.length) return;
