@@ -27,7 +27,7 @@
     --rose:#d94f8c;
     --gold:#f2c14e;
     --mist:#f4e9ff;
-    --dim:#d1c1e0; /* Brightened from #b9a3d1 */
+    --dim:#d1c1e0;
     --vh:100dvh;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -107,9 +107,9 @@
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(150% 100% at 50% 0%, rgba(242, 193, 78, 0.12) 0%, transparent 35%), /* Soft gold top glow */
-      radial-gradient(120% 90% at 50% -10%, #5a1c7a 0%, transparent 55%), /* Brighter purple peak */
-      linear-gradient(200deg, #180624 0%, #2a0e3f 25%, #60185b 60%, #b8447e 100%); /* Deep space fading to rose */
+      radial-gradient(150% 100% at 50% 0%, rgba(242, 193, 78, 0.12) 0%, transparent 35%),
+      radial-gradient(120% 90% at 50% -10%, #5a1c7a 0%, transparent 55%),
+      linear-gradient(180deg, var(--ink) 0%, var(--twilight) 35%, var(--magenta) 75%, var(--rose) 100%);
     overflow: hidden;
     z-index: 0;
   }
@@ -587,7 +587,11 @@
     pointer-events: none;
   }
 
-  #activitiesSection { margin: 18px auto 24px; }
+  #activitiesSection {
+    max-width: 420px; /* Restored original width */
+    margin: 18px auto 24px;
+    padding: 24px 20px; /* Restored original side padding */
+  }
 
   /* Elegant Center Emblem Divider */
   #activitiesSection .section-header {
@@ -762,7 +766,7 @@
   /* --- CURRENT ACTIVITY HIGHLIGHT --- */
   .hub-card.is-current {
     border-color: var(--gold);
-    box-shadow: 0 0 25px rgba(242, 193, 78, 0.2), inset 0 0 10px rgba(242, 193, 78, 0.1);
+    box-shadow: 0 0 25px rgba(242, 193, 78, 0.3), inset 0 0 10px rgba(242, 193, 78, 0.1);
     animation: current-pulse 4.5s ease-in-out infinite alternate;
     will-change: box-shadow; transform: translateZ(0);
   }
@@ -2646,12 +2650,13 @@ body[data-phase="closer"] .sky {
   .hub-sections {
     position: relative;
     width: 100%;
-    min-height: 70vh; /* Adapts to tall phones */
-    aspect-ratio: 4 / 5; /* Keeps the map drawn correctly on short/wide screens */
-    background: #2a0e3f;
+    min-height: 70vh; /* Restored original height */
+    aspect-ratio: 4 / 5; /* Restored original aspect ratio */
+    background: var(--twilight);
     border-radius: 20px;
     display: block; /* Overrides the original grid layout */
-    border: 4px solid var(--rose); /* Chunky retro border */
+    border: 1px solid rgba(242, 193, 78, 0.5); /* Delicate gold frame */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(217, 79, 140, 0.15);
     overflow: hidden; /* clips anything that would spill past the map's edge */
   }
 
@@ -2727,9 +2732,12 @@ body[data-phase="closer"] .sky {
     height: 54px;
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
-    background: linear-gradient(135deg, var(--gold), var(--rose)) !important;
-    border: 2px solid rgba(255,255,255,0.85) !important;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.45), inset 0 0 10px rgba(255,255,255,0.15);
+    /* Muted blush-to-magenta gradient, oversized and animated so it flows */
+    background: linear-gradient(180deg, #b98098, var(--rose), var(--magenta), var(--ink), #b98098) !important;
+    background-size: 100% 300% !important;
+    animation: pin-flow 7s ease infinite !important;
+    border: 2px solid rgba(244, 233, 255, 0.6) !important;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.45), inset 0 0 10px rgba(255, 255, 255, 0.15);
     filter: none;
   }
   /* Counter-rotate the contents so the icon/photo stays upright */
@@ -2777,14 +2785,20 @@ body[data-phase="closer"] .sky {
   }
   /* Glowing Neon State when Unlocked */
   .hub-card:not(.locked) .hub-card-icon {
-    background: linear-gradient(135deg, var(--gold), #ff8c00) !important;
-    box-shadow: 0 0 20px 4px rgba(242, 193, 78, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.8) !important;
-    border: 2px solid #fff !important;
-    animation: pin-glow 2.5s infinite alternate;
+    background: linear-gradient(180deg, #b98098, var(--rose), var(--magenta), var(--ink), #b98098) !important;
+    background-size: 100% 300% !important;
+    border: 2px solid var(--gold) !important; /* Pure gold ring */
+    box-shadow: 0 0 20px 4px rgba(217, 79, 140, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.4) !important;
+    animation: pin-flow 7s ease infinite, pin-glow 2.5s infinite alternate;
+  }
+  @keyframes pin-flow {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 0% 100%; }
+    100% { background-position: 0% 0%; }
   }
   @keyframes pin-glow {
-    0% { box-shadow: 0 0 15px 2px rgba(242, 193, 78, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.6); }
-    100% { box-shadow: 0 0 30px 8px rgba(242, 193, 78, 0.9), inset 0 0 20px rgba(255, 255, 255, 1); }
+    0% { box-shadow: 0 0 15px 2px rgba(217, 79, 140, 0.5), inset 0 0 10px rgba(242, 193, 78, 0.4); }
+    100% { box-shadow: 0 0 30px 8px rgba(217, 79, 140, 0.9), inset 0 0 20px rgba(242, 193, 78, 0.8); }
   }
 
   /* Make locked photos look like unlit windows instead of hiding them */
@@ -2835,8 +2849,23 @@ body[data-phase="closer"] .sky {
      heart. It only lights up when the host flips the "Glow" toggle
      (.is-super-glow, below). */
   #hubCardRecap:not(.is-super-glow) .hub-card-icon {
-    background: rgba(30, 15, 45, 0.9) !important;
-    animation: none !important;
+    background: linear-gradient(45deg, #ffc2e0, var(--rose), var(--magenta), #ffc2e0) !important;
+    background-size: 300% 300% !important;
+    animation: flowing-heart 5s ease infinite !important;
+  }
+
+  /* Hide the placeholder photo and the fallback SVG icon entirely so the
+     flowing gradient shows through the heart mask uninterrupted */
+  #hubCardRecap .hub-card-photo,
+  #hubCardRecap .icon-normal {
+    display: none !important;
+  }
+
+  /* The keyframes that make the gradient flow back and forth */
+  @keyframes flowing-heart {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
   /* Photo fills the heart and stays upright */
@@ -2980,6 +3009,28 @@ body[data-phase="closer"] .sky {
     to { stroke-dashoffset: -10.8; }
   }
 
+  /* --- MAGICAL LIVING MAP ANIMATIONS --- */
+  @keyframes map-star-twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  @keyframes window-flicker {
+    0%, 10%, 100% { opacity: 0.85; }
+    5%, 8% { opacity: 0.4; } /* subtle candle/TV flicker */
+  }
+  @keyframes window-switch {
+    0%, 45% { fill: #f2c14e; opacity: 0.8; } /* lights ON */
+    50%, 100% { fill: #1c0e2c; opacity: 1; } /* lights OFF */
+  }
+  .map-star { animation: map-star-twinkle 4s infinite alternate; }
+  .map-win-on { fill: #f2c14e; animation: window-flicker 7s infinite; }
+  .map-win-off { fill: #1c0e2c; }
+  .map-win-switch { animation: window-switch 25s infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .map-star, .map-win-on, .map-win-switch { animation: none; }
+    .map-star { opacity: 0.7; }
+  }
+
   /* 9. Sasha's car, parked next to Home */
   .hub-home-car {
     position: absolute;
@@ -3103,7 +3154,7 @@ body[data-phase="closer"] .sky {
 
   .hub-card:not(.locked) .hub-card-icon {
     animation: none !important;
-    box-shadow: 0 0 20px 4px rgba(242, 193, 78, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 0 20px 4px rgba(217, 79, 140, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.2) !important;
   }
 
   /* 2. Global touch optimization to instantly register all taps across the app */
@@ -3347,29 +3398,28 @@ body[data-phase="closer"] .sky {
       <!-- TODAY'S ACTIVITIES -->
       <div class="dashboard-section" id="activitiesSection">
         <!-- Upgraded premium header -->
-        <div class="section-header" style="position: relative; display: flex; flex-direction: column; align-items: center; border-bottom: none; padding-bottom: 8px; margin-bottom: 20px;">
+        <div class="section-header" style="position: relative; display: flex; flex-direction: column; align-items: center; border-bottom: none; padding-bottom: 0; margin-bottom: 16px;">
 
-          <!-- Help / tour button: anchored to the top-right corner, out of the central flow -->
+          <!-- Help / tour button: anchored to the top-right corner -->
           <button type="button" onclick="startTour()" title="Replay Tour" aria-label="Replay tour" style="position: absolute; top: 0; right: 0; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid rgba(242,193,78,0.3); color: var(--gold); font-family: 'Jost', sans-serif; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">?</button>
 
-          <!-- Central icon: glowing ring -->
-          <div style="width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, rgba(242,193,78,0.1), rgba(217,79,140,0.05)); border: 1px solid rgba(242, 193, 78, 0.5); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(242, 193, 78, 0.15), inset 0 0 10px rgba(242, 193, 78, 0.1); margin-bottom: 14px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <!-- Smaller, tighter accent icon -->
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(242,193,78,0.05); border: 1px solid rgba(242, 193, 78, 0.4); display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
           </div>
 
-          <!-- Typography: elegant serif title -->
-          <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 500; font-style: italic; color: var(--mist); margin: 0; text-shadow: 0 4px 15px rgba(255,255,255,0.1);">The City of Love Tour</h2>
-
-          <!-- Glowing divider -->
-          <div style="width: 50%; height: 1px; background: linear-gradient(90deg, transparent, rgba(242,193,78,0.4), transparent); margin-top: 18px; box-shadow: 0 0 8px rgba(242,193,78,0.3);"></div>
+          <!-- Typography: Uppercase, tighter, stacked, non-italic -->
+          <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; font-style: normal; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mist); margin: 0; text-align: center; line-height: 1.15; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+            The City of <br> <span style="color: var(--gold);">Love Tour</span>
+          </h2>
         </div>
 
-        <!-- Softened subtitle -->
-        <p class="sub" style="text-align: center; font-size: 14px; color: rgba(244, 233, 255, 0.75); max-width: 280px; margin: 0 auto 24px; line-height: 1.5;">
-          The night is mapped out for us, love. Each stop brings its own little piece of magic. <span style="opacity: 0.9;">✨</span>
+        <!-- Subtitle (pulled slightly closer and softened) -->
+        <p class="sub" style="text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 270px; margin: 0 auto 24px; line-height: 1.5;">
+          The night is mapped out for us, love. Each stop brings its own little piece of magic. ✨
         </p>
 
         <div class="hub-sections">
@@ -3384,18 +3434,18 @@ body[data-phase="closer"] .sky {
                round instead of stretching to fill the container. -->
           <svg class="hub-map-bg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
-              <linearGradient id="hubMapGround" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#1c0a2c"/>
-                <stop offset="40%" stop-color="#341251"/>
-                <stop offset="70%" stop-color="#7c2f6e"/>
-                <stop offset="100%" stop-color="#c24d84"/>
+              <linearGradient id="hubMapGround" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#120821"/>
+                <stop offset="45%" stop-color="#341251"/>
+                <stop offset="85%" stop-color="#7c2f6e"/>
+                <stop offset="100%" stop-color="#d94f8c"/>
               </linearGradient>
               <radialGradient id="hubGlowGold" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#f2c14e" stop-opacity="0.55"/>
+                <stop offset="0%" stop-color="#f2c14e" stop-opacity="0.35"/>
                 <stop offset="100%" stop-color="#f2c14e" stop-opacity="0"/>
               </radialGradient>
               <radialGradient id="hubGlowRose" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#d94f8c" stop-opacity="0.5"/>
+                <stop offset="0%" stop-color="#d94f8c" stop-opacity="0.3"/>
                 <stop offset="100%" stop-color="#d94f8c" stop-opacity="0"/>
               </radialGradient>
 
@@ -3414,10 +3464,24 @@ body[data-phase="closer"] .sky {
                 <circle cx="0" cy="-3" r="5" fill="url(#hubGlowGold)"/>
                 <circle cx="0" cy="-3" r="1.6" fill="#f2c14e" opacity="0.9"/>
               </g>
-              <g id="mapHouse">
+              <!-- Lived-in house variations -->
+              <g id="mapHouseLit">
                 <rect x="-8" y="-2" width="16" height="12" fill="#2a0e3f" opacity="0.75" rx="1"/>
                 <polygon points="-10,-2 0,-11 10,-2" fill="#341251" opacity="0.8"/>
-                <rect x="-2.2" y="2" width="4.4" height="4.4" fill="#f2c14e" opacity="0.85"/>
+                <rect x="-4" y="2" width="3" height="4" class="map-win-on"/>
+                <rect x="2" y="2" width="3" height="4" class="map-win-on"/>
+              </g>
+              <g id="mapHouseDark">
+                <rect x="-8" y="-2" width="16" height="12" fill="#1c0a2c" opacity="0.9" rx="1"/>
+                <polygon points="-10,-2 0,-11 10,-2" fill="#2a0e3f" opacity="0.95"/>
+                <rect x="-4" y="2" width="3" height="4" class="map-win-off"/>
+                <rect x="2" y="2" width="3" height="4" class="map-win-off"/>
+              </g>
+              <g id="mapHouseSwitch">
+                <rect x="-8" y="-2" width="16" height="12" fill="#2a0e3f" opacity="0.75" rx="1"/>
+                <polygon points="-10,-2 0,-11 10,-2" fill="#341251" opacity="0.8"/>
+                <rect x="-4" y="2" width="3" height="4" class="map-win-switch"/>
+                <rect x="2" y="2" width="3" height="4" class="map-win-off"/>
               </g>
               <g id="mapCourt">
                 <rect x="-13" y="4" width="26" height="2.4" fill="#2a0e3f" opacity="0.8"/>
@@ -3498,16 +3562,16 @@ body[data-phase="closer"] .sky {
             <circle cx="90" cy="430" r="140" fill="url(#hubGlowRose)"/>
             <circle cx="330" cy="400" r="130" fill="url(#hubGlowGold)"/>
 
-            <!-- scattered stars -->
-            <circle cx="40" cy="40" r="1.6" fill="#ffffff" opacity="0.8"/>
-            <circle cx="120" cy="25" r="1.2" fill="#f4e9ff" opacity="0.7"/>
-            <circle cx="220" cy="45" r="1.4" fill="#f2c14e" opacity="0.75"/>
-            <circle cx="300" cy="30" r="1.2" fill="#ffffff" opacity="0.7"/>
-            <circle cx="370" cy="70" r="1.6" fill="#ffffff" opacity="0.75"/>
-            <circle cx="60" cy="220" r="1.2" fill="#f4e9ff" opacity="0.55"/>
-            <circle cx="350" cy="260" r="1.4" fill="#ffffff" opacity="0.6"/>
-            <circle cx="200" cy="470" r="1.3" fill="#f2c14e" opacity="0.6"/>
-            <circle cx="30" cy="480" r="1.4" fill="#ffffff" opacity="0.55"/>
+            <!-- Magical twinkling stars -->
+            <circle cx="40" cy="40" r="1.6" fill="#ffffff" class="map-star" style="transform-origin: 40px 40px; animation-delay: 0.2s;"/>
+            <circle cx="120" cy="25" r="1.2" fill="#f4e9ff" class="map-star" style="transform-origin: 120px 25px; animation-delay: 1.5s;"/>
+            <circle cx="220" cy="45" r="1.4" fill="#f2c14e" class="map-star" style="transform-origin: 220px 45px; animation-delay: 0.7s;"/>
+            <circle cx="300" cy="30" r="1.2" fill="#ffffff" class="map-star" style="transform-origin: 300px 30px; animation-delay: 2.1s;"/>
+            <circle cx="370" cy="70" r="1.6" fill="#ffffff" class="map-star" style="transform-origin: 370px 70px; animation-delay: 0.9s;"/>
+            <circle cx="60" cy="220" r="1.2" fill="#f4e9ff" class="map-star" style="transform-origin: 60px 220px; animation-delay: 3.2s;"/>
+            <circle cx="350" cy="260" r="1.4" fill="#ffffff" class="map-star" style="transform-origin: 350px 260px; animation-delay: 1.8s;"/>
+            <circle cx="200" cy="470" r="1.3" fill="#f2c14e" class="map-star" style="transform-origin: 200px 470px; animation-delay: 0.4s;"/>
+            <circle cx="30" cy="480" r="1.4" fill="#ffffff" class="map-star" style="transform-origin: 30px 480px; animation-delay: 2.7s;"/>
 
             <!-- Soft moonlit river along the bottom, so the ground reads
                  like a real riverside town rather than a flat gradient -->
@@ -3525,9 +3589,15 @@ body[data-phase="closer"] .sky {
             <use href="#mapLouvre" transform="translate(112,468) scale(1.0)"/>
 
             <!-- near Home -->
-            <use href="#mapHouse" transform="translate(38,118) scale(0.9)"/>
-            <use href="#mapHouse" transform="translate(128,58) scale(0.75)"/>
+            <use href="#mapHouseLit" transform="translate(38,118) scale(0.9)"/>
+            <use href="#mapHouseSwitch" transform="translate(128,58) scale(0.75)"/>
             <use href="#mapLamp" transform="translate(112,102)"/>
+
+            <!-- suburbs & path sides: a mix of lit, dark and switching houses -->
+            <use href="#mapHouseDark" transform="translate(90,200) scale(0.85)"/>
+            <use href="#mapHouseLit" transform="translate(320,210) scale(0.8)"/>
+            <use href="#mapHouseSwitch" transform="translate(280,310) scale(0.9)"/>
+            <use href="#mapHouseDark" transform="translate(140,350) scale(0.85)"/>
 
             <!-- near Midnight Garden -->
             <use href="#mapPark" transform="translate(302,138) scale(1.15)"/>
@@ -3549,7 +3619,6 @@ body[data-phase="closer"] .sky {
             <use href="#mapBush" transform="translate(20,150) scale(1)"/>
             <use href="#mapBush" transform="translate(150,90) scale(0.85)"/>
             <use href="#mapBush" transform="translate(360,220) scale(0.9)"/>
-            <use href="#mapBush" transform="translate(140,340) scale(1)"/>
             <use href="#mapBush" transform="translate(220,440) scale(0.9)"/>
             <use href="#mapTree" transform="translate(60,180) scale(0.8)"/>
             <use href="#mapTree" transform="translate(280,250) scale(0.95)"/>
