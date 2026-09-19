@@ -202,24 +202,31 @@
      (name + pronoun chips + custom pronoun field). Let it scroll instead
      of spilling into / overlapping the fixed road scene at the bottom. */
   #screen-welcome{
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
+    /* Column layout: scrolling form area on top, road + car as a footer.
+       The road takes its own space instead of floating over the form, so the
+       "Get In" button can never end up sitting on top of the car. */
+    overflow:hidden;
     justify-content:flex-start;
-    padding-top:28px;
+    padding:0;
   }
 
   /* ---------- WELCOME: DRIVING ROAD SCENE ---------- */
   .welcome-content{
     position:relative; z-index:2; width:100%;
+    flex:1 1 auto; min-height:0;
     display:flex; flex-direction:column; align-items:center;
-    /* Reserves room so scrolled content never sits under the fixed,
-       absolutely-positioned road-scene (200px tall) below it. */
-    padding-bottom:200px;
+    overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+    /* The title sits top-left on two short lines, so it stays clear of the
+       moon in the top-right corner. */
+    padding:32px 26px 28px;
   }
 
   .road-scene{
-    position:absolute; left:0; right:0; bottom:0; z-index:1;
-    height:200px; overflow:hidden; pointer-events:none;
+    position:relative; flex:0 0 auto; z-index:1;
+    width:100%;
+    height:170px;
+    height:clamp(140px, 24dvh, 190px);
+    overflow:hidden; pointer-events:none;
   }
   .road-scene::before{
     /* Fade from the screen's ink background into the road, so the horizon looks distant */
@@ -245,14 +252,16 @@
     to{ background-position-y: 52px; }
   }
   .road-car{
-    position:absolute; bottom:34px; left:50%;
-    width:min(220px, 62vw);
+    position:absolute; bottom:24px; left:50%;
+    height:calc(100% - 40px);
+    max-width:min(220px, 62vw);
+    display:flex; justify-content:center;
     transform: translateX(-50%);
     filter: drop-shadow(0 18px 20px rgba(0,0,0,0.5));
     animation: road-bounce 0.5s ease-in-out infinite;
     z-index:3;
   }
-  .road-car img{ width:100%; display:block; border-radius:14px; }
+  .road-car img{ height:100%; width:auto; max-width:100%; object-fit:contain; display:block; border-radius:14px; }
   @keyframes road-bounce{
     0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
     50% { transform: translateX(-50%) translateY(-4px) rotate(-0.6deg); }
@@ -415,6 +424,75 @@
     color:var(--mist); margin:0 0 10px;
   }
   .greeting-bubble p:last-child{margin-bottom:0;}
+
+  /* Sasha's intro on the welcome screen: portrait + chat bubble */
+  .host-intro{
+    display:flex; align-items:flex-end; gap:12px;
+    width:100%; max-width:350px; margin:0 0 20px; text-align:left;
+  }
+  .host-portrait{
+    width:56px; height:56px; flex-shrink:0;
+    border-radius:50%; object-fit:cover;
+    border:2px solid var(--gold);
+    background:#2a0e3f;
+    box-shadow:0 4px 16px rgba(242,193,78,.35);
+  }
+  .host-bubble{
+    flex:1 1 auto; min-width:0;
+    padding:14px 16px;
+    border-radius:20px 20px 20px 6px;
+    background:linear-gradient(160deg, rgba(56,20,86,.94), rgba(28,13,44,.94));
+    border:1px solid rgba(244,233,255,.16);
+    box-shadow:0 8px 18px rgba(0,0,0,.35);
+  }
+  .host-bubble p{
+    margin:0;
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500;
+    font-size:17px; line-height:1.42; color:var(--mist);
+  }
+
+  /* Title: top-left, two lines (keeps it away from the moon) */
+  h1.display.welcome-title{
+    align-self:flex-start; text-align:left;
+    margin:0; padding-bottom:4px;
+    font-size:clamp(36px, 11.5vw, 46px); font-style:italic; line-height:1.02;
+    background:linear-gradient(to right, #ffffff, var(--mist));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 4px 25px rgba(255,255,255,0.25);
+  }
+
+  /* Everything under the title: one step at a time, centred in the space
+     between the title and the road */
+  .welcome-form{
+    width:100%; margin:auto 0;
+    display:flex; flex-direction:column; align-items:center;
+    padding-top:20px;
+  }
+  .welcome-form .field{ max-width:350px; margin-top:0; }
+  .welcome-form .btn{ width:100%; max-width:350px; margin-top:20px; }
+  .step-in{ animation:float-up-fade .45s ease both; }
+  .link-btn{
+    margin-top:14px; background:none; border:none; padding:6px 10px; cursor:pointer;
+    font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--dim); text-decoration:underline; text-underline-offset:3px;
+  }
+  @keyframes nudge-shake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px); } 40%{ transform:translateX(6px); }
+    60%{ transform:translateX(-4px); } 80%{ transform:translateX(4px); }
+  }
+  .nudge{ animation:nudge-shake .4s ease; }
+  .field input.nudge{ border-color:var(--rose); }
+
+  /* Short phones: tighten things so more of the form is visible */
+  @media (max-height:700px){
+    .welcome-content{ padding-top:26px; }
+    .welcome-form{ padding-top:14px; }
+    .host-intro{ margin-bottom:16px; }
+    .host-portrait{ width:48px; height:48px; }
+    .host-bubble{ padding:12px 14px; }
+    .host-bubble p{ font-size:16px; }
+  }
   .greeting-sign{
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.15em; text-transform:uppercase;
     color:var(--gold); margin-top:2px;
@@ -3446,32 +3524,39 @@ body[data-phase="closer"] .sky {
 <!-- COMBINED WELCOME & CHECK-IN -->
 <div class="screen" id="screen-welcome">
   <div class="welcome-content">
-    <h1 class="display stagger-2" style="margin-top: 24px; font-size:46px; margin-bottom: 16px; font-style: italic; background: linear-gradient(to right, #ffffff, var(--mist)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 25px rgba(255,255,255,0.25);">Welcome to Insight!</h1>
+    <h1 class="display welcome-title stagger-2">Welcome to<br>Insight!</h1>
 
-    <div class="greeting-bubble stagger-3" style="margin-bottom: 24px; text-align: center;">
-      <p>Hi, I'm Sasha, your host tonight. Tell me your name and get in the car. We're going on a special road trip!</p>
-    </div>
-
-    <div class="field stagger-4" style="margin-top: 0;">
-      <label style="text-align: left;">Your Name</label>
-      <input type="text" id="inputName" placeholder="What should we call you?" maxlength="24">
-    </div>
-
-    <div class="field stagger-4" style="margin-top: 12px;">
-      <label style="text-align: left;">Pronouns</label>
-      <div class="pronoun-chip-row" id="pronounChipRow" role="group" aria-label="Select your pronouns">
-        <button type="button" class="pronoun-chip" data-value="she/her">she/her</button>
-        <button type="button" class="pronoun-chip" data-value="he/him">he/him</button>
-        <button type="button" class="pronoun-chip" data-value="they/them">they/them</button>
-        <button type="button" class="pronoun-chip" data-value="ze/zir">ze/zir</button>
+    <div class="welcome-form">
+      <div class="host-intro stagger-3">
+        <img class="host-portrait" src="sasha.png" alt="Sasha" onerror="this.style.display='none'">
+        <div class="host-bubble">
+          <p id="hostLine">Hi, I'm Sasha, your host tonight. What's your name?</p>
+        </div>
       </div>
-      <div class="pronoun-custom-wrap">
-        <input type="text" id="inputPronounsCustom" placeholder="Or write your own" maxlength="30">
-      </div>
-      <div class="pronoun-hint">Pick as many as you like, or write your own</div>
-    </div>
 
-    <button class="btn stagger-4" id="btnJoin" style="width: 100%; max-width: 320px; margin-bottom: 24px;">Get In</button>
+      <!-- STEP 1: name -->
+      <div class="field stagger-4" id="fieldName">
+        <label style="text-align: left;">Your Name</label>
+        <input type="text" id="inputName" placeholder="What should we call you?" maxlength="24" autocomplete="given-name">
+      </div>
+
+      <!-- STEP 2: pronouns (revealed after the name is answered) -->
+      <div class="field" id="fieldPronouns" style="display:none;">
+        <label style="text-align: left;">Pronouns</label>
+        <div class="pronoun-chip-row" id="pronounChipRow" role="group" aria-label="Select your pronouns">
+          <button type="button" class="pronoun-chip" data-value="she/her">she/her</button>
+          <button type="button" class="pronoun-chip" data-value="he/him">he/him</button>
+          <button type="button" class="pronoun-chip" data-value="they/them">they/them</button>
+          <button type="button" class="pronoun-chip" data-value="ze/zir">ze/zir</button>
+        </div>
+        <div class="pronoun-custom-wrap">
+          <input type="text" id="inputPronounsCustom" placeholder="Or write your own" maxlength="30">
+        </div>
+      </div>
+
+      <button class="btn stagger-4" id="btnJoin">Next</button>
+      <button type="button" class="link-btn" id="btnChangeName" style="display:none;">Change name</button>
+    </div>
   </div>
 
   <!-- Driving road scene: car stays anchored to the bottom while text sits above it -->
@@ -4567,15 +4652,70 @@ function getPronounsValue(){
 }
 
 /* ---------- join ---------- */
-document.getElementById('btnJoin').addEventListener('click', async ()=>{
-  const name = document.getElementById('inputName').value.trim();
-  const pronouns = getPronounsValue();
+/* Two steps on the welcome screen: name first, then (once the name is
+   answered) pronouns. The same button moves from "Next" to "Get In". */
+let joinStep = 1;
+const HOST_LINE_1 = "Hi, I'm Sasha, your host tonight. What's your name?";
 
-  // Enforce both fields
-  if(!name || !pronouns){
-    alert('Please enter your name, and pick or write your pronouns, to continue.');
+function replayStepIn(el){
+  el.classList.remove('step-in');
+  void el.offsetWidth;            // restart the animation
+  el.classList.add('step-in');
+}
+function nudge(el){
+  el.classList.remove('nudge');
+  void el.offsetWidth;
+  el.classList.add('nudge');
+  setTimeout(() => el.classList.remove('nudge'), 500);
+}
+function setJoinStep(step){
+  joinStep = step;
+  const nameField = document.getElementById('fieldName');
+  const pronField = document.getElementById('fieldPronouns');
+  const btn = document.getElementById('btnJoin');
+  const line = document.getElementById('hostLine');
+  const changeBtn = document.getElementById('btnChangeName');
+  if (step === 1){
+    nameField.style.display = '';
+    pronField.style.display = 'none';
+    changeBtn.style.display = 'none';
+    btn.textContent = 'Next';
+    line.textContent = HOST_LINE_1;
+    replayStepIn(nameField);
+  } else {
+    const name = document.getElementById('inputName').value.trim();
+    nameField.style.display = 'none';
+    pronField.style.display = 'block';
+    changeBtn.style.display = '';
+    btn.textContent = 'Get In';
+    line.textContent = 'Nice to meet you, ' + name + '! Pick your pronouns, then hop in the car.';
+    replayStepIn(pronField);
+    requestAnimationFrame(() => btn.scrollIntoView({block:'nearest', behavior:'smooth'}));
+  }
+}
+document.getElementById('btnChangeName').addEventListener('click', () => setJoinStep(1));
+['inputName', 'inputPronounsCustom'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter'){ e.preventDefault(); document.getElementById('btnJoin').click(); }
+  });
+});
+
+document.getElementById('btnJoin').addEventListener('click', async ()=>{
+  const nameInput = document.getElementById('inputName');
+  const name = nameInput.value.trim();
+
+  // Step 1: just the name. Once it's answered, the pronouns question shows.
+  if (joinStep === 1){
+    if (!name){ nudge(nameInput); nameInput.focus(); return; }
+    nameInput.blur();
+    setJoinStep(2);
     return;
   }
+
+  // Step 2: pronouns are required before joining
+  const pronouns = getPronounsValue();
+  if(!name){ setJoinStep(1); return; }
+  if(!pronouns){ nudge(document.getElementById('pronounChipRow')); return; }
 
   if(window.Notification && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
     try { await Notification.requestPermission(); } catch(e) {}
@@ -6585,4 +6725,3 @@ if (isHost) {
 </script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
