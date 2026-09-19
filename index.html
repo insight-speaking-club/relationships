@@ -2798,7 +2798,7 @@ body[data-phase="closer"] .sky {
   #hubCardRoulette { top: 20%; left: 20%; }
   #hubCardGarden   { top: 35%; left: 62%; }
   #hubCardAita     { top: 60%; left: 22%; }
-  #hubCardCloser   { top: 72%; left: 48%; }
+  #hubCardCloser   { top: 79%; left: 48%; } /* road's lowest curve is ~80%; lower = clearer of the road, higher = closer to it */
 
   /* Position Memory Wall — visually a teardrop pin like the other
      locations (Roulette, Garden, Post Office), just scaled down a bit
@@ -6215,12 +6215,10 @@ ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
     void reveal.offsetWidth;
     reveal.style.animation = 'pop-in-center 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards';
 
-    // Update the grammar if it is a trio (odd number of guests)
+    // Same wording for pairs and trios, so no singular/plural switch is needed
     const eyebrow = document.getElementById('partnerRevealEyebrow');
     if (eyebrow) {
-      eyebrow.textContent = myPartners.length > 1 
-        ? 'In "The Midnight Garden", your partners are...' 
-        : 'In "The Midnight Garden", your partner is...';
+      eyebrow.textContent = 'Walking into The Midnight Garden with...';
     }
 
     // Simple: just the partner's name(s), nothing else
