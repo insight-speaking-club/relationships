@@ -3580,14 +3580,14 @@ body[data-phase="closer"] .sky {
               
               OF 
               
-              <!-- "LOVE" wrapper with couples -->
+              <!-- "LOVE" wrapper with larger flanking couples -->
               <span style="position: relative; display: inline-block;">
-                <!-- Couple 1 (Left) -->
-                <img src="couple-1.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 85%; left: 10%; transform: translateX(-50%); height: 18px; width: auto; opacity: 0.6; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
-                <!-- Couple 2 (Center) -->
-                <img src="couple-2.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 105%; left: 50%; transform: translateX(-50%); height: 22px; width: auto; opacity: 0.9; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6)); pointer-events: none;">
-                <!-- Couple 3 (Right) -->
-                <img src="couple-3.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 80%; left: 90%; transform: translateX(-50%); height: 18px; width: auto; opacity: 0.7; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+                <!-- Couple 1 (Left, scaled up) -->
+                <img src="couple-1.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: -5%; transform: translateX(-50%); height: 32px; width: auto; opacity: 0.75; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+                
+                <!-- Couple 3 (Right, scaled up) -->
+                <img src="couple-3.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: 105%; transform: translateX(-50%); height: 32px; width: auto; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+                
                 LOVE
               </span>
               
@@ -3600,17 +3600,26 @@ body[data-phase="closer"] .sky {
         </div>
 
         <!-- Subtitle -->
-        <p class="sub" style="text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 270px; margin: 0 auto 16px; line-height: 1.5;">
+        <p class="sub" style="text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 270px; margin: 0 auto 24px; line-height: 1.5;">
           The night is mapped out for us, love. Each stop brings its own little piece of magic. ✨
         </p>
 
-        <!-- Sleek Route Guide Button -->
-        <button type="button" id="routeGuideBtn" onclick="openRouteGuide()" style="background: rgba(242,193,78,0.08); border: 1px solid rgba(242,193,78,0.3); color: var(--gold); border-radius: 20px; padding: 6px 16px; font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 auto 24px; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s ease;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          View Route Guide
-        </button>
-
         <div class="hub-sections">
+
+          <!-- The Magical Route Guide: A glowing compass rose floating in the map's sky -->
+          <button type="button" id="routeGuideBtn" onclick="openRouteGuide()" style="position: absolute; top: 16px; right: 16px; z-index: 30; background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--gold); filter: drop-shadow(0 0 12px rgba(242, 193, 78, 0.5)); transition: transform 0.5s cubic-bezier(0.2, 1.4, 0.4, 1), filter 0.3s ease; display: flex; align-items: center; justify-content: center;" onmousedown="this.style.transform='scale(0.85) rotate(-25deg)'; this.style.filter='drop-shadow(0 0 20px rgba(242, 193, 78, 0.9))';" onmouseup="this.style.transform='scale(1) rotate(0deg)'; this.style.filter='drop-shadow(0 0 12px rgba(242, 193, 78, 0.5))';" onmouseleave="this.style.transform='scale(1) rotate(0deg)'; this.style.filter='drop-shadow(0 0 12px rgba(242, 193, 78, 0.5))';" title="View Itinerary">
+            <!-- Ethereal Compass Rose Vector -->
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Outer stardust ring -->
+              <circle cx="12" cy="12" r="11" stroke-dasharray="1 4" opacity="0.7"></circle>
+              <!-- Inner delicate ring -->
+              <circle cx="12" cy="12" r="6" opacity="0.4"></circle>
+              <!-- 4-Pointed Star -->
+              <polygon points="12 1 14 10 23 12 14 14 12 23 10 14 1 12 10 10 12 1" fill="rgba(242,193,78,0.15)"></polygon>
+              <!-- Center crystal dot -->
+              <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+            </svg>
+          </button>
 
           <!-- 10. New guests, queued beside where the car used to be -->
           <div id="hubWaitingGuests" class="hub-waiting-guests"></div>
@@ -3995,6 +4004,15 @@ body[data-phase="closer"] .sky {
           </div>
 
         </div>
+
+        <!-- Credit -->
+        <div style="text-align: left; margin-top: 14px; padding-left: 2px;">
+          <div style="font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.04em; color: rgba(244, 233, 255, 0.35); opacity: 0.85;">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
+          <a href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); text-decoration: none; opacity: 0.8;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            @z3xhwi14
+          </a>
+        </div>
       </div>
 
       <!-- HOST ONLY: Map Control Deck — pulled out of the map canvas itself
@@ -4097,16 +4115,6 @@ body[data-phase="closer"] .sky {
 
       <!-- HOST ONLY: Reset Button -->
       <button class="btn ghost" id="btnResetEvent" style="display:none; width: 100%; max-width: 420px; margin: 20px auto; border-color: rgba(255,77,94,0.4); color: #ff4d5e; font-size:12px;">Reset Entire Event (Danger)</button>
-
-      <!-- EVENT FOOTER -->
-      <div class="event-footer" style="margin-top: 40px; padding-bottom: 40px;">
-        <img loading="lazy" decoding="async" src="logo.png" alt="Logo" class="footer-logo" onerror="this.style.display='none'">
-        <div class="footer-credit">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
-        <a href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" class="footer-instagram">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-          @z3xhwi14
-        </a>
-      </div>
 
     </div> <!-- CLOSES .lounge-content so the next part is full-width -->
 
