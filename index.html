@@ -6850,7 +6850,8 @@ function matchPeople() {
   // odd headcount she is always the third person in the trio. Identified by
   // the host_ id prefix (same check used elsewhere), not by name, so a guest
   // who happens to be called "Sasha" never gets rigged.
-  const sasha = spinGuestsCache.find(g => g && typeof g.id === 'string' && g.id.startsWith('host_'));
+  const sasha = (isHost && me && spinGuestsCache.find(g => g && g.id === me.id)) ||
+    spinGuestsCache.find(g => g && typeof g.id === 'string' && g.id.startsWith('host_'));
   const others = spinGuestsCache.filter(g => g !== sasha);
 
   // Shuffle everyone else, then put Sasha at the very end
@@ -6907,58 +6908,83 @@ document.getElementById('btnUnmatchPeople')?.addEventListener('click', () => {
   ref(`events/${EVENT_ID}/pairs`).set(null);
 });
 
-// EVERYONE: Listen for the match execution
-ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
-  const allPairings = snap.val();
+// EVERYONE (the host included, since Sasha is matched like any other guest):
+// listen for the match execution and show the partner reveal.
+let lastPairings = null;
+
+// What the "don't remind me" tap applies to: this event plus my exact partner
+// set. A re-shuffle changes the signature, so the popup comes back by itself
+// instead of staying suppressed forever on that device (which is what used to
+// silence it for anyone, host included, who had ever tapped it once).
+function partnerRevealSignature(partners){
+  return EVENT_ID + ':' + partners.map(p => p.id).sort().join(',');
+}
+
+function renderPartnerReveal(allPairings){
   const crowd = document.getElementById('drivewayPassengerList');
+  const reveal = document.getElementById('partnerRevealWindow');
 
   if (!allPairings || !me) {
     window.myPartners = null; // Clear it out if unmatched
-    document.getElementById('partnerRevealWindow').style.display = 'none';
+    if (reveal) reveal.style.display = 'none';
     if (crowd) crowd.style.opacity = '1';
     return;
   }
 
   const myPartners = allPairings[me.id];
   window.myPartners = myPartners || null; // Save globally so the Garden can read their names
-  if (myPartners) {
-    // Find our specific global pair ID for the Garden routing later
-    ref(`events/${EVENT_ID}/pairs`).once('value').then(pSnap => {
-      const dbPairs = pSnap.val() || {};
-      const myPairKey = Object.keys(dbPairs).find(k => dbPairs[k].members.includes(me.id));
-      if (myPairKey) window.currentPairId = myPairKey;
-    });
-
-    // Check if the user dismissed it forever BEFORE dimming the screen
-    if (localStorage.getItem('fsc_hide_partner_reveal') === '1') {
-      if (crowd) crowd.style.opacity = '1'; // Keep them fully visible
-      return;
-    }
-
-    // Dim the passenger list to focus on the popup
-    if (crowd) crowd.style.opacity = '0.15';
-
-    const reveal = document.getElementById('partnerRevealWindow');
-    reveal.style.display = 'block';
-    // Re-trigger the pop-in animation
-    reveal.style.animation = 'none';
-    void reveal.offsetWidth;
-    reveal.style.animation = 'pop-in-center 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards';
-
-    // Same wording for pairs and trios, so no singular/plural switch is needed
-    const eyebrow = document.getElementById('partnerRevealEyebrow');
-    if (eyebrow) {
-      eyebrow.textContent = 'Walking into The Midnight Garden with...';
-    }
-
-    // Simple: just the partner's name(s), nothing else
-    document.getElementById('partnerName').innerHTML = myPartners.map(p =>
-      escapeHtml(p.name)
-    ).join('<div style="font-size: 12px; -webkit-text-fill-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.3); margin: 4px 0;">&amp;</div>');
-
-    if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+  if (!myPartners) {
+    if (reveal) reveal.style.display = 'none';
+    if (crowd) crowd.style.opacity = '1';
+    return;
   }
+
+  // Find our specific global pair ID for the Garden routing later
+  ref(`events/${EVENT_ID}/pairs`).once('value').then(pSnap => {
+    const dbPairs = pSnap.val() || {};
+    const myPairKey = Object.keys(dbPairs).find(k => (dbPairs[k].members || []).includes(me.id));
+    if (myPairKey) window.currentPairId = myPairKey;
+  });
+
+  // Dismissed for THIS exact pairing? (checked BEFORE dimming the screen)
+  if (localStorage.getItem('fsc_hide_partner_reveal') === partnerRevealSignature(myPartners)) {
+    if (reveal) reveal.style.display = 'none';
+    if (crowd) crowd.style.opacity = '1'; // Keep them fully visible
+    return;
+  }
+
+  // Dim the passenger list to focus on the popup
+  if (crowd) crowd.style.opacity = '0.15';
+
+  reveal.style.display = 'block';
+  // Re-trigger the pop-in animation
+  reveal.style.animation = 'none';
+  void reveal.offsetWidth;
+  reveal.style.animation = 'pop-in-center 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards';
+
+  // Same wording for pairs and trios, so no singular/plural switch is needed
+  const eyebrow = document.getElementById('partnerRevealEyebrow');
+  if (eyebrow) {
+    eyebrow.textContent = 'Walking into The Midnight Garden with...';
+  }
+
+  // Simple: just the partner's name(s), nothing else
+  document.getElementById('partnerName').innerHTML = myPartners.map(p =>
+    escapeHtml(p.name)
+  ).join('<div style="font-size: 12px; -webkit-text-fill-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.3); margin: 4px 0;">&amp;</div>');
+
+  if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+}
+
+ref(`events/${EVENT_ID}/gpsRoulette/pairings`).on('value', snap => {
+  lastPairings = snap.val();
+  renderPartnerReveal(lastPairings);
 });
+
+// The host's identity (`me`) is only created inside the DOMContentLoaded
+// handler above, so a pairing that arrived before that would have been ignored.
+// Re-run once `me` definitely exists.
+document.addEventListener('DOMContentLoaded', () => renderPartnerReveal(lastPairings));
 
 // Wire up the Close Button for the global reveal popup (restores opacity)
 document.getElementById('btnCloseReveal')?.addEventListener('click', () => {
@@ -6969,7 +6995,9 @@ document.getElementById('btnCloseReveal')?.addEventListener('click', () => {
 
 // Wire up the "Do Not Show Again" button for the global reveal popup (restores opacity)
 document.getElementById('btnDontShowReveal')?.addEventListener('click', () => {
-  localStorage.setItem('fsc_hide_partner_reveal', '1');
+  if (window.myPartners) {
+    localStorage.setItem('fsc_hide_partner_reveal', partnerRevealSignature(window.myPartners));
+  }
   document.getElementById('partnerRevealWindow').style.display = 'none';
   const crowd = document.getElementById('drivewayPassengerList');
   if (crowd) crowd.style.opacity = '1';
