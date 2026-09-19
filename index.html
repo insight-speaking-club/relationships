@@ -18,7 +18,7 @@
 <link rel="preload" href="night-garden-icon.jpg" as="image" fetchpriority="high">
 <link rel="preload" href="relationships-court-icon.jpg" as="image" fetchpriority="high">
 <link rel="preload" href="post-office-icon.jpg" as="image" fetchpriority="high">
-<link rel="preload" href="wall-of-memories-icon.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="the-museum-of-memories.png" as="image" fetchpriority="high">
 <style>
   :root{
     --ink:#120821;
@@ -198,8 +198,24 @@
     filter: none;
   }
 
+  /* The welcome screen's content can now run longer than the viewport
+     (name + pronoun chips + custom pronoun field). Let it scroll instead
+     of spilling into / overlapping the fixed road scene at the bottom. */
+  #screen-welcome{
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    justify-content:flex-start;
+    padding-top:28px;
+  }
+
   /* ---------- WELCOME: DRIVING ROAD SCENE ---------- */
-  .welcome-content{ position:relative; z-index:2; width:100%; display:flex; flex-direction:column; align-items:center; }
+  .welcome-content{
+    position:relative; z-index:2; width:100%;
+    display:flex; flex-direction:column; align-items:center;
+    /* Reserves room so scrolled content never sits under the fixed,
+       absolutely-positioned road-scene (200px tall) below it. */
+    padding-bottom:200px;
+  }
 
   .road-scene{
     position:absolute; left:0; right:0; bottom:0; z-index:1;
@@ -468,14 +484,14 @@
 
   /* --- PRONOUN CHIPS: pick any number, or write your own --- */
   .pronoun-chip-row{
-    display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;
+    display:flex; flex-wrap:wrap; gap:7px; margin-bottom:8px;
   }
   .pronoun-chip{
-    padding:9px 18px; border-radius:999px;
+    padding:7px 14px; border-radius:999px;
     border:1px solid rgba(244,233,255,.25);
     background:rgba(255,255,255,.06);
     color:var(--dim);
-    font-family:'Jost',sans-serif; font-size:13.5px;
+    font-family:'Jost',sans-serif; font-size:12.5px;
     cursor:pointer; -webkit-tap-highlight-color:transparent;
     transition:transform .15s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease, color .2s ease;
   }
@@ -497,8 +513,8 @@
     font-size:13px; color:var(--dim); opacity:.7; pointer-events:none;
   }
   .pronoun-hint{
-    font-family:'Space Mono',monospace; font-size:10px; color:var(--dim); opacity:.6;
-    margin-top:7px; letter-spacing:.03em; text-align:left;
+    font-family:'Space Mono',monospace; font-size:9.5px; color:var(--dim); opacity:.55;
+    margin-top:5px; letter-spacing:.03em; text-align:left;
   }
 
   /* ---------- MASTER LOUNGE & INTERNAL STATES ---------- */
@@ -2893,8 +2909,9 @@ body[data-phase="closer"] .sky {
   #hubCardAita     { top: 60%; left: 22%; }
   #hubCardCloser   { top: 79%; left: 48%; } /* road's lowest curve is ~80%; lower = clearer of the road, higher = closer to it */
 
-  /* Position Memory Wall — an open archive, not a stop on the route, so it
-     gets a heart instead of the teardrop pin the scheduled stops use.
+  /* Position the Museum of Memories — an open archive, not a stop on the
+     route, so it gets a heart instead of the teardrop pin the scheduled
+     stops use.
 
      The shadow/glow lives on the CARD, not the icon: CSS applies `filter`
      before `mask`, so a drop-shadow set on the masked icon would be cut
@@ -2904,7 +2921,7 @@ body[data-phase="closer"] .sky {
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
   }
 
-  /* Turn the Memory Wall icon into a heart with an SVG mask */
+  /* Turn the Museum of Memories icon into a heart with an SVG mask */
   #hubCardRecap .hub-card-icon {
     width: 62px;
     height: 58px;
@@ -2933,12 +2950,10 @@ body[data-phase="closer"] .sky {
     animation: flowing-heart 5s ease infinite !important;
   }
 
-  /* Hide the placeholder photo and the fallback SVG icon entirely so the
-     flowing gradient shows through the heart mask uninterrupted */
-  #hubCardRecap .hub-card-photo,
-  #hubCardRecap .icon-normal {
-    display: none !important;
-  }
+  /* The museum icon / photo now show normally (same on-load / onerror
+     pattern as every other pin), clipped to the heart shape by the mask
+     on the icon container above. The flowing gradient sits behind them
+     as the heart's base color. */
 
   /* The keyframes that make the gradient flow back and forth */
   @keyframes flowing-heart {
@@ -2958,8 +2973,8 @@ body[data-phase="closer"] .sky {
   /* Fallback icon, nudged up into the heart's upper curves */
   #hubCardRecap .icon-normal {
     transform: none !important;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     margin-top: -6px;
   }
 
@@ -2967,6 +2982,12 @@ body[data-phase="closer"] .sky {
     font-size: 10.5px;
     padding: 3px 7px;
     margin-top: -14px; /* label overlaps the heart's bottom point slightly */
+    /* "The Museum of Memories" is longer than the old label, so let it
+       wrap onto two lines instead of spilling past the pin's edges. */
+    white-space: normal;
+    max-width: 78px;
+    text-align: center;
+    line-height: 1.2;
   }
 
   /* Host "Dim" state: keep the heart's shadow while greying out.
@@ -3450,7 +3471,7 @@ body[data-phase="closer"] .sky {
       <div class="pronoun-hint">Pick as many as you like, or write your own</div>
     </div>
 
-    <button class="btn stagger-4" id="btnJoin" style="width: 100%; max-width: 320px; margin-bottom: 180px;">Get In</button>
+    <button class="btn stagger-4" id="btnJoin" style="width: 100%; max-width: 320px; margin-bottom: 24px;">Get In</button>
   </div>
 
   <!-- Driving road scene: car stays anchored to the bottom while text sits above it -->
@@ -3875,18 +3896,22 @@ body[data-phase="closer"] .sky {
             <div class="current-badge">We're here</div>
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
-                   missing — it'll quietly fall back to the photo-frame icon -->
-              <img class="hub-card-photo" decoding="async" src="wall-of-memories-icon.jpg" alt="" onerror="this.style.display='none'">
-              <!-- Minimalist Photo Frame SVG -->
+                   missing — it'll quietly fall back to the museum icon -->
+              <img class="hub-card-photo" decoding="async" src="the-museum-of-memories.png" alt="" onerror="this.style.display='none'">
+              <!-- Minimalist Museum Facade SVG (pediment + columns) -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <path d="M21 15l-5-5L5 21"/>
+                <path d="M2 9.5L12 3l10 6.5"/>
+                <path d="M3 9.5h18"/>
+                <path d="M3 21h18"/>
+                <path d="M5 21v-8.5"/>
+                <path d="M9 21v-8.5"/>
+                <path d="M15 21v-8.5"/>
+                <path d="M19 21v-8.5"/>
               </svg>
             </div>
             <div>
-              <div class="hub-card-title">The Memory Wall</div>
-              <div class="hub-card-desc">The Memory Wall is our little digital scrapbook. You can post whatever you want there.</div>
+              <div class="hub-card-title">The Museum of Memories</div>
+              <div class="hub-card-desc">The Museum of Memories is our little digital scrapbook. You can post whatever you want there.</div>
             </div>
           </div>
 
@@ -3980,7 +4005,7 @@ body[data-phase="closer"] .sky {
         </div>
 
         <div class="host-map-deck-row">
-          <span class="host-map-deck-label">The Memory Wall</span>
+          <span class="host-map-deck-label">The Museum of Memories</span>
           <div class="host-inline-controls" style="justify-content: space-between;">
             <button class="host-inline-btn action" id="btnHighlightRecap">Toggle "We're here"</button>
             <div style="display:flex; gap:6px;">
@@ -4567,13 +4592,16 @@ document.getElementById('btnJoin').addEventListener('click', async ()=>{
   ref(`events/${EVENT_ID}/attendees/${id}`).set({...me, joinedAt: Date.now()});
 
   playEntranceMagic();
-  enterLounge();
+  // Hold the tour off until the heart overlay has fully faded (3.8s) plus
+  // a small breather, so the two never compete for the screen.
+  enterLounge(ENTRANCE_MAGIC_DURATION + 500);
 });
 
 // Plays the cinematic heart-bloom overlay, then lets it fade away on its
 // own timeline to reveal the lounge underneath (enterLounge runs right
 // after we show it, so the lounge is already in place by the time the
 // overlay finishes fading).
+const ENTRANCE_MAGIC_DURATION = 3800; // matches the CSS timeline: fade-out-world starts at 2.8s, runs 1s
 function playEntranceMagic(){
   const overlay = document.getElementById('entrance-magic');
   if(!overlay) return;
@@ -4581,8 +4609,7 @@ function playEntranceMagic(){
   // Force a reflow so the CSS animations restart cleanly from frame 0
   // (needed since the overlay was just switched on from display:none).
   void overlay.offsetWidth;
-  // Matches the CSS timeline: fade-out-world starts at 2.8s and runs 1s.
-  setTimeout(() => { overlay.style.display = 'none'; }, 3800);
+  setTimeout(() => { overlay.style.display = 'none'; }, ENTRANCE_MAGIC_DURATION);
 }
 
 /* ---------- single room logic ---------- */
@@ -4609,7 +4636,7 @@ function renderPersonalGreeting(){
   el.innerHTML = `Good evening, <span class="name">${escapeHtml(firstName)}</span>!<br>${randomMsg}`;
 }
 
-function enterLounge(){
+function enterLounge(tourDelayMs){
   show('screen-lounge');
 
   renderPersonalGreeting();
@@ -4630,10 +4657,13 @@ function enterLounge(){
     lastKnownBloomCount = totalBlooms;
   });
 
-  // Auto-start the spotlight tour the first time a guest arrives
+  // Auto-start the spotlight tour the first time a guest arrives. Defaults
+  // to a short 600ms delay, but a caller that just triggered the entrance
+  // heart animation should pass a longer delay so the tour doesn't pop up
+  // on top of it — see playEntranceMagic/btnJoin below.
   if(!isHost && !localStorage.getItem('fsc_tour_seen')){
     localStorage.setItem('fsc_tour_seen', '1');
-    setTimeout(startTour, 600);
+    setTimeout(startTour, tourDelayMs ?? 600);
   }
 }
 
@@ -4660,7 +4690,7 @@ const ROUTE_STOPS = [
   { selector: '#hubCardGarden', title: 'The Midnight Garden', desc: 'First stop. This is where I\'ll pair you up with someone. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.' },
   { selector: '#hubCardAita', title: 'The Bunny Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.' },
   { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Our final stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.' },
-  { selector: '#hubCardRecap', title: 'The Memory Wall', desc: 'Our digital scrapbook. You can pin up photos or leave a note. It\'s always open, so post whenever you like.' }
+  { selector: '#hubCardRecap', title: 'The Museum of Memories', desc: 'Our digital scrapbook. You can pin up photos or leave a note. It\'s always open, so post whenever you like.' }
 ];
 
 function startTour() {
@@ -6401,7 +6431,7 @@ listenRoster = function() {
   });
 };
 
-// --- HOST ONLY: The Memory Wall Controls ---
+// --- HOST ONLY: The Museum of Memories Controls ---
 document.getElementById('btnHighlightRecap')?.addEventListener('click', async () => {
   const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
   if (snap.val() === 'recap') ref(`events/${EVENT_ID}/hubs/current`).set(null);
