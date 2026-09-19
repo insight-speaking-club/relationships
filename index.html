@@ -1690,6 +1690,104 @@
   .host-map-deck-label {
     display: block; font-family: 'Jost', sans-serif; font-size: 12px; color: var(--dim); margin-bottom: 4px;
   }
+  /* ---------- host: run-of-show cards (one per stop, in route order) ---------- */
+  .hs-card{
+    position:relative; padding:12px; margin-bottom:10px; border-radius:14px;
+    background:rgba(255,255,255,0.04); border:1px solid rgba(244,233,255,0.12);
+    transition:border-color .25s ease, background .25s ease, box-shadow .25s ease;
+  }
+  .hs-card:last-child{ margin-bottom:0; }
+  .hs-card.is-open{ border-color:rgba(242,193,78,0.35); }
+  .hs-card.is-live{
+    border-color:var(--gold); background:rgba(242,193,78,0.08);
+    box-shadow:0 0 18px rgba(242,193,78,0.18);
+  }
+  .hs-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; text-align:left; }
+  .hs-thumb{
+    width:36px; height:36px; border-radius:50%; object-fit:cover; flex:none;
+    border:1px solid rgba(244,233,255,0.25);
+  }
+  .hs-step{
+    font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--gold); opacity:.8;
+  }
+  .hs-name{
+    font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:500;
+    color:var(--mist); line-height:1.15;
+  }
+  .hs-main{ display:flex; gap:8px; align-items:stretch; }
+  .hs-go{
+    flex:1; min-height:48px; border:none; border-radius:10px; cursor:pointer;
+    background:var(--gold); color:var(--ink);
+    font-family:'Jost',sans-serif; font-size:16px; font-weight:600;
+    transition:transform .1s ease, background .2s ease;
+  }
+  .hs-go:active{ transform:scale(.97); }
+  .hs-card.is-live .hs-go{
+    background:transparent; color:#ff8fa3; border:1px solid rgba(255,77,94,0.55);
+  }
+  .hs-timerbox{
+    display:none; align-items:center; gap:6px; padding:0 10px; border-radius:10px;
+    background:rgba(0,0,0,0.3); border:1px solid rgba(244,233,255,0.25);
+    font-family:'Space Mono',monospace; font-size:11px; color:var(--dim);
+  }
+  .hs-card.is-locked .hs-timerbox{ display:flex; }
+  .hs-timerbox input{
+    width:44px; background:none; border:none; outline:none; text-align:right;
+    color:var(--mist); font-family:'Space Mono',monospace; font-size:16px; padding:0;
+  }
+  .hs-hint{
+    display:none; margin-top:7px; text-align:left;
+    font-size:11.5px; line-height:1.4; color:rgba(244,233,255,0.5);
+  }
+  .hs-card.is-locked .hs-hint{ display:block; }
+  .hs-chips{ display:flex; gap:6px; margin-top:8px; }
+  .hs-chip{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+    padding:10px 8px; border-radius:8px; cursor:pointer;
+    background:rgba(255,255,255,0.05); border:1px solid rgba(244,233,255,0.2);
+    color:var(--dim); font-family:'Jost',sans-serif; font-size:12.5px;
+    transition:background .2s ease, border-color .2s ease, color .2s ease, transform .1s ease;
+  }
+  .hs-chip:active{ transform:scale(.96); }
+  .hs-chip.is-on{
+    background:rgba(242,193,78,0.16); border-color:rgba(242,193,78,0.6); color:var(--gold);
+  }
+  .hs-more{ margin-top:8px; text-align:left; }
+  .hs-more summary{
+    cursor:pointer; list-style:none; font-size:11.5px; color:rgba(244,233,255,0.5);
+    padding:4px 2px; letter-spacing:.04em;
+  }
+  .hs-more summary::-webkit-details-marker{ display:none; }
+  .hs-more summary::before{ content:'+ '; }
+  .hs-more[open] summary::before{ content:'– '; }
+  .hs-more-row{ display:flex; flex-wrap:wrap; gap:6px; padding-top:6px; }
+
+  /* ---------- host: sticky "Now / Next" bar ---------- */
+  .host-nextbar{
+    position:sticky; bottom:calc(14px + env(safe-area-inset-bottom, 0px)); z-index:40;
+    width:100%; max-width:440px; margin-top:16px;
+    display:none; align-items:center; gap:10px; padding:10px 10px 10px 14px;
+    background:rgba(18,8,33,0.85); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(242,193,78,0.45); border-radius:16px;
+    box-shadow:0 8px 28px rgba(0,0,0,0.45);
+  }
+  .hn-now{ flex:1; min-width:0; text-align:left; }
+  .hn-label{
+    display:block; font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--gold); opacity:.85;
+  }
+  .hn-name{
+    display:block; font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--mist);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .hn-go{
+    flex:none; min-height:46px; padding:0 18px; border:none; border-radius:12px; cursor:pointer;
+    background:var(--gold); color:var(--ink);
+    font-family:'Jost',sans-serif; font-size:15px; font-weight:600;
+    transition:transform .1s ease;
+  }
+  .hn-go:active{ transform:scale(.96); }
   .host-list{width:100%; max-width:440px; margin:0 auto; }
   .host-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(244,233,255,.1);}
   .host-row .guest-avatar{width:38px;height:38px;font-size:16px;}
@@ -4051,67 +4149,66 @@ body[data-phase="closer"] .sky {
         </div>
       </div>
 
-      <!-- HOST ONLY: Map Control Deck — pulled out of the map canvas itself
-           (which is absolutely-positioned + overflow:hidden for the pin
-           layout) so these never get clipped/crammed the way they were
-           when they lived inline inside each map pin. -->
+      <!-- HOST ONLY: Run of Show. One card per stop, in route order.
+           The big button does the whole move in one tap (unlock + "We're here";
+           the Garden also matches everyone and starts the timer). The two chips
+           underneath are the same two switches on their own, for fine-tuning. -->
       <div class="host-map-deck" id="hostMapDeck" style="display:none;">
         <div class="host-map-deck-title">Host Controls</div>
 
-        <div class="host-map-deck-row">
-          <span class="host-map-deck-label">The Rendezvous</span>
-          <!-- HOST ONLY: Roulette Controls -->
-          <div id="hostControlsRoulette" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightRoulette">Toggle "We're here"</button>
-            <button class="host-inline-btn" id="btnToggleLockRoulette" style="display:flex; align-items:center; gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>Unlock</span>
-            </button>
+        <!-- 1. THE RENDEZVOUS -->
+        <div class="hs-card is-locked" data-stop="roulette">
+          <div class="hs-head">
+            <img class="hs-thumb" src="home-icon.jpg" alt="" onerror="this.style.display='none'">
+            <div><div class="hs-step">Starting point</div><div class="hs-name">The Rendezvous</div></div>
+          </div>
+          <div class="hs-main"><button type="button" class="hs-go">Open</button></div>
+          <div class="hs-hint">Unlocks it and marks &ldquo;We&rsquo;re here.&rdquo;</div>
+          <div class="hs-chips">
+            <button type="button" class="hs-chip hs-here"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>We&rsquo;re here</span></button>
+            <button type="button" class="hs-chip hs-lock"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Locked</span></button>
           </div>
         </div>
 
-        <!-- NEW LOCATION: HOST ONLY: Match Control -->
-        <div id="hostControlsSpin" class="host-inline-controls" style="display:none; margin: 0 auto 16px; border-color:var(--gold); width: 100%; flex-direction: column; gap: 8px;">
-          <button class="host-inline-btn action" id="btnMatchPeople" style="width:100%; padding: 12px; font-size: 15px;">Match People</button>
-          <button class="btn ghost" id="btnUnmatchPeople" style="width:100%; margin: 0; padding: 10px; font-size: 12px; border-color: rgba(255, 255, 255, 0.2); color: var(--dim);">Unmatch Everyone</button>
-        </div>
-
-        <div class="host-map-deck-row">
-          <span class="host-map-deck-label">The Midnight Garden</span>
-          <!-- HOST ONLY: Minimal Pairs Controls -->
-          <div id="hostControlsGarden" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightGarden">Toggle "We're here"</button>
-            <div style="display:flex; gap:6px;">
-              <button class="host-inline-btn" id="btnTimerGarden" style="display:none; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
-                <span>Timer</span>
-              </button>
-              <button class="host-inline-btn" id="btnToggleLockGarden" style="display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <span>Unlock</span>
-              </button>
+        <!-- 2. THE MIDNIGHT GARDEN -->
+        <div class="hs-card is-locked" data-stop="garden">
+          <div class="hs-head">
+            <img class="hs-thumb" src="night-garden-icon.jpg" alt="" onerror="this.style.display='none'">
+            <div><div class="hs-step">Pairs activity</div><div class="hs-name">The Midnight Garden</div></div>
+          </div>
+          <div class="hs-main">
+            <button type="button" class="hs-go">Open</button>
+            <label class="hs-timerbox"><input type="number" id="gardenMinutes" value="35" min="0" step="1" inputmode="numeric" aria-label="Garden timer in minutes"><span>min</span></label>
+          </div>
+          <div class="hs-hint">One tap: unlocks, marks &ldquo;We&rsquo;re here,&rdquo; matches everyone and starts the timer. Set 0 for no timer.</div>
+          <div class="hs-chips">
+            <button type="button" class="hs-chip hs-here"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>We&rsquo;re here</span></button>
+            <button type="button" class="hs-chip hs-lock"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Locked</span></button>
+          </div>
+          <details class="hs-more">
+            <summary>More</summary>
+            <div class="hs-more-row">
+              <button type="button" class="host-inline-btn" id="btnTimerGarden">Set / clear timer</button>
+              <button type="button" class="host-inline-btn" id="btnMatchPeople">Re-shuffle pairs</button>
+              <button type="button" class="host-inline-btn" id="btnUnmatchPeople">Clear pairs</button>
             </div>
-          </div>
+          </details>
         </div>
 
-        <div class="host-map-deck-row">
-          <span class="host-map-deck-label">The Bunny Court™</span>
-          <!-- HOST ONLY: Minimal Court Controls -->
-          <div id="hostControlsAita" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightCourt">Toggle "We're here"</button>
-            <div style="display:flex; gap:6px;">
-              <button class="host-inline-btn" id="btnTimerCourt" style="display:none; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
-                <span>Timer</span>
-              </button>
-              <button class="host-inline-btn" id="btnToggleLockCourt" style="display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <span>Unlock</span>
-              </button>
-            </div>
+        <!-- 3. THE BUNNY COURT -->
+        <div class="hs-card is-locked" data-stop="aita">
+          <div class="hs-head">
+            <img class="hs-thumb" src="relationships-court-icon.jpg" alt="" onerror="this.style.display='none'">
+            <div><div class="hs-step">Group activity</div><div class="hs-name">The Bunny Court&trade;</div></div>
           </div>
-          <!-- HOST ONLY: AITA Tally (Displays during court) -->
-          <div class="aita-tally" id="aitaTally" style="margin-top: 10px;">
+          <div class="hs-main"><button type="button" class="hs-go">Open</button></div>
+          <div class="hs-hint">Unlocks it, starts a fresh round and marks &ldquo;We&rsquo;re here.&rdquo;</div>
+          <div class="hs-chips">
+            <button type="button" class="hs-chip hs-here"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>We&rsquo;re here</span></button>
+            <button type="button" class="hs-chip hs-lock"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Locked</span></button>
+          </div>
+          <!-- Live vote tally (shows while the court is open) -->
+          <div class="aita-tally" id="aitaTally" style="margin-top: 12px;">
             <div class="aita-tally-bar">
               <div class="aita-tally-fill aita-tally-red" id="aitaTallyRed"></div>
               <div class="aita-tally-fill aita-tally-green" id="aitaTallyGreen"></div>
@@ -4123,34 +4220,57 @@ body[data-phase="closer"] .sky {
             <button class="btn ghost" id="btnPickElaborate" style="align-self:center; font-size:12px; padding: 10px 20px;">🎲 Pick someone to elaborate</button>
             <div class="aita-picked" id="aitaPicked"></div>
           </div>
-        </div>
-
-        <div class="host-map-deck-row">
-          <span class="host-map-deck-label">The Post Office</span>
-          <!-- HOST ONLY: Closer Controls -->
-          <div id="hostControlsCloser" class="host-inline-controls" style="display:none; justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightCloser">Toggle "We're here"</button>
-            <button class="host-inline-btn" id="btnToggleLockCloser" style="display:flex; align-items:center; gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>Unlock</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="host-map-deck-row">
-          <span class="host-map-deck-label">The Museum of Memories</span>
-          <div class="host-inline-controls" style="justify-content: space-between;">
-            <button class="host-inline-btn action" id="btnHighlightRecap">Toggle "We're here"</button>
-            <div style="display:flex; gap:6px;">
-              <button class="host-inline-btn" id="btnGlowRecap">✨ Glow</button>
-              <button class="host-inline-btn" id="btnDimRecap">🌙 Dim</button>
+          <details class="hs-more">
+            <summary>More</summary>
+            <div class="hs-more-row">
+              <button type="button" class="host-inline-btn" id="btnTimerCourt">Set / clear timer</button>
             </div>
+          </details>
+        </div>
+
+        <!-- 4. THE POST OFFICE -->
+        <div class="hs-card is-locked" data-stop="closer">
+          <div class="hs-head">
+            <img class="hs-thumb" src="post-office-icon.jpg" alt="" onerror="this.style.display='none'">
+            <div><div class="hs-step">Closer activity</div><div class="hs-name">The Post Office</div></div>
           </div>
+          <div class="hs-main"><button type="button" class="hs-go">Open</button></div>
+          <div class="hs-hint">Unlocks it and marks &ldquo;We&rsquo;re here.&rdquo;</div>
+          <div class="hs-chips">
+            <button type="button" class="hs-chip hs-here"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>We&rsquo;re here</span></button>
+            <button type="button" class="hs-chip hs-lock"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>Locked</span></button>
+          </div>
+        </div>
+
+        <!-- 5. THE MUSEUM OF MEMORIES (always open, so only "We're here") -->
+        <div class="hs-card" data-stop="recap">
+          <div class="hs-head">
+            <img class="hs-thumb" src="the-museum-of-memories-1.png" alt="" onerror="this.style.display='none'">
+            <div><div class="hs-step">Always open</div><div class="hs-name">The Museum of Memories</div></div>
+          </div>
+          <div class="hs-main"><button type="button" class="hs-go">Set &ldquo;We&rsquo;re here&rdquo;</button></div>
+          <details class="hs-more">
+            <summary>More</summary>
+            <div class="hs-more-row">
+              <button type="button" class="host-inline-btn" id="btnGlowRecap">✨ Glow</button>
+              <button type="button" class="host-inline-btn" id="btnDimRecap">🌙 Dim</button>
+            </div>
+          </details>
         </div>
       </div>
 
       <!-- HOST ONLY: Reset Button -->
       <button class="btn ghost" id="btnResetEvent" style="display:none; width: 100%; max-width: 420px; margin: 20px auto; border-color: rgba(255,77,94,0.4); color: #ff4d5e; font-size:12px;">Reset Entire Event (Danger)</button>
+
+      <!-- HOST ONLY: sticky Now / Next bar. Stays pinned to the bottom of the
+           screen so the next move is always one tap away, wherever you've scrolled. -->
+      <div class="host-nextbar" id="hostNextBar">
+        <div class="hn-now">
+          <span class="hn-label">Now</span>
+          <span class="hn-name" id="hnNowName">Nothing live yet</span>
+        </div>
+        <button type="button" class="hn-go" id="hnGo" style="display:none;">Open</button>
+      </div>
 
     </div> <!-- CLOSES .lounge-content so the next part is full-width -->
 
@@ -5239,18 +5359,7 @@ function listenHubs() {
       cardRoulette.classList.toggle('locked', !hubs.roulette);
       cardRoulette.classList.toggle('is-current', hubs.current === 'roulette');
     }
-    setLockButtonState(document.getElementById('btnToggleLockRoulette'), !!hubs.roulette, 'Lock', 'Unlock');
-
-    setLockButtonState(document.getElementById('btnToggleLockGarden'), !!hubs.garden, 'Lock', 'Unlock');
-    setLockButtonState(document.getElementById('btnToggleLockCourt'), !!hubs.aita, 'Lock', 'Unlock');
-    setLockButtonState(document.getElementById('btnToggleLockCloser'), !!hubs.closer, 'Lock', 'Unlock');
-
-    // The Timer button only makes sense once a section is unlocked —
-    // setting a timer is always optional, so it's just a standalone extra.
-    const timerBtnGarden = document.getElementById('btnTimerGarden');
-    if(timerBtnGarden) timerBtnGarden.style.display = hubs.garden ? 'flex' : 'none';
-    const timerBtnCourt = document.getElementById('btnTimerCourt');
-    if(timerBtnCourt) timerBtnCourt.style.display = hubs.aita ? 'flex' : 'none';
+    if (isHost) syncHostDeck(hubs);
   });
 }
 
@@ -6108,10 +6217,7 @@ function initHost(){
   // Unhide the inline host controls
   document.getElementById('hostRosterContainer').style.display = 'block';
   document.getElementById('hostMapDeck').style.display = 'block';
-  document.getElementById('hostControlsGarden').style.display = 'flex';
-  document.getElementById('hostControlsAita').style.display = 'flex';
-  document.getElementById('hostControlsCloser').style.display = 'flex';
-  document.getElementById('hostControlsRoulette').style.display = 'flex';
+  document.getElementById('hostNextBar').style.display = 'flex';
   document.getElementById('btnResetEvent').style.display = 'block';
 
   ref(`events/${EVENT_ID}/aita/round`).once('value').then(snap=>{
@@ -6341,99 +6447,163 @@ function showMessageToast(msg){
   }catch(e){ /* ignore */ }
 }
 
-/* ---------- Host Controls: Inline Per-Activity Controls ---------- */
+/* ---------- Host Controls: Run of Show ---------- */
+// Route order. "recap" (Museum) is always open, so it has no lock.
+const HOST_ROUTE = ['roulette', 'garden', 'aita', 'closer'];
+const HOST_STOP_NAMES = {
+  roulette: 'The Rendezvous',
+  garden: 'The Midnight Garden',
+  aita: 'The Bunny Court™',
+  closer: 'The Post Office',
+  recap: 'The Museum of Memories'
+};
+const HOST_STOP_SHORT = { roulette: 'Rendezvous', garden: 'Garden', aita: 'Court', closer: 'Post Office' };
 
-// --- TOGGLE "HAPPENING NOW" ---
-document.getElementById('btnHighlightGarden').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-  if (snap.val() === 'garden') ref(`events/${EVENT_ID}/hubs/current`).set(null); // Turn off
-  else ref(`events/${EVENT_ID}/hubs/current`).set('garden'); // Turn on
-});
+const hostEv = () => `events/${EVENT_ID}`;
 
-document.getElementById('btnHighlightCourt').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-  if (snap.val() === 'aita') ref(`events/${EVENT_ID}/hubs/current`).set(null);
-  else ref(`events/${EVENT_ID}/hubs/current`).set('aita');
-});
-
-document.getElementById('btnHighlightCloser').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-  if (snap.val() === 'closer') ref(`events/${EVENT_ID}/hubs/current`).set(null);
-  else ref(`events/${EVENT_ID}/hubs/current`).set('closer');
-});
-
-// Host Highlights and Unlocks for Home (GPS Roulette)
-document.getElementById('btnHighlightRoulette').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-  if (snap.val() === 'roulette') ref(`events/${EVENT_ID}/hubs/current`).set(null);
-  else ref(`events/${EVENT_ID}/hubs/current`).set('roulette');
-});
-
-// --- SYNC LOCK BUTTON LABEL/ICON TO CURRENT STATE ---
-const LOCK_ICON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
-function setLockButtonState(btn, isUnlocked, unlockedLabel, lockedLabel){
-  if(!btn) return;
-  btn.innerHTML = isUnlocked
-    ? `${LOCK_ICON_SVG} <span style="color:#ff4d5e;">${unlockedLabel}</span>`
-    : `${LOCK_ICON_SVG} <span>${lockedLabel}</span>`;
+// --- LOCK / UNLOCK a single stop (same behaviour each stop always had) ---
+function setLock(key, unlock) {
+  const E = hostEv();
+  if (unlock) {
+    if (key === 'aita') {
+      // Fresh round every time the court opens
+      const round = String(Date.now());
+      ref(`${E}/aita/round`).set(round);
+      ref(`${E}/aita/rounds/${round}/votes`).set(null);
+      ref(`${E}/hubs/aita`).set(true);
+      ref(`${E}/state`).set('aita');
+      document.getElementById('aitaPicked').textContent = '';
+      document.getElementById('aitaTally').style.display = 'flex';
+      listenAitaTally(round);
+    } else {
+      ref(`${E}/hubs/${key}`).set(true);
+    }
+  } else {
+    ref(`${E}/hubs/${key}`).set(false);
+    if (key !== 'closer') ref(`${E}/state`).set('lounge');
+    if (key === 'garden') ref(`${E}/gardenTimerEnd`).set(null); // Kill any timer
+    if (key === 'aita') {
+      ref(`${E}/aitaTimerEnd`).set(null); // Kill any timer
+      document.getElementById('aitaTally').style.display = 'none';
+    }
+  }
 }
 
-// --- UNLOCK / LOCK (instant, no prompts — timer is a separate, optional action) ---
-document.getElementById('btnToggleLockGarden').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/garden`).once('value');
-  if (snap.val()) {
-    // It's currently unlocked -> LOCK IT
-    ref(`events/${EVENT_ID}/hubs/garden`).set(false);
-    ref(`events/${EVENT_ID}/state`).set('lounge');
-    ref(`events/${EVENT_ID}/gardenTimerEnd`).set(null); // Kill any timer
-  } else {
-    // It's currently locked -> UNLOCK IT, instantly, no timer required
-    ref(`events/${EVENT_ID}/hubs/garden`).set(true);
+// --- TOGGLE "WE'RE HERE" (only one stop can be "here" at a time) ---
+async function toggleHere(key) {
+  const snap = await ref(`${hostEv()}/hubs/current`).once('value');
+  ref(`${hostEv()}/hubs/current`).set(snap.val() === key ? null : key);
+}
+
+async function toggleLock(key) {
+  const snap = await ref(`${hostEv()}/hubs/${key}`).once('value');
+  setLock(key, !snap.val());
+}
+
+// --- GARDEN: pair everyone up, but never reshuffle if pairs already exist ---
+async function ensurePairs() {
+  const snap = await ref(`${hostEv()}/pairs`).once('value');
+  if (snap.val()) return true; // already matched, so a re-open keeps everyone's partner
+  if (spinGuestsCache.length < 2) {
+    return confirm("Fewer than 2 guests are checked in, so nobody can be matched yet. Open the Garden anyway?");
   }
+  return matchPeople();
+}
+
+// --- THE ONE BUTTON: open a stop = match/timer (Garden only) + unlock + "We're here" ---
+async function openStop(key) {
+  if (key === 'garden') {
+    if (!(await ensurePairs())) return; // host backed out, so change nothing
+    const mins = parseFloat(document.getElementById('gardenMinutes')?.value);
+    ref(`${hostEv()}/gardenTimerEnd`).set(mins > 0 ? Date.now() + mins * 60000 : null);
+  }
+  setLock(key, true);
+  ref(`${hostEv()}/hubs/current`).set(key);
+}
+
+// ...and close = lock + clear "We're here" (if it was here)
+async function closeStop(key) {
+  setLock(key, false);
+  const snap = await ref(`${hostEv()}/hubs/current`).once('value');
+  if (snap.val() === key) ref(`${hostEv()}/hubs/current`).set(null);
+}
+
+// What the big button does depends on where the stop is right now
+async function hostPrimary(key) {
+  const snap = await ref(`${hostEv()}/hubs`).once('value');
+  const hubs = snap.val() || {};
+  if (key === 'recap') return toggleHere('recap');
+  const unlocked = !!hubs[key];
+  const here = hubs.current === key;
+  if (!unlocked) return openStop(key);
+  if (here) return closeStop(key);
+  return ref(`${hostEv()}/hubs/current`).set(key); // open but not marked: just move "We're here"
+}
+
+// Ignore accidental double-taps so a stop can't be opened twice in a row
+let hostBusy = false;
+async function hostGuard(fn) {
+  if (hostBusy) return;
+  hostBusy = true;
+  try { await fn(); } finally { setTimeout(() => { hostBusy = false; }, 500); }
+}
+
+document.getElementById('hostMapDeck').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  const card = btn && btn.closest('.hs-card');
+  if (!card) return;
+  const key = card.dataset.stop;
+  if (btn.classList.contains('hs-go')) hostGuard(() => hostPrimary(key));
+  else if (btn.classList.contains('hs-here')) hostGuard(() => toggleHere(key));
+  else if (btn.classList.contains('hs-lock')) hostGuard(() => toggleLock(key));
 });
 
-document.getElementById('btnToggleLockCourt').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/aita`).once('value');
-  if (snap.val()) {
-    // It's currently unlocked -> LOCK IT
-    ref(`events/${EVENT_ID}/hubs/aita`).set(false);
-    ref(`events/${EVENT_ID}/state`).set('lounge');
-    ref(`events/${EVENT_ID}/aitaTimerEnd`).set(null); // Kill any timer
-    document.getElementById('aitaTally').style.display = 'none';
-  } else {
-    // It's currently locked -> UNLOCK IT, instantly, no timer required
-    const round = String(Date.now());
-    ref(`events/${EVENT_ID}/aita/round`).set(round);
-    ref(`events/${EVENT_ID}/aita/rounds/${round}/votes`).set(null);
-    ref(`events/${EVENT_ID}/hubs/aita`).set(true);
-    ref(`events/${EVENT_ID}/state`).set('aita');
-
-    document.getElementById('aitaPicked').textContent = '';
-    document.getElementById('aitaTally').style.display = 'flex';
-    listenAitaTally(round);
-  }
+document.getElementById('hnGo').addEventListener('click', function () {
+  const key = this.dataset.stop;
+  if (key) hostGuard(() => openStop(key));
 });
 
-// Unlock toggle for Closer
-document.getElementById('btnToggleLockCloser').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/closer`).once('value');
-  if (snap.val()) {
-    ref(`events/${EVENT_ID}/hubs/closer`).set(false);
-  } else {
-    ref(`events/${EVENT_ID}/hubs/closer`).set(true);
-  }
-});
+// --- KEEP THE HOST DECK + STICKY BAR IN SYNC WITH THE LIVE STATE ---
+function syncHostDeck(hubs) {
+  document.querySelectorAll('#hostMapDeck .hs-card').forEach(card => {
+    const key = card.dataset.stop;
+    const lockable = key !== 'recap';
+    const unlocked = lockable ? !!hubs[key] : true;
+    const here = hubs.current === key;
 
-// Unlock toggle for Home (GPS Roulette)
-document.getElementById('btnToggleLockRoulette').addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/roulette`).once('value');
-  if (snap.val()) {
-    ref(`events/${EVENT_ID}/hubs/roulette`).set(false);
-    ref(`events/${EVENT_ID}/state`).set('lounge');
-  } else {
-    ref(`events/${EVENT_ID}/hubs/roulette`).set(true);
+    card.classList.toggle('is-live', here);
+    card.classList.toggle('is-open', lockable && unlocked && !here);
+    card.classList.toggle('is-locked', lockable && !unlocked);
+
+    const go = card.querySelector('.hs-go');
+    if (go) {
+      if (!lockable) go.textContent = here ? 'Clear “We’re here”' : 'Set “We’re here”';
+      else if (!unlocked) go.textContent = 'Open';
+      else if (here) go.textContent = 'Close';
+      else go.textContent = 'Set “We’re here”';
+    }
+    const hereChip = card.querySelector('.hs-here');
+    if (hereChip) hereChip.classList.toggle('is-on', here);
+    const lockChip = card.querySelector('.hs-lock');
+    if (lockChip) {
+      lockChip.classList.toggle('is-on', unlocked);
+      lockChip.querySelector('span').textContent = unlocked ? 'Unlocked' : 'Locked';
+    }
+  });
+
+  // Sticky bar: what's live, and the next door after it
+  const nowEl = document.getElementById('hnNowName');
+  if (nowEl) nowEl.textContent = hubs.current ? (HOST_STOP_NAMES[hubs.current] || '—') : 'Nothing live yet';
+  const go = document.getElementById('hnGo');
+  if (go) {
+    const idx = HOST_ROUTE.indexOf(hubs.current);
+    const pool = idx >= 0 ? HOST_ROUTE.slice(idx + 1) : HOST_ROUTE;
+    const next = pool.find(k => !hubs[k]);
+    go.dataset.stop = next || '';
+    go.style.display = next ? '' : 'none';
+    if (next) go.textContent = 'Open ' + HOST_STOP_SHORT[next] + ' ›';
   }
-});
+}
 
 // --- OPTIONAL TIMER (set it right after unlocking, later, or never — your call) ---
 // Clicking prompts for minutes; leaving it blank or hitting Cancel clears/skips the timer.
@@ -6640,11 +6810,7 @@ listenRoster = function() {
 };
 
 // --- HOST ONLY: The Museum of Memories Controls ---
-document.getElementById('btnHighlightRecap')?.addEventListener('click', async () => {
-  const snap = await ref(`events/${EVENT_ID}/hubs/current`).once('value');
-  if (snap.val() === 'recap') ref(`events/${EVENT_ID}/hubs/current`).set(null);
-  else ref(`events/${EVENT_ID}/hubs/current`).set('recap');
-});
+// ("We're here" for the Museum is handled by the Run of Show deck above.)
 
 document.getElementById('btnGlowRecap')?.addEventListener('click', async () => {
   const snap = await ref(`events/${EVENT_ID}/hubs/recapState`).once('value');
@@ -6659,10 +6825,10 @@ document.getElementById('btnDimRecap')?.addEventListener('click', async () => {
 });
 
 // HOST ACTION: Match People
-document.getElementById('btnMatchPeople')?.addEventListener('click', () => {
+function matchPeople() {
   if (spinGuestsCache.length < 2) {
     alert("You need at least 2 guests to match people.");
-    return;
+    return false;
   }
   
   // Pull the host (Sasha) out of the shuffle and append her last, so with an
@@ -6706,6 +6872,15 @@ document.getElementById('btnMatchPeople')?.addEventListener('click', () => {
   // Push personal pairings to the driveway display, and global pairs to the Garden
   ref(`events/${EVENT_ID}/gpsRoulette/pairings`).set(individualPairings);
   ref(`events/${EVENT_ID}/pairs`).set(globalPairs);
+  return true;
+}
+
+// "Re-shuffle pairs" (under More on the Garden card). Opening the Garden already
+// matches everyone the first time, so this is only for starting over.
+document.getElementById('btnMatchPeople')?.addEventListener('click', async () => {
+  const snap = await ref(`events/${EVENT_ID}/pairs`).once('value');
+  if (snap.val() && !confirm("Everyone already has a partner. Re-shuffle and give everyone a new one?")) return;
+  matchPeople();
 });
 
 // HOST ACTION: Unmatch Everyone
@@ -6785,10 +6960,6 @@ document.getElementById('btnDontShowReveal')?.addEventListener('click', () => {
   if (crowd) crowd.style.opacity = '1';
 });
 
-// Show the Host control if host
-if (isHost) {
-  document.getElementById('hostControlsSpin').style.display = 'flex';
-}
 
 </script>
 </body>
