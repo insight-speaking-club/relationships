@@ -3382,8 +3382,7 @@ body[data-phase="closer"] .sky {
        so nothing ever visibly parks up there -->
   <div class="sky-top-mask"></div>
 
-  <!-- Moon, top right corner: single static SVG (gradient + baked-in craters,
-       no extra animated layers) so detail comes for free at paint time -->
+  <!-- Crescent moon, top right corner -->
   <svg class="crescent-moon" viewBox="0 0 100 100" aria-hidden="true">
     <defs>
       <radialGradient id="moonBodyGrad" cx="35%" cy="32%" r="75%">
@@ -3391,12 +3390,24 @@ body[data-phase="closer"] .sky {
         <stop offset="55%" stop-color="#f9edcf" />
         <stop offset="100%" stop-color="#e9d4a3" />
       </radialGradient>
+
+      <!-- This blur softens the crisp font edges into natural "moon dust" -->
+      <filter id="dustBlur">
+        <feGaussianBlur stdDeviation="0.6" />
+      </filter>
     </defs>
+
+    <!-- The Moon Base -->
     <circle cx="50" cy="50" r="46" fill="url(#moonBodyGrad)" />
+
+    <!-- Natural Craters -->
     <circle cx="34" cy="40" r="9" fill="#dcc493" opacity="0.35" />
     <circle cx="63" cy="30" r="5" fill="#dcc493" opacity="0.3" />
     <circle cx="66" cy="58" r="11" fill="#dcc493" opacity="0.3" />
     <circle cx="42" cy="68" r="5" fill="#dcc493" opacity="0.28" />
+
+    <!-- The Monogram (Shifted down and left) -->
+    <text x="31" y="68" font-family="serif" font-size="24" fill="#dcc493" opacity="0.45" filter="url(#dustBlur)" text-anchor="middle">𝒪𝐵</text>
   </svg>
 
   <!-- PARIS SKYLINE HORIZON -->
@@ -3551,23 +3562,33 @@ body[data-phase="closer"] .sky {
 
       <!-- TODAY'S ACTIVITIES -->
       <div class="dashboard-section" id="activitiesSection">
-        <!-- Upgraded premium header -->
-        <div class="section-header" style="position: relative; display: flex; flex-direction: column; align-items: center; border-bottom: none; padding-bottom: 0; margin-bottom: 16px;">
 
-          <!-- Help / tour button: anchored to the top-right corner -->
-          <button type="button" id="routeGuideBtn" onclick="openRouteGuide()" title="Route guide" aria-label="Show route guide" style="position: absolute; top: 0; right: 0; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid rgba(242,193,78,0.3); color: var(--gold); font-family: 'Jost', sans-serif; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">?</button>
+        <!-- Symmetrical, anchored header with integrated skyline -->
+        <div class="section-header" style="display: flex; flex-direction: column; align-items: center; border-bottom: none; padding-bottom: 0; margin-bottom: 12px;">
 
-          <!-- Typography: Uppercase, tighter, stacked, non-italic -->
-          <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; font-style: normal; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mist); margin: 0; padding-left: 0.1em; width: 100%; text-align: center; line-height: 1.15; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
-            <span style="display: block; text-align: center;">City of Love</span>
-            <span style="display: block; text-align: center; color: var(--gold);">Tour</span>
-          </h2>
+          <!-- Skyline acting as a crown for the text -->
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <img src="paris-skyline-2.png" alt="Paris Skyline" onerror="this.style.display='none'" style="height: 42px; width: auto; margin-bottom: -6px; opacity: 0.95; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); z-index: 2; pointer-events: none;">
+
+            <!-- Typography -->
+            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; font-style: normal; text-transform: uppercase; letter-spacing: 0.12em; color: var(--mist); margin: 0; text-align: center; line-height: 1.15; text-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 1;">
+              <span style="display: block;">City of Love</span>
+              <span style="display: block; color: var(--gold);">Tour</span>
+            </h2>
+          </div>
+
         </div>
 
-        <!-- Subtitle (pulled slightly closer and softened) -->
-        <p class="sub" style="text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 270px; margin: 0 auto 24px; line-height: 1.5;">
+        <!-- Subtitle -->
+        <p class="sub" style="text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 270px; margin: 0 auto 16px; line-height: 1.5;">
           The night is mapped out for us, love. Each stop brings its own little piece of magic. ✨
         </p>
+
+        <!-- Sleek Route Guide Button -->
+        <button type="button" id="routeGuideBtn" onclick="openRouteGuide()" style="background: rgba(242,193,78,0.08); border: 1px solid rgba(242,193,78,0.3); color: var(--gold); border-radius: 20px; padding: 6px 16px; font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 auto 24px; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s ease;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          View Route Guide
+        </button>
 
         <div class="hub-sections">
 
@@ -4778,7 +4799,7 @@ let isTourOnBonusStep = false;
 // every stop in typewriter text. Kept as an array (length 1) so the rest
 // of the tour engine — typing, dots — needs no changes.
 const TOUR_STEPS = [
-  { selector: '#routeGuideBtn', title: 'Welcome aboard', desc: 'Curious what\'s planned tonight? Tap this anytime for the full route. Stops unlock one by one as the night goes on, so don\'t worry if one looks locked — it\'ll open when we get there.', pad: 8 }
+  { selector: '#routeGuideBtn', title: 'Welcome aboard, love', desc: 'The stars have aligned for us tonight. Tap here anytime to peek at the map and see where the night will take us. Just sit back and relax—I\'ll unlock each door when the moment is right.', pad: 8 }
 ];
 
 // Per-stop copy for the Route Guide ("?") window only — no longer walked
@@ -4795,10 +4816,6 @@ const ROUTE_STOPS = [
 function startTour() {
   tourIdx = 0;
   isTourOnBonusStep = false;
-
-  // Dynamically set the welcome step's greeting
-  TOUR_STEPS[0].title = `Welcome aboard, ${me.name.split(' ')[0]}`;
-  TOUR_STEPS[0].desc = `Curious what's planned tonight? Tap this anytime for the full route. Stops unlock one by one as the night goes on, so don't worry if one looks locked — it'll open when we get there.`;
 
   document.getElementById('tour-overlay').classList.add('show');
   document.getElementById('tour-dots').innerHTML = TOUR_STEPS.map(() => '<span></span>').join('');
