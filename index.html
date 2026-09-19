@@ -167,6 +167,49 @@
     0% { filter: drop-shadow(0 0 8px rgba(244,233,255,0.45)) drop-shadow(0 0 18px rgba(242,193,78,0.28)); }
     100% { filter: drop-shadow(0 0 14px rgba(244,233,255,0.7)) drop-shadow(0 0 28px rgba(242,193,78,0.45)); }
   }
+
+  /* ---------- WHISPERED FROM THE MOON ----------
+     A faint gold thread falls from the moon's lower curve toward the
+     first word of the welcome title, as if the moon is leaning down to
+     say something. The thread itself fades along its length, and the
+     title text glows brightest where the thread lands, dimming across
+     the rest of the line. */
+  .moon-thread{
+    position:absolute; top:0; right:0; width:100%; height:230px;
+    pointer-events:none; z-index:1; overflow:visible;
+  }
+  .moon-thread svg{ width:100%; height:100%; display:block; }
+  .moon-thread-line{
+    stroke:url(#threadGrad); stroke-width:1; fill:none;
+    filter:url(#threadBlur);
+    stroke-linecap:round;
+    animation:thread-breathe 4.2s ease-in-out infinite;
+  }
+  .moon-thread-spark{
+    fill:#fff8e6;
+    filter:url(#threadBlur);
+    animation:thread-breathe 4.2s ease-in-out infinite;
+  }
+  @keyframes thread-breathe{
+    0%,100%{ opacity:0.5; }
+    50%{ opacity:1; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .moon-thread-line, .moon-thread-spark{ animation:none; opacity:0.75; }
+  }
+
+  /* The word the thread lands on: soft warm glow, as if lit from above */
+  .thread-glow-word{
+    text-shadow:
+      0 0 16px rgba(242,193,78,0.75),
+      0 0 34px rgba(242,193,78,0.4),
+      0 4px 25px rgba(255,255,255,0.25);
+  }
+  /* The rest of the line: the light has traveled further, so it dims */
+  .thread-dim-word{
+    opacity:0.86;
+    text-shadow:0 4px 18px rgba(255,255,255,0.14);
+  }
   .stardust-mote {
     position: absolute;
     width: 2px; height: 2px;
@@ -1981,8 +2024,20 @@
     opacity: 0.4; cursor: default; box-shadow: none; transform: none;
   }
   /* First-time reveal: stops start invisible and fade in one by one. */
-  .rg-stop.rg-reveal { transition: opacity 0.9s ease, transform 0.9s ease; }
-  .rg-stop.rg-await { opacity: 0; transform: translateY(14px); }
+  .rg-stop.rg-reveal, .rg-break.rg-reveal { transition: opacity 0.9s ease, transform 0.9s ease; }
+  .rg-stop.rg-await, .rg-break.rg-await { opacity: 0; transform: translateY(14px); }
+  /* "One more thing": a break line that sets the Museum apart from the route */
+  .rg-break { display: flex; align-items: center; gap: 12px; margin: 10px 0 4px; }
+  .rg-break::before, .rg-break::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(242,193,78,0.6));
+  }
+  .rg-break::after { background: linear-gradient(270deg, transparent, rgba(242,193,78,0.6)); }
+  .rg-break span {
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gold);
+  }
+  .rg-stop.rg-bonus { border-top: none; padding-top: 8px; }
 
   /* --- SASHA'S GAME STYLES --- */
   .obs-basic {
@@ -3005,12 +3060,12 @@ body[data-phase="closer"] .sky {
     /* The Glow-Up */
     background: linear-gradient(135deg, #ffdf94, var(--gold));
     color: var(--ink);
-    padding: 4px 12px;
+    padding: 4px 10px;
     border-radius: 20px;
     font-family: 'Space Mono', monospace;
     font-size: 9px;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em; /* trimmed a touch so "Come on in ›" clears the map's right edge */
     font-weight: bold;
     border: 1px solid rgba(255, 255, 255, 0.6);
     box-shadow: 0 0 15px rgba(242, 193, 78, 0.6);
@@ -3574,6 +3629,7 @@ body[data-phase="closer"] .sky {
   #activitiesSection .map-sub { color: var(--paper-ink-soft) !important; text-shadow: none !important; }
   #activitiesSection .map-credit-by,
   #activitiesSection .map-credit-label { color: var(--paper-ink-soft) !important; opacity: 1 !important; }
+  #activitiesSection .map-credit-sig { color: var(--paper-ink) !important; }
   #activitiesSection .map-credit-link { color: var(--paper-accent) !important; opacity: 1 !important; }
   #activitiesSection .footer-logo {
     mix-blend-mode: multiply; filter: none !important; opacity: .9 !important;
@@ -3732,14 +3788,32 @@ body[data-phase="closer"] .sky {
 
 <!-- COMBINED WELCOME & CHECK-IN -->
 <div class="screen" id="screen-welcome">
+  <!-- WHISPERED FROM THE MOON: a faint thread of light falling from the
+       moon's lower curve down to the title's first word -->
+  <div class="moon-thread" aria-hidden="true">
+    <svg viewBox="0 0 100 57" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="threadGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f2c14e" stop-opacity="0.85"/>
+          <stop offset="55%" stop-color="#f2c14e" stop-opacity="0.32"/>
+          <stop offset="100%" stop-color="#f2c14e" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="threadBlur" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="0.35"/>
+        </filter>
+      </defs>
+      <line class="moon-thread-line" x1="87" y1="9" x2="11" y2="41"/>
+      <circle class="moon-thread-spark" cx="11" cy="41" r="0.9"/>
+    </svg>
+  </div>
   <div class="welcome-content">
-    <h1 class="display welcome-title stagger-2">Welcome to<br>Insight!</h1>
+    <h1 class="display welcome-title stagger-2"><span class="thread-glow-word">Welcome</span> to<br><span class="thread-dim-word">Insight!</span></h1>
 
     <div class="welcome-form">
       <div class="host-intro stagger-3">
         <img class="host-portrait" src="sasha.png" alt="Sasha" onerror="this.style.display='none'">
         <div class="host-bubble">
-          <p id="hostLine">Tonight we&#39;re taking a drive through the City of Love, with a few stops along the way. Write your name and I&#39;ll add you to the passenger list.</p>
+          <p id="hostLine">Hello. I&#39;m Sasha, your host.<br>Tonight we&#39;re taking a drive through the City of Love, with a few stops along the way. Write your name and I&#39;ll add you to the passenger list.</p>
         </div>
       </div>
 
@@ -4101,7 +4175,7 @@ body[data-phase="closer"] .sky {
 
           <!-- Stop 0: The Rendezvous -->
           <div class="hub-card locked" id="hubCardRoulette">
-            <div class="current-badge">We're here</div>
+            <div class="current-badge">Come on in ›</div>
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the compass icon -->
@@ -4146,7 +4220,7 @@ body[data-phase="closer"] .sky {
 
           <!-- Stop 1 -->
           <div class="hub-card locked" id="hubCardGarden">
-            <div class="current-badge">We're here</div>
+            <div class="current-badge">Come on in ›</div>
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the storefront icon -->
@@ -4176,7 +4250,7 @@ body[data-phase="closer"] .sky {
 
           <!-- Stop 2 -->
           <div class="hub-card locked" id="hubCardAita">
-            <div class="current-badge">We're here</div>
+            <div class="current-badge">Come on in ›</div>
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the courthouse icon -->
@@ -4203,7 +4277,7 @@ body[data-phase="closer"] .sky {
 
           <!-- Stop 3 -->
           <div class="hub-card locked" id="hubCardCloser">
-            <div class="current-badge">We're here</div>
+            <div class="current-badge">Come on in ›</div>
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the book icon -->
@@ -4229,7 +4303,7 @@ body[data-phase="closer"] .sky {
           <!-- Not a stop on the route — an always-open archive people can
                drop into (or skip) whenever they feel like it -->
           <div class="hub-card" id="hubCardRecap" onclick="window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank')">
-            <div class="current-badge">We're here</div>
+            <div class="current-badge">Come on in ›</div>
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the museum icon -->
@@ -4257,7 +4331,9 @@ body[data-phase="closer"] .sky {
         <div style="display: flex; align-items: center; gap: 12px; text-align: left; margin-top: 14px; padding-left: 2px;">
           <img class="footer-logo" src="logo.png" alt="" style="width: 28px; margin: 0; flex: none; opacity: 0.85; filter: drop-shadow(0 0 10px rgba(242, 193, 78, 0.2));" onerror="this.style.display='none'">
           <div style="min-width: 0;">
-            <div class="map-credit-by" style="font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.04em; color: rgba(244, 233, 255, 0.35); opacity: 0.85;">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
+            <!-- Sign-off: his "writing voice" (italic Cormorant, same as the letter), then his signature in script -->
+            <div class="map-credit-by" style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500; font-size: 15px; line-height: 1.1; color: rgba(244, 233, 255, 0.5);">Yours truly,</div>
+            <div class="map-credit-sig" style="font-size: 19px; line-height: 1.25; margin-top: 1px; color: rgba(244, 233, 255, 0.85);">𝒪𝓁ℯ𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
             <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 6px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;">
               <span class="map-credit-label" style="color: rgba(244, 233, 255, 0.35);">My instagram:</span>
               <a class="map-credit-link" href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 5px; color: var(--gold); text-decoration: none; opacity: 0.8;">
@@ -4941,7 +5017,7 @@ function getPronounsValue(){
 /* Two steps on the welcome screen: name first, then (once the name is
    answered) pronouns. The same button moves from "Next" to "Get In". */
 let joinStep = 1;
-const HOST_LINE_1 = "Tonight we're taking a drive through the City of Love, with a few stops along the way. Write your name and I'll add you to the passenger list.";
+const HOST_LINE_1 = "Hello. I'm Sasha, your host.<br>Tonight we're taking a drive through the City of Love, with a few stops along the way. Write your name and I'll add you to the passenger list.";
 
 function replayStepIn(el){
   el.classList.remove('step-in');
@@ -4966,7 +5042,7 @@ function setJoinStep(step){
     pronField.style.display = 'none';
     changeBtn.style.display = 'none';
     btn.textContent = 'Next';
-    line.textContent = HOST_LINE_1;
+    line.innerHTML = HOST_LINE_1;
     replayStepIn(nameField);
   } else {
     const name = document.getElementById('inputName').value.trim();
@@ -5119,7 +5195,7 @@ const ROUTE_STOPS = [
   { selector: '#hubCardGarden', title: 'The Midnight Garden', desc: 'First stop. This is where I\'ll pair you up with someone. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.' },
   { selector: '#hubCardAita', title: 'The Bunny Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.' },
   { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Our final stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.' },
-  { selector: '#hubCardRecap', title: 'The Museum of Memories', desc: 'Our digital scrapbook. You can pin up photos or leave a note. It\'s always open, so post whenever you like.' }
+  { selector: '#hubCardRecap', title: 'The Museum of Memories', bonus: true, desc: 'This one\'s always open, no door to wait for. It\'s our digital scrapbook: pin up photos or leave a note, whenever you like.' }
 ];
 
 function startTour() {
@@ -5234,12 +5310,14 @@ function finishTour() {
 let routeGuideLocked = false;   // true while the first-time reveal is still running
 let routeGuideRequired = false; // true when this open counts as "they've seen it"
 let routeGuideTimers = [];
+let routeGuideObserver = null; // fades in "one more thing" when it scrolls into view
 
 function openRouteGuide(opts) {
   const required = !!(opts && opts.required);
   routeGuideRequired = required;
   routeGuideTimers.forEach(clearTimeout);
   routeGuideTimers = [];
+  if (routeGuideObserver) { routeGuideObserver.disconnect(); routeGuideObserver = null; }
 
   const list = document.getElementById('route-guide-list');
   const closeBtn = document.getElementById('route-guide-close');
@@ -5255,6 +5333,7 @@ function openRouteGuide(opts) {
 
     const row = document.createElement('div');
     row.className = 'rg-stop';
+    if (step.bonus) row.classList.add('rg-bonus');
 
     const left = document.createElement('div');
     left.className = 'rg-photo-col';
@@ -5296,40 +5375,78 @@ function openRouteGuide(opts) {
     row.appendChild(left);
     row.appendChild(desc);
     // First time: every stop starts hidden and fades in on its own.
-    if (required) row.classList.add('rg-reveal', 'rg-await');
+    if (required || step.bonus) row.classList.add('rg-reveal', 'rg-await');
+    // "One more thing": a break line before the bonus stop
+    if (step.bonus) {
+      const brk = document.createElement('div');
+      brk.className = 'rg-break' + ((required || step.bonus) ? ' rg-reveal rg-await' : '');
+      const brkLabel = document.createElement('span');
+      brkLabel.textContent = 'One more thing';
+      brk.appendChild(brkLabel);
+      list.appendChild(brk);
+    }
     list.appendChild(row);
   });
 
   list.scrollTop = 0;
+
+  // Reveals one unit (a stop, or the "one more thing" break line) and keeps
+  // the newest one in view as the list grows past the card.
+  const revealUnit = (el) => {
+    el.classList.remove('rg-await');
+    const bottom = el.offsetTop + el.offsetHeight;
+    if (bottom > list.scrollTop + list.clientHeight) {
+      list.scrollTo({ top: bottom - list.clientHeight, behavior: 'smooth' });
+    }
+  };
+  const units = Array.from(list.children);
+  const GAP = 1900;        // time between stops, enough to actually read one
+  const BREAK_GAP = 1300;  // the break line lands, then the bonus stop follows it
 
   if (required) {
     routeGuideLocked = true;
     closeBtn.disabled = true;
     closeBtn.textContent = 'Revealing the route\u2026';
 
-    const rows = Array.from(list.querySelectorAll('.rg-stop'));
-    const FIRST_DELAY = 600;   // beat before the first stop appears
-    const GAP = 1900;          // time between stops, enough to actually read one
-    rows.forEach((row, i) => {
-      routeGuideTimers.push(setTimeout(() => {
-        row.classList.remove('rg-await');
-        // Keep the newest stop in view as the list grows past the card.
-        const bottom = row.offsetTop + row.offsetHeight;
-        if (bottom > list.scrollTop + list.clientHeight) {
-          list.scrollTo({ top: bottom - list.clientHeight, behavior: 'smooth' });
-        }
-      }, FIRST_DELAY + i * GAP));
+    // Everything fades in one by one; the button unlocks after the last one.
+    let t = 600; // beat before the first stop appears
+    units.forEach(el => {
+      routeGuideTimers.push(setTimeout(() => revealUnit(el), t));
+      t += el.classList.contains('rg-break') ? BREAK_GAP : GAP;
     });
-    // Only after the last stop has faded in can they continue.
     routeGuideTimers.push(setTimeout(() => {
       routeGuideLocked = false;
       closeBtn.disabled = false;
       closeBtn.textContent = "I'm ready";
-    }, FIRST_DELAY + rows.length * GAP));
+    }, t));
   } else {
     routeGuideLocked = false;
     closeBtn.disabled = false;
     closeBtn.textContent = 'Got it';
+
+    // Later opens: the stops are just there. "One more thing" waits below the
+    // fold and fades in (break line, then the Museum) the moment it scrolls
+    // into view, so it's always seen arriving instead of fading in off-screen.
+    const bonusUnits = units.filter(el => el.classList.contains('rg-await'));
+    const playBonus = () => {
+      let t = 500;
+      bonusUnits.forEach(el => {
+        routeGuideTimers.push(setTimeout(() => el.classList.remove('rg-await'), t));
+        t += BREAK_GAP;
+      });
+    };
+    if (bonusUnits.length && 'IntersectionObserver' in window) {
+      routeGuideObserver = new IntersectionObserver(entries => {
+        if (entries.some(e => e.isIntersecting)) {
+          routeGuideObserver.disconnect();
+          routeGuideObserver = null;
+          playBonus();
+        }
+      }, { root: list, threshold: 0.5 });
+      routeGuideObserver.observe(bonusUnits[0]);
+    } else if (bonusUnits.length) {
+      playBonus();
+    }
   }
 
   document.getElementById('route-guide').classList.add('show');
@@ -5339,6 +5456,7 @@ function closeRouteGuide() {
   if (routeGuideLocked) return; // required first look: no escaping mid-reveal
   routeGuideTimers.forEach(clearTimeout);
   routeGuideTimers = [];
+  if (routeGuideObserver) { routeGuideObserver.disconnect(); routeGuideObserver = null; }
   // They sat through the whole reveal, so it never has to be forced again.
   if (routeGuideRequired) {
     localStorage.setItem('fsc_route_seen', '1');
