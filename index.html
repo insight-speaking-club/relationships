@@ -2842,19 +2842,26 @@ body[data-phase="closer"] .sky {
     display: none !important;
   }
 
-  /* 5. Style the title like a physical paper label */
+  /* 5. Ethereal, Frosted-Glass Location Labels */
   .hub-card-title {
-    background: #fff;
-    color: var(--ink);
-    padding: 4px 10px;
-    border-radius: 12px;
-    border: 2px solid var(--ink);
-    font-size: 13px;
-    font-style: normal;
-    font-weight: bold;
-    margin-top: -6px; /* Pulls the label up slightly over the icon */
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.2); /* Hard, chunky shadow */
-    white-space: nowrap; /* keeps the label from wrapping/spilling out */
+    background: rgba(18, 8, 33, 0.65); /* Deep midnight glass */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--mist); /* Soft starlight text */
+    padding: 5px 11px;
+    border-radius: 20px; /* Elegant pill shape */
+    border: 1px solid rgba(242, 193, 78, 0.3); /* Delicate gold rim */
+
+    /* --- THE FONT FIX --- */
+    font-family: 'Jost', sans-serif !important; /* Crisp, modern font */
+    font-style: normal !important; /* Kills the slant */
+    font-weight: 500;
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+
+    margin-top: -2px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    white-space: nowrap;
   }
 
   /* 5b. On the map, the "We're here" badge used to be a normal flex
@@ -2862,6 +2869,7 @@ body[data-phase="closer"] .sky {
      the icon/title down and the whole pin visibly jumped. Floating it as
      an absolute overlay keeps the icon locked to its coordinate no
      matter whether the badge is showing. */
+  /* 5c. Magical "We're Here" Indicator */
   .hub-card .current-badge {
     position: absolute;
     top: -34px; /* Increased to push it safely above the pin and tag */
@@ -2870,6 +2878,19 @@ body[data-phase="closer"] .sky {
     margin-bottom: 0;
     z-index: 10; /* Ensures it sits on top */
     white-space: nowrap; /* Prevents the text from wrapping and drooping down */
+
+    /* The Glow-Up */
+    background: linear-gradient(135deg, #ffdf94, var(--gold));
+    color: var(--ink);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: bold;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 15px rgba(242, 193, 78, 0.6);
   }
 
   /* 6. Turn the icon into an actual map-pin marker — a gradient
@@ -3578,13 +3599,14 @@ body[data-phase="closer"] .sky {
                 CITY
               </span> 
               
-              OF 
-              
-              <!-- "LOVE" wrapper with larger flanking couples -->
+              <!-- "OF" wrapper with couple standing over the F -->
               <span style="position: relative; display: inline-block;">
-                <!-- Couple 1 (Left, scaled up) -->
-                <img src="couple-1.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: 6%; transform: translateX(-50%); height: 26px; width: auto; opacity: 0.75; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
-                
+                <img src="couple-1.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: 75%; transform: translateX(-50%); height: 26px; width: auto; opacity: 0.75; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+                OF
+              </span> 
+              
+              <!-- "LOVE" wrapper with flanking couple -->
+              <span style="position: relative; display: inline-block;">
                 <!-- Couple 3 (Right, scaled up) -->
                 <img src="couple-3.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: 62%; transform: translateX(-50%); height: 26px; width: auto; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
                 
@@ -4007,6 +4029,7 @@ body[data-phase="closer"] .sky {
 
         <!-- Credit -->
         <div style="text-align: left; margin-top: 14px; padding-left: 2px;">
+          <img class="footer-logo" src="logo.png" alt="" style="width: 28px; margin: 0 0 8px; opacity: 0.85; filter: drop-shadow(0 0 10px rgba(242, 193, 78, 0.2));" onerror="this.style.display='none'">
           <div style="font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.04em; color: rgba(244, 233, 255, 0.35); opacity: 0.85;">created by 𝒪𝓁𝓮𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
           <a href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); text-decoration: none; opacity: 0.8;">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
