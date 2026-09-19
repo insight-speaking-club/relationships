@@ -2800,42 +2800,89 @@ body[data-phase="closer"] .sky {
   #hubCardAita     { top: 60%; left: 22%; }
   #hubCardCloser   { top: 79%; left: 48%; } /* road's lowest curve is ~80%; lower = clearer of the road, higher = closer to it */
 
-  /* Position Memory Wall — visually a teardrop pin like the other
-     locations (Roulette, Garden, Post Office), just scaled down a bit
-     so it reads as a lighter, secondary spot rather than a scheduled
-     stop on the route — it's an open archive, not part of the tour.
-     It still inherits the base .hub-card-icon teardrop shape + the
-     "unlocked" gold-glow treatment, same as every other active stop on
-     the map — just smaller. */
-  #hubCardRecap { top: 71%; left: 81%; width: 72px; }
-  #hubCardRecap .hub-card-icon {
-    width: 36px;
-    height: 36px;
+  /* Position Memory Wall — an open archive, not a stop on the route, so it
+     gets a heart instead of the teardrop pin the scheduled stops use.
+
+     The shadow/glow lives on the CARD, not the icon: CSS applies `filter`
+     before `mask`, so a drop-shadow set on the masked icon would be cut
+     away and never show. On the card it traces the heart's outline. */
+  #hubCardRecap {
+    top: 71%; left: 81%; width: 72px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
   }
+
+  /* Turn the Memory Wall icon into a heart with an SVG mask */
+  #hubCardRecap .hub-card-icon {
+    width: 62px;
+    height: 58px;
+    transform: none; /* removes the -45deg teardrop rotation */
+    border-radius: 0 !important;
+    border: none !important; /* a border would be clipped by the mask anyway */
+    box-shadow: none !important;
+
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    mask-position: center;
+  }
+
+  /* The base map stylesheet auto-glows any pin that isn't marked
+     .locked, and Recap is never locked, so reset it to a quiet resting
+     heart. It only lights up when the host flips the "Glow" toggle
+     (.is-super-glow, below). */
+  #hubCardRecap:not(.is-super-glow) .hub-card-icon {
+    background: rgba(30, 15, 45, 0.9) !important;
+    animation: none !important;
+  }
+
+  /* Photo fills the heart and stays upright */
   #hubCardRecap .hub-card-photo {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    transform: none !important;
+  }
+
+  /* Fallback icon, nudged up into the heart's upper curves */
+  #hubCardRecap .icon-normal {
+    transform: none !important;
     width: 28px;
     height: 28px;
+    margin-top: -6px;
   }
-  #hubCardRecap .icon-normal {
-    width: 17px;
-    height: 17px;
-  }
+
   #hubCardRecap .hub-card-title {
     font-size: 10.5px;
     padding: 3px 7px;
-    margin-top: -4px;
+    margin-top: -14px; /* label overlaps the heart's bottom point slightly */
   }
-  /* The base map stylesheet auto-glows any pin that isn't marked
-     .locked — and Recap is never given a "locked" class (it's always
-     open), so it inherited that pulsing neon treatment permanently.
-     Reset it back to the plain resting teardrop look here, so it reads
-     as a normal, quiet location. It only lights up when the host
-     explicitly flips the "Glow" toggle (.is-super-glow, ruled below). */
-  #hubCardRecap:not(.is-super-glow) .hub-card-icon {
-    background: rgba(30, 15, 45, 0.9) !important;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
-    border: 2px solid rgba(244, 233, 255, 0.35) !important;
-    animation: none !important;
+
+  /* Host "Dim" state: keep the heart's shadow while greying out.
+     (#hubCardRecap outranks .hub-card.is-dimmed, so its filter has to be restated.) */
+  #hubCardRecap.is-dimmed {
+    filter: grayscale(100%) brightness(0.6) drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+  }
+
+  /* Host "Glow" state: the glow pulses on the card (so the mask can't clip it),
+     while the heart itself gently swells. */
+  #hubCardRecap.is-super-glow {
+    animation: super-heart-glow 1s infinite alternate;
+  }
+  #hubCardRecap.is-super-glow .hub-card-icon {
+    animation: super-heart-pulse 1s infinite alternate !important;
+    background: linear-gradient(135deg, #ff4d5e, #f2c14e) !important;
+  }
+  @keyframes super-heart-glow {
+    0%   { filter: drop-shadow(0 0 8px rgba(255, 77, 94, 0.6)); }
+    100% { filter: drop-shadow(0 0 15px rgba(242, 193, 78, 1)); }
+  }
+  @keyframes super-heart-pulse {
+    0%   { transform: scale(1); }
+    100% { transform: scale(1.15); }
   }
   /* Host-triggered visual states */
   .hub-card.is-dimmed {
