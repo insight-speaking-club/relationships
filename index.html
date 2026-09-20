@@ -1854,7 +1854,7 @@
     padding:2px 4px;
   }
 
-  /* -- State 3: Bunny Court™ (AITA) -- */
+  /* -- State 3: Palace of Justice (AITA) -- */
   #state-aita { padding: 40px 26px; justify-content: center; height: auto; overflow: visible; }
   #state-aita .eyebrow, #state-aita h1.display, #state-aita p.sub { display: block; }
   .aita-buttons{
@@ -2240,6 +2240,29 @@
   .rg-text-col { padding-top: 4px; }
   .rg-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--mist); line-height: 1.1; margin-bottom: 6px; }
   .rg-desc { font-family: 'Jost', sans-serif; font-size: 13.5px; color: rgba(244, 233, 255, 0.65); line-height: 1.45; }
+
+  /* Optional external link in the Route Guide: a quiet footnote, not an action */
+  .rg-optional { margin-top: 8px; line-height: 1.6; }
+  .rg-optional-tag {
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: rgba(244, 233, 255, 0.45);
+    margin-right: 5px;
+  }
+  .rg-learn-more {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(242, 193, 78, 0.4);
+    padding-bottom: 2px;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+  }
+  .rg-learn-more:hover { opacity: 0.8; border-color: var(--gold); }
 
   .route-guide-card .rg-close {
     flex-shrink: 0; margin-top: 20px; width: 100%;
@@ -3267,6 +3290,19 @@ body[data-phase="closer"] .sky {
     white-space: nowrap;
   }
 
+  /* 5a. The French translation under the primary name, so it stays
+     readable for guests who don't speak French — same pill, no clutter. */
+  .hub-card-title-en {
+    display: block;
+    font-family: 'Jost', sans-serif !important;
+    font-size: 8.5px;
+    font-style: normal !important;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: rgba(242, 193, 78, 0.85);
+    margin-top: 2px;
+  }
+
   /* 5b. On the map, the "We're here" badge used to be a normal flex
      child stacked above the icon — so the moment it appeared, it pushed
      the icon/title down and the whole pin visibly jumped. Floating it as
@@ -3381,7 +3417,7 @@ body[data-phase="closer"] .sky {
   }
 
   /* 7. Position each stop on the map — these are CENTER points now.
-     Post Office pulled in from the corner so it can't run past the edge. */
+     Louvre Post Office pulled in from the corner so it can't run past the edge. */
   #hubCardRoulette { top: 20%; left: 20%; }
   #hubCardGarden   { top: 35%; left: 62%; }
   #hubCardAita     { top: 60%; left: 22%; }
@@ -4417,13 +4453,13 @@ body[data-phase="closer"] .sky {
             <use href="#mapHouseSwitch" transform="translate(280,310) scale(0.9)"/>
             <use href="#mapHouseDark" transform="translate(140,350) scale(0.85)"/>
 
-            <!-- near Midnight Garden -->
+            <!-- near Luxembourg Garden -->
             <use href="#mapPark" transform="translate(302,138) scale(1.15)"/>
 
-            <!-- near Bunny Court™ -->
+            <!-- near Palace of Justice -->
             <use href="#mapCourt" transform="translate(38,262) scale(1.05)"/>
 
-            <!-- near The Post Office -->
+            <!-- near The Louvre Post Office -->
             <use href="#mapPost" transform="translate(300,422) scale(1.05)"/>
             <use href="#mapLamp" transform="translate(268,352) scale(0.9)"/>
 
@@ -4472,7 +4508,7 @@ body[data-phase="closer"] .sky {
             <path class="hub-route-path" d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,72.8 74,72" />
           </svg>
 
-          <!-- Stop 0: The Rendezvous -->
+          <!-- Stop 0: Dauphine Square -->
           <div class="hub-card locked" id="hubCardRoulette">
             <div class="current-badge">Come on in ›</div>
             <div class="hub-card-icon">
@@ -4489,9 +4525,9 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--gold);">Starting Point</div>
-              <div class="hub-card-title">The Rendezvous</div>
-              <div class="hub-card-desc">Our glamorous starting line. While we wait for the stragglers, check the passenger list, dodge red flags on the road, or style a look in the closet.</div>
+              <div class="hub-card-sub" style="color:var(--gold); display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Place Dauphine</div>
+              <div class="hub-card-title">Dauphine Square<span class="hub-card-title-en">Place Dauphine</span></div>
+              <div class="hub-card-desc">Our glamorous starting line, tucked into a hidden square on the Seine. While we wait for the stragglers, check the passenger list, dodge red flags on the road, or style a look in the closet.</div>
               <div class="hub-card-lock-note">We depart when the host is ready.</div>
             </div>
           </div>
@@ -4537,9 +4573,9 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--gold);">Pairs Activity</div>
-              <div class="hub-card-title">The Midnight Garden</div>
-              <div class="hub-card-desc">We’ve pulled up. When the doors open, step out and pick a flower with your partner.</div>
+              <div class="hub-card-sub" style="color:var(--gold); display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Jardin du Luxembourg</div>
+              <div class="hub-card-title">The Luxembourg Garden<span class="hub-card-title-en">Jardin du Luxembourg</span></div>
+              <div class="hub-card-desc">We’ve pulled up to the most romantic garden in Paris. The gates are locked for the night, but we have a way in. When the doors open, step out and pick a flower with your partner.</div>
               <div class="hub-card-lock-note">The host will unlock the doors when the time is right.</div>
             </div>
           </div>
@@ -4564,9 +4600,9 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--gold);">Group Activity</div>
-              <div class="hub-card-title">The Bunny Court™</div>
-              <div class="hub-card-desc">We're parked. Step inside, take your seat, and prepare to cast your vote.</div>
+              <div class="hub-card-sub" style="color:var(--gold); display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Palais de Justice</div>
+              <div class="hub-card-title">The Palace of Justice<span class="hub-card-title-en">Palais de Justice</span></div>
+              <div class="hub-card-desc">We're parked at the historic courthouse of Paris. Step inside, take your seat in the chambers, listen to the evidence, and prepare to cast your vote.</div>
               <div class="hub-card-lock-note">The doors are currently closed.</div>
             </div>
           </div>
@@ -4592,10 +4628,10 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--gold);">Closer Activity</div>
-              <div class="hub-card-title">The Post Office</div>
-              <div class="hub-card-desc">Our final stop. Step inside and write a letter. What kind? You'll just have to wait and see.</div>
-              <div class="hub-card-lock-note">The Post Office remains closed for now.</div>
+              <div class="hub-card-sub" style="color:var(--gold); display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>La Poste du Louvre</div>
+              <div class="hub-card-title">The Louvre Post Office<span class="hub-card-title-en">La Poste du Louvre</span></div>
+              <div class="hub-card-desc">Our final stop, once the only post office in the city that stayed open all night. Step inside and write a letter. What kind? You'll just have to wait and see.</div>
+              <div class="hub-card-lock-note">The Louvre Post Office remains closed for now.</div>
             </div>
           </div>
 
@@ -4620,7 +4656,7 @@ body[data-phase="closer"] .sky {
             </div>
             <div>
               <div class="hub-card-title">The Museum of Memories</div>
-              <div class="hub-card-desc">The Museum of Memories is our little digital scrapbook. You can post whatever you want there.</div>
+              <div class="hub-card-desc">The Museum of Memories is our little digital scrapbook. You can post whatever you want here whenever you like.</div>
             </div>
           </div>
 
@@ -4658,7 +4694,7 @@ body[data-phase="closer"] .sky {
         <div class="hs-card is-locked" data-stop="roulette">
           <div class="hs-head">
             <img class="hs-thumb" src="home-icon.jpg" alt="" onerror="this.style.display='none'">
-            <div><div class="hs-step">Starting point</div><div class="hs-name">The Rendezvous</div></div>
+            <div><div class="hs-step">Starting point</div><div class="hs-name">Dauphine Square</div></div>
           </div>
           <div class="hs-main"><button type="button" class="hs-go">Open</button></div>
           <div class="hs-hint">Unlocks it and marks &ldquo;We&rsquo;re here.&rdquo;</div>
@@ -4672,7 +4708,7 @@ body[data-phase="closer"] .sky {
         <div class="hs-card is-locked" data-stop="garden">
           <div class="hs-head">
             <img class="hs-thumb" src="night-garden-icon.jpg" alt="" onerror="this.style.display='none'">
-            <div><div class="hs-step">Pairs activity</div><div class="hs-name">The Midnight Garden</div></div>
+            <div><div class="hs-step">Pairs activity</div><div class="hs-name">The Luxembourg Garden</div></div>
           </div>
           <div class="hs-main">
             <button type="button" class="hs-go">Open</button>
@@ -4697,7 +4733,7 @@ body[data-phase="closer"] .sky {
         <div class="hs-card is-locked" data-stop="aita">
           <div class="hs-head">
             <img class="hs-thumb" src="relationships-court-icon.jpg" alt="" onerror="this.style.display='none'">
-            <div><div class="hs-step">Group activity</div><div class="hs-name">The Bunny Court&trade;</div></div>
+            <div><div class="hs-step">Group activity</div><div class="hs-name">The Palace of Justice</div></div>
           </div>
           <div class="hs-main"><button type="button" class="hs-go">Open</button></div>
           <div class="hs-hint">Unlocks it, starts a fresh round and marks &ldquo;We&rsquo;re here.&rdquo; The timer is set inside the court.</div>
@@ -4726,7 +4762,7 @@ body[data-phase="closer"] .sky {
         <div class="hs-card is-locked" data-stop="closer">
           <div class="hs-head">
             <img class="hs-thumb" src="post-office-icon.jpg" alt="" onerror="this.style.display='none'">
-            <div><div class="hs-step">Closer activity</div><div class="hs-name">The Post Office</div></div>
+            <div><div class="hs-step">Closer activity</div><div class="hs-name">The Louvre Post Office</div></div>
           </div>
           <div class="hs-main"><button type="button" class="hs-go">Open</button></div>
           <div class="hs-hint">Unlocks it and marks &ldquo;We&rsquo;re here.&rdquo;</div>
@@ -4773,7 +4809,7 @@ body[data-phase="closer"] .sky {
   <!-- STATE 1.5: THE RENDEZVOUS (Passenger List, Rally & Closet) -->
   <div id="state-roulette" class="lounge-state">
     <button class="back-btn" id="btnBackToGatheringRoulette" onclick="setLoungeState('state-gathering')">‹</button>
-    <h1 class="display" style="margin-top: 40px; font-size:34px; font-style:italic; color:#fff;">The Rendezvous</h1>
+    <h1 class="display" style="margin-top: 40px; font-size:34px; font-style:italic; color:#fff;">Dauphine Square</h1>
     <p class="sub" style="margin-bottom: 20px; padding: 0 20px;">Take a breather, darlings. Check the passenger list and warm up your instincts with Red Flag Rally while I get the engine running.</p>
 
     <!-- SLEEK PASSENGER LIST -->
@@ -4892,7 +4928,7 @@ body[data-phase="closer"] .sky {
   <!-- STATE 3: RELATIONSHIPS COMMITTEE™ (AITA) -->
   <div id="state-aita" class="lounge-state">
     <button class="back-btn" id="btnBackToGatheringAita" onclick="setLoungeState('state-gathering')">‹</button>
-    <div class="eyebrow">The Bunny Court™</div>
+    <div class="eyebrow">The Palace of Justice</div>
     <h1 class="display" style="font-size:28px;">Cast Your Verdict</h1>
     <p class="sub" style="margin-bottom: 24px;">The Host will present a real-life relationship conflict. Listen to the evidence, evaluate the boundaries crossed, and cast your official vote below.</p>
     <div class="aita-buttons">
@@ -4980,7 +5016,7 @@ body[data-phase="closer"] .sky {
 
     <div id="partnerName" class="partner-name" style="font-family: 'Playfair Display', 'Cormorant Garamond', serif; font-weight: 600; font-style: normal; font-size: 24px; line-height: 1.3; margin-bottom: 14px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto; background: linear-gradient(90deg, var(--gold), var(--rose)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></div>
 
-    <div id="partnerRevealInstruction" style="font-family: 'Jost', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--dim); margin-bottom: 16px; padding: 0 4px;">Find them somewhere in the room and have a one-on-one conversation in the Midnight Garden.</div>
+    <div id="partnerRevealInstruction" style="font-family: 'Jost', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--dim); margin-bottom: 16px; padding: 0 4px;">Find them somewhere in the room and have a one-on-one conversation in the Luxembourg Garden.</div>
 
     <button id="btnDontShowReveal" style="background: none; border: none; color: var(--dim); font-size: 10px; opacity: 0.6; cursor: pointer; padding: 4px; text-decoration: underline; margin: 0 auto; display: block;">Got it, don't remind me.</button>
   </div>
@@ -5536,11 +5572,11 @@ const TOUR_STEPS = [
 // through step-by-step in the welcome tour, but still the source of truth
 // for each stop's name/photo/description in that window.
 const ROUTE_STOPS = [
-  { selector: '#hubCardRoulette', title: 'The Rendezvous', desc: 'Our starting line. We gather here while waiting for the rest of the group. Scope out the passenger list and play a quick round of Red Flag Rally before we depart.' },
-  { selector: '#hubCardGarden', title: 'The Midnight Garden', desc: 'First stop. This is where I\'ll pair you up with someone. Once we\'ve pulled in and the doors open, step out and pick a flower with your partner.' },
-  { selector: '#hubCardAita', title: 'The Bunny Court™', desc: 'Second stop. We regroup here after the garden—locked until we arrive, so get ready to cast your verdicts.' },
-  { selector: '#hubCardCloser', title: 'The Post Office', desc: 'Our final stop. We\'ll drop by the Post Office and write a special letter. What kind of letter? You\'ll find out once you\'re inside.' },
-  { selector: '#hubCardRecap', title: 'The Museum of Memories', bonus: true, desc: 'This one\'s always open, no door to wait for. It\'s our digital scrapbook: pin up photos or leave a note, whenever you like.' }
+  { selector: '#hubCardRoulette', title: 'Dauphine Square', desc: 'Our glamorous starting line is a quiet, triangular square hidden on the Seine. While we wait for the stragglers, check the passenger list, dodge red flags on the road, or style a look in the closet.', url: 'https://en.wikipedia.org/wiki/Place_Dauphine' },
+  { selector: '#hubCardGarden', title: 'The Luxembourg Garden', desc: 'First stop. The heavy iron gates of this famous garden are locked at sundown, but we have a way in. Once we pull in and the doors open, step out and pick a flower with your partner.', url: 'https://en.wikipedia.org/wiki/Jardin_du_Luxembourg' },
+  { selector: '#hubCardAita', title: 'The Palace of Justice', desc: 'Second stop. We regroup here after the garden. It is the historic courthouse of Paris, locked until we arrive, so get ready to take your seat and cast your verdicts.', url: 'https://en.wikipedia.org/wiki/Palais_de_Justice,_Paris' },
+  { selector: '#hubCardCloser', title: 'The Louvre Post Office', desc: 'Our final stop. Historically the only post office in the city to stay open all night, making it the perfect place to send a late night love letter. What kind of letter will you write? You\'ll find out once you\'re inside.', url: 'https://parisjetaime.com/eng/pro/la-poste-paris-louvre-p2711' },
+  { selector: '#hubCardRecap', title: 'The Museum of Memories', bonus: true, desc: 'This one is always open, no door to wait for. It is our digital scrapbook: pin up photos or leave a note, whenever you like.' }
 ];
 
 function startTour() {
@@ -5672,7 +5708,10 @@ function openRouteGuide(opts) {
   ROUTE_STOPS.forEach(step => {
     const card = document.querySelector(step.selector);
     if (!card) return;
-    const name = (card.querySelector('.hub-card-title') || {}).textContent || step.title;
+    const titleEl = card.querySelector('.hub-card-title');
+    const titleClone = titleEl ? titleEl.cloneNode(true) : null;
+    if (titleClone) { const sub = titleClone.querySelector('.hub-card-title-en'); if (sub) sub.remove(); }
+    const name = (titleClone ? titleClone.textContent.trim() : '') || step.title;
     const photoEl = card.querySelector('.hub-card-photo');
     const photoSrc = photoEl ? photoEl.getAttribute('src') : null;
     const fallbackIcon = card.querySelector('.icon-normal');
@@ -5729,6 +5768,28 @@ function openRouteGuide(opts) {
 
     textCol.appendChild(nameEl);
     textCol.appendChild(desc);
+
+    // If a URL is provided, add an optional, muted "for the curious" footnote.
+    // Only the gold link is clickable; the tag in front of it is plain, soft text.
+    if (step.url) {
+      const optionalEl = document.createElement('div');
+      optionalEl.className = 'rg-optional';
+
+      const tagEl = document.createElement('span');
+      tagEl.className = 'rg-optional-tag';
+      tagEl.textContent = '* For the curious:';
+
+      const linkEl = document.createElement('a');
+      linkEl.className = 'rg-learn-more';
+      linkEl.href = step.url;
+      linkEl.target = '_blank';
+      linkEl.rel = 'noopener noreferrer';
+      linkEl.textContent = 'Read the real history ↗';
+
+      optionalEl.appendChild(tagEl);
+      optionalEl.appendChild(linkEl);
+      textCol.appendChild(optionalEl);
+    }
 
     row.appendChild(numberCol);
     row.appendChild(photoCol);
@@ -5917,19 +5978,19 @@ function listenPhase(){
 }
 
 // Human-readable names + on-brand copy for the unlock toast, so it reads
-// like a text FROM that place ("Home", "Midnight Garden"...) rather than
+// like a text FROM that place ("Home", "Luxembourg Garden"...) rather than
 // a generic system message.
 const HUB_SECTION_NAMES = {
-  roulette: 'The Rendezvous',
-  garden: 'The Midnight Garden',
-  aita: 'The Bunny Court™',
-  closer: 'The Post Office'
+  roulette: 'Dauphine Square',
+  garden: 'The Luxembourg Garden',
+  aita: 'The Palace of Justice',
+  closer: 'The Louvre Post Office'
 };
 const HUB_UNLOCK_MESSAGES = {
-  roulette: "The Rendezvous is open. Check the passenger list, hit the road, or step into the mirror. Your call. 💋",
-  garden: "The Midnight Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
-  aita: "The Bunny Court™ is officially in session, darling. Tap in and judge accordingly ⚖️💋",
-  closer: "The Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌"
+  roulette: "Dauphine Square is open. Check the passenger list, hit the road, or step into the mirror. Your call. 💋",
+  garden: "The Luxembourg Garden is open, darling. Tap it and go find your bouquet before I do 🌸",
+  aita: "The Palace of Justice is officially in session, darling. Tap in and judge accordingly ⚖️💋",
+  closer: "The Louvre Post Office is open, darling. Step in and write. You'll see what kind of letter once you're inside 💌"
 };
 let hubsPrevState = null; // null = "haven't seen a snapshot yet", so we don't toast on first load
 let previousActiveHub = null; // tracks hubs.current so we can fire a synchronized haptic pulse on room changes
@@ -7115,13 +7176,13 @@ function showMessageToast(msg){
 // Route order. "recap" (Museum) is always open, so it has no lock.
 const HOST_ROUTE = ['roulette', 'garden', 'aita', 'closer'];
 const HOST_STOP_NAMES = {
-  roulette: 'The Rendezvous',
-  garden: 'The Midnight Garden',
-  aita: 'The Bunny Court™',
-  closer: 'The Post Office',
+  roulette: 'Dauphine Square',
+  garden: 'The Luxembourg Garden',
+  aita: 'The Palace of Justice',
+  closer: 'The Louvre Post Office',
   recap: 'The Museum of Memories'
 };
-const HOST_STOP_SHORT = { roulette: 'Rendezvous', garden: 'Garden', aita: 'Court', closer: 'Post Office' };
+const HOST_STOP_SHORT = { roulette: 'Dauphine', garden: 'Garden', aita: 'Justice', closer: 'Post Office' };
 
 const hostEv = () => `events/${EVENT_ID}`;
 
@@ -7340,7 +7401,7 @@ document.getElementById('btnPickElaborate').addEventListener('click', ()=>{
   ref(`events/${EVENT_ID}/messages/${id}`).set({
     text: `${pick.name}, please defend your position! 🎙️`,
     target: pick.id,
-    from: 'The Bunny Court™',
+    from: 'The Palace of Justice',
     avatar: '⚖️',
     senderId: me && me.id,
     ts: Date.now()
@@ -7622,7 +7683,7 @@ function renderPartnerReveal(allPairings){
   // Same wording for pairs and trios, so no singular/plural switch is needed
   const eyebrow = document.getElementById('partnerRevealEyebrow');
   if (eyebrow) {
-    eyebrow.textContent = 'Walking into The Midnight Garden with...';
+    eyebrow.textContent = 'Walking into The Luxembourg Garden with...';
   }
 
   // Simple: just the partner's name(s), nothing else
