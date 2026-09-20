@@ -2154,65 +2154,91 @@
   #tour-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); }
   #tour-dots span.tour-dot-done { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
 
-  /* --- ROUTE GUIDE (the "?" button): static overview of every stop --- */
+  /* --- ROUTE GUIDE (the "?" button): Elegant Timeline --- */
   .route-guide-overlay {
     display: none; position: fixed; inset: 0; z-index: 100050;
     align-items: center; justify-content: center; padding: 16px;
     background: rgba(18,8,33,0.75); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
   }
   .route-guide-overlay.show { display: flex; }
+
   .route-guide-card {
     width: min(92vw, 440px); max-height: min(86vh, 680px);
     display: flex; flex-direction: column;
-    background: rgba(30,15,45,0.96);
-    border: 1px solid rgba(244,233,255,0.2); border-radius: 16px;
-    padding: 20px 18px 18px; box-shadow: 0 14px 40px rgba(0,0,0,0.8);
+    /* Deep, luxurious gradient to match the night sky */
+    background: linear-gradient(160deg, rgba(42,17,66,0.96), rgba(24,9,38,0.98));
+    border: 1px solid rgba(242, 193, 78, 0.25); border-radius: 20px;
+    padding: 24px 20px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
   }
-  .route-guide-card .rg-head { text-align: center; margin-bottom: 14px; flex-shrink: 0; }
-  .route-guide-card .rg-eyebrow { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
-  .route-guide-card .rg-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--mist); line-height: 1.1; }
-  .route-guide-card .rg-list { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .route-guide-card .rg-head { text-align: center; margin-bottom: 20px; flex-shrink: 0; }
+  .route-guide-card .rg-eyebrow { font-family: 'Space Mono', monospace; font-size: 10.5px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px; }
+  .route-guide-card .rg-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--mist); line-height: 1.1; }
+
+  .route-guide-card .rg-list {
+    position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto;
+    overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+    padding-bottom: 10px;
+  }
+
+  /* The Golden Thread connecting the stops */
+  .route-guide-card .rg-list::before {
+    content: ''; position: absolute;
+    top: 24px; bottom: 40px; left: 14px; width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(242,193,78,0.4) 10%, rgba(242,193,78,0.4) 90%, transparent);
+    z-index: 0;
+  }
+
   .rg-stop {
-    display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center;
-    padding: 14px 0; border-top: 1px solid rgba(244,233,255,0.1);
+    display: grid; grid-template-columns: 30px 64px 1fr; gap: 16px; align-items: start;
+    padding: 18px 0; position: relative; z-index: 1;
   }
-  .rg-stop:first-child { border-top: none; padding-top: 0; }
-  .rg-photo-col { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-  .rg-photo {
-    position: relative; width: 84px; height: 84px; border-radius: 14px; overflow: hidden;
+  .rg-stop:first-child { padding-top: 0; }
+
+  .rg-number-col { display: flex; justify-content: center; padding-top: 18px; }
+  .rg-number-node {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--ink); border: 1px solid var(--gold);
+    color: var(--gold); font-family: 'Space Mono', monospace; font-size: 11px;
     display: flex; align-items: center; justify-content: center;
-    border: 1.5px solid rgba(242,193,78,0.55);
+    box-shadow: 0 0 10px rgba(242, 193, 78, 0.2); z-index: 2;
+  }
+
+  .rg-photo-col { display: flex; justify-content: center; }
+  .rg-photo {
+    position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    border: 1.5px solid rgba(244,233,255,0.2);
     background: linear-gradient(160deg, var(--rose), var(--magenta) 60%, var(--twilight));
-    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
   }
   .rg-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .rg-name { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--mist); line-height: 1.1; }
-  .rg-desc { font-family: 'Jost', sans-serif; font-size: 14px; color: #d1c5df; line-height: 1.5; }
+
+  .rg-text-col { padding-top: 4px; }
+  .rg-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--mist); line-height: 1.1; margin-bottom: 6px; }
+  .rg-desc { font-family: 'Jost', sans-serif; font-size: 13.5px; color: rgba(244, 233, 255, 0.65); line-height: 1.45; }
+
   .route-guide-card .rg-close {
-    flex-shrink: 0; margin-top: 14px; width: 100%;
+    flex-shrink: 0; margin-top: 20px; width: 100%;
     background: var(--gold); color: var(--ink); border: none; border-radius: 20px;
-    padding: 10px 22px; font-family: 'Jost', sans-serif; font-weight: 600; font-size: 14px;
-    cursor: pointer; box-shadow: 0 4px 15px rgba(242, 193, 78, 0.2);
+    padding: 12px 22px; font-family: 'Jost', sans-serif; font-weight: 600; font-size: 14.5px;
+    cursor: pointer; box-shadow: 0 4px 15px rgba(242, 193, 78, 0.2); transition: transform 0.2s ease;
   }
   .route-guide-card .rg-close:active { transform: scale(0.97); }
-  .route-guide-card .rg-close:disabled {
-    opacity: 0.4; cursor: default; box-shadow: none; transform: none;
-  }
-  /* First-time reveal: stops start invisible and fade in one by one. */
+  .route-guide-card .rg-close:disabled { opacity: 0.4; cursor: default; box-shadow: none; transform: none; }
+
+  /* First-time reveal animations */
   .rg-stop.rg-reveal, .rg-break.rg-reveal { transition: opacity 0.9s ease, transform 0.9s ease; }
   .rg-stop.rg-await, .rg-break.rg-await { opacity: 0; transform: translateY(14px); }
-  /* "One more thing": a break line that sets the Museum apart from the route */
-  .rg-break { display: flex; align-items: center; gap: 12px; margin: 10px 0 4px; }
+
+  /* "One more thing" break line */
+  .rg-break { display: flex; align-items: center; gap: 12px; margin: 16px 0 8px; position: relative; z-index: 1; }
   .rg-break::before, .rg-break::after {
     content: ''; flex: 1; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(242,193,78,0.6));
+    background: linear-gradient(90deg, transparent, rgba(242,193,78,0.4));
   }
-  .rg-break::after { background: linear-gradient(270deg, transparent, rgba(242,193,78,0.6)); }
-  .rg-break span {
-    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.18em;
-    text-transform: uppercase; color: var(--gold);
-  }
-  .rg-stop.rg-bonus { border-top: none; padding-top: 8px; }
+  .rg-break::after { background: linear-gradient(270deg, transparent, rgba(242,193,78,0.4)); }
+  .rg-break span { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); opacity: 0.8; }
+  .rg-stop.rg-bonus { padding-top: 12px; }
 
   /* --- SASHA'S GAME STYLES --- */
   .obs-basic {
@@ -3816,6 +3842,41 @@ body[data-phase="closer"] .sky {
     border-radius: 8px;
     box-shadow: 0 0 0 3px var(--paper-gap), 0 0 0 4px rgba(var(--paper-ink-rgb), .5), inset 0 0 20px rgba(217,79,140,.15);
   }
+
+  /* --- GENTLE WALTZ & FLOATING HEARTS --- */
+  .dancing-couple {
+    color: var(--paper-ink);
+    transform-origin: bottom center;
+    animation: waltz-sway 4s ease-in-out infinite;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+  }
+
+  /* The dance step: dipping and rising */
+  @keyframes waltz-sway {
+    0%, 100% { transform: rotate(-5deg) translateY(0); }
+    25% { transform: rotate(0deg) translateY(-2.5px); }
+    50% { transform: rotate(5deg) translateY(0); }
+    75% { transform: rotate(0deg) translateY(-2.5px); }
+  }
+
+  /* The hearts drifting up */
+  .ink-heart {
+    position: absolute;
+    color: var(--paper-accent, #a02a5c); /* Deep ruby ink color */
+    opacity: 0;
+    bottom: 80%; left: 50%;
+  }
+
+  .heart-1 { width: 7px; height: 7px; margin-left: -10px; animation: float-heart 3.5s ease-in infinite 0.2s; }
+  .heart-2 { width: 5px; height: 5px; margin-left: 6px; animation: float-heart 4s ease-in infinite 1.8s; }
+  .heart-3 { width: 9px; height: 9px; margin-left: -2px; animation: float-heart 4.5s ease-in infinite 2.9s; }
+
+  @keyframes float-heart {
+    0% { opacity: 0; transform: translateY(0) scale(0.5) rotate(0deg); }
+    20% { opacity: 0.8; transform: translateY(-6px) scale(1) rotate(-10deg); }
+    80% { opacity: 0.8; }
+    100% { opacity: 0; transform: translateY(-28px) scale(1.1) rotate(15deg); }
+  }
 </style>
 </head>
 <body>
@@ -4089,12 +4150,46 @@ body[data-phase="closer"] .sky {
                 OF
               </span> 
               
-              <!-- "LOVE" wrapper with flanking couple -->
+              <!-- "LOVE" wrapper with flanking couples -->
               <span style="position: relative; display: inline-block;">
-                <!-- Couple 3 (Right, scaled up) -->
-                <img src="couple-3.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: 62%; transform: translateX(-50%); height: 26px; width: auto; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
-                
-                LOVE
+                <!-- Couple 1 (Left) -->
+                <img src="couple-1.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: -5%; transform: translateX(-50%); height: 32px; width: auto; opacity: 0.75; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+
+                <!-- Couple 3 (Right) -->
+                <img src="couple-3.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: 105%; transform: translateX(-50%); height: 32px; width: auto; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+
+                L<span style="position: relative; display: inline-block;">
+                  <!-- Animated Center Couple (Two Men Waltzing + Hearts), anchored over the O -->
+                  <div class="dancing-couple-wrap" style="position: absolute; bottom: 85%; left: 50%; transform: translateX(-50%); width: 28px; height: 28px; z-index: 10; pointer-events: none;">
+
+                    <!-- Floating Hearts -->
+                    <svg class="ink-heart heart-1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <svg class="ink-heart heart-2" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <svg class="ink-heart heart-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+
+                    <!-- The Couple (Two Men Silhouette) -->
+                    <div class="dancing-couple">
+                      <svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+                        <!-- Heads -->
+                        <circle cx="25" cy="14" r="4.5" />
+                        <circle cx="39" cy="15" r="4.2" />
+
+                        <!-- Lead (Left) Torso & Legs -->
+                        <path d="M 20 20 C 24 17 28 17 32 21 C 32 26 30 35 30 38 L 27 60 L 21 60 L 24 40 L 18 60 L 12 60 L 19 38 C 18 30 18 25 20 20 Z" />
+
+                        <!-- Follow (Right) Torso & Legs -->
+                        <path d="M 33 21 C 37 18 42 18 45 20 C 47 25 46 32 45 38 L 48 60 L 42 60 L 39 42 L 35 60 L 29 60 L 35 38 C 34 32 32 26 33 21 Z" />
+
+                        <!-- The Dance Frame (Arms) -->
+                        <!-- Clasped hands held high -->
+                        <path d="M 23 23 C 25 12 30 8 32 8 C 34 8 38 13 41 22" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none" />
+                        <!-- Arm wrapped around waist -->
+                        <path d="M 30 30 C 33 32 36 31 38 29" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" fill="none" />
+                      </svg>
+                    </div>
+                  </div>
+                  O
+                </span>VE
               </span>
               
             </span>
@@ -5546,6 +5641,7 @@ function openRouteGuide(opts) {
   const closeBtn = document.getElementById('route-guide-close');
   list.innerHTML = '';
 
+  const numberedStops = ROUTE_STOPS.filter(s => !s.bonus);
   ROUTE_STOPS.forEach(step => {
     const card = document.querySelector(step.selector);
     if (!card) return;
@@ -5558,8 +5654,16 @@ function openRouteGuide(opts) {
     row.className = 'rg-stop';
     if (step.bonus) row.classList.add('rg-bonus');
 
-    const left = document.createElement('div');
-    left.className = 'rg-photo-col';
+    // Number node: bonus stops get a star instead of the next number in sequence.
+    const numberCol = document.createElement('div');
+    numberCol.className = 'rg-number-col';
+    const numberNode = document.createElement('div');
+    numberNode.className = 'rg-number-node';
+    numberNode.textContent = step.bonus ? '★' : String(numberedStops.indexOf(step) + 1);
+    numberCol.appendChild(numberNode);
+
+    const photoCol = document.createElement('div');
+    photoCol.className = 'rg-photo-col';
 
     const photo = document.createElement('div');
     photo.className = 'rg-photo';
@@ -5583,20 +5687,25 @@ function openRouteGuide(opts) {
     } else {
       addFallbackIcon();
     }
+    photoCol.appendChild(photo);
+
+    const textCol = document.createElement('div');
+    textCol.className = 'rg-text-col';
 
     const nameEl = document.createElement('div');
     nameEl.className = 'rg-name';
     nameEl.textContent = name;
 
-    left.appendChild(photo);
-    left.appendChild(nameEl);
-
     const desc = document.createElement('div');
     desc.className = 'rg-desc';
     desc.textContent = step.desc;
 
-    row.appendChild(left);
-    row.appendChild(desc);
+    textCol.appendChild(nameEl);
+    textCol.appendChild(desc);
+
+    row.appendChild(numberCol);
+    row.appendChild(photoCol);
+    row.appendChild(textCol);
     // First time: every stop starts hidden and fades in on its own.
     if (required || step.bonus) row.classList.add('rg-reveal', 'rg-await');
     // "One more thing": a break line before the bonus stop
