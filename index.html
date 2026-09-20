@@ -114,9 +114,9 @@ function imgFallback(img){
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(150% 100% at 50% 0%, rgba(242, 193, 78, 0.12) 0%, transparent 35%),
-      radial-gradient(120% 90% at 50% -10%, #5a1c7a 0%, transparent 55%),
-      linear-gradient(180deg, var(--ink) 0%, var(--twilight) 35%, var(--magenta) 75%, var(--rose) 100%);
+      radial-gradient(150% 100% at 50% 0%, rgba(242, 193, 78, 0.06) 0%, transparent 35%),
+      radial-gradient(120% 90% at 50% -10%, #2e0f42 0%, transparent 55%),
+      linear-gradient(180deg, var(--ink) 0%, #1a0a2c 40%, #170826 75%, #0c0515 100%);
     overflow: hidden;
     z-index: 0;
   }
@@ -3283,15 +3283,17 @@ body[data-phase="closer"] .sky {
      readable for guests who don't speak French — same pill, no clutter. */
   .hub-card-title-en {
     display: block;
-    font-family: 'Jost', sans-serif !important;
-    font-size: 8.5px;
-    font-style: normal !important;
+    font-family: 'Cormorant Garamond', serif !important; /* elegant italic serif, clearly different from the Jost English name */
+    font-size: 11px;
+    font-style: italic !important;
     font-weight: 500;
     letter-spacing: 0.02em;
-    color: var(--rose);
-    margin-top: 2px;
+    color: var(--gold); /* soft gold so the two lines don't blur together */
+    opacity: 0.85;
+    margin-top: 3px;
+    padding-top: 3px;
+    border-top: 1px solid rgba(242, 193, 78, 0.18); /* hairline divider */
   }
-
   /* 5b. On the map, the "We're here" badge used to be a normal flex
      child stacked above the icon — so the moment it appeared, it pushed
      the icon/title down and the whole pin visibly jumped. Floating it as
@@ -3410,7 +3412,7 @@ body[data-phase="closer"] .sky {
   #hubCardRoulette { top: 20%; left: 20%; }
   #hubCardGarden   { top: 35%; left: 62%; }
   #hubCardAita     { top: 60%; left: 22%; }
-  #hubCardCloser   { top: 72%; left: 78%; } /* moved per screenshot mark: further right, where the road on the map art actually continues to */
+  #hubCardCloser   { top: 79%; left: 70%; } /* moved per screenshot mark: further right, where the road on the map art actually continues to */
 
   /* Position the Museum of Memories — an open archive, not a stop on the
      route, so it gets a heart instead of the teardrop pin the scheduled
@@ -3617,6 +3619,18 @@ body[data-phase="closer"] .sky {
     width: 100%; height: 100%;
     z-index: 0; /* sits under the pins/car/guests, above the backdrop */
     pointer-events: none;
+  }
+  /* Road was drawn in a stretched 100x100 box, so it came out thick where it runs
+     sideways and thin where it runs up/down. non-scaling-stroke measures the
+     road and its dashes in real screen pixels, so it's an even width everywhere. */
+  .hub-road-base {
+    vector-effect: non-scaling-stroke;
+    stroke-width: min(6.8vw, 34px);
+  }
+  .hub-road-dash {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 4px;
+    stroke-dasharray: 12px 8px;
   }
   .hub-route-svg {
     position: absolute; inset: 0;
@@ -3841,7 +3855,7 @@ body[data-phase="closer"] .sky {
     --paper-ink-rgb: 58, 18, 48;
     --paper-ink: #3a1230;
     --paper-ink-soft: rgba(58, 18, 48, 0.62);
-    --paper-accent: #a02a5c;
+    --paper-accent: #5a1228;
     isolation: isolate;
     background: transparent !important;
     background-color: transparent !important;
@@ -3894,7 +3908,7 @@ body[data-phase="closer"] .sky {
 
   /* printed ink instead of glowing light */
   #activitiesSection .map-title {
-    color: var(--paper-ink) !important;
+    color: #110C09 !important;
     text-shadow: 0 1px 0 rgba(255,255,255,.35) !important;
   }
   #activitiesSection .map-title-accent { color: var(--paper-accent) !important; }
@@ -3918,7 +3932,7 @@ body[data-phase="closer"] .sky {
     box-shadow: 0 0 0 3px var(--paper-gap), 0 0 0 4px rgba(var(--paper-ink-rgb), .5), inset 0 0 20px rgba(217,79,140,.15);
   }
 
-  /* --- ALTERNATING FLOATING HEARTS: couple 1's hearts rise, then couple 3's --- */
+  /* --- ALTERNATING FLOATING HEARTS: couple 1's hearts rise --- */
   .ink-heart {
     position: absolute;
     color: var(--paper-accent, #a02a5c); /* Deep ruby ink color */
@@ -3938,16 +3952,6 @@ body[data-phase="closer"] .sky {
     38% { opacity: 0.8; }
     48% { opacity: 0; transform: translateY(-28px) scale(1.1) rotate(15deg); }
     50%, 100% { opacity: 0; }
-  }
-
-  /* Couple 3's hearts: active during the second half of the same cycle, never overlapping couple 1's */
-  .ink-heart-b { animation: float-heart-b 8s ease-in-out infinite; }
-  @keyframes float-heart-b {
-    0%, 50% { opacity: 0; transform: translateY(0) scale(0.5) rotate(0deg); }
-    58% { opacity: 0.8; transform: translateY(-6px) scale(1) rotate(-10deg); }
-    88% { opacity: 0.8; }
-    98% { opacity: 0; transform: translateY(-28px) scale(1.1) rotate(15deg); }
-    100% { opacity: 0; }
   }
 
   /* --- AMBIENT CANDLELIGHT GLOW --- */
@@ -4251,9 +4255,6 @@ body[data-phase="closer"] .sky {
                 <!-- Couple 3 (Right, scaled up) -->
                 <span style="position: absolute; bottom: 75%; left: 62%; transform: translateX(-50%); width: 26px; height: 26px;">
                   <img src="data:image/webp;base64,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" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 26px; width: auto; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
-                  <svg class="ink-heart ink-heart-b heart-1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                  <svg class="ink-heart ink-heart-b heart-2" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                  <svg class="ink-heart ink-heart-b heart-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                 </span>
                 
                 LOVE
@@ -4261,14 +4262,11 @@ body[data-phase="closer"] .sky {
               
             </span>
             
-            <!-- LINE 2: TOUR -->
-            <span class="map-title-accent" style="display: block; color: var(--gold);">Tour</span>
-            
           </h2>
         </div>
 
         <!-- Subtitle / Letter Opening -->
-        <p class="sub map-sub" style="text-align: left; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 290px; margin: 0 auto 24px; line-height: 1.5;">
+        <p class="sub map-sub" style="text-align: left; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15.5px; color: rgba(244, 233, 255, 0.7); max-width: 290px; margin: 0 auto 24px; line-height: 1.5;">
           <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; display: block; margin-bottom: 6px; color: var(--paper-ink);">
             Dear <span id="mapGreetingName">Passenger</span>,
           </span>
@@ -4499,10 +4497,10 @@ body[data-phase="closer"] .sky {
                space as the pins' top/left percentages and lines up
                with them regardless of the container's real size. -->
           <svg class="hub-road-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,72.8 74,72"
-                  fill="none" stroke="#4a4256" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
-            <path d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,72.8 74,72"
-                  fill="none" stroke="#f2c14e" stroke-width="0.8" stroke-linecap="round" stroke-dasharray="2.4 2" opacity="0.8"/>
+            <path d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,79.8 74,79"
+                  class="hub-road-base" fill="none" stroke="#4a4256" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+            <path d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,79.8 74,79"
+                  class="hub-road-dash" fill="none" stroke="#f2c14e" stroke-width="0.8" stroke-linecap="round" stroke-dasharray="2.4 2" opacity="0.8"/>
           </svg>
 
           <!-- Traveling glow that follows the same road, so it looks
@@ -4510,7 +4508,7 @@ body[data-phase="closer"] .sky {
                drawn using the same top/left percentages as the pins
                below -->
           <svg class="hub-route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path class="hub-route-path" d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,72.8 74,72" />
+            <path class="hub-route-path" d="M10,20 C15.3,20.3 36.0,18.3 42,22 C48.0,25.7 40.7,38.0 46,42 C51.3,46.0 72.0,43.3 74,46 C76.0,48.7 64.7,56.7 58,58 C51.3,59.3 41.3,51.7 34,54 C26.7,56.3 12.0,68.2 14,72 C16.0,75.8 36.0,77.0 46,77 C56.0,77.0 69.3,79.8 74,79" />
           </svg>
 
           <!-- Stop 0: Dauphine Square -->
@@ -4530,8 +4528,8 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--rose); display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Place Dauphine</div>
-              <div class="hub-card-title">Dauphine Square<span class="hub-card-title-en">Place Dauphine</span></div>
+              <div class="hub-card-sub" style="color:#ffffff; display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Place Dauphine</div>
+              <div class="hub-card-title">Dauphine Square</div>
               <div class="hub-card-desc">Our starting line, tucked into a hidden square on the Seine. While we wait for those with tragic time management, check the passenger list and play a quick round of "Red Flag Rally".</div>
               <div class="hub-card-lock-note">We depart when the host is ready.</div>
             </div>
@@ -4578,8 +4576,8 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--rose); display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Jardin du Luxembourg</div>
-              <div class="hub-card-title">The Luxembourg Garden<span class="hub-card-title-en">Jardin du Luxembourg</span></div>
+              <div class="hub-card-sub" style="color:#ffffff; display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Jardin du Luxembourg</div>
+              <div class="hub-card-title">The Luxembourg Garden</div>
               <div class="hub-card-desc">We’ve pulled up to the most romantic garden in Paris. The gates are locked for the night, but we have a way in. When the doors open, step out and pick a flower with your partner.</div>
               <div class="hub-card-lock-note">The host will unlock the doors when the time is right.</div>
             </div>
@@ -4605,8 +4603,8 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--rose); display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Palais de Justice</div>
-              <div class="hub-card-title">The Palace of Justice<span class="hub-card-title-en">Palais de Justice</span></div>
+              <div class="hub-card-sub" style="color:#ffffff; display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Palais de Justice</div>
+              <div class="hub-card-title">The Palace of Justice</div>
               <div class="hub-card-desc">We're parked at the historic courthouse of Paris. Step inside, take your seat in the chambers, listen to the evidence, and prepare to cast your vote.</div>
               <div class="hub-card-lock-note">The doors are currently closed.</div>
             </div>
@@ -4633,8 +4631,8 @@ body[data-phase="closer"] .sky {
               </svg>
             </div>
             <div>
-              <div class="hub-card-sub" style="color:var(--rose); display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>La Poste du Louvre</div>
-              <div class="hub-card-title">The Louvre Post Office<span class="hub-card-title-en">La Poste du Louvre</span></div>
+              <div class="hub-card-sub" style="color:#ffffff; display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>La Poste du Louvre</div>
+              <div class="hub-card-title">The Louvre Post Office</div>
               <div class="hub-card-desc">Our final stop, once the only post office in the city that stayed open all night. Step inside and write a letter. What kind? You'll just have to wait and see.</div>
               <div class="hub-card-lock-note">The Louvre Post Office remains closed for now.</div>
             </div>
