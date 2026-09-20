@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>Bunny Court™ | The Archives</title>
+<title>Palace of Justice | The Archives</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -105,7 +105,7 @@
     overflow-y: auto; overflow-x: hidden;
     padding: 70px 20px 80px; display: flex; flex-direction: column; align-items: center;
   }
-  #phaseIntro { padding-top: 30vh; }
+  #phaseIntro { padding-top: 6vh; }
 
   .section-layer {
     width: 100%; max-width: 650px; display: none; flex-direction: column; align-items: center;
@@ -618,7 +618,7 @@
             <path d="M12 3v18M5 7l-3 6a3.5 3.5 0 0 0 7 0zM19 7l-3 6a3.5 3.5 0 0 0 7 0zM5 7h14M9 21h6M3 3l9 4 9-4"></path>
           </svg>
           <div class="inbox-title-block">
-            <div class="email-title">The Bunny Court Inbox</div>
+            <div class="email-title">Palace of Justice Inbox</div>
             <div class="email-count" id="emailCount">6 cases unread</div>
           </div>
           <div class="me-avatar" id="meAvatar">JS</div>
@@ -742,9 +742,9 @@
 
 <script>
   const LORE_MESSAGES = [
-    "Bunny Court is in session, darlings.",
-    "We've judged strangers from a Parisian courtroom since 1986. The pigeons retired, so we receive emails in our inbox nowadays.",
-    "Read tonight's cases, cast your vote, and get ready to defend it — because we will pick someone (yes, the ears are part of the uniform)."
+    "The Palace of Justice is in session, darlings.",
+    "Paris has judged its strangers from this courthouse for centuries. The pigeons retired, so we receive emails in our inbox nowadays.",
+    "Read tonight's cases, cast your vote, and get ready to defend it — because we will pick someone (yes, the bunny ears are part of the uniform, because the Honorable Judge Sasha is presiding)."
   ];
 
   const DOCKET_STORIES = [
@@ -1031,7 +1031,7 @@ I get that weddings are expensive, but I don't see why my education should be th
     db.ref(`events/${EVENT_ID}/court/randomizerEvent`)
       .set({ targetIndex, ts: Date.now() })
       .catch(err => {
-        console.warn('[Bunny Court] Could not broadcast the randomizer pick, spinning locally instead.', err);
+        console.warn('[Palace of Justice] Could not broadcast the randomizer pick, spinning locally instead.', err);
         btn.disabled = false;
         runRandomizerAnimation(targetIndex);
       });
@@ -1211,7 +1211,7 @@ I get that weddings are expensive, but I don't see why my education should be th
         triggerSessionOver();
         if (db) {
           db.ref(`events/${EVENT_ID}/court/timer`).remove()
-            .catch(err => console.error('[Bunny Court] Could not clear the shared timer — check that your Firebase rules allow writes under events/*/court/. Error:', err));
+            .catch(err => console.error('[Palace of Justice] Could not clear the shared timer — check that your Firebase rules allow writes under events/*/court/. Error:', err));
         }
       }
     }
