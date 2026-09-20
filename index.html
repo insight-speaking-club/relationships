@@ -14,10 +14,10 @@
 <link rel="preload" href="sashas-car-bunny1.png" as="image" fetchpriority="high">
 <link rel="preload" href="red-flag.png" as="image" fetchpriority="high">
 <link rel="preload" href="green-flag-1.png" as="image" fetchpriority="high">
-<link rel="preload" href="dauphine-square.png" as="image" fetchpriority="high">
-<link rel="preload" href="luxembourg-garden.png" as="image" fetchpriority="high">
-<link rel="preload" href="palais-de-justice.png" as="image" fetchpriority="high">
-<link rel="preload" href="louvre-post-office.png" as="image" fetchpriority="high">
+<link rel="preload" href="dauphine-square.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="luxembourg-garden.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="palais-de-justice.jpg" as="image" fetchpriority="high">
+<link rel="preload" href="louvre-post-office.jpg" as="image" fetchpriority="high">
 <link rel="preload" href="the-museum-of-memories-1.png" as="image" fetchpriority="high">
 <link rel="preload" href="paris-skyline-1.png" as="image" fetchpriority="high">
 <style>
@@ -734,16 +734,17 @@
   /* ---------- ACTS II & III: THE PARCHMENT LETTER ---------- */
   .letter-scroll{
     position:relative; z-index:2; width:100%; height:100%; max-width:460px;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
     overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
-    padding:26px 6px;
+    padding:26px 6px 48px;
   }
   .letter-paper{
     --parch-hi:#fbf1de; --parch-mid:#f3e2bd; --parch-lo:#e7cd97;
     --parch-shade:92,58,20; --parch-light:255,250,238; --parch-ink:#3a2410; --parch-ink-soft:rgba(58,36,16,.66);
     position:relative; width:100%; min-height:420px;
+    flex-shrink:0; margin:auto 0;
     border-radius:4px 14px 6px 16px / 10px 4px 14px 4px;
-    padding:38px 26px 30px;
+    padding:38px 26px 40px;
     background:
       radial-gradient(circle at 0 0, rgba(var(--parch-light),.6) 0, transparent 60px),
       radial-gradient(circle at 100% 100%, rgba(var(--parch-light),.5) 0, transparent 70px),
@@ -4129,11 +4130,10 @@ body[data-phase="closer"] .sky {
         <div class="letter-dogear" aria-hidden="true"></div>
 
         <div class="letter-reading" id="letterReading">
-          <p class="letter-line" data-line="1">The engine is running and the streets are mostly empty.</p>
-          <p class="letter-line" data-line="2">Tonight, I am taking you to my favorite city in the world: Paris.</p>
-          <p class="letter-line" data-line="3">I have the entire route mapped out, but the passenger seat is still empty.</p>
-          <p class="letter-line" data-line="4">Tell me you are coming along.</p>
-          <p class="letter-line letter-sign-off" data-line="5">S.</p>
+          <p class="letter-line" data-line="1">I'm Sasha, your host, and tonight, I'm taking you to my favorite city in the world.</p>
+          <p class="letter-line" data-line="2">I've mapped out the entire route, but there's still one thing missing:</p>
+          <p class="letter-line" data-line="3">you in the passenger seat.</p>
+          <p class="letter-line" data-line="4">So... are you coming along?</p>
         </div>
 
         <div class="letter-signature" id="letterSignature">
@@ -4141,7 +4141,7 @@ body[data-phase="closer"] .sky {
           <div class="host-intro">
             <img class="host-portrait" src="sasha.png" alt="Sasha" onerror="this.style.display='none'">
             <div class="host-bubble">
-              <p id="hostLine">Write your name below, darling. Tell me who I'm riding with.</p>
+              <p id="hostLine">Write your name below, darling, and I'll add you to the passenger list.</p>
             </div>
           </div>
 
@@ -4258,7 +4258,7 @@ body[data-phase="closer"] .sky {
           <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; display: block; margin-bottom: 6px; color: var(--paper-ink);">
             Dear <span id="mapGreetingName">passenger</span>,
           </span>
-          Welcome to Paris. I traced this map out just for us. There is a reason behind every stop on this list. We have the whole night ahead of us, so let's just take it one destination at a time.
+          You're in. I traced this map out just for us, and there is a reason behind every stop. We leave once everyone is here, and then we have the whole night ahead of us.
         </p>
 
         <div class="hub-sections">
@@ -4514,7 +4514,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the compass icon -->
-              <img class="hub-card-photo" decoding="async" src="dauphine-square.png" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" decoding="async" src="dauphine-square.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Compass / Location SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="3 11 22 2 13 21 11 13 3 11"/>
@@ -4559,7 +4559,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the storefront icon -->
-              <img class="hub-card-photo" decoding="async" src="luxembourg-garden.png" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" decoding="async" src="luxembourg-garden.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Storefront SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l1.5-5.5A1 1 0 0 1 5.46 3h13.08a1 1 0 0 1 .96 1.5L21 9"/>
@@ -4589,7 +4589,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the courthouse icon -->
-              <img class="hub-card-photo" decoding="async" src="palais-de-justice.png" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" decoding="async" src="palais-de-justice.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Courthouse Pillars SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 21h18"/><path d="M4 21v-4"/><path d="M20 21v-4"/><path d="M3 7v4h18V7"/><path d="M12 21v-9"/><path d="M8 21v-9"/><path d="M16 21v-9"/><polygon points="12,2 22,7 2,7"/>
@@ -4616,7 +4616,7 @@ body[data-phase="closer"] .sky {
             <div class="hub-card-icon">
               <!-- Drop a real photo here named exactly this, or leave it
                    missing — it'll quietly fall back to the book icon -->
-              <img class="hub-card-photo" decoding="async" src="louvre-post-office.png" alt="" onerror="this.style.display='none'">
+              <img class="hub-card-photo" decoding="async" src="louvre-post-office.jpg" alt="" onerror="this.style.display='none'">
               <!-- Minimalist Open Book SVG -->
               <svg class="icon-normal" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mist)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 4.5C2 4.5 5 3 8.5 3s6.5 1.5 6.5 1.5v15S12 18 8.5 18 2 19.5 2 19.5v-15Z"/>
@@ -4668,7 +4668,7 @@ body[data-phase="closer"] .sky {
           <div style="min-width: 0;">
             <!-- Sign-off: his "writing voice" (italic Cormorant, same as the letter), then his signature in script -->
             <div class="map-credit-by" style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500; font-size: 15px; line-height: 1.1; color: rgba(244, 233, 255, 0.5);">Yours truly,</div>
-            <div class="map-credit-sig" style="font-size: 19px; line-height: 1.25; margin-top: 1px; color: rgba(244, 233, 255, 0.85);">𝒪𝓁ℯ𝓀𝓈𝒶𝓃𝒹𝓇 𝐵.</div>
+            <div class="map-credit-sig" style="font-size: 19px; line-height: 1.25; margin-top: 1px; color: rgba(244, 233, 255, 0.85);">𝒮𝒶𝓈𝒽𝒶</div>
             <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 6px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;">
               <span class="map-credit-label" style="color: rgba(244, 233, 255, 0.35);">My instagram:</span>
               <a class="map-credit-link" href="https://www.instagram.com/z3xhwi14?igsi=MXdsZjBnNGhxYWQ0NA==" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 5px; color: var(--gold); text-decoration: none; opacity: 0.8;">
@@ -4693,7 +4693,7 @@ body[data-phase="closer"] .sky {
         <!-- 1. THE RENDEZVOUS -->
         <div class="hs-card is-locked" data-stop="roulette">
           <div class="hs-head">
-            <img class="hs-thumb" src="dauphine-square.png" alt="" onerror="this.style.display='none'">
+            <img class="hs-thumb" src="dauphine-square.jpg" alt="" onerror="this.style.display='none'">
             <div><div class="hs-step">Starting point</div><div class="hs-name">Dauphine Square</div></div>
           </div>
           <div class="hs-main"><button type="button" class="hs-go">Open</button></div>
@@ -4707,7 +4707,7 @@ body[data-phase="closer"] .sky {
         <!-- 2. THE MIDNIGHT GARDEN -->
         <div class="hs-card is-locked" data-stop="garden">
           <div class="hs-head">
-            <img class="hs-thumb" src="luxembourg-garden.png" alt="" onerror="this.style.display='none'">
+            <img class="hs-thumb" src="luxembourg-garden.jpg" alt="" onerror="this.style.display='none'">
             <div><div class="hs-step">Pairs activity</div><div class="hs-name">The Luxembourg Garden</div></div>
           </div>
           <div class="hs-main">
@@ -4732,7 +4732,7 @@ body[data-phase="closer"] .sky {
         <!-- 3. THE BUNNY COURT -->
         <div class="hs-card is-locked" data-stop="aita">
           <div class="hs-head">
-            <img class="hs-thumb" src="palais-de-justice.png" alt="" onerror="this.style.display='none'">
+            <img class="hs-thumb" src="palais-de-justice.jpg" alt="" onerror="this.style.display='none'">
             <div><div class="hs-step">Group activity</div><div class="hs-name">The Palace of Justice</div></div>
           </div>
           <div class="hs-main"><button type="button" class="hs-go">Open</button></div>
@@ -4761,7 +4761,7 @@ body[data-phase="closer"] .sky {
         <!-- 4. THE POST OFFICE -->
         <div class="hs-card is-locked" data-stop="closer">
           <div class="hs-head">
-            <img class="hs-thumb" src="louvre-post-office.png" alt="" onerror="this.style.display='none'">
+            <img class="hs-thumb" src="louvre-post-office.jpg" alt="" onerror="this.style.display='none'">
             <div><div class="hs-step">Closer activity</div><div class="hs-name">The Louvre Post Office</div></div>
           </div>
           <div class="hs-main"><button type="button" class="hs-go">Open</button></div>
@@ -4810,7 +4810,7 @@ body[data-phase="closer"] .sky {
   <div id="state-roulette" class="lounge-state">
     <button class="back-btn" id="btnBackToGatheringRoulette" onclick="setLoungeState('state-gathering')">‹</button>
     <h1 class="display" style="margin-top: 40px; font-size:34px; font-style:italic; color:#fff;">Dauphine Square</h1>
-    <p class="sub" style="margin-bottom: 20px; padding: 0 20px;">Take a breather, darlings. Check the passenger list and warm up your instincts with Red Flag Rally while I get the engine running.</p>
+    <p class="sub" style="margin-bottom: 20px; padding: 0 20px;">Take a breather, darlings. We're still waiting on a few people, so check the passenger list and warm up with Red Flag Rally.</p>
 
     <!-- SLEEK PASSENGER LIST -->
     <div class="dashboard-section" style="width: 100%; max-width: 420px; margin: 0 auto 16px;">
@@ -5378,7 +5378,11 @@ function playLetterOpening(){
 
     setTimeout(() => {
       document.getElementById('letterSignature').classList.add('sig-visible');
-      requestAnimationFrame(() => document.getElementById('inputName')?.focus({preventScroll:true}));
+      requestAnimationFrame(() => {
+        document.getElementById('inputName')?.focus({preventScroll:true});
+        const sc = document.querySelector('.letter-scroll');
+        if (sc) sc.scrollTo({ top: sc.scrollHeight, behavior: 'smooth' });
+      });
     }, lines.length * LETTER_LINE_DELAY + LETTER_LINE_READ_TIME);
 
     setTimeout(() => flash.classList.remove('is-flashing'), 900);
@@ -5389,7 +5393,7 @@ document.getElementById('btnBreakSeal').addEventListener('click', playLetterOpen
 /* ---------- join ---------- */
 /* Two steps inside the letter's signature block: name first, then (once
    the name is answered) pronouns. The same button moves from "Next" to
-   "Step Into the Night". */
+   "Join the ride". */
 let joinStep = 1;
 const HOST_LINE_1 = "Write your name below, darling, and I'll add you to the passenger list.";
 
@@ -5423,10 +5427,13 @@ function setJoinStep(step){
     nameField.style.display = 'none';
     pronField.style.display = 'block';
     changeBtn.style.display = '';
-    btn.textContent = 'Step Into the Night';
-    line.textContent = 'Nice to meet you, ' + name + '! Last thing: pick your pronouns, then we\'ll set off.';
+    btn.textContent = 'Join the ride';
+    line.textContent = 'Nice to meet you, ' + name + '! Last thing: pick your pronouns.';
     replayStepIn(pronField);
-    requestAnimationFrame(() => btn.scrollIntoView({block:'nearest', behavior:'smooth'}));
+    requestAnimationFrame(() => {
+      const sc = document.querySelector('.letter-scroll');
+      if (sc) sc.scrollTo({ top: sc.scrollHeight, behavior: 'smooth' });
+    });
   }
 }
 document.getElementById('btnChangeName').addEventListener('click', () => setJoinStep(1));
@@ -5565,7 +5572,7 @@ let isTourOnBonusStep = false;
 // every stop in typewriter text. Kept as an array (length 1) so the rest
 // of the tour engine — typing, dots — needs no changes.
 const TOUR_STEPS = [
-  { selector: '#routeGuideBtn', title: 'Welcome aboard, love', desc: 'The stars have aligned for us tonight. Tap here anytime to peek at the map and see where the night will take us. Just sit back and relax—I\'ll unlock each door when the moment is right.', pad: 8 }
+  { selector: '#routeGuideBtn', title: 'Tonight\'s itinerary', desc: 'Tap here anytime to see the route.', pad: 8 }
 ];
 
 // Per-stop copy for the Route Guide ("?") window only — no longer walked
