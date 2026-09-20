@@ -3423,7 +3423,7 @@ body[data-phase="closer"] .sky {
   #hubCardRoulette { top: 20%; left: 20%; }
   #hubCardGarden   { top: 35%; left: 62%; }
   #hubCardAita     { top: 60%; left: 22%; }
-  #hubCardCloser   { top: 79%; left: 48%; } /* road's lowest curve is ~80%; lower = clearer of the road, higher = closer to it */
+  #hubCardCloser   { top: 72%; left: 78%; } /* moved per screenshot mark: further right, where the road on the map art actually continues to */
 
   /* Position the Museum of Memories — an open archive, not a stop on the
      route, so it gets a heart instead of the teardrop pin the scheduled
@@ -3436,6 +3436,15 @@ body[data-phase="closer"] .sky {
     top: 71%; left: 81%; width: 72px;
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
   }
+
+  /* Museum of Memories retired from the itinerary + map: this one element
+     is both the itinerary card and the map pin, so hiding it removes it
+     from both places at once. Left in the DOM (rather than deleted) so the
+     host controls, route-guide and Firebase sync logic that still refer to
+     #hubCardRecap keep working without errors; it now points nowhere
+     visible. Its Padlet link lives on in the small archive folder at the
+     bottom of the map card instead. */
+  #hubCardRecap { display: none !important; }
 
   /* Turn the Museum of Memories icon into a heart with an SVG mask */
   #hubCardRecap .hub-card-icon {
@@ -4700,6 +4709,14 @@ body[data-phase="closer"] .sky {
         <span class="map-dogear" aria-hidden="true"></span>
       </div>
 
+      <!-- Small archive folder: legible black pill button, now living below the
+           parchment paper card rather than inside it. Links to the standalone
+           archive site (which itself embeds the Padlet as its "Memory Wall"). -->
+      <button type="button" id="archiveFolderBtn" onclick="window.open('https://insight-speaking-club.github.io/archive/', '_blank')" style="display: flex; width: fit-content; align-items: center; gap: 6px; margin: 14px auto 0; padding: 7px 12px; background: #0c0612; border: 1px solid rgba(242, 193, 78, 0.5); border-radius: 8px; color: var(--gold); font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 10px rgba(242, 193, 78, 0.12);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+        <span>Tap to see archive</span>
+      </button>
+
       <!-- HOST ONLY: Run of Show. One card per stop, in route order.
            The big button does the whole move in one tap (unlock + "We're here";
            the Garden also matches everyone and starts the timer). The two chips
@@ -5697,11 +5714,11 @@ let isTourOnBonusStep = false;
 
 // The full stop-by-stop walkthrough now lives in the Route Guide ("?"
 // window), which shows the whole route at a glance. So the welcome tour
-// is a single step that points guests to that button instead of replaying
-// every stop in typewriter text. Kept as an array (length 1) so the rest
-// of the tour engine — typing, dots — needs no changes.
+// just points guests to that button, then to the archive folder, instead
+// of replaying every stop in typewriter text.
 const TOUR_STEPS = [
-  { selector: '#routeGuideBtn', title: 'Tonight\'s itinerary', desc: 'Tap here anytime to see the route.', pad: 8 }
+  { selector: '#routeGuideBtn', title: 'Tonight\'s itinerary', desc: 'Tap here anytime to see the route.', pad: 8 },
+  { selector: '#archiveFolderBtn', title: 'Tap to see archive', desc: 'This little folder opens our scrapbook from past nights — tap it anytime.', pad: 8 }
 ];
 
 // Per-stop copy for the Route Guide ("?") window only — no longer walked
@@ -5711,8 +5728,7 @@ const ROUTE_STOPS = [
   { selector: '#hubCardRoulette', title: 'Dauphine Square', desc: 'Our glamorous starting line is a quiet, triangular square hidden on the Seine. While we wait for the stragglers, check the passenger list, dodge red flags on the road, or style a look in the closet.', url: 'https://en.wikipedia.org/wiki/Place_Dauphine' },
   { selector: '#hubCardGarden', title: 'The Luxembourg Garden', desc: 'First stop. The heavy iron gates of this famous garden are locked at sundown, but we have a way in. Once we pull in and the doors open, step out and pick a flower with your partner.', url: 'https://en.wikipedia.org/wiki/Jardin_du_Luxembourg' },
   { selector: '#hubCardAita', title: 'The Palace of Justice', desc: 'Second stop. We regroup here after the garden. It is the historic courthouse of Paris, locked until we arrive, so get ready to take your seat and cast your verdicts.', url: 'https://en.wikipedia.org/wiki/Palais_de_Justice,_Paris' },
-  { selector: '#hubCardCloser', title: 'The Louvre Post Office', desc: 'Our final stop. Historically the only post office in the city to stay open all night, making it the perfect place to send a late night love letter. What kind of letter will you write? You\'ll find out once you\'re inside.', url: 'https://parisjetaime.com/eng/pro/la-poste-paris-louvre-p2711' },
-  { selector: '#hubCardRecap', title: 'The Museum of Memories', bonus: true, desc: 'This one is always open, no door to wait for. It is our digital scrapbook: pin up photos or leave a note, whenever you like.' }
+  { selector: '#hubCardCloser', title: 'The Louvre Post Office', desc: 'Our final stop. Historically the only post office in the city to stay open all night, making it the perfect place to send a late night love letter. What kind of letter will you write? You\'ll find out once you\'re inside.', url: 'https://parisjetaime.com/eng/pro/la-poste-paris-louvre-p2711' }
 ];
 
 function startTour() {
@@ -5732,9 +5748,15 @@ function showTourStep(bonus) {
   // Scroll the targeted element into the center of the screen
   target.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  // Single-step tour: no step counter or progress dots needed.
-  document.getElementById('tour-step-label').textContent = '';
-  document.getElementById('tour-dots').style.display = 'none';
+  // Step counter + progress dots only matter once there's more than one step.
+  const isMultiStep = TOUR_STEPS.length > 1;
+  document.getElementById('tour-step-label').textContent = isMultiStep ? `${tourIdx + 1} of ${TOUR_STEPS.length}` : '';
+  document.getElementById('tour-dots').style.display = isMultiStep ? '' : 'none';
+  if (isMultiStep) {
+    document.querySelectorAll('#tour-dots span').forEach((dot, i) => {
+      dot.classList.toggle('tour-dot-done', i <= tourIdx);
+    });
+  }
 
   // Typewriter Setup
   const titleEl = document.getElementById('tour-title');
@@ -5764,7 +5786,7 @@ function showTourStep(bonus) {
       clearInterval(typeInterval);
       isTyping = false;
       descEl.classList.remove('typing');
-      nextBtn.textContent = 'Show me the map';
+      nextBtn.textContent = (tourIdx === TOUR_STEPS.length - 1) ? 'Show me the map' : 'Next';
     }
   }, 25);
 
@@ -5795,6 +5817,8 @@ function showTourStep(bonus) {
 }
 
 function tourNext() {
+  const isLastStep = tourIdx === TOUR_STEPS.length - 1;
+
   // If the text is still typing, clicking the button just fast-forwards to the end
   if (isTyping) {
     clearInterval(typeInterval);
@@ -5803,11 +5827,18 @@ function tourNext() {
     document.getElementById('tour-title').textContent = step.title;
     document.getElementById('tour-desc').textContent = step.desc;
     document.getElementById('tour-desc').classList.remove('typing');
-    document.getElementById('tour-next').textContent = 'Show me the map';
+    document.getElementById('tour-next').textContent = isLastStep ? 'Show me the map' : 'Next';
     return;
   }
 
-  // Single step: finishing it opens the (required) map.
+  // More steps left: advance to the next one instead of finishing.
+  if (!isLastStep) {
+    tourIdx++;
+    showTourStep();
+    return;
+  }
+
+  // Last step: finishing it opens the (required) map.
   finishTour();
 }
 
