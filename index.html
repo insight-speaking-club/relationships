@@ -2213,7 +2213,7 @@ function imgFallback(img){
     box-shadow: 0 0 10px rgba(242, 193, 78, 0.2); z-index: 2;
   }
 
-  .rg-photo-col { display: flex; flex-direction: column; align-items: center; }
+  .rg-photo-col { display: flex; flex-direction: column; align-items: center; position: relative; }
   .rg-photo {
     position: relative; width: 64px; height: 64px; border-radius: 50%; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
@@ -2227,29 +2227,27 @@ function imgFallback(img){
   .rg-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--mist); line-height: 1.1; margin-bottom: 6px; }
   .rg-desc { font-family: 'Jost', sans-serif; font-size: 13.5px; color: rgba(244, 233, 255, 0.65); line-height: 1.45; }
 
-  /* Optional external link in the Route Guide: a quiet footnote, not an action */
-  .rg-optional { margin-top: 9px; text-align: left; line-height: 1.3; }
-  .rg-optional-tag {
-    display: block;
-    font-family: 'Jost', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    color: rgba(244, 233, 255, 0.45);
-    margin: 0 0 4px;
-  }
-  .rg-learn-more {
-    display: inline-block;
-    font-family: 'Space Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+  /* Optional external link in the Route Guide: a tiny "?" badge on the
+     stop's photo instead of a footnote in the copy. Tapping it opens the
+     real-place link in a new tab; it's otherwise easy to miss/ignore. */
+  .rg-learn-badge {
+    position: absolute;
+    bottom: -2px; right: -2px; /* sits at the photo's bottom-right edge */
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--ink);
+    border: 1px solid var(--gold);
     color: var(--gold);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
     text-decoration: none;
-    border-bottom: 1px solid rgba(242, 193, 78, 0.4);
-    padding-bottom: 2px;
-    transition: opacity 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 0 6px rgba(242, 193, 78, 0.35);
+    z-index: 3;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-  .rg-learn-more:hover { opacity: 0.8; border-color: var(--gold); }
+  .rg-learn-badge:active { transform: scale(0.88); box-shadow: 0 0 10px rgba(242, 193, 78, 0.6); }
+
 
   .route-guide-card .rg-close {
     flex-shrink: 0; margin-top: 20px; width: 100%;
@@ -4529,7 +4527,7 @@ body[data-phase="closer"] .sky {
             <div>
               <div class="hub-card-sub" style="color:var(--gold); display:flex; align-items:center; justify-content:center; gap:3px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>Place Dauphine</div>
               <div class="hub-card-title">Dauphine Square<span class="hub-card-title-en">Place Dauphine</span></div>
-              <div class="hub-card-desc">Our glamorous starting line, tucked into a hidden square on the Seine. While we wait for the stragglers, check the passenger list, dodge red flags on the road, or style a look in the closet.</div>
+              <div class="hub-card-desc">Our starting line, tucked into a hidden square on the Seine. While we wait for those with tragic time management, check the passenger list and play a quick round of "Red Flag Rally".</div>
               <div class="hub-card-lock-note">We depart when the host is ready.</div>
             </div>
           </div>
@@ -4690,7 +4688,7 @@ body[data-phase="closer"] .sky {
            (our digital scrapbook) in a new tab. -->
       <button type="button" id="archiveFolderBtn" onclick="window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank', 'noopener')" aria-label="Open the Memory Wall" style="display: flex; width: fit-content; align-items: center; gap: 6px; margin: 14px auto 0; padding: 7px 12px; background: #0c0612; border: 1px solid rgba(242, 193, 78, 0.5); border-radius: 8px; color: var(--gold); font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 10px rgba(242, 193, 78, 0.12);">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
-        <span>Tap to see Memory Wall</span>
+        <span>Tap to see our Memory Wall</span>
       </button>
 
       <!-- HOST ONLY: Run of Show. One card per stop, in route order.
@@ -5638,15 +5636,15 @@ let isTourOnBonusStep = false;
 // just points guests to that button, then to the Memory Wall button, instead
 // of replaying every stop in typewriter text.
 const TOUR_STEPS = [
-  { selector: '#routeGuideBtn', title: 'Tonight\'s itinerary', desc: 'Tap here anytime to see the route.', pad: 8 },
-  { selector: '#archiveFolderBtn', title: 'Memory Wall', desc: 'Our digital scrapbook. Leave anything you want there later. You can tap here anytime.', pad: 8 }
+  { selector: '#routeGuideBtn', title: 'Tonight\'s itinerary', desc: 'This is the full rundown of tonight\'s stops — give it a read so you know what\'s coming. Tap here anytime to pull it back up.', pad: 8 },
+  { selector: '#archiveFolderBtn', title: 'Memory Wall', desc: 'Our group scrapbook. Drop your photos and thoughts here whenever the moment strikes — tap in any time.', pad: 8 }
 ];
 
 // Per-stop copy for the Route Guide ("?") window only — no longer walked
 // through step-by-step in the welcome tour, but still the source of truth
 // for each stop's name/photo/description in that window.
 const ROUTE_STOPS = [
-  { selector: '#hubCardRoulette', title: 'Dauphine Square', desc: 'Our glamorous starting line is a quiet, triangular square hidden on the Seine. While we wait for the stragglers, check the passenger list, dodge red flags on the road, or style a look in the closet.', url: 'https://www.parisinsidersguide.com/place-dauphine-paris.html' },
+  { selector: '#hubCardRoulette', title: 'Dauphine Square', desc: 'Our starting line, tucked into a hidden square on the Seine. While we wait for those with tragic time management, check the passenger list and play a quick round of "Red Flag Rally".', url: 'https://www.parisinsidersguide.com/place-dauphine-paris.html' },
   { selector: '#hubCardGarden', title: 'The Luxembourg Garden', desc: 'First stop. The heavy iron gates of this famous garden are locked at sundown, but we have a way in. Once we pull in and the doors open, step out and pick a flower with your partner.', url: 'https://jardin.senat.fr/en.html' },
   { selector: '#hubCardAita', title: 'The Palace of Justice', desc: 'Second stop. We regroup here after the garden. It is the historic courthouse of Paris, locked until we arrive, so get ready to take your seat and cast your verdicts.', url: 'https://www.hotelparisjadore.com/blog/en/visit-paris/palais-de-justice-of-paris-a-journey-through-its-history-and-architecture/' },
   { selector: '#hubCardCloser', title: 'The Louvre Post Office', desc: 'Our final stop. Historically the only post office in the city to stay open all night, making it the perfect place to send a late night love letter. What kind of letter will you write? You\'ll find out once you\'re inside.', url: 'https://parisjetaime.com/eng/pro/la-poste-paris-louvre-p2711' }
@@ -5865,26 +5863,20 @@ function openRouteGuide(opts) {
     textCol.appendChild(nameEl);
     textCol.appendChild(desc);
 
-    // If a URL is provided, add an optional, muted "for the curious" footnote under the picture.
-    // Only the gold link is clickable; the tag in front of it is plain, soft text.
+    // If a URL is provided, add a tiny "?" badge on the photo — tap it to
+    // open the real-place link in a new tab. Kept off the description text
+    // so it doesn't clutter the copy.
     if (step.url) {
-      const optionalEl = document.createElement('div');
-      optionalEl.className = 'rg-optional';
-
-      const tagEl = document.createElement('span');
-      tagEl.className = 'rg-optional-tag';
-      tagEl.textContent = '* For the curious';
-
-      const linkEl = document.createElement('a');
-      linkEl.className = 'rg-learn-more';
-      linkEl.href = step.url;
-      linkEl.target = '_blank';
-      linkEl.rel = 'noopener noreferrer';
-      linkEl.textContent = 'Learn about the real place ↗';
-
-      optionalEl.appendChild(tagEl);
-      optionalEl.appendChild(linkEl);
-      textCol.appendChild(optionalEl);    // sits under the description (the label is too long for the narrow picture column)
+      const badge = document.createElement('a');
+      badge.className = 'rg-learn-badge';
+      badge.href = step.url;
+      badge.target = '_blank';
+      badge.rel = 'noopener noreferrer';
+      badge.textContent = '?';
+      badge.setAttribute('aria-label', `Learn about ${name}`);
+      badge.setAttribute('title', `Learn about ${name}`);
+      badge.onclick = (e) => e.stopPropagation(); // don't trigger anything the photo/row might have
+      photoCol.appendChild(badge);
     }
 
     row.appendChild(numberCol);
@@ -6184,16 +6176,16 @@ function listenHubs() {
 // each one names the section and treats it like a real venue we haven't
 // arrived at yet, not a door Sasha personally unlocks.
 const PATIENCE_MESSAGES = [
-  "Darling, this one's locked. Sit tight, I'll unlock it myself when it's time 💋",
-  "Not yet, mon chéri. I'm the one who opens the doors, so watch for the ping 🤭",
-  "Still closed, darling. I'll swing it open for everyone the moment we're ready. 🦢",
-  "Locked for now, love. I'll unlock it and you'll get a little tap on the shoulder. 💋",
-  "Patience, darling. I open every door myself, no need to keep knocking 🤭",
-  "Simply not open yet. I'll flip the lock when it's go time, promise. 🦢",
-  "Not so fast, love. I'll unlock this one, and you'll know the second it's ready 💋",
-  "Still waiting on me, darling. I'll open it for the whole room at once. 🤭",
-  "Locked, darling. I'll take care of it, no tapping required 🦢",
-  "Not yet, love. I open these myself, and you'll feel the buzz when it's time 💋"
+  "We haven't pulled up there yet, darling. You'll be the first to know when we do 💋",
+  "Not yet, mon chéri — we're not even there. Sit tight 🦢",
+  "Still on our way, love. This one opens the second we arrive 🤭",
+  "We haven't arrived, darling. No amount of tapping gets us there faster 💋",
+  "Patience, love. I'll let you in the moment the car stops 🦢",
+  "Not there yet, darling. Save your energy for when we pull up 🤭",
+  "Still en route, mon chéri. This door only opens once we've landed 💋",
+  "Hold that thought, love — we're not there. You'll feel the buzz when we are 🦢",
+  "Nope, not yet, darling. I promise it's coming, just not from here 🤭",
+  "We haven't gotten there, love. Watch for the ping the second we do 💋"
 ];
 let lastPatienceIndex = -1;
 function showPatienceToast(){
