@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>The Post Office</title>
+<title>The Louvre Post Office</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -236,7 +236,7 @@
     <div class="door-glow"></div>
     <div class="door-emblem" id="doorEmblem">
       <img src="post-office-icon.png" alt="" class="door-emblem-icon" onerror="if(this.dataset.fb!=='1'){this.dataset.fb='1';this.src='post-office-icon.jpg';}else{this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23f2c14e\'><path d=\'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z\'/></svg>';}">
-      <div class="door-emblem-title">The Post Office</div>
+      <div class="door-emblem-title">The Louvre Post Office</div>
       <div class="door-emblem-sub">Please, Come In</div>
     </div>
   </div>
@@ -246,7 +246,7 @@
     <img src="post-office-icon.png" alt="The Post Office Icon" class="post-office-icon" onerror="if(this.dataset.fb!=='1'){this.dataset.fb='1';this.src='post-office-icon.jpg';}else{this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23f2c14e\'><path d=\'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z\'/></svg>';}">
     
     <div class="guide-container">
-      <img src="emily.jpg" alt="Emily" class="emily-portrait" onerror="if(this.dataset.fb!=='1'){this.dataset.fb='1';this.src='emily.png';}else{this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%238b9bb4\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg>';}">
+      <img src="emily.jpg" alt="Émilie" class="emily-portrait" onerror="if(this.dataset.fb!=='1'){this.dataset.fb='1';this.src='emily.png';}else{this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%238b9bb4\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg>';}">
       <div class="dialogue-box">
         <div class="dialogue-text" id="dialogueText"></div>
       </div>
@@ -306,7 +306,7 @@
       <div style="border: 1px solid rgba(242, 193, 78, 0.3); padding: 50px; min-height: 1011px;">
         <!-- Header -->
         <div style="font-family: 'Space Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: #8b9bb4; text-align: center; border-bottom: 1px solid rgba(242, 193, 78, 0.2); padding-bottom: 24px; margin-bottom: 40px;">
-          The Post Office &bull; A Letter to My Past Self &bull; <span id="pdf-date"></span>
+          The Louvre Post Office &bull; A Letter to My Past Self &bull; <span id="pdf-date"></span>
         </div>
         <!-- Body -->
         <div id="pdf-body" style="font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #f4e9ff; line-height: 1.8; white-space: normal;">
@@ -317,13 +317,6 @@
   
   <div class="success-msg" id="successOverlay">
     <h1>The letter is sealed.</h1>
-    <p class="success-thanks">Thank you for writing it.</p>
-    <div class="success-followup">
-      <p style="font-size: 16px; color: var(--dim); margin: 0 0 24px; line-height: 1.5; font-weight: 300; max-width: 400px;">
-        One more thing: if you'd like, consider leaving something on the Memory Wall. This is kind of our digital scrapbook.
-      </p>
-      <a href="https://padlet.com/speakingclub_sasha/memory-wall-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener noreferrer" class="btn-delicate" style="max-width: 280px;">Head to the Memory Wall</a>
-    </div>
   </div>
 
 
@@ -367,7 +360,7 @@
       document.getElementById('tourContent').classList.add('show');
       
       await wait(1200);
-      await typeDialogue("Hello there. I'm Emily.<br>Welcome to The Post Office.");
+      await typeDialogue("Hello there. I'm Émilie.<br>Welcome to The Louvre Post Office.");
       
       await wait(1500);
       await typeDialogue("We've been talking about other people's relationships... but there's one that's no less important: the one you have with yourself.");
