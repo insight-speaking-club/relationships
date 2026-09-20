@@ -796,16 +796,40 @@
   }
   #screen-welcome .letter-paper .host-bubble p{ color:var(--parch-ink); }
   #screen-welcome .letter-paper .field label{ color:var(--parch-ink-soft); }
-  #screen-welcome .letter-paper .field input{
-    background:rgba(255,255,255,.55); border-color:rgba(var(--parch-shade),.3); color:var(--parch-ink);
+
+  /* Force the wrapper to respect the paper's padding */
+  #screen-welcome .letter-paper .field {
+    max-width: 100%;
+    box-sizing: border-box;
   }
+
+  /* Kill the mobile expansion bug so the inputs stay perfectly inside the lines */
+  #screen-welcome .letter-paper .field input {
+    background:rgba(255,255,255,.55); border-color:rgba(var(--parch-shade),.3); color:var(--parch-ink);
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #screen-welcome .letter-paper .pronoun-custom-wrap input {
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
+  }
+
   #screen-welcome .letter-paper .field input::placeholder{ color:rgba(58,36,16,.4); }
   #screen-welcome .letter-paper .field input:focus{ border-color:var(--parch-accent,#a02a5c); background:rgba(255,255,255,.75); }
   #screen-welcome .letter-paper .pronoun-chip{ background:rgba(255,255,255,.5); border-color:rgba(var(--parch-shade),.3); color:var(--parch-ink-soft); }
   #screen-welcome .letter-paper .pronoun-chip.selected{ box-shadow:0 4px 14px rgba(160,42,92,.3); }
   #screen-welcome .letter-paper .pronoun-hint{ color:var(--parch-ink-soft); opacity:.8; }
   #screen-welcome .letter-paper .link-btn{ color:var(--parch-ink-soft); }
-  #screen-welcome .letter-paper .btn{ width:100%; }
+
+  /* Ensure the button doesn't spill over either */
+  #screen-welcome .letter-paper .btn {
+    width:100%;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
 
   @media (prefers-reduced-motion: reduce){
     .envelope-wrap{ animation:none; }
@@ -4173,9 +4197,12 @@ body[data-phase="closer"] .sky {
           </h2>
         </div>
 
-        <!-- Subtitle -->
+        <!-- Subtitle / Letter Opening -->
         <p class="sub map-sub" style="text-align: center; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 270px; margin: 0 auto 24px; line-height: 1.5;">
-          The night is mapped out for us, love. Each stop brings its own little piece of magic. ✨
+          <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; display: block; margin-bottom: 6px; color: var(--paper-ink);">
+            Dear <span id="mapGreetingName">darling</span>,
+          </span>
+          I've mapped out a night just for you. Each stop holds its own bit of magic. ✨
         </p>
 
         <div class="hub-sections">
@@ -5409,9 +5436,16 @@ function playEntranceMagic(){
 
 function renderPersonalGreeting(){
   const el = document.getElementById('personalGreetingText');
-  if(!el || !me || !me.name) return;
+  const mapNameEl = document.getElementById('mapGreetingName'); // Grab the new map span
+
+  if(!me || !me.name) return;
 
   const firstName = me.name.split(' ')[0];
+
+  // Inject the name into the map letter
+  if (mapNameEl) mapNameEl.textContent = firstName;
+
+  if(!el) return;
 
   // A pool of intimate greetings — add more by dropping another line in here
   const messages = [
