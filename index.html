@@ -2228,7 +2228,7 @@ function imgFallback(img){
   .rg-desc { font-family: 'Jost', sans-serif; font-size: 13.5px; color: rgba(244, 233, 255, 0.65); line-height: 1.45; }
 
   /* Optional external link in the Route Guide: a quiet footnote, not an action */
-  .rg-optional { margin-top: 9px; text-align: center; white-space: nowrap; line-height: 1.3; }
+  .rg-optional { margin-top: 9px; text-align: left; line-height: 1.3; }
   .rg-optional-tag {
     display: block;
     font-family: 'Jost', sans-serif;
@@ -4685,12 +4685,12 @@ body[data-phase="closer"] .sky {
         <span class="map-dogear" aria-hidden="true"></span>
       </div>
 
-      <!-- Small archive folder: legible black pill button, now living below the
-           parchment paper card rather than inside it. Links to the standalone
-           archive site (which itself embeds the Padlet as its "Memory Wall"). -->
-      <button type="button" id="archiveFolderBtn" onclick="window.open('https://insight-speaking-club.github.io/archive/', '_blank')" style="display: flex; width: fit-content; align-items: center; gap: 6px; margin: 14px auto 0; padding: 7px 12px; background: #0c0612; border: 1px solid rgba(242, 193, 78, 0.5); border-radius: 8px; color: var(--gold); font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 10px rgba(242, 193, 78, 0.12);">
+      <!-- Memory Wall button: legible black pill button, living below the
+           parchment paper card rather than inside it. Opens the Padlet
+           (our digital scrapbook) in a new tab. -->
+      <button type="button" id="archiveFolderBtn" onclick="window.open('https://padlet.com/speakingclub_sasha/things-we-love-nwbq1n7nb2y6cu8t', '_blank', 'noopener')" aria-label="Open the Memory Wall" style="display: flex; width: fit-content; align-items: center; gap: 6px; margin: 14px auto 0; padding: 7px 12px; background: #0c0612; border: 1px solid rgba(242, 193, 78, 0.5); border-radius: 8px; color: var(--gold); font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 10px rgba(242, 193, 78, 0.12);">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
-        <span>Tap to see archive</span>
+        <span>Tap to see Memory Wall</span>
       </button>
 
       <!-- HOST ONLY: Run of Show. One card per stop, in route order.
@@ -5635,20 +5635,20 @@ let isTourOnBonusStep = false;
 
 // The full stop-by-stop walkthrough now lives in the Route Guide ("?"
 // window), which shows the whole route at a glance. So the welcome tour
-// just points guests to that button, then to the archive folder, instead
+// just points guests to that button, then to the Memory Wall button, instead
 // of replaying every stop in typewriter text.
 const TOUR_STEPS = [
   { selector: '#routeGuideBtn', title: 'Tonight\'s itinerary', desc: 'Tap here anytime to see the route.', pad: 8 },
-  { selector: '#archiveFolderBtn', title: 'Tap to see archive', desc: 'This little folder opens our scrapbook from past nights — tap it anytime.', pad: 8 }
+  { selector: '#archiveFolderBtn', title: 'Memory Wall', desc: 'Our digital scrapbook. Leave anything you want there later. You can tap here anytime.', pad: 8 }
 ];
 
 // Per-stop copy for the Route Guide ("?") window only — no longer walked
 // through step-by-step in the welcome tour, but still the source of truth
 // for each stop's name/photo/description in that window.
 const ROUTE_STOPS = [
-  { selector: '#hubCardRoulette', title: 'Dauphine Square', desc: 'Our glamorous starting line is a quiet, triangular square hidden on the Seine. While we wait for the stragglers, check the passenger list, dodge red flags on the road, or style a look in the closet.', url: 'https://en.wikipedia.org/wiki/Place_Dauphine' },
-  { selector: '#hubCardGarden', title: 'The Luxembourg Garden', desc: 'First stop. The heavy iron gates of this famous garden are locked at sundown, but we have a way in. Once we pull in and the doors open, step out and pick a flower with your partner.', url: 'https://en.wikipedia.org/wiki/Jardin_du_Luxembourg' },
-  { selector: '#hubCardAita', title: 'The Palace of Justice', desc: 'Second stop. We regroup here after the garden. It is the historic courthouse of Paris, locked until we arrive, so get ready to take your seat and cast your verdicts.', url: 'https://en.wikipedia.org/wiki/Palais_de_Justice,_Paris' },
+  { selector: '#hubCardRoulette', title: 'Dauphine Square', desc: 'Our glamorous starting line is a quiet, triangular square hidden on the Seine. While we wait for the stragglers, check the passenger list, dodge red flags on the road, or style a look in the closet.', url: 'https://www.parisinsidersguide.com/place-dauphine-paris.html' },
+  { selector: '#hubCardGarden', title: 'The Luxembourg Garden', desc: 'First stop. The heavy iron gates of this famous garden are locked at sundown, but we have a way in. Once we pull in and the doors open, step out and pick a flower with your partner.', url: 'https://jardin.senat.fr/en.html' },
+  { selector: '#hubCardAita', title: 'The Palace of Justice', desc: 'Second stop. We regroup here after the garden. It is the historic courthouse of Paris, locked until we arrive, so get ready to take your seat and cast your verdicts.', url: 'https://www.hotelparisjadore.com/blog/en/visit-paris/palais-de-justice-of-paris-a-journey-through-its-history-and-architecture/' },
   { selector: '#hubCardCloser', title: 'The Louvre Post Office', desc: 'Our final stop. Historically the only post office in the city to stay open all night, making it the perfect place to send a late night love letter. What kind of letter will you write? You\'ll find out once you\'re inside.', url: 'https://parisjetaime.com/eng/pro/la-poste-paris-louvre-p2711' }
 ];
 
@@ -5707,7 +5707,7 @@ function showTourStep(bonus) {
       clearInterval(typeInterval);
       isTyping = false;
       descEl.classList.remove('typing');
-      nextBtn.textContent = (tourIdx === TOUR_STEPS.length - 1) ? 'Show me the map' : 'Next';
+      nextBtn.textContent = (tourIdx === TOUR_STEPS.length - 1) ? 'Show me tonight\'s itinerary' : 'Next';
     }
   }, 25);
 
@@ -5748,7 +5748,7 @@ function tourNext() {
     document.getElementById('tour-title').textContent = step.title;
     document.getElementById('tour-desc').textContent = step.desc;
     document.getElementById('tour-desc').classList.remove('typing');
-    document.getElementById('tour-next').textContent = isLastStep ? 'Show me the map' : 'Next';
+    document.getElementById('tour-next').textContent = isLastStep ? 'Show me tonight\'s itinerary' : 'Next';
     return;
   }
 
@@ -5880,11 +5880,11 @@ function openRouteGuide(opts) {
       linkEl.href = step.url;
       linkEl.target = '_blank';
       linkEl.rel = 'noopener noreferrer';
-      linkEl.textContent = 'History ↗';
+      linkEl.textContent = 'Learn about the real place ↗';
 
       optionalEl.appendChild(tagEl);
       optionalEl.appendChild(linkEl);
-      photoCol.appendChild(optionalEl);   // sits under the location picture
+      textCol.appendChild(optionalEl);    // sits under the description (the label is too long for the narrow picture column)
     }
 
     row.appendChild(numberCol);
