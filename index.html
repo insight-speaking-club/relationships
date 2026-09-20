@@ -961,7 +961,7 @@
 
   #activitiesSection {
     max-width: 420px; /* Restored original width */
-    margin: 18px auto 24px;
+    margin: 50px auto 24px; /* Pushes the map down slightly */
     padding: 24px 20px; /* Restored original side padding */
   }
 
@@ -3914,11 +3914,11 @@ body[data-phase="closer"] .sky {
   }
 
   @keyframes candle-flicker {
-    0%   { opacity: 0.8; transform: scale(1); }
-    25%  { opacity: 1; transform: scale(1.02) translate(-1px, 1px); }
-    50%  { opacity: 0.7; transform: scale(0.98) translate(1px, -1px); }
-    75%  { opacity: 0.9; transform: scale(1.01) translate(0px, 2px); }
-    100% { opacity: 0.85; transform: scale(1); }
+    0%   { opacity: 0.8; }
+    25%  { opacity: 1; }
+    50%  { opacity: 0.65; }
+    75%  { opacity: 0.9; }
+    100% { opacity: 0.85; }
   }
 </style>
 </head>
@@ -4093,10 +4093,10 @@ body[data-phase="closer"] .sky {
         <div class="letter-dogear" aria-hidden="true"></div>
 
         <div class="letter-reading" id="letterReading">
-          <p class="letter-line" data-line="1">The engine is running. The city is asleep, but the night is mapped out for us.</p>
-          <p class="letter-line" data-line="2">There are a few stops I want to show you. Secrets tucked away in the dark.</p>
-          <p class="letter-line" data-line="3">But the passenger seat is empty, and I am tired of driving alone.</p>
-          <p class="letter-line letter-sign-off" data-line="4">&mdash; S.</p>
+          <p class="letter-line" data-line="1">The engine is running and the streets are mostly empty.</p>
+          <p class="letter-line" data-line="2">I have a specific route in mind for tonight, but the passenger seat is empty.</p>
+          <p class="letter-line" data-line="3">Tell me you are coming along.</p>
+          <p class="letter-line letter-sign-off" data-line="4">S.</p>
         </div>
 
         <div class="letter-signature" id="letterSignature">
@@ -4144,11 +4144,6 @@ body[data-phase="closer"] .sky {
   <!-- STATE 1: THE GATHERING -->
   <div id="state-gathering" class="lounge-state active">
     <div class="lounge-content">
-
-      <!-- Personal, rotating greeting — sits right above the itinerary -->
-      <div class="personal-greeting" id="personalGreeting">
-        <div class="personal-greeting-text" id="personalGreetingText"></div>
-      </div>
 
       <!-- HOST ONLY: Roster -->
       <div id="hostRosterContainer" class="dashboard-section" style="display:none; border-color: var(--gold);">
@@ -4222,11 +4217,11 @@ body[data-phase="closer"] .sky {
         </div>
 
         <!-- Subtitle / Letter Opening -->
-        <p class="sub map-sub" style="text-align: left; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 300px; margin: 0 auto 24px; line-height: 1.5;">
+        <p class="sub map-sub" style="text-align: left; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); max-width: 290px; margin: 0 auto 24px; line-height: 1.5;">
           <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; display: block; margin-bottom: 6px; color: var(--paper-ink);">
-            Dear <span id="mapGreetingName">darling</span>,
+            Dear <span id="mapGreetingName">passenger</span>,
           </span>
-          I traced this route out just for us. The city is finally quiet, and there are a few places tucked away in the dark that I want to show you. We have the whole night ahead of us to see where the road leads.
+          You made it. I traced this map out just for us. There is a reason behind every stop on this list. We have the whole night ahead of us, so let's just take it one destination at a time.
         </p>
 
         <div class="hub-sections">
