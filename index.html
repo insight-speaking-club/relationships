@@ -3843,39 +3843,36 @@ body[data-phase="closer"] .sky {
     box-shadow: 0 0 0 3px var(--paper-gap), 0 0 0 4px rgba(var(--paper-ink-rgb), .5), inset 0 0 20px rgba(217,79,140,.15);
   }
 
-  /* --- GENTLE WALTZ & FLOATING HEARTS --- */
-  .dancing-couple {
-    color: var(--paper-ink);
-    transform-origin: bottom center;
-    animation: waltz-sway 4s ease-in-out infinite;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
-  }
-
-  /* The dance step: dipping and rising */
-  @keyframes waltz-sway {
-    0%, 100% { transform: rotate(-5deg) translateY(0); }
-    25% { transform: rotate(0deg) translateY(-2.5px); }
-    50% { transform: rotate(5deg) translateY(0); }
-    75% { transform: rotate(0deg) translateY(-2.5px); }
-  }
-
-  /* The hearts drifting up */
+  /* --- ALTERNATING FLOATING HEARTS: couple 1's hearts rise, then couple 3's --- */
   .ink-heart {
     position: absolute;
     color: var(--paper-accent, #a02a5c); /* Deep ruby ink color */
     opacity: 0;
-    bottom: 80%; left: 50%;
+    bottom: 100%; left: 50%;
   }
 
-  .heart-1 { width: 7px; height: 7px; margin-left: -10px; animation: float-heart 3.5s ease-in infinite 0.2s; }
-  .heart-2 { width: 5px; height: 5px; margin-left: 6px; animation: float-heart 4s ease-in infinite 1.8s; }
-  .heart-3 { width: 9px; height: 9px; margin-left: -2px; animation: float-heart 4.5s ease-in infinite 2.9s; }
+  .heart-1 { width: 7px; height: 7px; margin-left: -10px; }
+  .heart-2 { width: 5px; height: 5px; margin-left: 6px; animation-delay: 0.3s; }
+  .heart-3 { width: 9px; height: 9px; margin-left: -2px; animation-delay: 0.6s; }
 
-  @keyframes float-heart {
+  /* Couple 1's hearts: active during the first half of the shared 8s cycle */
+  .ink-heart-a { animation: float-heart-a 8s ease-in-out infinite; }
+  @keyframes float-heart-a {
     0% { opacity: 0; transform: translateY(0) scale(0.5) rotate(0deg); }
-    20% { opacity: 0.8; transform: translateY(-6px) scale(1) rotate(-10deg); }
-    80% { opacity: 0.8; }
-    100% { opacity: 0; transform: translateY(-28px) scale(1.1) rotate(15deg); }
+    8% { opacity: 0.8; transform: translateY(-6px) scale(1) rotate(-10deg); }
+    38% { opacity: 0.8; }
+    48% { opacity: 0; transform: translateY(-28px) scale(1.1) rotate(15deg); }
+    50%, 100% { opacity: 0; }
+  }
+
+  /* Couple 3's hearts: active during the second half of the same cycle, never overlapping couple 1's */
+  .ink-heart-b { animation: float-heart-b 8s ease-in-out infinite; }
+  @keyframes float-heart-b {
+    0%, 50% { opacity: 0; transform: translateY(0) scale(0.5) rotate(0deg); }
+    58% { opacity: 0.8; transform: translateY(-6px) scale(1) rotate(-10deg); }
+    88% { opacity: 0.8; }
+    98% { opacity: 0; transform: translateY(-28px) scale(1.1) rotate(15deg); }
+    100% { opacity: 0; }
   }
 </style>
 </head>
@@ -4146,14 +4143,24 @@ body[data-phase="closer"] .sky {
               
               <!-- "OF" wrapper with couple standing over the F -->
               <span style="position: relative; display: inline-block;">
-                <img src="couple-1.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: 75%; transform: translateX(-50%); height: 26px; width: auto; opacity: 0.75; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+                <span style="position: absolute; bottom: 75%; left: 75%; transform: translateX(-50%); width: 26px; height: 26px;">
+                  <img src="couple-1.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 26px; width: auto; opacity: 0.75; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+                  <svg class="ink-heart ink-heart-a heart-1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  <svg class="ink-heart ink-heart-a heart-2" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  <svg class="ink-heart ink-heart-a heart-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
                 OF
               </span> 
               
               <!-- "LOVE" wrapper with flanking couple -->
               <span style="position: relative; display: inline-block;">
                 <!-- Couple 3 (Right, scaled up) -->
-                <img src="couple-3.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 75%; left: 62%; transform: translateX(-50%); height: 26px; width: auto; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+                <span style="position: absolute; bottom: 75%; left: 62%; transform: translateX(-50%); width: 26px; height: 26px;">
+                  <img src="couple-3.png" alt="" onerror="this.style.display='none'" style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 26px; width: auto; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;">
+                  <svg class="ink-heart ink-heart-b heart-1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  <svg class="ink-heart ink-heart-b heart-2" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  <svg class="ink-heart ink-heart-b heart-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
                 
                 LOVE
               </span>
@@ -4164,36 +4171,6 @@ body[data-phase="closer"] .sky {
             <span class="map-title-accent" style="display: block; color: var(--gold);">Tour</span>
             
           </h2>
-
-          <!-- Animated Couple (Two Men Waltzing + Hearts): tucked in the back, bottom-right corner of the header -->
-          <div class="dancing-couple-wrap" style="position: absolute; bottom: -6px; right: 6%; width: 30px; height: 30px; z-index: 0; pointer-events: none;">
-
-            <!-- Floating Hearts -->
-            <svg class="ink-heart heart-1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-            <svg class="ink-heart heart-2" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-            <svg class="ink-heart heart-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-
-            <!-- The Couple (Two Men Silhouette) -->
-            <div class="dancing-couple">
-              <svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
-                <!-- Heads -->
-                <circle cx="25" cy="14" r="4.5" />
-                <circle cx="39" cy="15" r="4.2" />
-
-                <!-- Lead (Left) Torso & Legs -->
-                <path d="M 20 20 C 24 17 28 17 32 21 C 32 26 30 35 30 38 L 27 60 L 21 60 L 24 40 L 18 60 L 12 60 L 19 38 C 18 30 18 25 20 20 Z" />
-
-                <!-- Follow (Right) Torso & Legs -->
-                <path d="M 33 21 C 37 18 42 18 45 20 C 47 25 46 32 45 38 L 48 60 L 42 60 L 39 42 L 35 60 L 29 60 L 35 38 C 34 32 32 26 33 21 Z" />
-
-                <!-- The Dance Frame (Arms) -->
-                <!-- Clasped hands held high -->
-                <path d="M 23 23 C 25 12 30 8 32 8 C 34 8 38 13 41 22" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none" />
-                <!-- Arm wrapped around waist -->
-                <path d="M 30 30 C 33 32 36 31 38 29" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" fill="none" />
-              </svg>
-            </div>
-          </div>
         </div>
 
         <!-- Subtitle -->
