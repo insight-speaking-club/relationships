@@ -357,7 +357,9 @@
   .tu-open { width: auto; }
   .tu-link { margin-top: 6px; padding: 6px 4px; cursor: pointer; background: none; border: none; border-bottom: 1px solid rgba(244,233,255,0.3); font: 300 13px 'Jost', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mist); }
   .tu-link:hover { color: var(--gold); border-bottom-color: var(--gold); }
-  .tu-saved { margin: 0; font-size: 12px; color: var(--dim); opacity: 0.8; }
+  .tu-saved { margin: 14px 0 0; max-width: 300px; font-size: 13px; font-weight: 300; line-height: 1.5; color: var(--dim); }
+  .tu-finish { padding: 11px 30px; border-radius: 999px; cursor: pointer; font: 400 13px 'Jost', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); background: rgba(244,233,255,0.06); border: 1px solid rgba(244,233,255,0.28); transition: all 0.3s ease; }
+  .tu-finish:hover { color: var(--gold); border-color: rgba(242,193,78,0.6); background: rgba(242,193,78,0.08); }
   .timeup.sealed .tu-unsealed { display: none; }
   @media (max-width: 600px) { .tu-1 h2 { font-size: 30px; } }
 
@@ -524,8 +526,8 @@
       <h3>Our Memory Box</h3>
       <p class="tu-text">This is where we keep the memories we make together. Have a peek, and add something of your own.</p>
       <a class="btn-delicate tu-open" href="https://padlet.com/speakingclub_sasha/memory-box-archive-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener">Open the Memory Box</a>
-      <button class="tu-link tu-unsealed" id="timeUpClose" type="button">Finish my letter</button>
-      <p class="tu-saved tu-unsealed" id="timeUpSaved">Your letter is saved on this device.</p>
+      <p class="tu-saved tu-unsealed">You can always come back to this page and finish your letter. It&rsquo;s saved on this device.</p>
+      <button class="tu-finish tu-unsealed" id="timeUpClose" type="button">Finish now</button>
     </div>
   </div>
 
@@ -759,8 +761,6 @@
     }
     function showClosing(sealed) {
       clearTimeout(tuTimer);
-      const hasText = document.getElementById('letterInput').value.trim().length > 0;
-      document.getElementById('timeUpSaved').style.display = hasText ? '' : 'none';
       const el = document.getElementById('timeUp');
       el.classList.toggle('sealed', !!sealed);
       tuStep(1); el.classList.add('show'); el.setAttribute('aria-hidden', 'false');
