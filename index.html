@@ -6148,7 +6148,7 @@ function listenHubs() {
               } else if (key === 'aita') {
                 window.location.href = 'peoples-court.html' + (isHost ? '?host=1' : '');
               } else if (key === 'closer') {
-                window.location.href = 'the-post-office.html';
+                window.location.href = 'the-post-office.html' + (isHost ? '?host=1' : '');
               }
             }
           });
@@ -6259,7 +6259,7 @@ document.getElementById('hubCardAita').addEventListener('click', function() {
 document.getElementById('hubCardCloser').addEventListener('click', function() {
   if (handleLockedHubClick(this)) return;
   // Route to the new journaling activity
-  window.location.href = 'the-post-office.html';
+  window.location.href = 'the-post-office.html' + (isHost ? '?host=1' : '');
 });
 function enterAitaRound(round){
   window.currentAitaRound = round;
@@ -7320,6 +7320,7 @@ function setLock(key, unlock) {
     ref(`${E}/hubs/${key}`).set(false);
     if (key !== 'closer') ref(`${E}/state`).set('lounge');
     if (key === 'garden') ref(`${E}/gardenTimerEnd`).set(null); // Kill any timer
+    if (key === 'closer') ref(`${E}/closer/timer`).set(null); // Kill the Post Office letter timer
     if (key === 'aita') {
       ref(`${E}/court/timer`).set(null); // Kill the court's timer (it's set on the court page)
       document.getElementById('aitaTally').style.display = 'none';
