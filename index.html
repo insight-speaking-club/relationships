@@ -5659,11 +5659,10 @@ let isTourOnBonusStep = false;
 
 // The full stop-by-stop walkthrough now lives in the Route Guide ("?"
 // window), which shows the whole route at a glance. So the welcome tour
-// just points guests to that button, then to the Memory Wall button, instead
+// just points guests to that button instead
 // of replaying every stop in typewriter text.
 const TOUR_STEPS = [
-  { selector: '#routeGuideBtn', title: 'Tonight\'s itinerary', desc: 'This is the full rundown of tonight\'s stops — give it a read so you know what\'s coming. Tap here anytime to pull it back up.', pad: 8 },
-  { selector: '#archiveFolderBtn', title: 'Memory Wall (optional)', desc: 'Something extra, and nothing you need right now. This archive box is our group scrapbook, so if the moment strikes later, drop your photos and thoughts here.', pad: 8 }
+  { selector: '#routeGuideBtn', title: 'Tonight\'s itinerary', desc: 'This is the full rundown of tonight\'s stops — give it a read so you know what\'s coming. Tap here anytime to pull it back up.', pad: 8 }
 ];
 
 // Per-stop copy for the Route Guide ("?") window only — no longer walked
