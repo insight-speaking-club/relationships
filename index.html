@@ -4247,7 +4247,7 @@ body[data-phase="closer"] .sky {
 
         <!-- The itinerary letter opens with this note, then the title, the map, and the sign-off -->
         <p class="sub map-sub" style="text-align: left; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500; font-size: 18px; color: #110C09; max-width: 300px; margin: 6px auto 0; position: relative; z-index: 2; line-height: 1.5;">
-          &hellip;<span id="mapGreetingName">Passenger</span>, I drew this after midnight, when Paris gets quiet. It's everywhere we're going tonight. Look it over.
+          <span id="mapGreetingName">Passenger</span>, some nights are only worth having with the right company. I'm glad it's you. Let me show you the map with every stop we're making tonight.
         </p>
 
         <!-- Symmetrical, anchored header with integrated skyline & couples -->
@@ -6533,6 +6533,15 @@ function startBunnyGame(){
     // Save the new message to check against next time
     window.lastRoastMessage = sassyMessage;
 
+    // State the reason for the crash first, then let the roast land
+    let reasonLine = "";
+    if (reason === 'flag') {
+      reasonLine = "You ran into a red flag?";
+    } else if (reason === 'missed') {
+      reasonLine = "You jumped over a green flag?";
+    }
+    if (reasonLine) sassyMessage = `${reasonLine}\n${sassyMessage}`;
+
     overlay.innerHTML = `
       <div style="font-size: 22px; color: var(--gold); font-weight: 600; margin-bottom: 8px;">Score: ${finalScore}</div>
       <button class="btn" id="gameStartBtn">Play Again</button>
@@ -7190,9 +7199,12 @@ function showSashaToast({ title = 'Sasha', body = '', vibrateMs = 40, holdMs = 5
 
   // Meme roasts pass an <img> tag as part of the body — render that markup
   // as an actual image instead of escaping it into visible tag text.
+  // Plain-text roasts may still need a line break (e.g. the crash-reason
+  // line above the roast itself), so newlines are converted to <br> after
+  // escaping, rather than relying on a literal <br> in the source string.
   const hasImage = /<img/i.test(body);
   if (hasImage) el.classList.add('has-image');
-  const bodyHtml = hasImage ? body : escapeHtml(body);
+  const bodyHtml = (hasImage ? body : escapeHtml(body)).replace(/\n/g, '<br>');
 
   let actionHtml = '';
   if (actionLabel) {

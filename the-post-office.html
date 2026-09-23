@@ -686,7 +686,7 @@
   messagingSenderId: "852389788989",
   appId: "1:852389788989:web:6c79282e08c665b54dd954"
 };
-    const EVENT_ID = "default";
+    const EVENT_ID = "louvre-post-office-2026";
     let db = null, usingFirebase = false;
     try {
       if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -786,7 +786,7 @@
       const v = snap.val();
       const newEnd = v && v.endTime ? Number(v.endTime) : null;
       // Host ended the session live (e.g. the 0-minute preset): treat it as a timer we watched run out
-      if (syncedOnce && newEnd && newEnd !== hostEnd && newEnd - serverNow() <= 1500) runSeenFor = newEnd;
+      if (syncedOnce && newEnd && newEnd !== hostEnd && newEnd - serverNow() <= 1500 && newEnd - serverNow() >= -1500) runSeenFor = newEnd;
       syncedOnce = true;
       hostEnd = newEnd;
       hostDuration = v && v.durationMin ? Number(v.durationMin) : null;
