@@ -184,7 +184,7 @@
   .act-2-editor { position: absolute; top: 0; left: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; padding: 100px 24px 80px; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; opacity: 0; transform: translateY(20px); filter: blur(10px); pointer-events: none; transition: opacity 1.2s ease, transform 1.2s ease, filter 1.2s ease; }
   .act-2-editor.active { opacity: 1; transform: translateY(0); filter: blur(0); pointer-events: auto; }
 
-  .timer-pill { position: fixed; top: calc(5vh + 10px); left: 50%; transform: translateX(-50%); background: rgba(10, 17, 40, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(244, 233, 255, 0.15); border-radius: 999px; padding: 8px 20px; display: flex; align-items: center; gap: 8px; z-index: 20; box-shadow: 0 4px 20px rgba(0,0,0,0.3); opacity: 0; transition: opacity 2s ease, border-color 0.6s ease; white-space: nowrap; }
+  .timer-pill { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: rgba(10, 17, 40, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(244, 233, 255, 0.15); border-radius: 999px; padding: 8px 20px; display: flex; align-items: center; gap: 8px; z-index: 20; box-shadow: 0 4px 20px rgba(0,0,0,0.3); opacity: 0; transition: opacity 2s ease, border-color 0.6s ease; white-space: nowrap; }
   .timer-pill.show { opacity: 1; }
   .timer-pill.ember-glow { border-color: rgba(255, 138, 61, 0.45); animation: ember-pulse 2.2s ease-in-out infinite; }
   .timer-pill.resting { opacity: 0.55; }
@@ -194,10 +194,32 @@
   .timer-pill.ember-glow .timer-text { color: var(--ember); }
   .timer-pill.resting .timer-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; letter-spacing: 0.02em; color: var(--dim); }
 
-  .header { text-align: center; max-width: 600px; margin-bottom: 40px; width: 100%; }
-  .ideas-container { display: flex; flex-direction: column; gap: 16px; width: 100%; text-align: left; }
-  .idea { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-style: italic; font-weight: 300; color: var(--dim); padding-left: 16px; border-left: 1px solid rgba(242, 193, 78, 0.3); line-height: 1.5; min-height: 28px; }
+  /* Émilie's help */
+  .emilie-help { position: relative; z-index: 12; width: 100%; max-width: 920px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 16px; opacity: 0; pointer-events: none; transition: opacity 1.2s ease 0.5s; }
+  .emilie-help.show { opacity: 1; pointer-events: auto; }
+  .emilie-btn { display: inline-flex; align-items: center; gap: 10px; padding: 5px 18px 5px 6px; border-radius: 999px; cursor: pointer; font-family: 'Jost', sans-serif; font-size: 14px; letter-spacing: 0.04em; color: var(--gold);
+    background: rgba(10, 17, 40, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(242, 193, 78, 0.4); box-shadow: 0 4px 16px rgba(0,0,0,0.35); transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease; }
+  .emilie-btn:hover { background: rgba(242, 193, 78, 0.12); border-color: rgba(242, 193, 78, 0.7); }
+  .emilie-btn:active { transform: scale(0.97); }
+  .emilie-btn.pulse { animation: help-pulse 2s ease-in-out infinite; }
+  @keyframes help-pulse { 0%, 100% { box-shadow: 0 4px 16px rgba(0,0,0,0.35); } 50% { box-shadow: 0 4px 22px rgba(242,193,78,0.5), 0 0 0 4px rgba(242,193,78,0.12); } }
+  .emilie-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: 50% 0%; background: radial-gradient(circle at 50% 30%, #24346a, #0a1128); border: 1px solid rgba(242, 193, 78, 0.5); }
+  .emilie-bubble { max-width: 560px; width: 100%; overflow: hidden; background: rgba(10, 17, 40, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid transparent; border-radius: 12px;
+    max-height: 0; opacity: 0; padding: 0 20px; margin-top: -12px; transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease, border-color 0.5s ease; }
+  .emilie-bubble.open { max-height: 280px; opacity: 1; padding: 16px 20px; margin-top: 0; border-color: rgba(242, 193, 78, 0.28); box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
+  .emilie-text { font-family: 'Space Mono', monospace; font-size: 14px; line-height: 1.65; color: var(--gold); white-space: pre-wrap; min-height: 3.3em; text-shadow: 0 0 8px rgba(242,193,78,0.2); }
+  .emilie-actions { display: flex; gap: 22px; margin-top: 12px; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+  .emilie-actions.ready { opacity: 1; pointer-events: auto; }
+  .emilie-link { background: none; border: none; border-bottom: 1px solid rgba(244, 233, 255, 0.3); padding: 4px 0; cursor: pointer; font-family: 'Jost', sans-serif; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mist); }
+  .emilie-link.primary { color: var(--gold); border-bottom-color: rgba(242, 193, 78, 0.5); }
+  .emilie-link:hover { color: #fff; border-bottom-color: var(--gold); }
+  @media (max-width: 600px) { .emilie-btn { font-size: 13px; } }
 
+  .command-flash { position: absolute; inset: 0; z-index: 13; pointer-events: none; background: radial-gradient(circle at 50% 40%, rgba(242, 193, 78, 0.22), transparent 62%); opacity: 0; transition: opacity 1.6s ease; }
+  .command-flash.show { opacity: 1; }
+  .big-command { position: absolute; top: 62%; left: 50%; transform: translate(-50%, -50%) scale(0.95); font-family: 'Cormorant Garamond', serif; font-size: 44px; font-style: italic; color: var(--gold); opacity: 0; pointer-events: none; text-shadow: 0 4px 30px rgba(242, 193, 78, 0.4); transition: opacity 0.8s ease, transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1); white-space: nowrap; z-index: 15; }
+  .big-command.show { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  .big-command.hide { opacity: 0; transform: translate(-50%, -50%) scale(1.15); transition: opacity 1.5s ease, transform 1.5s ease; }
 
   .glass-panel { position: relative; overflow: hidden; width: 100%; max-width: 650px; background: rgba(10, 17, 40, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(255, 255, 255, 0.15); border-left: 1px solid rgba(255, 255, 255, 0.1); border-right: 1px solid rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5); border-radius: 20px; padding: 32px 24px; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transform: translateY(10px); transition: opacity 1s ease, transform 1s ease, filter 0.5s ease; }
   .glass-panel::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(160deg, rgba(255,255,255,0.06), transparent 42%); }
@@ -205,6 +227,45 @@
   .glass-panel.sealing { filter: blur(10px); opacity: 0; pointer-events: none; }
   textarea { position: relative; z-index: 1; width: 100%; min-height: 40vh; background: transparent; border: none; font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; line-height: 1.7; color: var(--mist); outline: none; resize: none; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
   textarea::placeholder { color: rgba(139, 155, 180, 0.4); font-style: italic; }
+
+  /* Parchment letter */
+  .glass-panel { --lh: 52px; max-width: 920px; padding: 56px 60px 26px; border: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+    border-radius: 6px 11px 7px 12px / 11px 6px 12px 7px;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(255, 250, 236, 0.6), transparent 62%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .1  0 0 0 .2 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+      linear-gradient(170deg, #f6ead0 0%, #ecd9b0 55%, #e2c894 100%);
+    box-shadow: inset 0 0 70px rgba(139, 90, 30, 0.38), inset 0 0 6px rgba(90, 55, 15, 0.55), 0 18px 50px rgba(0,0,0,0.6), 0 0 44px rgba(242,193,78,0.1); }
+  .glass-panel::before { background:
+      radial-gradient(circle at 12% 16%, rgba(150, 100, 45, 0.11), transparent 22%),
+      radial-gradient(circle at 90% 80%, rgba(150, 100, 45, 0.13), transparent 26%),
+      radial-gradient(circle at 72% 10%, rgba(150, 100, 45, 0.07), transparent 18%); }
+  textarea { font-family: 'Dancing Script', 'Cormorant Garamond', cursive; font-size: 30px; font-weight: 500; min-height: 54vh; line-height: var(--lh); color: #3a2814; caret-color: #b9741a; text-shadow: none; padding: 0;
+    background: repeating-linear-gradient(to bottom, transparent 0 calc(var(--lh) - 7px), rgba(120,80,35,0.16) calc(var(--lh) - 7px) calc(var(--lh) - 6px), transparent calc(var(--lh) - 6px) var(--lh)) local; }
+  textarea::placeholder { color: rgba(90, 60, 30, 0.45); font-style: normal; }
+  ::selection { background: rgba(185, 116, 26, 0.3); }
+
+  /* Let the page scroll instead of squashing the letter */
+  .glass-panel, .emilie-help, .actions { flex-shrink: 0; }
+
+  /* Progress + whispers under the letter */
+  .ink-foot { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 18px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 17px; color: rgba(90, 60, 30, 0.8); }
+  .ink-msg { transition: opacity 0.5s ease; }
+  .ink-msg.swap { opacity: 0; }
+  .ink-count { font-family: 'Space Mono', monospace; font-style: normal; font-size: 11px; letter-spacing: 0.1em; color: rgba(90, 60, 30, 0.6); white-space: nowrap; }
+  .ink-bar { position: relative; z-index: 1; height: 3px; margin-top: 10px; border-radius: 3px; background: rgba(90, 60, 30, 0.15); overflow: hidden; }
+  .ink-bar i { display: block; height: 100%; width: 0; border-radius: 3px; background: linear-gradient(90deg, #c98a2b, #f2c14e); box-shadow: 0 0 10px rgba(242,193,78,0.8); transition: width 0.5s ease; }
+
+  /* Sparkles that follow your pen */
+  .ink-spark { position: fixed; z-index: 40; pointer-events: none; width: 4px; height: 4px; border-radius: 50%; background: #f2b632; box-shadow: 0 0 8px 2px rgba(240, 160, 40, 0.9); opacity: 0; }
+  .ink-spark.star { width: auto; height: auto; background: none; box-shadow: none; color: #e0a02c; font-size: 12px; line-height: 1; text-shadow: 0 0 6px rgba(240,160,40,0.9); }
+
+  @media (max-width: 600px) {
+    .act-2-editor { padding-left: 12px; padding-right: 12px; }
+    .glass-panel { --lh: 44px; padding: 34px 22px 18px; }
+    textarea { font-size: 26px; min-height: 58vh; }
+    .ink-foot { font-size: 15px; }
+  }
 
   .actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 40px; width: 100%; max-width: 280px; opacity: 0; pointer-events: none; transform: translateY(10px); transition: opacity 1.5s ease, transform 1.5s ease; }
   .actions.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
@@ -217,6 +278,16 @@
   .seal-flash { position: fixed; inset: 0; z-index: 95; pointer-events: none; background: radial-gradient(circle at 50% 62%, rgba(244,233,255,0.85), rgba(242,193,78,0.35) 42%, transparent 72%); opacity: 0; transition: opacity 1s ease; }
   .seal-flash.show { opacity: 1; transition: opacity 0.15s ease; }
   
+  /* Sealed envelope */
+  .sealed-envelope { position: fixed; top: 50%; left: 50%; width: min(250px, 62vw); height: auto; z-index: 98; opacity: 0; pointer-events: none; filter: drop-shadow(0 16px 30px rgba(0,0,0,0.6)) drop-shadow(0 0 22px rgba(242,193,78,0.4)); }
+  .sealed-envelope.fly { animation: envelope-away 5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  @keyframes envelope-away {
+    0%   { opacity: 0; transform: translate(-50%, calc(-50% + 22vh)) scale(0.65) rotate(-5deg); }
+    22%  { opacity: 1; transform: translate(-50%, calc(-50% - 2vh)) scale(1) rotate(2deg); }
+    55%  { opacity: 1; transform: translate(-50%, calc(-50% - 5vh)) scale(1.03) rotate(-1.5deg); }
+    100% { opacity: 0; transform: translate(-50%, calc(-50% - 78vh)) scale(0.5) rotate(5deg); }
+  }
+
   .spark { position: fixed; bottom: 110px; left: 50%; width: 3px; height: 3px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 6px 2px rgba(242, 193, 78, 0.85); z-index: 99; pointer-events: none; opacity: 0; }
   
 
@@ -243,131 +314,6 @@
   .card.interactive:hover .card-btn { background: rgba(242, 193, 78, 0.12); border-color: rgba(242, 193, 78, 0.6); }
   @media (prefers-reduced-motion: reduce) { .card.interactive .envelope-img { animation: none; } }
 
-
-  /* =========================================================
-     POLISH: timer subtitle, parchment letter, prompt cards, typing magic
-     ========================================================= */
-  .act-2-editor { padding: calc(5vh + 104px) 20px 60px; }
-
-  .timer-sub { position: fixed; top: calc(5vh + 52px); left: 50%; transform: translateX(-50%); width: min(320px, 88vw); text-align: center; z-index: 20; pointer-events: none;
-    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; line-height: 1.35; color: rgba(244, 233, 255, 0.62); text-shadow: 0 1px 8px rgba(0,0,0,0.8);
-    opacity: 0; transition: opacity 2s ease 0.6s; }
-  .timer-pill.show + .timer-sub { opacity: 1; }
-
-  /* Émilie's help */
-  .emilie-help { position: relative; z-index: 12; width: 100%; max-width: 920px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 16px; opacity: 0; pointer-events: none; transition: opacity 1.2s ease 0.5s; }
-  .emilie-help.show { opacity: 1; pointer-events: auto; }
-  .emilie-btn { display: inline-flex; align-items: center; gap: 10px; padding: 5px 18px 5px 6px; border-radius: 999px; cursor: pointer; font-family: 'Jost', sans-serif; font-size: 14px; letter-spacing: 0.04em; color: var(--gold);
-    background: rgba(10, 17, 40, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(242, 193, 78, 0.4); box-shadow: 0 4px 16px rgba(0,0,0,0.35); transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease; }
-  .emilie-btn:hover { background: rgba(242, 193, 78, 0.12); border-color: rgba(242, 193, 78, 0.7); }
-  .emilie-btn:active { transform: scale(0.97); }
-  .emilie-btn.pulse { animation: help-pulse 2s ease-in-out infinite; }
-  @keyframes help-pulse { 0%, 100% { box-shadow: 0 4px 16px rgba(0,0,0,0.35); } 50% { box-shadow: 0 4px 22px rgba(242,193,78,0.5), 0 0 0 4px rgba(242,193,78,0.12); } }
-  .emilie-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: 50% 0%; background: radial-gradient(circle at 50% 30%, #24346a, #0a1128); border: 1px solid rgba(242, 193, 78, 0.5); }
-  .emilie-bubble { max-width: 560px; width: 100%; overflow: hidden; background: rgba(10, 17, 40, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid transparent; border-radius: 12px;
-    max-height: 0; opacity: 0; padding: 0 20px; margin-top: -12px; transition: max-height 0.6s ease, opacity 0.5s ease, padding 0.5s ease, margin 0.5s ease, border-color 0.5s ease; }
-  .emilie-bubble.open { max-height: 280px; opacity: 1; padding: 16px 20px; margin-top: 0; border-color: rgba(242, 193, 78, 0.28); box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
-  .emilie-text { font-family: 'Space Mono', monospace; font-size: 14px; line-height: 1.65; color: var(--gold); white-space: pre-wrap; min-height: 3.3em; text-shadow: 0 0 8px rgba(242,193,78,0.2); }
-  .emilie-actions { display: flex; gap: 22px; margin-top: 12px; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
-  .emilie-actions.ready { opacity: 1; pointer-events: auto; }
-  .emilie-link { background: none; border: none; border-bottom: 1px solid rgba(244, 233, 255, 0.3); padding: 4px 0; cursor: pointer; font-family: 'Jost', sans-serif; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mist); }
-  .emilie-link.primary { color: var(--gold); border-bottom-color: rgba(242, 193, 78, 0.5); }
-  .emilie-link:hover { color: #fff; border-bottom-color: var(--gold); }
-
-  /* Parchment letter */
-  .glass-panel { --lh: 52px; max-width: 920px; padding: 56px 60px 26px; border: none; backdrop-filter: none; -webkit-backdrop-filter: none;
-    border-radius: 6px 11px 7px 12px / 11px 6px 12px 7px;
-    background:
-      radial-gradient(120% 80% at 50% 0%, rgba(255, 250, 236, 0.6), transparent 62%),
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .1  0 0 0 .2 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
-      linear-gradient(170deg, #f6ead0 0%, #ecd9b0 55%, #e2c894 100%);
-    box-shadow: inset 0 0 70px rgba(139, 90, 30, 0.38), inset 0 0 6px rgba(90, 55, 15, 0.55), 0 18px 50px rgba(0,0,0,0.6), 0 0 44px rgba(242,193,78,0.1); }
-  .glass-panel::before { background:
-      radial-gradient(circle at 12% 16%, rgba(150, 100, 45, 0.11), transparent 22%),
-      radial-gradient(circle at 90% 80%, rgba(150, 100, 45, 0.13), transparent 26%),
-      radial-gradient(circle at 72% 10%, rgba(150, 100, 45, 0.07), transparent 18%); }
-  textarea { font-family: 'Dancing Script', 'Cormorant Garamond', cursive; font-size: 30px; font-weight: 500; min-height: 54vh; line-height: var(--lh); color: #3a2814; caret-color: #b9741a; text-shadow: none; padding: 0;
-    background: repeating-linear-gradient(to bottom, transparent 0 calc(var(--lh) - 7px), rgba(120,80,35,0.16) calc(var(--lh) - 7px) calc(var(--lh) - 6px), transparent calc(var(--lh) - 6px) var(--lh)) local; }
-  textarea::placeholder { color: rgba(90, 60, 30, 0.45); font-style: normal; }
-  ::selection { background: rgba(185, 116, 26, 0.3); }
-
-  /* Progress + whispers under the letter */
-  .ink-foot { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 18px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 17px; color: rgba(90, 60, 30, 0.8); }
-  .ink-msg { transition: opacity 0.5s ease; }
-  .ink-msg.swap { opacity: 0; }
-  .ink-count { font-family: 'Space Mono', monospace; font-style: normal; font-size: 11px; letter-spacing: 0.1em; color: rgba(90, 60, 30, 0.6); white-space: nowrap; }
-  .ink-bar { position: relative; z-index: 1; height: 3px; margin-top: 10px; border-radius: 3px; background: rgba(90, 60, 30, 0.15); overflow: hidden; }
-  .ink-bar i { display: block; height: 100%; width: 0; border-radius: 3px; background: linear-gradient(90deg, #c98a2b, #f2c14e); box-shadow: 0 0 10px rgba(242,193,78,0.8); transition: width 0.5s ease; }
-
-  /* Sparkles that follow your pen */
-  .ink-spark { position: fixed; z-index: 40; pointer-events: none; width: 4px; height: 4px; border-radius: 50%; background: #f2b632; box-shadow: 0 0 8px 2px rgba(240, 160, 40, 0.9); opacity: 0; }
-  .ink-spark.star { width: auto; height: auto; background: none; box-shadow: none; color: #e0a02c; font-size: 12px; line-height: 1; text-shadow: 0 0 6px rgba(240,160,40,0.9); }
-
-  @media (max-width: 600px) {
-    .act-2-editor { padding-left: 12px; padding-right: 12px; }
-    .glass-panel { --lh: 44px; padding: 34px 22px 18px; }
-    textarea { font-size: 26px; min-height: 58vh; }
-    .emilie-btn { font-size: 13px; }
-    .ink-foot { font-size: 15px; }
-  }
-
-  /* Host controls (only with ?host=1) */
-  .host-panel { display: none; position: fixed; top: calc(5vh + 10px); left: 12px; z-index: 130; }
-  body.is-host.doors-open .host-panel { display: block; }
-  .host-chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 11px; border-radius: 999px; cursor: pointer; color: var(--gold); font: 500 12px 'Jost', sans-serif; letter-spacing: 0.16em; text-transform: uppercase; background: rgba(10, 17, 40, 0.82); border: 1px solid rgba(242, 193, 78, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
-  .host-dot { width: 7px; height: 7px; border-radius: 50%; background: #8b9bb4; }
-  .host-dot.live { background: #6be3a0; box-shadow: 0 0 8px #6be3a0; }
-  .host-mini { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: var(--mist); text-transform: none; }
-  .host-body { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; width: min(290px, calc(100vw - 24px)); padding: 16px; border-radius: 14px; background: rgba(10, 17, 40, 0.9); border: 1px solid rgba(242, 193, 78, 0.3); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 12px 34px rgba(0,0,0,0.5); }
-  .host-panel.collapsed .host-body { display: none; }
-  .host-title { display: flex; justify-content: space-between; align-items: baseline; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 19px; color: var(--gold); }
-  .host-title small { font-family: 'Space Mono', monospace; font-style: normal; font-size: 10px; letter-spacing: 0.08em; color: var(--dim); }
-  .host-presets { display: flex; gap: 6px; }
-  .host-presets button { flex: 1; padding: 8px 0; border-radius: 999px; cursor: pointer; font: 400 13px 'Space Mono', monospace; color: var(--mist); background: rgba(244,233,255,0.05); border: 1px solid rgba(244,233,255,0.18); }
-  .host-presets button.on { color: #14100a; background: var(--gold); border-color: var(--gold); }
-  .host-start { padding: 12px; border-radius: 999px; cursor: pointer; font: 500 13px 'Jost', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); background: rgba(242,193,78,0.1); border: 1px solid rgba(242,193,78,0.5); }
-  .host-start:active { transform: scale(0.98); }
-  .host-run { display: flex; align-items: center; gap: 8px; }
-  .host-clock { flex: 1; font-family: 'Space Mono', monospace; font-size: 22px; letter-spacing: 0.06em; color: var(--mist); }
-  .host-run button { padding: 8px 14px; border-radius: 999px; cursor: pointer; font: 400 12px 'Jost', sans-serif; letter-spacing: 0.06em; color: var(--mist); background: rgba(244,233,255,0.06); border: 1px solid rgba(244,233,255,0.2); }
-  .host-run button:disabled { opacity: 0.35; cursor: default; }
-  .host-note { font-size: 12px; line-height: 1.4; color: var(--dim); }
-
-  /* Sealed envelope (replaces the lantern) */
-  .sealed-envelope { position: fixed; top: 50%; left: 50%; width: min(250px, 62vw); height: auto; z-index: 98; opacity: 0; pointer-events: none; filter: drop-shadow(0 16px 30px rgba(0,0,0,0.6)) drop-shadow(0 0 22px rgba(242,193,78,0.4)); }
-  .sealed-envelope.fly { animation: envelope-away 5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-  @keyframes envelope-away {
-    0%   { opacity: 0; transform: translate(-50%, calc(-50% + 22vh)) scale(0.65) rotate(-5deg); }
-    22%  { opacity: 1; transform: translate(-50%, calc(-50% - 2vh)) scale(1) rotate(2deg); }
-    55%  { opacity: 1; transform: translate(-50%, calc(-50% - 5vh)) scale(1.03) rotate(-1.5deg); }
-    100% { opacity: 0; transform: translate(-50%, calc(-50% - 78vh)) scale(0.5) rotate(5deg); }
-  }
-
-  /* Closing screen: thank you, then the Memory Box */
-  .timeup { position: fixed; inset: 0; z-index: 125; display: grid; place-items: center; padding: 24px; overflow-y: auto; text-align: center; background: rgba(4, 8, 20, 0.93); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; visibility: hidden; transition: opacity 1s ease, visibility 1s; }
-  .timeup.show { opacity: 1; visibility: visible; }
-  .tu-step { grid-area: 1 / 1; max-width: 420px; display: flex; flex-direction: column; align-items: center; gap: 14px; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px); transition: opacity 0.9s ease, transform 0.9s ease, visibility 0.9s; }
-  .tu-step.on { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
-  .tu-1 h2 { margin: 0; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 36px; line-height: 1.2; color: var(--gold); text-shadow: 0 0 20px rgba(242,193,78,0.3); }
-  .tu-sub { margin: 6px 0 0; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 23px; color: var(--mist); }
-  .memory-box-img { width: min(210px, 52vw); height: auto; display: block; filter: drop-shadow(0 0 22px rgba(217,79,140,0.5)) drop-shadow(0 10px 18px rgba(0,0,0,0.6)); transition: transform 0.4s ease; }
-  .tu-box-link:hover .memory-box-img { transform: translateY(-4px) rotate(-1deg); }
-  .tu-2 h3 { margin: 6px 0 0; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 28px; color: var(--gold); }
-  .tu-text { margin: 0 0 8px; max-width: 300px; font-size: 15px; font-weight: 300; line-height: 1.55; color: var(--dim); }
-  .tu-open { width: auto; }
-  .tu-link { margin-top: 6px; padding: 6px 4px; cursor: pointer; background: none; border: none; border-bottom: 1px solid rgba(244,233,255,0.3); font: 300 13px 'Jost', sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mist); }
-  .tu-link:hover { color: var(--gold); border-bottom-color: var(--gold); }
-  .tu-saved { margin: 14px 0 0; max-width: 300px; font-size: 13px; font-weight: 300; line-height: 1.5; color: var(--dim); }
-  .tu-finish { padding: 11px 30px; border-radius: 999px; cursor: pointer; font: 400 13px 'Jost', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mist); background: rgba(244,233,255,0.06); border: 1px solid rgba(244,233,255,0.28); transition: all 0.3s ease; }
-  .tu-finish:hover { color: var(--gold); border-color: rgba(242,193,78,0.6); background: rgba(242,193,78,0.08); }
-  .timeup.sealed .tu-unsealed { display: none; }
-  @media (max-width: 600px) { .tu-1 h2 { font-size: 30px; } }
-
-  /* Skip the tour */
-  .skip-tour { position: fixed; top: calc(4vh + 10px); right: 14px; z-index: 40; padding: 7px 14px; border-radius: 999px; cursor: pointer; font: 400 12px 'Jost', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); background: rgba(10, 17, 40, 0.55); border: 1px solid rgba(244,233,255,0.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity 0.8s ease, color 0.3s ease, border-color 0.3s ease; }
-  .skip-tour.show { opacity: 1; pointer-events: auto; }
-  .skip-tour:hover { color: var(--gold); border-color: rgba(242,193,78,0.5); }
-
   /* --- COMPACT TOUR LAYOUT (phones & short screens) --- */
   @media (max-width: 600px), (max-height: 760px) {
     #tourContent { padding-top: 44px; }
@@ -391,31 +337,6 @@
 </style>
 </head>
 <body>
-
-  <button class="skip-tour" id="skipTour" type="button">Skip ahead <span aria-hidden="true">&rsaquo;</span></button>
-
-  <!-- HOST CONTROLS (only visible with ?host=1) -->
-  <aside class="host-panel" id="hostPanel" aria-label="Host controls">
-    <button class="host-chip" id="hostChip" type="button"><span class="host-dot" id="hostDot"></span><span>Host</span><span class="host-mini" id="hostMini">--:--</span></button>
-    <div class="host-body" id="hostBody">
-      <div class="host-title">Letter timer <small id="hostStatus">Connecting&hellip;</small></div>
-      <div class="host-presets" id="hostPresets">
-        <button type="button" data-min="0">0</button>
-        <button type="button" data-min="5">5</button>
-        <button type="button" data-min="10" class="on">10</button>
-        <button type="button" data-min="15">15</button>
-        <button type="button" data-min="20">20</button>
-        <button type="button" data-min="30">30</button>
-      </div>
-      <button class="host-start" id="hostStart" type="button">Start 10-minute timer</button>
-      <div class="host-run">
-        <span class="host-clock" id="hostClock">--:--</span>
-        <button type="button" id="hostPlus" disabled>+5 min</button>
-        <button type="button" id="hostClear" disabled>Clear</button>
-      </div>
-      <div class="host-note">Everyone sees this timer live, so we all finish together. <b>0</b> ends the session right now.</div>
-    </div>
-  </aside>
 
   <!-- BACKGROUNDS -->
   <div class="sky"></div>
@@ -465,8 +386,6 @@
       <span class="timer-text" id="timeDisplay">10:00</span>
     </div>
 
-    <div class="timer-sub" id="timerSub">This timer just helps us all finish around the same time.</div>
-
     <div class="emilie-help" id="emilieHelp">
       <button class="emilie-btn" id="emilieBtn" type="button" aria-expanded="false">
         <img class="emilie-avatar" id="emilieAvatar" alt="">
@@ -481,6 +400,9 @@
       </div>
     </div>
 
+    <div class="command-flash" id="commandFlash"></div>
+    <div class="big-command" id="bigCommand">Write it down.</div>
+
     <div class="glass-panel" id="editorWrapper">
       <textarea id="letterInput" placeholder="Dear you," spellcheck="false"></textarea>
       <div class="ink-foot"><span class="ink-msg" id="inkMsg">Stuck? &Eacute;milie is happy to give you a little nudge &#10022;</span><span class="ink-count" id="inkCount">0 words</span></div>
@@ -492,7 +414,7 @@
     </div>
   </div>
 
-  <!-- PDF, Overlays & Lantern -->
+  <!-- PDF & Overlays -->
   <img class="sealed-envelope" id="sealedEnvelope" alt="">
   <div class="seal-flash" id="sealFlash"></div>
   <!-- Beautiful, Hidden PDF Template -->
@@ -515,25 +437,7 @@
     <h1>The letter is sealed.</h1>
   </div>
 
-  <!-- CLOSING: thank you, then the Memory Box -->
-  <div class="timeup" id="timeUp" aria-hidden="true">
-    <div class="tu-step tu-1 on" id="tuStep1">
-      <h2>Thank you for coming to this speaking club.</h2>
-      <p class="tu-sub">I hope you had a great time.</p>
-    </div>
-    <div class="tu-step tu-2" id="tuStep2">
-      <a class="tu-box-link" href="https://padlet.com/speakingclub_sasha/memory-box-archive-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener" aria-label="Open the Memory Box"><img class="memory-box-img" alt="The Memory Box (Archive)"></a>
-      <h3>Our Memory Box</h3>
-      <p class="tu-text">This is where we keep the memories we make together. Have a peek, and add something of your own.</p>
-      <a class="btn-delicate tu-open" href="https://padlet.com/speakingclub_sasha/memory-box-archive-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener">Open the Memory Box</a>
-      <p class="tu-saved tu-unsealed">You can always come back to this page and finish your letter. It&rsquo;s saved on this device.</p>
-      <button class="tu-finish tu-unsealed" id="timeUpClose" type="button">Finish now</button>
-    </div>
-  </div>
 
-
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
   <script>
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -556,14 +460,12 @@
     })();
 
     /* --- EMILY TOUR LOGIC --- */
-    let tourSkipped = false;
     async function typeDialogue(text, speed = 40) {
       const el = document.getElementById('dialogueText');
       el.innerHTML = '<span class="cursor-emily" id="cursorEmily"></span>';
       let i = 0;
       return new Promise(resolve => {
         function type() {
-          if (tourSkipped) { resolve(); return; }
           if (i < text.length) {
             if (text.substring(i, i + 4) === '<br>') {
               el.innerHTML = el.innerHTML.replace('<span class="cursor-emily" id="cursorEmily"></span>', '') + '<br><span class="cursor-emily" id="cursorEmily"></span>';
@@ -588,41 +490,24 @@
       }
     }
 
-    const TOUR_FINAL = "Think of the person you were a few years ago.<br>Write to your past self to tell them about the fears they will overcome and the unexpected victories waiting for them.";
-    const skipBtn = document.getElementById('skipTour');
-
-    // Jump straight to Émilie's last message, with the envelope ready to tap
-    function showFinalTour() {
-      tourSkipped = true;
-      skipBtn.classList.remove('show');
-      document.body.classList.add('tour-started');
-      document.getElementById('tourContent').classList.add('show');
-      highlightCard('card1');
-      document.querySelectorAll('.card').forEach(c => c.classList.add('revealed', 'interactive'));
-      document.getElementById('dialogueText').innerHTML = TOUR_FINAL;
-    }
-    skipBtn.addEventListener('click', showFinalTour);
-
     async function runTour() {
-      await wait(500); if (tourSkipped) return;
+      await wait(500);
       document.body.classList.add('tour-started');
       document.getElementById('tourContent').classList.add('show');
-      skipBtn.classList.add('show');
-
-      await wait(1200); if (tourSkipped) return;
-      await typeDialogue("Hello there. I'm Émilie.<br>Sasha told me you might be stopping by tonight. Welcome to The Post Office."); if (tourSkipped) return;
-
-      await wait(1500); if (tourSkipped) return;
-      await typeDialogue("We were discussing how much can change in just a few years. We spend so much time looking forward... but today, I want you to look back at the mountains you have already climbed."); if (tourSkipped) return;
-
-      await wait(1800); if (tourSkipped) return;
+      
+      await wait(1200);
+      await typeDialogue("Hello there. I'm Émilie.<br>Sasha told me you might be stopping by tonight. Welcome to The Post Office.");
+      
+      await wait(1500);
+      await typeDialogue("We were discussing how much can change in just a few years. We spend so much time looking forward... but today, I want you to look back at the mountains you have already climbed.");
+      
+      await wait(1800);
       highlightCard('card1');
-      await typeDialogue(TOUR_FINAL); if (tourSkipped) return;
-
+      await typeDialogue("Think of the person you were a few years ago.<br>Write to your past self to tell them about the fears they will overcome and the unexpected victories waiting for them.");
+      
       document.querySelectorAll('.card').forEach(c => c.classList.add('revealed', 'interactive'));
-      skipBtn.classList.remove('show');
       await wait(3000);
-      const cur = document.getElementById('cursorEmily'); if (cur) cur.classList.add('hidden');
+      document.getElementById('cursorEmily').classList.add('hidden');
     }
 
     /* --- OPENING DOORS --- */
@@ -638,7 +523,6 @@
       scene.classList.add('opening');
       await wait(2600);
       scene.classList.add('hidden');
-      document.body.classList.add('doors-open');
     }
 
     async function init() {
@@ -651,7 +535,6 @@
     /* --- TRANSITION TO PAST SELF EDITOR --- */
     document.getElementById('card1').addEventListener('click', async function(e) {
       e.preventDefault();
-      skipBtn.classList.remove('show');
       
       // Fade out the tour
       const tourContent = document.getElementById('tourContent');
@@ -668,157 +551,105 @@
     /* --- PAST SELF EDITOR LOGIC (from the-post-office-1_2.html) --- */
     async function runEditorSequence() {
       document.getElementById('editorScreen').classList.add('active');
-      editorVisible = true; renderTimer();
+      document.getElementById('timerPill').classList.add('show');
+      startTimer();
+      await wait(600);
+
       await wait(700);
+
+      const command = document.getElementById('bigCommand');
+      const flash = document.getElementById('commandFlash');
+      command.classList.add('show'); flash.classList.add('show');
+
+      await wait(1200); // Quicker command flash
+      command.classList.replace('show', 'hide'); flash.classList.remove('show');
+
+      await wait(400);
+
       document.getElementById('editorWrapper').classList.add('show');
       document.getElementById('emilieHelp').classList.add('show');
       armHelpNudge();
       document.getElementById('letterInput').focus();
     }
 
-    /* --- ONE SHARED TIMER (host sets it, everyone sees it) --- */
-    const firebaseConfig = {
-  apiKey: "AIzaSyDv47HEwF9APQLLoLdJgHwdLHzoYfTawyQ",
-  authDomain: "relationships-d8119.firebaseapp.com",
-  databaseURL: "https://relationships-d8119-default-rtdb.firebaseio.com",
-  projectId: "relationships-d8119",
-  storageBucket: "relationships-d8119.firebasestorage.app",
-  messagingSenderId: "852389788989",
-  appId: "1:852389788989:web:6c79282e08c665b54dd954"
-};
-    const EVENT_ID = "louvre-post-office-2026";
-    let db = null, usingFirebase = false;
-    try {
-      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-      db = firebase.database(); usingFirebase = true;
-    } catch (e) { console.warn('Firebase unavailable, using local preview mode.', e); }
+    /* --- ÉMILIE'S HELP: tap for a gentle question --- */
+    const helpPrompts = [
+      { q: "What do you wish someone had whispered to them on their hardest night?", start: "If I could sit beside you on your hardest night, I'd tell you " },
+      { q: "What are you proud of that nobody ever saw?", start: "Nobody saw this, but I am so proud of " },
+      { q: "Who showed up for you when you least expected it?", start: "Someone showed up for me when I least expected it: " },
+      { q: "What fear felt enormous then, and feels small now?", start: "You're so afraid of this right now, but I promise " },
+      { q: "What is something you could tell them that would make them smile?", start: "Here's something that will make you smile: " }
+    ];
+    const helpIntros = ['Hmm\u2026 try this one.', 'Take a breath. Then maybe\u2026', 'Here, start with this\u2026', 'I wonder\u2026', 'Ooh, what about this?'];
+    const emBtn = document.getElementById('emilieBtn');
+    const emBubble = document.getElementById('emilieBubble');
+    const emText = document.getElementById('emilieText');
+    const emActions = document.getElementById('emilieActions');
+    let helpDeck = [], helpToken = 0, helpCurrent = null, helpOpen = false, helpUsed = false;
 
-    // Fallback so the page still works when previewed on its own (syncs between tabs of one browser only)
-    function localRef(path) {
-      const key = 'fsc:' + path;
-      return {
-        set(val) { localStorage.setItem(key, JSON.stringify(val)); window.dispatchEvent(new StorageEvent('storage', { key })); },
-        on(evt, cb) {
-          const read = () => { const raw = localStorage.getItem(key); cb({ val: () => raw ? JSON.parse(raw) : null }); };
-          read(); window.addEventListener('storage', e => { if (e.key === key) read(); });
-        }
-      };
+    const sprite = document.querySelector('.character-sprite');
+    if (sprite) document.getElementById('emilieAvatar').src = sprite.src;
+
+    function nextHelp() {
+      if (!helpDeck.length) helpDeck = helpPrompts.slice().sort(() => Math.random() - 0.5);
+      return helpDeck.pop();
     }
-    const ref = (path) => usingFirebase ? db.ref(path) : localRef(path);
-
-    let serverOffset = 0;
-    if (usingFirebase) db.ref('.info/serverTimeOffset').on('value', s => { serverOffset = s.val() || 0; });
-    const serverNow = () => Date.now() + serverOffset;
-
-    const isHost = new URLSearchParams(location.search).get('host') === '1';
-    const timerRef = ref('events/' + EVENT_ID + '/closer/timer');
-    const SUB_RUNNING = 'This timer just helps us all finish around the same time.';
-    const SUB_DONE = 'Finish your thought \u2014 your letter stays saved on this device.';
-    let hostEnd = null, hostDuration = null, editorVisible = false;
-    let runSeenFor = null, shownFor = null, letterSealed = false, timeUpOpen = false, syncedOnce = false;
-    const BOX_SRC = 'data:image/webp;base64,UklGRhI+AABXRUJQVlA4WAoAAAAQAAAAfwIA0gEAQUxQSLQZAAAB/yckSPD/eGtEpO4jbttIcqTu+fa+8k949b40I/o/AZq3Dd4sz+PtYmHjE8A2dYhne8Mk1B31furfwzX19VAkOQePIkpyhLYj+SCo35GSPbAmOUug6QnZmYJ9kux0QOsL6oB2rkgymyiM2zZyJPVf9l7w+OIzIibA4+ybZXIHWS3EUVT2R94+2chzk438sBRQqHLSYhLEz+WBEkXocMDTtm1rW9u2dt2vLNmWZY45zK0zMzPjYGZmZmYeo4w/gBmLPEo8RpG5c2+cxHoKUuxGceyUImICvOH/f76xtm3vz++fTGc6yzh8HKdt27Z9ns+sR7Zt2/a57DW2bXRqJG3aNM7/93mQdNZqpqvN/7djImICGC8LYUbSFQvZqJQJX8+qS+1us74RGS6BMampUgzADyrT3cbMQqNcLPrePnqdXr0y/2i6WlmutPu9yKC+kJMNpRmpYaveXF7sdru1Qoahe43NteXVtZX5xUp1rdr5QsFbOZWQEmZpigrR/PLM/EK7WvRI2nBieN6vrVQX1hobG/1h5+6VtNlma2kL46RAwxjpzg+mpptTswvd5lQ5IGmYQMMZsEBs2feQeGsuZOdPZIB7dxdCl6cVyOCiTYMpYRhDl5eLvldodVrNXqsYBiTNEIjjbMAg8dTtDQ25+Lh0Z/5AJ4/txkZtdZMtAx7iIksJAWY22LZyznNB4MtF1UqlMVdq7CtnMpmMT6qliBPbTyWeMsZg8tbmRnV+rro8M1NrN1tsLWFwoaRt4oQByJN5TrhCOQpLkS+Uq1byGT9XKOczXqEcBoHP9oYJlHIy+2nE08bu5mqlujI3t7G+urzayXtmUE/hQkcgYtvGFQq5KMx4pU6nCNms5zK+Z1tbWQ/kAseQZihFnHq9lZEY3mu3NleXa2vLi3NrG2urracQaCsPuCgRMgNQqdBdm2sXM54QoI2jgBjehhE7pYeJLbvNer0yu7BaWZyttFrdnvniAYwLDSUM8PPdue5Sp9rfbwxppBvaTuzwBiwQw91pbaxWK7X62nqrR9g/Sb+5XllY7vR7DNUwFwkCE8gskZvprp4xN9up5EjGGAKUkLYRI6jBILFl7OUmlEu416ytrKwtz0xVNmuVOsMlPOAiYMCg1DhjfXW9V80BWEIOMWJ7CzHUiOHdVrO+PLdQXZ5+st5tNtlSwnhcp4TLxv0tP+rNTJ+2PtspC7CEEiO9hwg8RAx3a6NWW5t7Mre+urjc6vcYqmEeowlklijfOB9uzM7OtioBQIxQYvfpYWKou631leW1yszU8matusFwCQx4vCVkRjJbnlpbXjxtvp7zAAwQu18PEcO77WZ9eW5udWV2eq3darClhPE4SCmGBjEAFxR7M7PLrdyjfZKWELtqSxPDW/X19dX5x7Prq0vLjbxnBjXMYwkdG6XYNgKzlCFVm6r1Tpubnjm6RdISLrE79zAxvNdaryytVucfL9bXV9fYMoAB77UEKMWGEWacqH4+s7GxZcjzgqyfbbRazc58b6oSCcASLjEG9BAxvNdublTm56qV2Se1ZqthhksYvIfREMbxdBnPkx+FvpdiFmNb4bQw9O+HnJCXiyql7mwzPPDIIcMFuXIlKlRKuawjaQmXGDN6mBjertdb80sPZ2prKwubeY+h2sJbCLzrEyDMhigUwzDrhMJa5Dv6G1tH9h/cOLLh5aLe0ky9mA3ygedSMIN+UBOgh/c7kPPzYZhzHEMzgRhzepgY6l6rXl2qVhamZzfqa7V8iwAGRUDCFt6VCWFGai7Mt2oHHjjk1xvNVmemHkU5TygoZB3EW0cPHjh4NFa2WIzyPieoHQsxTvUQMTzv1jdW5+YqK3NPVjrtZmSoXlK7zVAN8y5JKUbSyxS7rXpvea5ZD7ceORRUStmsx/E1LKHtDNA2liJAjIk9TAzvbG7U1hZm5psb92fC9/+RP3//tUP27aVAPkxfyLsNASImVdV6qb602G50m1HOY2AzdDzEON7DxJZ5a3qu/YO+5RXaq+ofn8l0/lJmtLz6hQjYuwOBzEhVIV+YWeg2Z2emilFOJG0wMbn0MDHciOFzS8LhzIVy61i1FJ+ingPCdjKlGclMptJr1eaXZur1SsGRagkxafUw4QFZDI3d0LywFrMMD/FnN/bdmQfZDiMwBAjiNG+qVmyuzjVanUYh60haipgQe4gAuk/efEHZEGoNn75x6OJhDWKnPhng0SfVC3Pl+YV2a75XLRaypFqKUibNBvJWlod9IWA7E3Qf/tfP7R8EpXhHUop51WazePihQ8qWalOLS+2pWjkk1VLEJNyCGHthH6DFj355c18uxjl3hP/+NQWBh2lAApQ8KQSCmNTWRVed07LDG+aHlXIYkGopSpm4m+5/fvNAJ3jowMFHH/jlo48HxRjiTBdkQBgBSCKp4yfAIMAgZCPpRXhB9cyrLl4uiwEtISb/m5uHDzzy4H//d2Drkm4ftT6cj8cfIwwHI1IhAjpPevrTT+P4CjCAMCAw4Fjpxv3zrrJcpdYsBWADiD2BZoDEwN28/zf/Vh4JP+B7flVjmmu+8MUnVuufemj//m+dgYYTYEgQA6UwPnQAcj375wZkF/IXLsaXrvVVjkg3kRbakWiiwDb7SgOC33znsf8+cPbtS63+t9ZfgB/d6dWBn/3D/t0yoIShhAEIA8L58xfqPOoOHd6YvsZ+9f8wP3VOsVkk1VLEnsJo2zFGYox27MWYv/rqgEH8gO82KwHwG38w5jt+WYaJpe873wIsIbOEkCnmzEY0ffE589Hm4wdyNc+cx6CWUMpeQaMB29DN7dz9di/v5Xn+nd8+kIwdYAjkgAUC+gBeO2/usf8xnbd+/cYoFj9/7A2X5ooi1QQYyDCB2ENowFK0wsBQG0O/0YsxOr7+4lZgIJICMSheLNVlrRefvuk98MMjT6jE7vCRHMT/UcsDA5E0xJ7DaJAkB758I7Z//2QfzpsnYPmqo+CJ7Q2xB9EGITAoWCCe8bxtqGyZSXNlIynAEHsLDRqIEASgwA4Zu0DuKIDhUvYYGrAhgrOgwFNqh8ADmwmxl9BgwMYMFXnMQcQwqSE7aqaf2DNojGUwBhljomOWlUrdja77L72801h93sxN+oyw8YBlgcHgqGhnsbRf2QGT9XvBOTuqgUYPY4JvZBSNZBwtmehoGaKtiRIHJkKQgfDqQcTOWgpdJCb0BhuEIOaEkugbcim3YjfLLDzxelmRrSWxw7765n3am5M42wYCVp4TEc5zRwfHzAfeyELeKh8MClkOYievVfFvwdxkzdEWOGig03ckBtn9ODFphxcmeoaJFyJIYqfv9cgvMCE3tlEQSMrYsu1g2H8AQiiXlSkyNOOrUYqvv1p4GQzGMtiePAZVoY8ZfgbEDv29Xi62jMEYMCjmMVaUHQSfHf/1iaLKYBuLKLCxHbMsxvEGo+UkUYWTAZs4gE2EUuzDZFbeF4xgxCh1cwplQ4RItB0do8Fx8mAGISgYMXK6HYsiA8ZEiH07OlLOWt39ZQWgVBa71G69XwjZYGw7OivH3pB9E1kvj4SBXWyrFosfGws7BztqIsMYCOyKW7UcFzoehJCZvjIMgd11u9anuDVkNiaGTOzWOxuxmLEEIt1i997fLGYMELvDvFHM7CZ7yU+7mfq0mk58Oo2Y+DTaqU+r7ZRHxt2Y8nTLYJJdh/5nk6S9+QxKe7JSh7R3JZL0mssbKY8JtDXgREf0797IMCFzmrNw58b1EkD1nhxtpzb52/9vkkHN/O9aCJLSmqiZSyAz+P//7qGPb/d6MaExGbNtKQcw63/3t/32P/in/sh/beM0xhLNW+f3YYaruc61S8z/0N+0P0oJjPzkxOOpEk9pAWj2X36/33SABLZ2685FxNN7wFr4F9/9U998I3UxZ/7Vi4D8VMOtuX9985f+Dpy2QH2dYJsv01paPvC9SV6z0I982Q4Q05d+hr40bJG4WrVzmeKXB1f2JS7QmCV4O65N4MRFpR7bmuUkr2Z785i+bLed/JD8OPX5OsBOfZQlL3nYpjjfC4nLiTfxNljtQ4s4bZkS29zqk7iWnG+TlLqY5/7/puel1MXb1l1PXbJtMvc/SlqstccRbwdqriQt8PiQxTaXEhdHtt2Jy3P/f1OkTn6y1EXbV9mQkxWrf3Rh+w5dJ12B/o0NebvqHZLWMtufKW3xCJjn/v/adoVRUNJSr4+AG0nL+WPbZlY/aganK5vr24Z6Mz0S1pBtH5SUsuBRMM/9P/YPSn2m7qQ+N67htCeIhNUjkecpS0mj8MqrCUtvujcKP+6nokTFWnm/Ebx9B18mXXWHUVyaTljQSFw+h9OV0ez1SHyl1Oe5/7+xpZT6nH+MUx5xY2pUlKhAKbD9pnt8VU5VzCgqv7JK4ltS6mO+3q+Sn9nTaY+1dBWlPECJZNWj4nSlNCqpqqncd9IDU0ettAfz3P/f7KdHxslKplHJEhXlF6qjcm8BJyimd6Yqj8aJO0kKUGJUbRJVj8xz/4+xnfooS33u3Up97lwdGSlRCdnIbJ7phSQFj4hD40wTJykjXCL1dfLz3P/fsNLJT5b65NU86bEqb2/Ko6KQoEC/hhhNs1FJUpQxuhdP4wQFj1CjQeIrpT7P/f+16h6pgBKUjHxUTH55Q05Pbr6KRwT1TyyTnIpzjA5I6QkI89z/30R9UOqzfC3tsWZOo5QnVXXyk6U9pr6Q9sCDT6y0J2+T+ir5ee5HJT+bMemxOu/P4oQH8pWeGGWnJ5QY7SxB8YjNr+LUZNQPX099On0SXyn1+SZ07dQny1KfajX1uXRy1HrJSbs1Umbt01ZwWiKNFOreaJH0uvz99yc94tVfMhmV8IAmSX2d/HzjaSc/mZIea/N8M+mBtePd4KSn/LrMaDstkd/8FQetkVKWlkD2ZonR7s5bSYnyxf5IWWvvb8oJiVl+d1MeIXA9Jy3tbyBGOyMxVcaoOzXBI5f+SomJNHKdZmLS6o/c5ZNJiTh8A4/YajUpgcXayGVZYlJi5O3ExKP3Tec6+Sk5T3qsn1m9KSc88L02q4lPTvIbYuJz5jWc8DjkN0l5YvDlTaU8gU8Ov0CiaxxaU3fO8Sw6BbED9P/Pu68hj5q8/5/8bivxsKTpi2G9Osez6NLv/E0m6bTE9Pynj1xBz4T47l/+gtINI/nQhbnqfgx+JiB850QXJRmGgKcP3wyAeHYdq59XcHJhCLA2dflSGYT9DCGmXvmOxMIOgsrsydmZ10BEnnHxw34icjphgvJu7cjR7iQgIs++mViqElIJB1aenL1aKgOIyI5o3T253InR6YOtUD1xfP5lQGCzU8rN03MTIcgpg4Eg7vzbFiCI7LDNH8onN0HJggnAysPWESGI7Lya/OC3/Pn3b+c4STBiY/HEVGt2XxlFdmS7uVS59n+ugp0cGLFx5tP5NxlqdmhJolkLENICI3z70bt1AQizc9tG6PKFNjgZMKK7eP2v36+CMGanNzx+//9dRzgNsFg8eePz2ccgm69Ggbv8qw+YcNFnICx/doIyCBs7p6D95K9UkF3k2Rkw+8/XARH56u38r0MNAnYhZyDoyefd7FEZQeSrV2Lh2P1LS0i4cDMBaF/8sFaKAUW+oiXq/+KfnHzURCrWTKAzp9n3lzMwmK9sQ2P2xN/4F29NGRdnJjB36t6NzqsBBOarXWL+8r/+92cNLsIMBBY+O5GVAGTzlW8j+rWpXg0VXoYAXHi7WgYENrtDW6L+zqENsAssE6Dh9SNXAEFkV2lYOvqohAR2EWUI9O7cP7S6/0UQkV2o0JNTUxVAKpxMgIVPr6+UxKDZlRqWP/6jf2qJvIldKJlAq3/9Px4EJDC7WD+80p77W39gHhVIdkbr/LtLr4Igsru1AqXTv/bPe70LLoYsqfI/HjQEIrILdqS/2PKp/3MNqegxIPnuxfsdQER2yxKxc/vo42XbRY4R4Acf3MxKCJvdtVDtPbGZoUmNA5uVcOlN14aAGMXFuZ/7yeNFDNDkxYTNix/f03cAEiO6vOzCi59waQEwTVQMznjwbysZOZIY6TV/81T2pnMCM6QJSVQA9W/+X4HY7UsA3ml33nsBE1KjQKN/eWb2XhnZuz5AYLiLXt/21ito0mECvTt3jzXK+QRg9owyNTL++57FZNNWoPLko7uTDMrsKWXoae+Yy4EmFg5i7vNjvQnQQGSPKVx49vIzrsfQJMJW2Lxz49x+QMSBPep5T31qDzNpsmAHibNvTb8KwmbPKrDgBW/qBGCaJDjIdy837gEisseVRZes31pZajEhNDiocu/ide0XIrL3leE63PXa+YxJE4BBP/qf115i0OyNZZA/53VPAAw0zrPyjm7dXbl6EARm7yyMC1+6Vl0XmMZ1NiH/V4cn7t6aBBHZa7u4np+/7MJL6znTeM6C/v3fewxARPbqvUs+vN/w+M0QHpwLDx9/ezAQ2ZtLElTf/WdLHqsZCe7++1Um2PvLUbji8XIfPC6zFfBS+8jVEhF5zweCxb/9nx6jsZghiO6TD8/13wRBZBwo8eD0iZk6HnuZANOL84daBwHZjA9F/+qpQLDHWSbQOnVqeelNQBAZJxr165u3uwiPr0Tzwvs1AYLI2NFQ//D/XekiPI4y8PDh0RWBIDKu7N15762rXSSPm0yAo/8plkE240uL7u33377WAtljI4OgG68fAWQz5hT92x/+0/8yA9KYyAI/eniouu+AsBl72qJ36a13/90/vJPjsRDdyrmLJ/slxqkStXf/5n87Y7DHPCZe//+fT88AwuMTG6C13FxAGufYAWZ/zyd9EDbjVSOx/t4nDzeRxzNGEFc6//1vrgWbsaxh7dy/+jvnuuAxjEVcu3Tjw80HKzJjWwnCD/in07bHK8bYP376vifM5Bn7SvDaL/3XM32BNBaxJSH+cP9sCEga8wCCV37xicsBQ+MPB+G4cKlxj0ASY2EJ/tBzzC2VMI01jBVmlnT8Zrld9hBjZOnVuumZz64VDY0tTEBc/7dz5ZcZV9dWL3zDLIbGEAaJOHe5cQu6aBwlwPCf/dLTs8TS2EEQpx4dWuuUMwRxHDXUxdn12+85O8A0TjBW9/rxxlQsMWjG3P763ReeN23jAxOQ/+X5fQEQmHG3jCD/hHfPgMcBtgLd+73qIkLYjMVlBM98XRfJez+J2cP3nzRe2y9jxuey8LTVw1WD7b2c1bx450pZjOmP/vd//ARJezVjstv/ceUgIPD4TTD39p3L80ubyHuvSACx/ukKCJsxveie/Me/9S+c67AXd5y/unnquyUi43sbZg8f+/ihsL2HsjpTrcO3lhoTYvwvwKbf9RwfTLsgGyTl//Pd/GUG5bFf0sWzr1runOuz+3UQkD/6cB0QYFMMygqZ2bvvPT0bS7sZS5UFSg8+bx1EECkSZZBdfcVzfTDtXtT96NCc4rcCihSNAmz2FeecO4Wh3YhRfPDJA3BEECkiheVrl5zx7AXMpN2FHcRnb3cmEUCksJRBcO+Tr5wCM2nXYEn5qo+ugOJAkSkwOtfdXjp9Hkx7AxOoXL15Kf/BwUSKUZUzFzzlol4J7wFMYPrfL7UmKVJlQKNx/0s6EL27szOunpgrA8LFCQiM6sUvz1HAuzUDQWvHT7cDgkjRKowz3/nPt+toV2YHgErl9BmBIoWssOtv/b1/fKEO3m0ZEe8da5UePfqegGyKWomVW5/+vyWEd1EGsXLt+v+/2FUAYQpcI8Unj47PIrxbsmDt2P8+UmsAiEjBa0Pv9P/5dBbJuyCDOrWz//ezeRBgUwgLqrd/6e+xxWi0MbYrf+Xnfy9AokiWoHLb639tmEYXQ6Dz4O3f9jIgCmcJuPbLd9Qxk0YRE2D2+J/+8d8BEoW0JKrPfdpZPhgaNUxg89qd81kJJIprkV2/685yu0QsjRB2EM3zHy6+BEgU2jKy88GVF161yMhoJOX1qx9WAwhRdAsDL3jCk5b2jQYmQPXG5csHAohIES4wgtLKE55bMaSdzQT6V99brh8EZFOcy6Dz+dsAQzuWIdC7/sFUGRA2xbqka19a2prbB6adyQGm71x4tA8EkSLe1byt89680s0Y2nFshc3Zs2eaB0BECnw323v9LXkw7SRGkk+89+hNQDbFvcBg+dZ7LorA0A5hAt68dfuiQBAp+oW5xSvPvG2NndFWYPXQaVdeFiKSBMogPO/20y+rx6CdzQKa0/++ASBMMiiMTPPqN58N4J3LyDMPVw939iMgkhQKw73luWYR2pksEzj7zkblDYFIEkWjra25TyoQvdOYgHz0xjyARNp44nZEQTuJIZCH+c8uhoAQCaMSeOb0g/nc3insDFaPng71fQAmhawf/zN/uJGB/ewZgnpXL93q0QdhkkiL2cc/hlwSfrZMgJl7Z6b2CwGRdFIhHP1Xbz9uo2fJBOoLp87VDwCKpJV2rB/573/z397qDeiksETr7MePXgeETXIpibkr7723Chg64UzwvUdHKwEEkSTTRnQf3jt9djcLphPKBJb/2/W8DCKScNpi80jvxvvWQzB0QhiQ6K7+l3VANsmnwD9r5YZbekDsjpsdAN97eGzhZYJtElCDQfXq1fat62A6LhbUl0Lz82uxDMpJRgUG4fm3nXFNFEvHyIDcuPC/zmjiRUA2SanA8OtvfnEeYgQawgi4/86ZG3cAhE16KrDuffeudh2AWUICMxKthatnz51tQsBEUlWhxes+2tpYvsgPGFDQaf/3w98GCEeSVgkC1184vXxrp4/i1oqn/90N94/wrSCIpK8Sqe3AUH/1Cs/9ZS5/AwiOjKsBVlA4IDgkAAAQ1wCdASqAAtMBPkkkj0YioiEhIvJY6FAJCWdu3Nc566R1RuyYbpqRyDUyqOki3cvd1yz7r/ff3fm+PqeKXZ/nqvhf8D9gvdH+f/Vk6Lf9m/7XqJ/lv/E/cj3Z/+/+03vC/zPqAf3P/Ydcn/fPUA/iv+E9O39u/g//sv/b9J7/5ewB/9PbD/gHUj8nO4z/P9xz6v/Mfmdzu2bv7v+7emnfzwGvyb+o/5XiLQDfW/id01v8Z0LX+T5Tv0T/j8B0SY9C2+4L2ii98UIkFMDwp8S6L+GHYPAsAbV/xr++tFWN9JW3p1zRKYnrjRV7/S+uOyT92u2rNHcRd7kM9D3aLmmEr1cYAHhXgXt+NppXnzTDSjlLA1vHAkBS34D/Zx7+4ZxdtsQnZtzr9q8WfssfBD47fjMaAtIWjkHXwxqFuXTzpShMSLqP4Ar8gGAteZ73fxJ07ym6R5st4BfhEuolyYSL3L8y8B6q/ULb7gvcGgjj+ZhUmrqB0QL44bGsP0guG3xTyWaqX1vKY9yAwDxiAehbfLaBWPtBZrCr7RvFnGQZneqKqbmdHxuf/+HvAfJWdyUin507pOkFgDUApyyNaa+IujGZFxf3w969+c/cXThf7jC3FRT+9Y6aeqJ6FqejL6H6Vj1VPcfVdiAehbfIlvVkRO/V24iNRCYYEQ8K+eDjjh5w0ncOmJghsYuhu8GHAnBmjOoMPHB3hH/zsQDw+MCgulcixrnN5SuwqABksFwWxCyvxeDQpU1WBCZnTuX5n4y3HdovN9Y7lhHIYYsAWk6bSqG0ZdpKy+BHknXwux6IiUUy3u/AxPdGiT8S7MsXfFUwpXqa9sR0FgMhOgx5feYG1ErOe2y/3LOaDxdnDg1tROJstX9ndRh9C3vcyUljeLu9dnjPgokfIf/Kqrhkc+qzUFJOSMzMx/Mag4X7LCFiLZwVNYRK5uBkyhl8xe4k57J1X4bvdYT0UIWR84oOrcxAPQtzcAkRLCsn6jw8/VgCc1h5gXG/vuDGpEsSmRQkjHH70iXgNNiiOW/uDrD6gHruQy2nK64z45kU7L2/RKEmuaqMq1NEKxzbIoh4wzpaCjjjEt3nXy5qiAASphWZ/fqlu9RIrUhc9n59uqAlPfXcADxbJSeU8vaotoTKBASGoxy1YXvZeMFc35yjQH3TNsf1spTE6KFOHfOsGHdjMxfhjTaXgQM+iNZ6UecuxtGqI9cMYCVbhW2jSoICML5nVPvV1gGMWXSGHI5w60HsQTU0nzAUWCYgIBfYpj6eRyQ0wMB23mq1Cxse2yUoG095FTfyB3jjwZzqYfrV95iLgVHHURp5V8Rjh2XeqVJKJxUsAEg4xF6Gp3BM3lM1T5cBJ/9tHvxo+6mRLC3ssF7pYUM/i85socFqgczUfaJUfhK/ByFrTz35i+J6STEONcFTgUc0PefysKRI7edSKNCwaZtsdYvh/+WGtuT7IeDgwSsvCzpRrZAApOx2YMY89ojNj+XWJvNok5DcoJyPSnGq0HrbDL2HXIIDMgjZrQPrVnKAPwOZeBwqa/5xvBH/kLmhWq0P++7c6XN/865rBJXIPCqXNzzTKbr7otpfGbwp1Yc/nRVtdvuC8WUrKm8vrSFwXoczUBRNvCYQuYlA/Hf+RpYXtDNHFZ0Ct9wXuC9qEU/yRheKcn9t5mjim0FnSwTKd6Jj2zJmtkPmbSI+CcjjbIoh4xAPQts1KzoRwZQF2CsUgK5ehn2paL83ycJfMKgaaVn/GERtXXD+diAehbfcF7grA2Yqt6+2KS9L5n58Wx9g9gyZDhBAxl4HiTuMt7RpYXuC9wXuC9ri8AAwdIuI13gGJ1N6Yru6gGRJAnjYo0pvD17PkdR9FdZb+LNfXS/l59mBRRDxiAee9k5LAZe7i06yzra4IDz2121feRZHUq2LS/jPtMw/2rHvOon71yRRDxiAeecEfQk5NEHXr7Ze/ULb7f0jWRfhRRP9HdLVbqsgmC9b2QpGS57cPpe4L3BeQ9+jVAYu5/MG5+4L3Be4Lx0r/ERjifHhmWewf/zLGvI4KnHcPuJ4F7f3/ZmbUrugMxCPDI+VRCE9C2+4L3Be39IAld6SiPhvrrNIw4uSpUMGEMh4w/qZGbTAe3UF1mnL+B/ejpm2RRDxiAehbfHT7Oa4bAnkg/E5ebY5hCM/fGNeJ+zZe2eV7tEapdSpXa49HHV2IB6Ft9wXuC9wXuCsLoU987mTHVdDCQT1YWcIPK7T8ZbZr91MRW0T19l9k6sLhC2+4L3Be4L3Be4L3BWF0OCUpJCmnoSkplP3Be4L3Be4L2gAAP78IWABM/GLvvl51rzZ38ligad3cKB+PM/lDwxj0Eby6WIRyiaSd9LbvGzdREoCfdq7e6PdWL84sxTornTM5eh6NO8FMJFeJ0qIyCauT1peoNHLzOAFuwvOttIGefhoQMyKdv9G8dwSbTzm1xd+Zg4x5WxETWhONIpNhu/pbILQK1+/AR4ArZOesuYa7oXCR+41BV+flAYcQZ9UELAdnpp2EvFw567zc3bpZbnnY+ONe3lngmb9NY7qaPHoPu8xWE+XlmXz2M0nzJ9aj/cwCvkE8tsv7kdKe8X/2/B+3afHD+z0tTpjnveEG6Gz+qqERNsbTIf/sTiPziTuIudujyjGC1Ohf4GkieHfsWkRrT3Y+5W5beKUKJs6cLyMAwghZKm1WNf1itdLzMFXJ++CvadMNUju8DIImAYChX7gx/81DHy2LbG+++jrIh7THuD75Dlrnj+Y3QnKvwG/ObFBgpzPYB00uTdcel8kNI+o0sKXYNGqfYrkOL2smD0f33NPxpnXbleHt9mv2oTJ16vPwOL4fzcyVgOeTss737zsle9FR3SLp86AX5YbZc+hNKih5CJWJTcNYAtQgSuyA8u25tT/6wr3y7kG6P2Tikj0HgWOQSnA/C7WG/a586Cz0x/BBv3jLuwl1POPvXFctExz3GXP5etp6QouftYwjl/jLt9l+MUikQA16Jy1FarI0HmZp+/8pGoxwEyFkZZ+WfX9vs6WvXjU6rQ4xcn5J+vv/xAbs5f2/DgYVX68Ok1jflcHgSi6l7EcvTtoKbU6xz0RuqcoSTo5IcOCb5homZbgDPoBAKVPVpdUubKxA1BuYeM4I+7nC4m9EaJGTP44vepli/F7YFLJKjO0ftGdFcim9G8F95q4nh8GT/yoVZSM6a1+MeHgu5/ky5g3PjBtcTZi5tBmSqJaZYAuxm6rx1N3VT0fjD6/WIeNiBB0AXRs3TsvyDKycr472AE4qlrQGxF5mzbX9YCBY4ixwAFVxiGy1c4hylRX4iDX+caT8Di65utMChq3luY9GjvtT368lrlh1yPC0/ch6bMBsERsyAJSosnjdE3086pWjuaIQzjXZcjtU18Kr3i3XViVZSOwbXwjuiZME1NzhXXOKaJXhgf2fL6bsGwshAwgex1UyxwUhB9MJGEDiucBVIDJbtO0oRQ/9HeJSQutJM+CB113eD8hpEacEGVR21y08hyamfCVkWXHpgGt3flwpiDVjWFNyI11chDm/kn9VgqLZIFX7XBjS3A/G9g6LLmraXwm5jkpHuknAADVoN8skvvHBCx0Gv0LO2fcIuTkz1Rpmuth8t54XNtl8D+Hv3kH8gSOVKOMgkoz+7KDDd7MgM6DvIATlSckVhlFmK9IYm0QF/SNMXzVC+z2Lqog15dRhYuQrxg4HK846SXqf3mJt1iLfwMkzitbm6pa89kKXwHUSTZMBpiwm54qG8qajaQruc8r41YOcFHK9gN+da82eEw5PEa56d4lQsWufVtbXiLFVVKkl9PK1bJZM5hWCyKCy8e9ovaWOe7+GzFXz7KUTQtk8hC3GRjAqW2S4lsXZXHCItlqxPnnwE+6c3XwRcCzRVqjkAXxJ0JUYfbEm1VjwVzoz1clT6hz/B9u0Gw6O7jQsc8I6N1WjZVdcSsm6RTfboO+lql+dagoXlP7rKEiUespzOq3qNK/Txjsj62auvuHhh0xTIIXmETdU43jQZ5ib/oKOHOgUla6ecy2yC5alfOMn3gKIBDPmRe34LQHCkxf/ZwWLDPgAAAAV81pI43Eij6GSNay8ifIw6dFJN4fewkaxpXs6KmGZcoI71LmJ8g84Jqosbm5flkFlNsOEHKUY6Cwnz9YkDTTY/wRkVCGCOJ0Pan8z/gMiTXmBinCDXR2vL2I6r13nL1523+xCAAr9g9UlaxrqtyARMkjl8//WC7TmFKuZeq7V/bZvtL/a7xywAlfUKwZDnilCwzFlYZ2Dymtd3+saheeQR4v35X7yYPtFtJFaHSlekPggxtadVAAEelmcGb4ae1BVj/wpEwitlC2BTdHMU50ZV0JNsimOGrCTC5xOA0T3+9pZCFf9OLpmcwOmhjNGPcEErwSeMNnTwm19OByx2UmsvwNksgp+X3PGNaTDDsiUVLiz8dOWFceVKkQAAB8vWBxNvl3FPbC3KMucW6P32LW/8MhyuAOP1qn75tTg2YlUR3y9FdupZgvGHZgu9fmSUmIBVs1rO4ZiVQeCDN6I6eL9IAtN9HmfhwifFZkZ32pKTfKtWFW1AAAXNSe8iy2dQIV2pB1jUvIT+y0e2qC1pylnEwtUAAAAAAKEofJmzpwyS9Y+u2JTvnh3dE8g6gTz6KPT/SO9h4zFBGnU9l8K0f+4Lu4MZOBdNrLutqw8u1A3G2XDfSrBptZ7+XYnYXUXcpz/yIDb9xXB/kE510rzSVZLGKlG4Au7T+hVjyX8LjXSlXcHp1Timz9IIJkoUlp8gniN8BXQ5thgy0DEDrITqhmRBdu81t3CRYKaxIV1okv+RM3X2VCUk/UNjxQCP2HwndQdsI0IawDVZcV1KfDoKkepAARuHq7lGYKhGTKs39AQPV/Ya4tkyUb7unkyAD4Az7iBRKbOkxi7QHNCtUHPz5vAc64WjzlK8IjGPVXmh8h7+tEjVUC3xrS+xX/wqAsZWYgF0BwU2eOseAfVigPt9dA9pNBklYCiyCG3Zl6osDdmJpLG70ETBF/qjeqj4b2Nj/iuBsb39l1ZwJlGsF+KGOKUGjnG+ArozKOl3sW5GG/9oyt7Rbv/8JPpTf65jiXNRTCxOk6uwATHbjWKE0BforqNlcEcvor4MnswAR0Y1xg0qdGngH/PzedKuiN1s6zGfdHpHAyZ/3vNLO2WLl3zGJsyI3NnEK1rqF0ScD5FLErvqhr6pdjdYwVqQ5yQbFOzFj09gog4sJYJgzFxksLfAI7t5gEWcHQkEtfUq0urgFX6j4vMCwlKApA0hmD3xyPIqNdaOenLAynPoT8Pe3aC5w8ervRcXaOizU0UmDx082Z77EnWB2eehTmNSmxU8fFJuNUcbYpZf5tt8SV79uhGtw4I+xx5FdGxSbywt6FhDV8sQ7uZ0+tMcgMR78ffqB/xwtZW2mMPTIUrjgmoOCMFVwu6tWUQp1WDlfRTwNBKzONtyDRjKBfE0OoY+M/dcCWAFiBJpGIJKOkZkbRkIBurQkxy2Gfj0mppD1ZtqBCrw4pTJrw+dzAajX+8ayfwYXUIj5MmtDPqY8rhMshtVw0kUL5jUG6ccawetGcoOVdgQhloQLPZwIphIznrm3ZDkfKLVSO9g0kB4jMIA/9jfw9VuCvc+J8X1Yj3LNJtGaFHNHPKvkwXVq2I/EIRjj9aRWJ+PyAATA7qd45uYY+aXoYhjIXBrARRURIL4T+aS9Esn/i6xzTuX57Zow5nsQbB1c6HrZ4rlZZGIjeUIw+YYvpX5m9cmF2qWGIC59VIP9UszmgPrFiBrmoViXpc0hxh4gtTdbzJvrDOcGUugtXcmjYbChiuvU0Cd1+ii2Ma7Mv2Ttl3Gvg72fivtlpQX0YVUPF8wSwFTPy+iuOvbJxCW/EeRyANdfCgS+WszLO44/MDyISmim44YprzXZf0veMAPsiaGQ4SkSlhmuBZZnF5JNx+hq1kA04ie+8h7fq+sQq1a3hGe11rX9aw56OrqwDka2DCyKzvS9nl24j5p98F2wUtgFaAYarG1Q4htqrRQ12JLzAOpIVYDTrRRuJ2JR6uS/4pu0/at0EKm7IkmKzw9XJhR4ZMmDgGljgVl+SWzl+tfHrvrBfmra+HFeXux3hkG22VwF81kFqbWwp9WWhcJ6NuGWyo36IKVsqdW54OIXJDCFpHsWE6kIx5YDSctLrXVW+SzCFAhyDGYpIOUz9BpqFysjWjjZ8B3qcnVDD1+KaiKH61BhBDB/dFh4e2yrrLj4ZRd7l3wjntKQ/SrJA+lIjtN/lHVCqU3arldIpXNsf9CeP8KO+GUE1riguyWsKxloet6hYrsQHTLs5gcqBL2dyPz2EyY9r1VETVyEET6CRLLHdUaOT6jxfYIB3avhG4Zex+wZyt8+CJ8G2V5alDVcALOMxkToRDD8ALR53af/r50WI1yZm/VlPBkABKE4GzdXKrK8ZtEz/DuK7BxLmMp0IjPqUc5I4pkbOvrh9+D3Wb6Im+eHDDtbh2Pgwi/4SO/u961fOs8fDl22GYb0mbblcL1zbhZRRd6mFOjeVrAueFXCYxT9gRWKdKR8K7K/SHPbNxlchbCt51PqbjkoMqrRBMu/lcaYPQ8HWPvU2RnatAHeRMZEk+DWtzkXAA8wg6AA1PANUYucfGUZOR1cpFMi7erPsiXsEN4sIfWc9G+1mcDhE4xtcg6QGHDb62qsrx8QFWqmL3OV2aR1b+XKQZ3u8ss64mU+SmGd2Wd2N77mWNgggbPA4D0VcA4/+AkHGxGkkBjOh3lRDyZEOfQS9PcY50SgIs/Qgk9+opAyJ7TCEDTqxoW51MiHo4khvkSxodo646LzBxm/ZXEaAdHqh3aTI+TTsacVWX5WXXhsP5QfXIQ3Hs7tD//L2LzcQoJsIMuaV6i+uuKqE0VH9lecFqGoZplzrl51JE1GFa4hpg5xYza6UElgGeJfZ4ZKaL8XWO7sIMEsZ8nYK+HjG/OgQ4vZ+Myzc5JqQYM1Lwfr+ypnp+DRct4uNXNs1Fa19m3QjixInjVvuwcTF9/T6Rw0cUevdMyU2vRdy8Tio3hQBzdPt9Y1ibXV/L8XTI0DpAPyiBdr47ez9zcuj1b88FRYbOn37a6U9O/68sbOfYhZdMSyQ1C/mOxU5Rs5Kg7rdKo2y2jEvpd0ayAs1ULGz0fG7fWjLIXZi0clfp/+A+hTlCtm0FX5nKfjakGrHM9/DFvg+ARy5Fjv4SfR4PlB5ttxtTpQSgqoxn3JuPSR8aIB4eaJwEvHbpNcmjI27ABfiN5iUbMLWM4I2sMlqhLrSeFbEzTfCLjXKRrf+NzXSmerqi782tW0NxiKJfuwLs9zIcxVpsEbcjs4Z7rRTUXX+AZ6rm4cGW6t5eglsim4eBA026bZqA/Dqp/sVuMSK7i8gI3S/ZT2U2SmeP43//uWoulDB2lY2Yzs34l/mXh3lvOmHbzi0/zodfn21I5O+LwS+6S78iP7Q929v3b4Lne5VXhFp7mRUxC9ya9N5mQLpWuOXZM+lk6EObxjfJiuQTOJ75YK2OdJzyf9/OKr2hjcq/p7bo7tp5aeYkIG4IVVARqelHF/jrXkU7AfLNXPEVFOWf+MxCBoa1wjIzIMVWJDKfDFV1sizMyYeO0vg9ucuH03NYYyygY39XaRBeSi0AfNTiA4XcRCzxf0vpoMvA6W5n3E7xzWAce1a1mciyzPaEcpxW13FdCijtpQHlgQoqO1xd+oOS6hNncaQHRZ06yOyexTAdywN62yUtd+dsh3HNKygJMoh0M8s+W3EmaHgjQhLbLhWNT1JXD90HvaOJS68H/EzqgvLPe/SZzi6QkDxEcjyDiuEf8Cf4F6J1Fow+ibp9jYOfZcAcfhRzTZq6Zz8Z20dgNBm6qoC5VpRf9jULzuUCB2nBycOw1YXWPL7R9x24oyVZvBgDi2TG+h23+IUMCR0iOikvZpI8oC/u7+Txcv4Iemagy1hfzjl+e1s29yI/1VV9VW/FgI9fq1FxK1F5fGkIaxO2Iy5m4q51Zgvl0IUrO2b2dWbcY/fr/hDopNwmAE6Fd5ZaIfxeeMe+3SO3eqzcS6nyoRq18gUqnzMtgXIcthLWyPW8HGigzV64WOpIVNQL/nQhXW14VBJYaz78BqU0bOinQPSbzT6CT1wNIlzUzbO3isRlyhx+HlFCQNKnOgICcu0o+5RkLcGEow3gf6W7v5CkpUoC0qk4zTcOExTfeqLGZNZW9n4fGqbGzeSrkomgBBNr8WnxzvIspXzUDFQXCzt0BW+ARwlp6hxQGnlHbDkOZh9guYezrfqThtD/E3nh4sehX3sMSszSZx9kRPjx3Nj07do2c6dQrVL265Y6D5z9BLxDMohiZLcHUuebWvqASZK5/7oVSspRCzNP9LX/rrk07U6n9ByxFtMloLfg6nFOcHGDkXbxrhuGyYbmnvQVEqbQVs2imxbpMIKbijYXTLgRNeEF+XzL5yO+3tBYoZ8J4zfS8SPcmgXKsPdwfR9Dro1nQ4MKpBldWGmEo2kC5TqhrUdsztAx3ubifuxk6YxkCbQnjGWkGxWCa3R0ZT0/H92e0LJF+QbzUQBF3GkUC1oK+r6xRcQ0E1dL8zwyWq+9+R/TGFQvb155/JC/B/6vQyNGX5dtT/PmP90qcpWXB31as+Qs4hjup1Dszhi+/BacA4MFrpeR83H4S/ix+t+w/+NQr66uu9w6apSstMiv9vM3HAYsBmU7Vgm9t0uiZ7xopDpJQOkFZaVqK9yg7HLryKRhq36zn90FRKsxTs3Jmm/I2nmW8QRUU3X83/S1iYYA6GLdDll+YszXvNGNgFqyvYyM1GB00iDRAXV2Fh11E4i83jDw65MhDd7N2GjMsDwiU8LnWakNfUHp8Tx0HRHPW0bYGtmfeI9f46uZTpf1Y73Lv0zkIsjKko+4qQHgcqDPfAmILZflHOG37yDURRkWXQgsN+U2sB95KawGf8oeVYMcbynhnESKJrNJXtTzEd33N1yGjs6rr9Okswg5nxd3iJzNMDRaxG91LGh2InESYBo1wR89jvO7NfZtdpWAue2kh8On3hFGYu+vQ+TjP84gXMKjQENVF4GAA8hf5x2EWUlVjxiCDDHU0afWzII9dn9zpKfyCLdEtRyt8vtCuPWDTdvB4piGfVAgH3rZQ1D3yTBJCNb/sAtxp0sKU+xfHCGCOIT+CfxvoHQuKmWC3b8uWTThQvw6ATwb8kmcFSU3VK0zal22P1rIq4V8D/GO3btLIqoXK8yFAGepTHpvw8hO4KXVzMGi9b/oLSnd5diZmAza4KVVSfdDQie9E8D6Xudpd/wOEjEcwgK4ydSEPKL/jqRKSEXeWQWsYmoGfmJflobQJYPX3QrEDrjFZPK+YOnju0FoK67gffqGkdenLGOoM6+outVVM584wDbMsdDnpYszW+qy+wZD9ToP0qJJxrkAAcUB9uLQKN/yTzdKzWcCuYOYd/FkPi8b6Npvvb3OV7vWBoEm/v0Lbg8gzz09Mq1Uk4E3WycMYm4VZwBI6G8D+6dHNOhJcB24twywAAgZJNpwFKozyiLQtyPO+7bg38tglqM2N+crlCXSL9Kvte/irL67x+E9EzsxOGJFd4xaqR4hKun8LDzRFemH0KxPYRbOrgYdtvvnYmiJJwAAIjeN5JWrau15Swjeb+YKgx48hnE8BZGzPczUKeCa32acK78cuSOtgXwPi1yxtosYNBeGH1L2WypB0rTAyd3KmMy2F07zPiS/vqh7WJ71K9YnUxyHse6OC7kZd6kwt40dgAAfLftnHcTQWt/fJlu1Cvt8ML3QhPYxmKpXkGYi3gkaQXbA1lSuXm8VNjn8k+00gkJM5Cg62Z66aJOATzj4sPVt9cs8UgxYa6jYd+r7uPnfq8nfDZOqNBHsVr94pWNzKuPS/hjYVQgfrT6kkbC0keoBrRSHqJP45EUBqFkpX3ajejr4goAADdg7Gb6F6XB0vbH5wz4bbviv0xmug4Ho3RCzRG5Wkuaedw9CUuRYQ5GiLkDmheTtatMKgMD98aQm7zfQe25WaHKqcyz/oKWgbMekvNC2G/Y9aj5cinzAA7VZRqB+GcnR4DSPODD64m00LosAVAyLNJ+ohlec/Y/ACNETYrmm6pw2iZbe/UYqog5ZZOWCVDhhOxSmKdZlSuTZ/j8EuLfUFPJuTXmdH63L9d+3Q15oU8CylQq2STuoYKRHFkXlCQ/KeI3EPx7FSIJ2HTN5sGzb/8slpULdlQyD1RhSeKZGS/LHbAADtwB0pzLJyi928rdFCnEdFwvR9UyRZQIxJD7RF1LuM5XKsMUqiOu710kMe6orDI8rAntnoGORSvnQqKPOTv9Te+H02AiziCJVmMVe14Euz7/ADg8ErkEp3cAJiVyt/hEs3kqYJIrSLJVtzOhne9FpcAADNYJ2vCt5UMAeWvltjgQ5xyvCYbgJxOCxuDgJC5M6Orw3O/kZ7iGdG8DBx61IK5grd0C6InJnvUVHYMaA2mrmDbPMwEoy40bcAyyovuRwSgqh7cxcGKki7oR99rNlJwjYxQnulERi9f8IFOQ1drF3MM0bijKkoNlRahRsusE2lYGZy4lvpO04E2P3eA0n4AUI0NBdgc+qlEPQ/LfF0DmZpvOUOj98Smyo+2nBZxApq35vaMUCan6rEJCCVfJMjPFu7i3Z9hMJZOQuSy79NEirL2si7CEF3vCSXBlUIRsK+gnq9QFDgHitJxB8+H1d/QVbeEzG10fqjGir9egGSxhpPPgAAADxnbfn/Xyp6O2vzUJENf7HQ30k4qUpTOYn8a4g35fGE5vPH87mWFyIblQMrR04QVCQX6asvfNdK7+AkMaz8sYc3bgnMMUDBxpnoQCkA+oyyaSbr8/TBeSv2Z35BOmHh6zYePp6jvc2Y76AYI5aRFSVfCAAV4Nr5Se3t9TtMuRGnH5AcnwEbP/S9cjCSTUV9FK4FQytrp+VFPr0/TTi0FNnCFluVbuBVQcaaGSBJNhaYgzAybf2z76mORatp7fFG1peNhgg1eZm+8twV4DeTekXNIjZvrsGcx6RByrtsjaRfsF8a6rSdybneNqQF4AAACXdekMA0INRJM7GxLQ2ccfRtKdi7QalBVA1mWf0F2sCLmpdgcZp/G3X+Yhit+gMYu7EqUEoRGqXfuo5JKCUIVTHvTxNZnfhdiJRaowDk0rsKkzIHh9v2K1k8Qz3+axcfeCZrlFHiT7yuTPrXwAfU56bjpjyj+obepCkEpLuq6Xt8yfXPW5emDWxWx2ov68hMwlOcselROtTGG4/+yeJt492YAXmyTp7OTBNWVwquP/TYjK9GYk6ELBNnQGFzjkYAuXpuu7zO8ep1fZ5iDPgeu6xcNW7rKnUCPodylIgfL/J12ptuNFUq53DaAAAAAAIDKEyxyw5F4fgTmOD7fvnaNKOopvkkKQu8QRTXS+Q2ypPE6Zi2RAA9WH3UXQ5xl75oeO84UFbkIpn4tbyHnJ7Folt7krt9OHrvZ1jpY1+zmeqmh3XX/ThhxFXOWFiRUqtvulqVyH0JgZF9vjcUiPNVz3RFPYf7QJz8Iu0/i9/tvVUU5rDyAv+fd5e97oML6N6fWUK5NZoP+Mzpt/GWbO7ozVGw++LN7+b08bxlo31JsFIBIAwNu+QEu+COADvD9S5HW1HEHbRc7eMIDlp7qOWyqK7YAAAAAAgvZXuUlsZCdh8OnFjnOvtnq+bqCQ0nZ8CbZPhXsvAULd4PErA1nMr3tuWr2PSALvZ0wgHZ+7Ebx6934zjIRlv4mLKZiNUX6VhnpKqPGENb9V2qXnUvliHagghIqEiKPM01GXGdMcjviIpNqhHxYWQbTMYQLTZVW5GUVLTafABYcayXNg57IHvV7fYEubFww+IBF1ItRkqyE5Lcpr+QU2bqbRqNZFMA9Bns4kZ3Gg/tZ/8fDYc+ngQp/VgoDBfiNXDXHmvRVpswVZExyERcX1gvvz6guYAAAAAAACIZbNnekPoZAE6xJscpF6epk1njcwjIqfUuDl4VwT7wLC0hfGU2gyevlbLHBF+sV8uPr42k9uMcDS1GfQ60KfU/k8FNJF2VefPYHuojfV4+I5qGmP1Ii6vpgGs0mDZOiVme9Xxbf8Oiu721/y/hgOeeb/vGexLXZljMTT9By7pj2pZHW74RlAIyFsNc2/fIrNu5r09DF+xKDwSvtrDObYeX6+Imn1Nz29UHx+MO9lUZ+AFM+CTs8rBSPqqPE//ZIISNkXOizYvoi1I+yOB4dVWxmz+/FVVQLrn9rZwab2MAAAAAADK+np1dn3QVuUrGKnqu34f0uUVbLHiy2mueDLaQVCtBKtF/Bbmit2rQuSXwX7sCnACIyqW70LNQOqnsjGETJhveEAAAAAAAAAAA==';
-    document.querySelectorAll('.memory-box-img').forEach(i => { i.src = BOX_SRC; });
-
-    const fmt = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
-    function setText(el, t) { if (el.textContent !== t) el.textContent = t; }
-
-    function renderTimer() {
-      const pill = document.getElementById('timerPill');
-      const txt = document.getElementById('timeDisplay');
-      const sub = document.getElementById('timerSub');
-      const left = hostEnd ? hostEnd - serverNow() : null;
-
-      pill.classList.toggle('show', !!(editorVisible && hostEnd));
-      if (hostEnd) {
-        if (left > 0) {
-          pill.classList.remove('resting'); pill.classList.toggle('ember-glow', left <= 60000);
-          setText(txt, fmt(left)); setText(sub, SUB_RUNNING);
-          runSeenFor = hostEnd;
-          if (timeUpOpen && !letterSealed) hideTimeUp();   // host added more time
-        } else {
-          pill.classList.remove('ember-glow'); pill.classList.add('resting');
-          setText(txt, "Time's up"); setText(sub, SUB_DONE);
-          // Only when we watched it run out (not for someone arriving after the end)
-          if (runSeenFor === hostEnd && shownFor !== hostEnd && !letterSealed) { shownFor = hostEnd; showTimeUp(); }
+    async function showHelp() {
+      const token = ++helpToken;
+      helpUsed = true; helpOpen = true; helpCurrent = nextHelp();
+      emBtn.classList.remove('pulse'); emBtn.setAttribute('aria-expanded', 'true');
+      emActions.classList.add('ready');
+      emBubble.classList.add('open');
+      const intro = helpIntros[Math.floor(Math.random() * helpIntros.length)];
+      const full = intro + '\n\u201C' + helpCurrent.q + '\u201D';
+      emText.textContent = '';
+      if (reduceMotion) { emText.textContent = full; }
+      else {
+        for (let i = 0; i < full.length; i++) {
+          if (token !== helpToken) return;
+          emText.textContent = full.slice(0, i + 1);
+          await wait(/[.?,\u2026]/.test(full[i]) ? 140 : 22);
         }
-      } else if (timeUpOpen && !letterSealed) { hideTimeUp(); }    // host cleared the timer
-      if (isHost) {
-        const clock = hostEnd ? fmt(Math.max(0, left)) : '--:--';
-        setText(document.getElementById('hostClock'), clock);
-        setText(document.getElementById('hostMini'), clock);
-        document.getElementById('hostPlus').disabled = !hostEnd;
-        document.getElementById('hostClear').disabled = !hostEnd;
       }
+      if (token === helpToken) emActions.classList.add('ready');
     }
-    function saveDraft() {
-      if (letterSealed) return;
-      try { localStorage.setItem(DRAFT_KEY, document.getElementById('letterInput').value); } catch (e) {}
+    function closeHelp() {
+      helpToken++; helpOpen = false;
+      emBubble.classList.remove('open'); emBtn.setAttribute('aria-expanded', 'false');
     }
-    let tuTimer = null;
-    function tuStep(n) {
-      document.getElementById('tuStep1').classList.toggle('on', n === 1);
-      document.getElementById('tuStep2').classList.toggle('on', n === 2);
+    function armHelpNudge() {
+      setTimeout(() => { if (!helpUsed && !textarea.value.trim()) emBtn.classList.add('pulse'); }, 12000);
     }
-    function showClosing(sealed) {
-      clearTimeout(tuTimer);
-      const el = document.getElementById('timeUp');
-      el.classList.toggle('sealed', !!sealed);
-      tuStep(1); el.classList.add('show'); el.setAttribute('aria-hidden', 'false');
-      timeUpOpen = true;
-      tuTimer = setTimeout(() => tuStep(2), 4200);   // thank you first, then the Memory Box
-    }
-    function showTimeUp() { saveDraft(); showClosing(false); }
-    function hideTimeUp() {
-      clearTimeout(tuTimer);
-      const el = document.getElementById('timeUp'); el.classList.remove('show'); el.setAttribute('aria-hidden', 'true');
-      timeUpOpen = false;
-    }
-    document.getElementById('tuStep1').addEventListener('click', () => { clearTimeout(tuTimer); tuStep(2); });
-    document.getElementById('timeUpClose').addEventListener('click', () => {
-      hideTimeUp();
-      if (editorVisible) document.getElementById('letterInput').focus();
-      else showFinalTour();                            // still on the tour: get the envelope ready
+    emBtn.addEventListener('click', () => { helpOpen ? closeHelp() : showHelp(); });
+    document.getElementById('emilieAnother').addEventListener('click', showHelp);
+    document.getElementById('emilieUse').addEventListener('click', () => {
+      if (!helpCurrent) return;
+      const gap = textarea.value ? (textarea.value.endsWith('\n') ? '' : '\n\n') : '';
+      textarea.value += gap + helpCurrent.start;
+      closeHelp();
+      textarea.focus(); textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      textarea.dispatchEvent(new Event('input'));
     });
-    window.addEventListener('pagehide', saveDraft);
-    document.addEventListener('visibilitychange', () => { if (document.hidden) saveDraft(); });
 
-    timerRef.on('value', snap => {
-      const v = snap.val();
-      const newEnd = v && v.endTime ? Number(v.endTime) : null;
-      // Host ended the session live (e.g. the 0-minute preset): treat it as a timer we watched run out
-      if (syncedOnce && newEnd && newEnd !== hostEnd && newEnd - serverNow() <= 1500 && newEnd - serverNow() >= -1500) runSeenFor = newEnd;
-      syncedOnce = true;
-      hostEnd = newEnd;
-      hostDuration = v && v.durationMin ? Number(v.durationMin) : null;
-      renderTimer();
-    });
-    setInterval(renderTimer, 250);
 
-    if (isHost) {
-      document.body.classList.add('is-host');
-      const panel = document.getElementById('hostPanel');
-      const startBtn = document.getElementById('hostStart');
-      let hostMin = 10;
-      document.getElementById('hostChip').addEventListener('click', () => panel.classList.toggle('collapsed'));
-      document.querySelectorAll('#hostPresets button').forEach(b => b.addEventListener('click', () => {
-        hostMin = Number(b.dataset.min);
-        document.querySelectorAll('#hostPresets button').forEach(x => x.classList.toggle('on', x === b));
-        startBtn.textContent = hostMin === 0 ? 'End now \u2014 thank everyone' : 'Start ' + hostMin + '-minute timer';
-      }));
-      startBtn.addEventListener('click', () => timerRef.set({ endTime: serverNow() + hostMin * 60000, durationMin: hostMin }));
-      document.getElementById('hostPlus').addEventListener('click', () => {
-        if (!hostEnd) return;
-        timerRef.set({ endTime: Math.max(hostEnd, serverNow()) + 5 * 60000, durationMin: hostDuration || hostMin });
-      });
-      document.getElementById('hostClear').addEventListener('click', () => timerRef.set(null));
-
-      const status = document.getElementById('hostStatus'), dot = document.getElementById('hostDot');
-      const setStatus = (live) => { status.textContent = live ? 'Connected' : 'Connecting\u2026'; dot.classList.toggle('live', live); };
-      if (usingFirebase) db.ref('.info/connected').on('value', s => setStatus(!!s.val()));
-      else { status.textContent = 'Preview (this browser only)'; }
+    /* --- TIMER & PDF --- */
+    let timeLeft = 600;
+    function startTimer() {
+      const timeDisplay = document.getElementById('timeDisplay');
+      const timerPill = document.getElementById('timerPill');
+      const timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          timerPill.classList.remove('ember-glow'); timerPill.classList.add('resting');
+          timeDisplay.textContent = "Take your time"; return;
+        }
+        timeLeft--;
+        const m = Math.floor(timeLeft / 60); const s = timeLeft % 60;
+        timeDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        if (timeLeft === 60) timerPill.classList.add('ember-glow');
+      }, 1000);
     }
 
-    /* --- PDF --- */
     const textarea = document.getElementById('letterInput');
     let actionRevealed = false;
     textarea.addEventListener('input', function() {
@@ -827,7 +658,6 @@
         document.getElementById('actionButtons').classList.add('show'); actionRevealed = true;
       }
     });
-
 
     /* --- TYPING MAGIC: sparkles, word count, whispers, saved draft, tappable prompts --- */
     const DRAFT_KEY = 'louvrePostOfficeDraft';
@@ -897,68 +727,6 @@
       if (burst > lastBurst) { lastBurst = burst; sparkle(p.x, p.y, 12); }
     });
 
-    /* --- ÉMILIE'S HELP: tap for a gentle question --- */
-    const helpPrompts = [
-      { q: "What is a challenge that felt impossible then, but is just a memory now?", start: "There was a time I truly believed I'd never get through " },
-      { q: "What is an achievement they wouldn't believe you actually pulled off?", start: "You won't believe this, but I actually " },
-      { q: "What is the most valuable lesson you learned from your biggest failure?", start: "The hardest lesson I ever learned was " },
-      { q: "What do you wish someone had whispered to them on their hardest night?", start: "If I could sit beside you on your hardest night, I'd tell you " },
-      { q: "What are you proud of that nobody ever saw?", start: "Nobody saw this, but I am so proud of " },
-      { q: "Who showed up for you when you least expected it?", start: "Someone showed up for me when I least expected it: " },
-      { q: "What fear felt enormous then, and feels small now?", start: "You're so afraid of this right now, but I promise " },
-      { q: "What is something you could tell them that would make them smile?", start: "Here's something that will make you smile: " }
-    ];
-    const helpIntros = ['Hmm\u2026 try this one.', 'Take a breath. Then maybe\u2026', 'Here, start with this\u2026', 'I wonder\u2026', 'Ooh, what about this?'];
-    const emBtn = document.getElementById('emilieBtn');
-    const emBubble = document.getElementById('emilieBubble');
-    const emText = document.getElementById('emilieText');
-    const emActions = document.getElementById('emilieActions');
-    let helpDeck = [], helpToken = 0, helpCurrent = null, helpOpen = false, helpUsed = false;
-
-    const sprite = document.querySelector('.character-sprite');
-    if (sprite) document.getElementById('emilieAvatar').src = sprite.src;
-
-    function nextHelp() {
-      if (!helpDeck.length) helpDeck = helpPrompts.slice().sort(() => Math.random() - 0.5);
-      return helpDeck.pop();
-    }
-    async function showHelp() {
-      const token = ++helpToken;
-      helpUsed = true; helpOpen = true; helpCurrent = nextHelp();
-      emBtn.classList.remove('pulse'); emBtn.setAttribute('aria-expanded', 'true');
-      emActions.classList.remove('ready');
-      emBubble.classList.add('open');
-      const intro = helpIntros[Math.floor(Math.random() * helpIntros.length)];
-      const full = intro + '\n\u201C' + helpCurrent.q + '\u201D';
-      emText.textContent = '';
-      if (reduceMotion) { emText.textContent = full; }
-      else {
-        for (let i = 0; i < full.length; i++) {
-          if (token !== helpToken) return;
-          emText.textContent = full.slice(0, i + 1);
-          await wait(/[.?,\u2026]/.test(full[i]) ? 140 : 22);
-        }
-      }
-      if (token === helpToken) emActions.classList.add('ready');
-    }
-    function closeHelp() {
-      helpToken++; helpOpen = false;
-      emBubble.classList.remove('open'); emBtn.setAttribute('aria-expanded', 'false');
-    }
-    function armHelpNudge() {
-      setTimeout(() => { if (!helpUsed && !textarea.value.trim()) emBtn.classList.add('pulse'); }, 12000);
-    }
-    emBtn.addEventListener('click', () => { helpOpen ? closeHelp() : showHelp(); });
-    document.getElementById('emilieAnother').addEventListener('click', showHelp);
-    document.getElementById('emilieUse').addEventListener('click', () => {
-      if (!helpCurrent) return;
-      const gap = textarea.value ? (textarea.value.endsWith('\n') ? '' : '\n\n') : '';
-      textarea.value += gap + helpCurrent.start;
-      closeHelp();
-      textarea.focus(); textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-      textarea.dispatchEvent(new Event('input'));
-    });
-
     // Come back later: restore an unsent draft
     try {
       const draft = localStorage.getItem(DRAFT_KEY);
@@ -997,7 +765,6 @@
         try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
         document.getElementById('editorWrapper').classList.add('sealing');
         document.getElementById('actionButtons').classList.remove('show');
-        letterSealed = true;
         const env = document.getElementById('sealedEnvelope');
         const envSrc = document.querySelector('.envelope-img');
         if (envSrc) env.src = envSrc.src;
@@ -1016,7 +783,6 @@
         }
 
         setTimeout(() => document.getElementById('successOverlay').classList.add('show'), 3800);
-        setTimeout(() => showClosing(true), 6800);
       });
     });
   </script>
