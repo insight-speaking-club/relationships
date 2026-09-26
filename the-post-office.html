@@ -496,14 +496,14 @@
       document.getElementById('tourContent').classList.add('show');
       
       await wait(1200);
-      await typeDialogue("Hello there. I'm Émilie.<br>Sasha mentioned you'd be arriving once the noise settled. Welcome to the Louvre Post Office.");
+      await typeDialogue("Hello there. I'm Émilie.<br>Sasha told me you'd be stopping by. Welcome to the Louvre Post Office.");
       
       await wait(1500);
       await typeDialogue("We've spent the evening talking about relationships and unraveling other people's stories.<br>But perhaps the most important relationship of all is the one we have with ourselves.");
       
       await wait(1800);
       highlightCard('card1');
-      await typeDialogue("Right now, the room is quiet. We so rarely pause to acknowledge the challenges we've overcome, or the quiet achievements we easily forget.<br>Think of the person you were a few years ago. Write to them. Tell them about the things you are grateful for today—the reality that your past self would be absolutely overjoyed to know is yours.");
+      await typeDialogue("Right now, the room is quiet. We so rarely pause to acknowledge the challenges we've overcome, or the quiet achievements we easily forget.<br>Think of the person you were a few years ago. Write to them. Tell them about the things you are grateful for today and the challenges you have overcome to get where you are now.");
       
       document.querySelectorAll('.card').forEach(c => c.classList.add('revealed', 'interactive'));
       await wait(3000);
