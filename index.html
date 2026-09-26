@@ -4980,6 +4980,9 @@ body[data-phase="closer"] .sky {
       <div id="drivewayPassengerList" style="display: flex; flex-direction: row; flex-wrap: nowrap; gap: 14px; padding-bottom: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
         <!-- Populated dynamically -->
       </div>
+      <button type="button" id="passengerListToggle" onclick="togglePassengerListExpand(this)" style="display:none; width: 100%; margin-top: 4px; background: none; border: none; color: var(--gold); font-size: 11px; letter-spacing: 0.03em; text-align: center; padding: 6px; cursor: pointer;">
+        Show all ▾
+      </button>
     </div>
 
     <!-- RED FLAG RALLY -->
@@ -5020,46 +5023,6 @@ body[data-phase="closer"] .sky {
     <div class="leaderboard-container" style="margin-bottom: 30px;">
       <div class="eyebrow" style="text-align:center; margin-bottom:12px;">Top Scores</div>
       <div id="gameLeaderboard" class="leaderboard-list"></div>
-    </div>
-
-    <!-- ARTIFACT: THE GLASS CLOSET -->
-    <div class="dashboard-section" style="width: 100%; max-width: 420px; margin: 0 auto 40px; padding: 24px 16px; text-align: center; background: linear-gradient(145deg, rgba(217,79,140,0.15) 0%, rgba(18, 8, 33, 0.7) 100%); border-color: rgba(217,79,140,0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(217,79,140,0.05);">
-      <div class="eyebrow" style="margin-bottom: 12px; color: var(--rose); opacity: 0.85;">From the Archive 💋</div>
-
-      <!-- Ransom Note Typography (one readable label for screen readers, not eleven loose letters) -->
-      <div role="img" aria-label="Glass Closet" style="margin-bottom: 10px; display: flex; justify-content: center; align-items: baseline; gap: 2px; color: var(--mist); text-shadow: 0 2px 10px rgba(217,79,140,0.4);">
-        <span style="font-family: 'Space Mono', monospace; font-size: 22px; font-weight: bold;">G</span>
-        <span style="font-family: 'Cormorant Garamond', serif; font-size: 28px; font-style: italic;">L</span>
-        <span style="font-family: 'Jost', sans-serif; font-size: 24px; font-weight: 300;">A</span>
-        <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600;">S</span>
-        <span style="font-family: 'Space Mono', monospace; font-size: 25px; font-style: italic;">S</span>
-        <span style="margin: 0 4px;"></span>
-        <span style="font-family: 'Jost', sans-serif; font-size: 22px; font-weight: 500;">C</span>
-        <span style="font-family: 'Cormorant Garamond', serif; font-size: 29px; font-style: italic;">L</span>
-        <span style="font-family: 'Space Mono', monospace; font-size: 20px; font-weight: bold;">O</span>
-        <span style="font-family: 'Jost', sans-serif; font-size: 26px; font-style: italic;">S</span>
-        <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500;">E</span>
-        <span style="font-family: 'Space Mono', monospace; font-size: 24px;">T</span>
-      </div>
-
-      <p class="sub" style="margin-bottom: 18px; font-size: 13.5px; color: rgba(244, 233, 255, 0.7); line-height: 1.45;">An artifact from our very first era. The doors remain open if you need to pull a look for tonight's journey.</p>
-
-      <button type="button" class="btn ghost" onclick="openGlassCloset(this)" style="width: 100%; font-size: 13px; padding: 10px 20px; border-color: rgba(217,79,140,0.4); color: var(--mist); background: rgba(217,79,140,0.1);">
-        Open the Closet
-      </button>
-
-      <div id="glassClosetFrameWrap" style="display: none; margin-top: 16px;">
-        <div style="border-radius: 14px; overflow: hidden; border: 1px solid rgba(217,79,140,0.3); background: var(--ink); box-shadow: 0 10px 25px rgba(0,0,0,0.6);">
-          <!-- No src on purpose: openGlassCloset() sets it from data-src on the first tap,
-               so the closet page isn't fetched or run until someone asks for it -->
-          <iframe id="glassClosetFrame" title="The Glass Closet" data-src="https://insight-speaking-club.github.io/glass-closet/" style="width: 100%; height: 500px; border: none; display: block;"></iframe>
-          <button type="button" class="btn ghost" onclick="window.open('https://insight-speaking-club.github.io/glass-closet/', '_blank')" style="font-size: 12px; padding: 12px; width: 100%; border: none; border-top: 1px solid rgba(217,79,140,0.3); border-radius: 0; margin-top: 0; color: var(--rose); background: rgba(217,79,140,0.05);">
-            Pop out to full screen ⛶
-          </button>
-        </div>
-
-        <p class="sub" style="margin-top: 16px; font-size: 12.5px; max-width: 480px; margin-left: auto; margin-right: auto;">This is where the Vogue Committee was born, back at our Fashion Speaking Club on August 14, 2026. Send in your fit for a shot at getting accepted into the (very exclusive) Committee. <a href="https://t.me/+UC1vcZZRBWA0ZDg6" target="_blank" rel="noopener" style="color: var(--rose); text-decoration: underline;">Submit your fit →</a></p>
-      </div>
     </div>
   </div>
 
@@ -7800,9 +7763,18 @@ function renderSpinCircle(guests) {
   const countLabel = document.getElementById('passengerCountLabel');
   if (countLabel) countLabel.textContent = `${guests.length} Checked In`;
 
+  const toggleBtn = document.getElementById('passengerListToggle');
+
   if (guests.length === 0) {
     listContainer.innerHTML = `<div style="text-align:center; color:var(--dim); font-size:13px; padding: 10px;">No passengers checked in yet.</div>`;
+    if (toggleBtn) toggleBtn.style.display = 'none';
     return;
+  }
+
+  // Show the expand toggle once there are enough passengers to overflow
+  // the single-row scroller (~5 fit comfortably in the 420px card).
+  if (toggleBtn) {
+    toggleBtn.style.display = guests.length > 5 ? 'block' : 'none';
   }
 
   listContainer.innerHTML = guests.map(g => {
@@ -7819,6 +7791,26 @@ function renderSpinCircle(guests) {
       </div>
     `;
   }).join('');
+}
+
+// Expands/collapses the passenger list between a single scrolling row
+// and a full wrapped grid so guests can see everyone checked in.
+function togglePassengerListExpand(btn) {
+  const listContainer = document.getElementById('drivewayPassengerList');
+  if (!listContainer) return;
+  const isExpanded = listContainer.classList.toggle('passenger-list-expanded');
+  if (isExpanded) {
+    listContainer.style.flexWrap = 'wrap';
+    listContainer.style.overflowX = 'visible';
+    listContainer.style.justifyContent = 'center';
+    listContainer.style.maxHeight = 'none';
+    btn.textContent = 'Show less ▴';
+  } else {
+    listContainer.style.flexWrap = 'nowrap';
+    listContainer.style.overflowX = 'auto';
+    listContainer.style.justifyContent = 'flex-start';
+    btn.textContent = 'Show all ▾';
+  }
 }
 
 const originalListenRoster = listenRoster;
