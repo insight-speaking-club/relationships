@@ -400,8 +400,6 @@
       </div>
     </div>
 
-    <div class="command-flash" id="commandFlash"></div>
-    <div class="big-command" id="bigCommand">Write it down.</div>
 
     <div class="glass-panel" id="editorWrapper">
       <textarea id="letterInput" placeholder="Dear you," spellcheck="false"></textarea>
@@ -555,24 +553,13 @@
       startTimer();
       await wait(600);
 
-      await wait(700);
-
-      const command = document.getElementById('bigCommand');
-      const flash = document.getElementById('commandFlash');
-      command.classList.add('show'); flash.classList.add('show');
-
-      await wait(1200); // Quicker command flash
-      command.classList.replace('show', 'hide'); flash.classList.remove('show');
-
-      await wait(400);
-
       document.getElementById('editorWrapper').classList.add('show');
       document.getElementById('emilieHelp').classList.add('show');
       armHelpNudge();
       document.getElementById('letterInput').focus();
     }
 
-    /* --- ÉMILIE'S HELP: tap for a gentle question --- */
+    /* --- ADELINE'S HELP: tap for a gentle question --- */
     const helpPrompts = [
       { q: "What do you wish someone had told you on your hardest night?", start: "If I could sit beside you on your hardest night, I'd tell you: " },
       { q: "What is an achievement you often forget to give yourself credit for?", start: "Nobody really saw this happen, but I am so proud that I " },
