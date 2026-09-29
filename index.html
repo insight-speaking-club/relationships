@@ -1273,6 +1273,7 @@ function imgFallback(img){
     cursor:pointer;
   }
 
+
   /* --- FULLSCREEN LANDSCAPE MODE --- */
   #gameSection:fullscreen{
     position:fixed; top:50%; left:50%; margin:0; border-radius:0;
@@ -5210,15 +5211,42 @@ function dismissVogueLoreForever(){
 
 function localRef(path){
   const key = "fsc:"+path;
+  const readTree = ()=>{
+    let out = null;
+    const exact = localStorage.getItem(key);
+    if(exact !== null){ try{ out = JSON.parse(exact); }catch(e){} }
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith(key+"/")){
+        const parts = k.slice(key.length+1).split("/");
+        let raw; try{ raw = JSON.parse(localStorage.getItem(k)); }catch(e){ continue; }
+        if(raw === null) continue;
+        if(out === null || typeof out !== 'object') out = {};
+        let node = out;
+        parts.slice(0,-1).forEach(pt=>{ node[pt] = node[pt] && typeof node[pt]==='object' ? node[pt] : {}; node = node[pt]; });
+        const last = parts[parts.length-1];
+        node[last] = (node[last] && typeof node[last]==='object' && raw && typeof raw==='object') ? {...node[last], ...raw} : raw;
+      }
+    }
+    return out;
+  };
+  const notify = ()=> window.dispatchEvent(new StorageEvent('storage',{key}));
   return {
-    set(val){ localStorage.setItem(key, JSON.stringify(val)); window.dispatchEvent(new StorageEvent('storage',{key})); },
-    update(val){ const cur = JSON.parse(localStorage.getItem(key)||'{}'); this.set({...cur, ...val}); },
+    set(val){
+      if(val === null || val === undefined) localStorage.removeItem(key);
+      else localStorage.setItem(key, JSON.stringify(val));
+      // tell listeners on this path AND its ancestors
+      const segs = key.split("/");
+      for(let i=1;i<=segs.length;i++) window.dispatchEvent(new StorageEvent('storage',{key: segs.slice(0,i).join("/")}));
+      return Promise.resolve();
+    },
+    update(val){ const cur = readTree() || {}; return this.set({...cur, ...val}); },
     on(evt, cb){
-      const read = ()=>{ const raw = localStorage.getItem(key); cb({val:()=> raw?JSON.parse(raw):null}); };
+      const read = ()=>{ const v = readTree(); cb({val:()=> v}); };
       read();
       window.addEventListener('storage', (e)=>{ if(e.key===key) read(); });
     },
-    once(evt){ const raw = localStorage.getItem(key); return Promise.resolve({val:()=> raw?JSON.parse(raw):null}); }
+    once(evt){ const v = readTree(); return Promise.resolve({val:()=> v}); }
   };
 }
 function ref(path){ return usingFirebase ? db.ref(path) : localRef(path); }
@@ -5409,7 +5437,7 @@ function setLoungeState(stateId) {
   // unless we explicitly stop it here.
   const leavingDriveway = document.getElementById('state-roulette')?.classList.contains('active')
     && stateId !== 'state-roulette';
-  if (leavingDriveway) stopBunnyGame();
+  if (leavingDriveway) { stopBunnyGame(); }
 
   document.querySelectorAll('.lounge-state').forEach(s => s.classList.remove('active'));
   document.getElementById(stateId).classList.add('active');
@@ -6148,8 +6176,23 @@ function endTour() {
 let stateGuests = [];
 let currentKnownState = 'lounge';
 
+function syncMyBestScore(guests) {
+  if (!me || !me.id) return;
+  const localBest = Math.max(Number(localStorage.getItem('fsc_bunny_high') || 0), me.highScore || 0);
+  if (!localBest) return;
+  const rec = guests.find(g => g && g.id === me.id);
+  if (rec && (rec.highScore || 0) < localBest) {
+    me.highScore = localBest;
+    try {
+      const p = ref(`events/${EVENT_ID}/attendees/${me.id}`).update({ highScore: localBest });
+      if (p && p.catch) p.catch(err => console.warn('Score sync failed:', err));
+    } catch (err) { console.warn('Score sync failed:', err); }
+  }
+}
+
 function renderLeaderboard(guests) {
   const list = document.getElementById('gameLeaderboard');
+  syncMyBestScore(guests);
   if(!list) return;
 
   // Sort everyone by high score
@@ -6635,10 +6678,16 @@ function startBunnyGame(){
     const best = Math.max(Number(localStorage.getItem('fsc_bunny_high')||0), finalScore);
     localStorage.setItem('fsc_bunny_high', String(best));
 
-    // Save to Firebase for the Global Leaderboard
-    if (me && finalScore > (me.highScore || 0)) {
-      me.highScore = finalScore; // update local
-      ref(`events/${EVENT_ID}/attendees/${me.id}`).update({ highScore: finalScore });
+    // Save to Firebase for the Global Leaderboard.
+    // Compare against the persisted best (not just in-memory me.highScore,
+    // which is lost on reload and used to let a low score overwrite a high one).
+    if (me && me.id && best > (me.highScore || 0)) {
+      me.highScore = best;
+      localStorage.setItem('fsc_guest', JSON.stringify(me));
+      try {
+        const p = ref(`events/${EVENT_ID}/attendees/${me.id}`).update({ highScore: best });
+        if (p && p.catch) p.catch(err => console.warn('Score save failed:', err));
+      } catch (err) { console.warn('Score save failed:', err); }
     }
 
     const messagesFlag = [
@@ -8070,5 +8119,6 @@ function scrollToArchive() {
   }, 2000);
 }
 </script>
+
 </body>
 </html>
