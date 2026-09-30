@@ -5032,7 +5032,8 @@ body[data-phase="closer"] .sky {
 
     <!-- RED FLAG RALLY -->
     <div class="dashboard-section" style="width: 100%; max-width: 560px; margin: 0 auto 24px; padding: 16px;">
-      <div class="eyebrow" style="text-align: center; margin-bottom: 12px; color: var(--gold);">Red Flag Rally</div>
+      <div class="eyebrow" style="text-align: center; margin-bottom: 8px; color: var(--gold);">Red Flag Rally</div>
+      <p style="font-family: 'Jost', sans-serif; font-size: 12.5px; line-height: 1.55; color: var(--dim); text-align: center; margin: 0 auto 14px; padding: 0 6px;">This game was inspired by your low standards. Unlike some people (like a certain Alex), Sasha finally has some self-respect and does NOT ride red flags. So, keep driving him safely so he can find true love with as many green flags as possible 💞</p>
       <div class="game-section" id="gameSection" style="margin-top: 0;">
         <div class="lounge-ground" aria-hidden="true" id="loungeGround">
           <div class="game-custom-bg" id="gameCustomBg"></div>
@@ -5052,7 +5053,7 @@ body[data-phase="closer"] .sky {
               <img class="sprite-bunny" decoding="async" src="sashas-car-bunny1.png" alt="Sasha in Bunny Form">
             </div>
             <div class="game-overlay" id="gameOverlay">
-              <div>Help me collect green flags and jump over the red ones. Tap the screen to jump. Keep me driving safely so I can find true love.</div>
+              <div>Help Sasha collect green flags and JUMP over the red ones. Tap the screen to jump, because we don't wanna run into any red flags, do we?</div>
               <button class="btn" id="gameStartBtn">Play</button>
             </div>
             <button class="game-replay-btn" id="gameReplayBtn">
@@ -6674,7 +6675,7 @@ function startBunnyGame(){
   scoreEl.textContent = high ? `best ${high}` : '0';
   bunnyEl.style.transform = 'translateY(0)';
   overlay.classList.remove('hidden');
-  overlay.innerHTML = '<div>Help me collect green flags and jump over the red ones. Tap the screen to jump. Keep me driving safely so I can find true love.</div><button class="btn" id="gameStartBtn">Play</button>';
+  overlay.innerHTML = '<div>Help Sasha collect green flags and JUMP over the red ones. Tap the screen to jump, because we don\'t wanna run into any red flags, do we?</div><button class="btn" id="gameStartBtn">Play</button>';
 
   const parallaxBack = document.getElementById('parallaxBack');
   const parallaxMid = document.getElementById('parallaxMid');
