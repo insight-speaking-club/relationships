@@ -218,6 +218,8 @@
   body.is-host .host-timer-bar { display: flex; }
   .host-timer-bar input { width: 44px; padding: 4px 6px; border-radius: 8px; border: 1px solid rgba(244,233,255,0.2); background: rgba(255,255,255,0.06); color: #fff; font: inherit; text-align: center; }
   .host-timer-bar button { padding: 5px 9px; border-radius: 8px; border: 1px solid rgba(242,193,78,0.5); background: transparent; color: var(--gold); font: inherit; cursor: pointer; }
+  .host-timer-bar { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 16px); }
+  .host-timer-bar .ht-link { padding: 5px 9px; border-radius: 8px; border: 1px solid rgba(242,193,78,0.5); color: var(--gold); text-decoration: none; }
   .host-timer-bar button.ht-primary { background: var(--gold); color: #1a1030; border-color: var(--gold); }
   #htStatus { min-width: 44px; text-align: right; color: var(--gold); font-family: 'Space Mono', monospace; }
   .timer-pill.resting .timer-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; letter-spacing: 0.02em; color: var(--dim); }
@@ -462,7 +464,8 @@
   </div>
   
   <div class="timesup-card" id="timesUpCard" role="status" aria-live="polite">
-    <p>Time&rsquo;s up, but there&rsquo;s no rush. Thank you for coming to this event (˶ᵔ ᵕ ᵔ˶)<br>When you&rsquo;re ready, the Memory Box is waiting.</p>
+    <p>Darling, time&rsquo;s up. But you can always come back here and finish your letter&hellip;</p>
+    <p>I also want to thank you for coming to the event. And if you&rsquo;d like, leave a few words or a photo in the Memory Box (it&rsquo;s kind of an archive of previous events)</p>
     <div class="row">
       <a class="btn-delicate" href="https://padlet.com/speakingclub_sasha/memory-box-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener">Open the Memory Box</a>
       <button type="button" class="quiet" id="timesUpKeep">Keep writing</button>
@@ -475,6 +478,7 @@
     <button type="button" class="ht-primary" id="htStart">Start</button>
     <button type="button" id="htPlus">+2</button>
     <button type="button" id="htClear">Clear</button>
+    <a class="ht-link" href="https://music.youtube.com/playlist?list=PLPezC07JPV64&amp;si=AlX3JO7q48tkl8Eq" target="_blank" rel="noopener">&#9835; Playlist</a>
     <span id="htStatus">off</span>
   </div>
 
