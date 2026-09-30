@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Dancing+Script:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <!-- PDF Script from the-post-office-1_2.html -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <!-- EMBEDDED ARTWORK: background scene lives here as a CSS variable (--scene-bg).
@@ -192,6 +194,32 @@
   .timer-icon { width: 12px; height: 12px; fill: currentColor; flex-shrink: 0; }
   .timer-text { font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 0.1em; color: var(--gold); }
   .timer-pill.ember-glow .timer-text { color: var(--ember); }
+  /* Guests see a quietly burning line, never numbers. Only the host sees the clock. */
+  .timer-candle { width: 72px; height: 3px; border-radius: 2px; background: rgba(244,233,255,0.14); overflow: hidden; }
+  .timer-candle i { display: block; height: 100%; width: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--ember), var(--gold)); box-shadow: 0 0 8px rgba(242,193,78,0.6); transition: width 1s linear; }
+  .timer-pill.ember-glow .timer-candle i { background: var(--ember); }
+  .timer-pill.resting .timer-candle { display: none; }
+  body:not(.is-host) .timer-pill:not(.resting) .timer-text,
+  body:not(.is-host) .timer-pill:not(.resting) .timer-icon { display: none; }
+  .success-msg .memory-note { font-family: 'Jost', sans-serif; font-weight: 300; font-size: 14px; color: var(--dim); margin: 0 0 16px; max-width: 280px; opacity: 0; transition: opacity 1.4s ease 2.6s; }
+  .success-msg .memory-link { display: inline-block; text-decoration: none; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 1.4s ease 3s, visibility 0s linear 3s; }
+  .success-msg.show .memory-note, .success-msg.show .memory-link { opacity: 1; }
+  .success-msg.show .memory-link { visibility: visible; pointer-events: auto; }
+  .success-msg .memory-thanks { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: var(--gold); margin: 0 0 20px; opacity: 0; transition: opacity 1.4s ease 2.8s; }
+  .success-msg.show .memory-thanks { opacity: 1; }
+  .timesup-card { position: fixed; left: 50%; top: calc(72px + env(safe-area-inset-top, 0px)); transform: translate(-50%, -12px); z-index: 90; width: calc(100% - 40px); max-width: 340px; padding: 16px 18px; border-radius: 16px; text-align: center; background: rgba(10,17,40,0.94); border: 1px solid rgba(242,193,78,0.35); box-shadow: 0 12px 40px rgba(0,0,0,0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 1s ease, transform 1s ease, visibility 0s linear 1s; }
+  body.is-host .timesup-card { top: calc(112px + env(safe-area-inset-top, 0px)); }
+  .timesup-card.show { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0); transition: opacity 1s ease, transform 1s ease, visibility 0s; }
+  .timesup-card p { margin: 0 0 12px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; line-height: 1.35; color: var(--mist, #f4e9ff); }
+  .timesup-card .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .timesup-card a, .timesup-card button { text-decoration: none; }
+  .timesup-card .quiet { background: none; border: none; color: var(--dim); font: 400 13px 'Jost', sans-serif; cursor: pointer; padding: 8px 10px; text-decoration: underline; }
+  .host-timer-bar { position: fixed; top: 64px; left: 50%; transform: translateX(-50%); z-index: 100000; display: none; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 12px; background: rgba(10,17,40,0.85); border: 1px solid rgba(242,193,78,0.35); font-family: 'Jost', sans-serif; font-size: 12px; color: var(--dim); white-space: nowrap; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  body.is-host .host-timer-bar { display: flex; }
+  .host-timer-bar input { width: 44px; padding: 4px 6px; border-radius: 8px; border: 1px solid rgba(244,233,255,0.2); background: rgba(255,255,255,0.06); color: #fff; font: inherit; text-align: center; }
+  .host-timer-bar button { padding: 5px 9px; border-radius: 8px; border: 1px solid rgba(242,193,78,0.5); background: transparent; color: var(--gold); font: inherit; cursor: pointer; }
+  .host-timer-bar button.ht-primary { background: var(--gold); color: #1a1030; border-color: var(--gold); }
+  #htStatus { min-width: 44px; text-align: right; color: var(--gold); font-family: 'Space Mono', monospace; }
   .timer-pill.resting .timer-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; letter-spacing: 0.02em; color: var(--dim); }
 
   /* Adeline's help */
@@ -291,8 +319,8 @@
   .spark { position: fixed; bottom: 110px; left: 50%; width: 3px; height: 3px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 6px 2px rgba(242, 193, 78, 0.85); z-index: 99; pointer-events: none; opacity: 0; }
   
 
-  .success-msg { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(4,8,20,0.95); opacity: 0; pointer-events: none; transition: opacity 1.5s ease; z-index: 120; text-align: center; padding: 24px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-  .success-msg.show { opacity: 1; pointer-events: auto; }
+  .success-msg { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(4,8,20,0.95); opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 1.5s ease, visibility 0s linear 1.5s; z-index: 120; text-align: center; padding: 24px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .success-msg.show { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity 1.5s ease, visibility 0s; }
   .success-msg h1 { transform: translateY(8px); opacity: 0; transition: opacity 1.4s ease 0.3s, transform 1.4s ease 0.3s; margin: 0 0 16px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 42px; color: var(--gold); }
   .success-msg.show h1 { opacity: 1; transform: translateY(0); }
   .success-thanks { font-family: 'Jost', sans-serif; font-weight: 300; font-size: 16px; color: var(--dim); margin: 0 0 40px; opacity: 0; transform: translateY(8px); transition: opacity 1.4s ease 1.8s, transform 1.4s ease 1.8s; }
@@ -383,7 +411,8 @@
   <div class="act-2-editor" id="editorScreen">
     <div class="timer-pill" id="timerPill">
       <svg class="timer-icon" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
-      <span class="timer-text" id="timeDisplay">10:00</span>
+      <span class="timer-candle" aria-hidden="true"><i id="candleFill"></i></span>
+      <span class="timer-text" id="timeDisplay">--:--</span>
     </div>
 
     <div class="emilie-help" id="emilieHelp">
@@ -431,8 +460,29 @@
     </div>
   </div>
   
+  <div class="timesup-card" id="timesUpCard" role="status" aria-live="polite">
+    <p>Time&rsquo;s up, but there&rsquo;s no rush. Thank you for coming to this event (˶ᵔ ᵕ ᵔ˶)<br>When you&rsquo;re ready, the Memory Box is waiting.</p>
+    <div class="row">
+      <a class="btn-delicate" href="https://padlet.com/speakingclub_sasha/memory-box-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener">Open the Memory Box</a>
+      <button type="button" class="quiet" id="timesUpKeep">Keep writing</button>
+    </div>
+  </div>
+
+  <div class="host-timer-bar" id="hostTimerBar">
+    <span>Letter timer</span>
+    <input id="htMinutes" type="number" min="1" max="60" value="15" inputmode="numeric" aria-label="Minutes">
+    <button type="button" class="ht-primary" id="htStart">Start</button>
+    <button type="button" id="htPlus">+2</button>
+    <button type="button" id="htClear">Clear</button>
+    <span id="htStatus">off</span>
+  </div>
+
   <div class="success-msg" id="successOverlay">
     <h1>The letter is sealed.</h1>
+    <p class="success-thanks">Take a breath. We&rsquo;ll gather in a minute.</p>
+    <p class="memory-note">Your letter stays with you. If you&rsquo;d like, leave a few words or a photo in the Memory Box.</p>
+    <p class="memory-thanks">Thank you for coming to this event (˶ᵔ ᵕ ᵔ˶)</p>
+    <a class="btn-delicate memory-link" id="memoryLinkSealed" href="https://padlet.com/speakingclub_sasha/memory-box-nwbq1n7nb2y6cu8t" target="_blank" rel="noopener">Open the Memory Box</a>
   </div>
 
 
@@ -552,8 +602,7 @@
     /* --- PAST SELF EDITOR LOGIC (from the-post-office-1_2.html) --- */
     async function runEditorSequence() {
       document.getElementById('editorScreen').classList.add('active');
-      document.getElementById('timerPill').classList.add('show');
-      startTimer();
+      startTimer(); // pill only appears once the host has started a timer
       await wait(600);
 
       document.getElementById('editorWrapper').classList.add('show');
@@ -622,22 +671,99 @@
     });
 
 
-    /* --- TIMER & PDF --- */
-    let timeLeft = 600;
-    function startTimer() {
-      const timeDisplay = document.getElementById('timeDisplay');
-      const timerPill = document.getElementById('timerPill');
-      const timerInterval = setInterval(() => {
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          timerPill.classList.remove('ember-glow'); timerPill.classList.add('resting');
-          timeDisplay.textContent = "Take your time"; return;
+    /* --- SHARED LETTER TIMER (host sets it, guests only feel it) --- */
+    // Paste the config from your NEW Firebase project here. Use the same values as in index.html.
+    const firebaseConfig = {
+  apiKey: "AIzaSyDHzNk__J_WKdvmoKGgzfY-TsEvjkBBnPo",
+  authDomain: "post-office-94df2.firebaseapp.com",
+  databaseURL: "https://post-office-94df2-default-rtdb.firebaseio.com",
+  projectId: "post-office-94df2",
+  storageBucket: "post-office-94df2.firebasestorage.app",
+  messagingSenderId: "724732574971",
+  appId: "1:724732574971:web:903637c12cb15da8eb445e"
+};
+    const EVENT_ID = "default";
+    const isHost = new URLSearchParams(location.search).get('host') === '1';
+    if (isHost) document.body.classList.add('is-host');
+
+    let timerRef = null;
+    try {
+      if (!/PASTE_/.test(firebaseConfig.databaseURL)) {
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        timerRef = firebase.database().ref('events/' + EVENT_ID + '/closer/timer');
+      }
+    } catch (e) { console.warn('Firebase unavailable, letter timer off.', e); }
+
+    let sharedTimer = null;      // { startMs, endTime }
+    let editorActive = false;
+    let nudged = false, nudgeHold = false, sealed = false, timesUpShown = false, lastEnd = null;
+    const pill = document.getElementById('timerPill');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const candleFill = document.getElementById('candleFill');
+    const htStatus = document.getElementById('htStatus');
+    const fmt = (ms) => { const t = Math.max(0, Math.ceil(ms / 1000)); return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+
+    const timesUpCard = document.getElementById('timesUpCard');
+    const hideTimesUp = () => timesUpCard.classList.remove('show');
+    document.getElementById('timesUpKeep').addEventListener('click', hideTimesUp);
+
+    function renderTimer() {
+      if (!sharedTimer || !sharedTimer.endTime) {
+        pill.classList.remove('show', 'ember-glow', 'resting');
+        if (htStatus) htStatus.textContent = 'off';
+        return;
+      }
+      const left = sharedTimer.endTime - Date.now();
+      const total = Math.max(1, sharedTimer.endTime - (sharedTimer.startMs || sharedTimer.endTime - 900000));
+      if (htStatus) htStatus.textContent = left > 0 ? fmt(left) : 'done';
+      if (editorActive) pill.classList.add('show');
+      if (left > 0) {
+        pill.classList.remove('resting');
+        timeDisplay.textContent = fmt(left);
+        candleFill.style.width = Math.max(0, Math.min(100, (left / total) * 100)) + '%';
+        pill.classList.toggle('ember-glow', left <= 60000);
+        if (left <= 180000 && !nudged && editorActive) {
+          nudged = true; nudgeHold = true;
+          setWhisper("If you\u2019re not done, that\u2019s okay. Finish the sentence you\u2019re on, then seal it.");
+          setTimeout(() => { nudgeHold = false; }, 25000);
         }
-        timeLeft--;
-        const m = Math.floor(timeLeft / 60); const s = timeLeft % 60;
-        timeDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        if (timeLeft === 60) timerPill.classList.add('ember-glow');
-      }, 1000);
+      } else {
+        // Never a hard stop: the letter stays open
+        pill.classList.remove('ember-glow'); pill.classList.add('resting');
+        timeDisplay.textContent = 'Take your time';
+        // Gentle invitation to the Memory Box. Never a lock: the letter stays open.
+        if (editorActive && !sealed && !timesUpShown) { timesUpShown = true; timesUpCard.classList.add('show'); }
+      }
+    }
+    setInterval(renderTimer, 1000);
+
+    if (timerRef) {
+      timerRef.on('value', snap => {
+        const v = snap.val();
+        sharedTimer = v && v.endTime ? v : null;
+        if (!sharedTimer) nudged = false;
+        // A new or extended timer (host tapped Start or +2) resets the prompt
+        const end = sharedTimer ? sharedTimer.endTime : null;
+        if (end !== lastEnd) { lastEnd = end; timesUpShown = false; nudged = false; hideTimesUp(); }
+        renderTimer();
+      });
+    }
+    function startTimer() { editorActive = true; renderTimer(); }
+
+    // Host controls (only visible with ?host=1)
+    if (isHost) {
+      const need = () => { if (!timerRef) { alert('Firebase is not set up on this page yet. Paste your config into the-post-office.html.'); return false; } return true; };
+      document.getElementById('htStart').addEventListener('click', () => {
+        if (!need()) return;
+        const mins = Math.max(1, Math.min(60, parseFloat(document.getElementById('htMinutes').value) || 15));
+        timerRef.set({ startMs: Date.now(), endTime: Date.now() + mins * 60000 });
+      });
+      document.getElementById('htPlus').addEventListener('click', () => {
+        if (!need() || !sharedTimer) return;
+        const base = Math.max(sharedTimer.endTime, Date.now());
+        timerRef.set({ startMs: sharedTimer.startMs || Date.now(), endTime: base + 120000 });
+      });
+      document.getElementById('htClear').addEventListener('click', () => { if (need()) timerRef.set(null); });
     }
 
     const textarea = document.getElementById('letterInput');
@@ -706,7 +832,7 @@
       inkFill.style.width = Math.min(100, (words / WORD_GOAL) * 100) + '%';
 
       let w = 0; whispers.forEach((m, i) => { if (words >= m[0]) w = i; });
-      if (w !== currentWhisper) { currentWhisper = w; setWhisper(whispers[w][1]); }
+      if (w !== currentWhisper && !nudgeHold) { currentWhisper = w; setWhisper(whispers[w][1]); }
 
       try { localStorage.setItem(DRAFT_KEY, this.value); } catch (err) {}
 
@@ -728,6 +854,7 @@
     document.getElementById('btnDownload').addEventListener('click', function() {
       const text = textarea.value.trim();
       if (!text) return;
+      sealed = true; hideTimesUp();
       this.classList.add('loading'); this.textContent = 'Sealing...';
       
       const sealFlash = document.getElementById('sealFlash');
