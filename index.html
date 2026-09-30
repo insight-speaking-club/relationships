@@ -5182,7 +5182,7 @@ body[data-phase="closer"] .sky {
 
     <div id="partnerRevealEyebrow" class="eyebrow" style="margin-bottom: 10px; color: var(--gold); font-size: 10px; letter-spacing: 0.12em;">Arriving at The Luxembourg Garden:</div>
 
-    <div id="partnerName" class="partner-name" style="font-family: 'Playfair Display', 'Cormorant Garamond', serif; font-weight: 600; font-style: normal; font-size: 24px; line-height: 1.3; margin-bottom: 14px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto; background: linear-gradient(90deg, var(--gold), var(--rose)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></div>
+    <div id="partnerName" class="partner-name" style="font-family: 'Playfair Display', 'Cormorant Garamond', serif; font-weight: 600; font-style: normal; font-size: 24px; line-height: 1.3; margin-bottom: 14px; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto; color: var(--mist);"></div>
 
     <div id="partnerRevealInstruction" style="font-family: 'Jost', sans-serif; font-size: 12.5px; line-height: 1.5; color: var(--dim); margin-bottom: 16px; padding: 0 4px;">Seek each other out across the room. Your private conversation in the gardens begins now.</div>
 
@@ -8096,11 +8096,13 @@ function renderPartnerReveal(allPairings){
     eyebrow.textContent = 'Arriving at The Luxembourg Garden:';
   }
 
-  // "You & your partner(s)" on one line, e.g. "Maya & Sasha" (wraps naturally for trios / long names)
-  const arrivingNames = [me.name].concat(myPartners.map(p => p.name));
+  // "You and your partner(s)": your own name carries a small "you" tag
+  const arrivingNames = [{ name: me.name, isMe: true }].concat(myPartners.map(p => ({ name: p.name, isMe: false })));
   document.getElementById('partnerName').innerHTML = arrivingNames.map(n =>
-    escapeHtml(n)
-  ).join(' <span style="font-size: 0.6em; -webkit-text-fill-color: rgba(255,255,255,0.35); color: rgba(255,255,255,0.35);">&amp;</span> ');
+    '<span style="white-space: nowrap;">' + escapeHtml(n.name) +
+    (n.isMe ? '<sup style="font-family: \'Jost\', sans-serif; font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-left: 5px; vertical-align: super;">you</sup>' : '') +
+    '</span>'
+  ).join(' <span style="font-family: \'Cormorant Garamond\', serif; font-style: italic; font-weight: 400; font-size: 0.7em; color: var(--dim);">and</span> ');
 
   if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
 }
