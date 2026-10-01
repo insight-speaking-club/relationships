@@ -721,7 +721,7 @@
 
         <div class="inbox-explainer">
           <span class="inbox-explainer-label">❔</span>
-          <span class="inbox-explainer-text">For those who may not know, AITA means Am I The Asshole. It's a popular online forum on Reddit where users share personal conflicts and strangers judge who is at fault, which is what we will be doing today ;)</span>
+          <span class="inbox-explainer-text">For those who may not know, AITA means Am I The Asshole. It's a popular online forum on Reddit where users share personal conflicts and strangers judge who is at fault, which is what we will be doing today ;) A few letters in the box are different: they are advice letters, where nobody is on trial and you simply choose the advice you would give.</span>
         </div>
 
         <div id="emailList"></div>
@@ -753,14 +753,14 @@
         </div>
 
         <div class="voting-dock">
-          <p style="text-align: center; color: var(--dim); font-size: 14px; margin-bottom: 12px;">Read the case, cast your vote, then reveal your choice — and hold your phone up so the room can see.</p>
+          <p id="dockHint" style="text-align: center; color: var(--dim); font-size: 14px; margin-bottom: 12px;">Read the case, cast your vote, then reveal your choice — and hold your phone up so the room can see.</p>
           <div class="vote-tally" id="voteTally">
-            <div class="tally-item tally-red"><span id="ytaCount">0</span>Asshole</div>
-            <div class="tally-item tally-green"><span id="ntaCount">0</span>Not The Asshole</div>
+            <div class="tally-item tally-red"><span id="ytaCount">0</span><label id="ytaLabel">Asshole</label></div>
+            <div class="tally-item tally-green"><span id="ntaCount">0</span><label id="ntaLabel">Not The Asshole</label></div>
           </div>
           <div class="aita-buttons">
-            <button class="aita-btn aita-btn-red" onclick="registerVote('YTA')">ASSHOLE</button>
-            <button class="aita-btn aita-btn-green" onclick="registerVote('NTA')">NOT THE ASSHOLE</button>
+            <button class="aita-btn aita-btn-red" id="btnYTA" onclick="registerVote('YTA')">ASSHOLE</button>
+            <button class="aita-btn aita-btn-green" id="btnNTA" onclick="registerVote('NTA')">NOT THE ASSHOLE</button>
           </div>
           <button class="btn-ghost remove-vote-btn" id="removeVoteBtn" onclick="clearVote()" style="display:none;">Remove my vote</button>
           <button class="btn-ghost reveal-btn" onclick="revealVerdict()">Reveal my vote</button>
@@ -814,6 +814,9 @@
         <button type="button" class="hd-start" id="hdStart" onclick="startGlobalTimer()">Start 25-minute timer</button>
         <button type="button" class="hd-pick" onclick="pickSomeone()">🎤 Pick someone</button>
       </div>
+      <div class="hd-actions">
+        <button type="button" class="hd-pick" style="flex:1;" onclick="pickReader()">📖 Pick a reader for this story</button>
+      </div>
     </div>
 
     <!-- Timer running: countdown + the two things you'd actually need -->
@@ -825,6 +828,9 @@
       </div>
       <div class="hd-actions">
         <button type="button" class="hd-pick" style="flex:1;" onclick="pickSomeone()">🎤 Pick someone to explain their vote</button>
+      </div>
+      <div class="hd-actions">
+        <button type="button" class="hd-pick" style="flex:1;" onclick="pickReader()">📖 Pick a reader for this story</button>
       </div>
     </div>
   </div>
@@ -980,9 +986,125 @@ My parents pushed back, saying I could just take out student loans instead, and 
 I get that weddings are expensive, but I don't see why my education should be the thing that gets sacrificed to pay for someone else's party. AITA?`,
       attachment: ""
     }
+    ,{
+      type: "advice",
+      sender: "torn.between.two.futures@gmail.com",
+      name: "Torn Husband",
+      time: "Today",
+      date: "Today, 9:15 AM",
+      subject: "Advice needed: our accidental pregnancy changed what I want, and my wife says that if it ends, so do we",
+      redditUrl: "https://www.reddit.com/r/relationship_advice/comments/1wusfdu/my_30m_wife_30f_got_pregnant_by_accident_i_now/",
+      choices: {
+        YTA: { label: "Part ways", reveal: "PART\nWAYS" },
+        NTA: { label: "Stay together", reveal: "STAY\nTOGETHER" }
+      },
+      actualVerdict: null,
+      text: `My wife and I have been together 12 years, married for 5. From the start we agreed kids weren't a priority. We travel a lot, we've sat through enough screaming toddlers on planes, and we love our nieces and nephews precisely because we can <span class='hint-word' data-ukr='повернути їх батькам'>hand them back</span>. If we ever had one, it would be at 35+. Until then, life was about the two of us and our dog.
+
+We also talked about adoption in case we couldn't conceive. She liked that idea more. She has a severe fear of hospitals, blood and anything medical, and pregnancy is the scariest version of that. She's afraid it will wreck her body and doesn't want to "have something inside her." I understood that completely and never pushed back.
+
+About 2 months ago she came off birth control because of severe eczema. She didn't tell me. It happened the very first month, and she's now about 8 weeks pregnant.
+
+It was hard and unexpected at first, but we both agreed to go through with it. Too big a <span class='hint-word' data-ukr='збіг обставин'>coincidence</span>, other couples try for years, and our life has had lots of "random unexpected coincidences" that turned out well. We said, we like a challenge, so let's do it.
+
+Here's what I didn't expect. For the past month I've been living as a future dad, and I want it. I love it. All my "problems" (a motorbike, new skis, a new bike) suddenly feel irrelevant. I'm reading everything, we're planning how we'd raise it, what sports, what music at bedtime. I used to <span class='hint-word' data-ukr='закочувати очі з осудом'>roll my eyes</span> at people who said a kid gave their life meaning. Now I get it, and it scares me a bit.
+
+Here's the problem. My wife says she's happy about this one, but if she miscarries, that's it. She'll go back on birth control, I'd use protection, and she will never try pregnancy again. She can handle this one surprise, but deliberately getting pregnant terrifies her. She says she doesn't really want to be a mother, but if I insist, she's OK with adoption. She hates the idea of limiting herself in certain foods, activities, body change, etc.
+
+I'm not OK with that. Something changed in me. I told her I want a child that's ours, with our genes, our features, our personality. I even said I don't know if I can be truly happy for the rest of my life without one. I know how that sounds.
+
+She said that if she miscarries, then we'll have to split up. She's disappointed in me and feels I only want to be with her "because of the baby." That's not how I see it, but I understand why she heard it that way.
+
+I told her we'd need a therapist for this and that there are other options (<span class='hint-word' data-ukr='сурогатне материнство'>surrogacy</span>, for example). I respect that it's her body and her choice. But I feel stuck in a <span class='hint-word' data-ukr='глухий кут'>dead end</span>:
+
+I get a child, she <span class='hint-word' data-ukr='таїть образу'>resents</span> me, is disappointed in me and doesn't even want to be a mother.
+
+No child, and I lose my partner of 12 years.
+
+Or I stay and I'm unhappy.
+
+Has anyone been through something like this? How did you get through it?`,
+      attachment: ""
+    },
+    {
+      type: "advice",
+      sender: "calm.home.needed@gmail.com",
+      name: "Shaken Girlfriend",
+      time: "Yesterday",
+      date: "Yesterday, 11:48 PM",
+      subject: "Advice needed: I set a boundary about steroids, and my partner packed his things and left",
+      redditUrl: "https://www.reddit.com/r/relationship_advice/comments/1wuygqm/i_37f_set_a_boundary_about_my_partner_37m_using/",
+      choices: {
+        YTA: { label: "Hold the line", reveal: "HOLD\nTHE LINE" },
+        NTA: { label: "Meet halfway", reveal: "MEET\nHALFWAY" }
+      },
+      actualVerdict: null,
+      text: `I need some outside perspective on a situation that <span class='hint-word' data-ukr='загострилася'>escalated</span> rapidly tonight.
+
+My partner and I have been together for a while, and up until recently, things felt incredible. I was honestly the happiest I've been in a long time. However, a major issue came up regarding his fitness routine. He previously used steroids. I wasn't aware of this. He's been off them for about 8 months but was on them for about 3 years prior, and I never got clarification on whether that was cycles or a solid 3 years. Now he's made it clear that he plans to go back on them.
+
+I have a history of trauma from a past abusive relationship, both physical and verbal, so unpredictable mood shifts, potential aggression, and the chaos that can come with performance-enhancing drugs are absolute <span class='hint-word' data-ukr='категорично неприйнятні умови'>non-negotiables</span> for me. I need my home to be a safe, calm <span class='hint-word' data-ukr='місце спокою, притулок'>sanctuary</span>.
+
+When he told me his plans, I set a firm boundary. I explained that while I love him, I cannot share a home with someone actively using steroids because of the risk to my mental health and safety, and that we could talk about what the future would hold for us. I wasn't trying to control his body. I was stating what I can and cannot live with. I also said I would support his physique goals in any way I could, with diet, with support getting to the gym, keeping him accountable, but this was a step too far.
+
+His reaction was <span class='hint-word' data-ukr='захисна, різка'>defensive</span>. He dismissed my concerns, saying I "don't know anything" about steroids. He called my fear of potentially having to walk on <span class='hint-word' data-ukr='ходити навшпиньки, боячись образити'>eggshells</span> around him "absolutely insane." (To be fair, he currently does not have an anger issue, and without chemicals altering his brain chemistry it's not something I'm worried about with him, but I also fear this could cause problems.)
+
+Instead of sitting down to talk it through, he packed up his things and left my house that same night while I was out working a show. When I questioned why he needs to go back on them after being off for 8 months, he basically <span class='hint-word' data-ukr='замкнувся, припинив розмову'>shut down</span> the conversation and framed me as the one blowing things up and jumping to conclusions.
+
+I'm now at my house with my pets. Part of me feels a strange sense of relief and clarity, because I finally prioritized my own well-being after years of working to rebuild my life post-divorce. But another part of me is grieving how fast this <span class='hint-word' data-ukr='розвалилося'>crumbled</span> over something that feels so completely avoidable.
+
+So I guess I'm asking: am I being unreasonable for making steroids a strict dealbreaker? And I'd like to talk face-to-face today, despite his knee-jerk reaction of just leaving last night, so we can get some clarity and maybe work through this. Is that too much to ask?
+
+Any advice or perspective from people who have navigated boundaries around drug or steroid use in relationships would be greatly appreciated.`,
+      attachment: ""
+    },
+    {
+      type: "advice",
+      sender: "heartbroken.dog.mom@gmail.com",
+      name: "Heartbroken Dog Mom",
+      time: "2 Days Ago",
+      date: "2 Days Ago, 7:20 PM",
+      subject: "Advice needed: my boyfriend used my dog's treatment savings to buy a computer",
+      redditUrl: "https://www.reddit.com/r/relationship_advice/comments/ic4aos/my_23f_boyfriend_25m_used_the_dogs_savings_for_a/",
+      choices: {
+        YTA: { label: "Report him", reveal: "REPORT\nHIM" },
+        NTA: { label: "Keep it private", reveal: "KEEP IT\nPRIVATE" }
+      },
+      actualVerdict: null,
+      text: `I know the title is a little odd, but it was the best way I could summarize what he's done.
+
+I have an 11-year-old senior German Shepherd. He was hit by a car in 2018 and we went through a very difficult recovery process. He had seizures, urine issues, constant fear of anything going fast near him, like I couldn't throw a ball anymore. You would have sworn he was displaying abused behavior, but he was just scared. He's moved past all of that and I'm so proud of him. The vet prescribed medication for his seizures and so far he's been recovering well.
+
+We were discussing ways to improve his mobility. It's like a walking cane, but for dogs, with sensory objects on the end to prevent him from bumping into furniture. We tested it in the office and his mood improved instantly, but at that time I couldn't afford more treatment for him, so I opted to come back. After paying off the debt from his previous treatments, I didn't want to open another card, so I started saving cash in a little <span class='hint-word' data-ukr='вогнетривка скринька'>fireproof chest</span>.
+
+I met my boyfriend earlier this year while walking my dog. He's known since day 1 that my dog requires special treatment and that I would absolutely provide it. Everything went well and he wasn't <span class='hint-word' data-ukr='владний, контролюючий'>controlling</span> or abusive. Everything just "clicked," but it's my fault because I was too comfortable. We were talking about finances and I told him about my debt and the money I was saving up for my dog.
+
+He stole it. Yesterday I went to his place and noticed he has a new setup. I asked him where he got the money from, and we fought, and he said, "he's half dead anyway, you need to let go."
+
+He's not even close to dying. He's a little older, but he's nowhere near dying age. We go to the vet regularly and everything checks out as well as it can be, given his circumstances. No one has ever mentioned death. We've only been looking at the future and improvements.
+
+I'm so upset, what do I do? We're both students, and I don't want to call the police and ruin his future. But that money was for my baby, so he could walk around my home comfortably.`,
+      attachment: ""
+    }
   ];
 
   const gavelAudio = document.getElementById('gavelSound');
+  const DEFAULT_CHOICES = {
+    YTA: { label: 'Asshole', reveal: 'ASSHOLE' },
+    NTA: { label: 'Not The Asshole', reveal: 'NOT THE\nASSHOLE', tag: 'Not TA' }
+  };
+  function choicesFor(story) { return (story && story.choices) || DEFAULT_CHOICES; }
+  function applyStoryMode(story) {
+    const c = choicesFor(story);
+    const isAdvice = story.type === 'advice';
+    document.getElementById('ytaLabel').textContent = c.YTA.label;
+    document.getElementById('ntaLabel').textContent = c.NTA.label;
+    document.getElementById('btnYTA').textContent = c.YTA.label;
+    document.getElementById('btnNTA').textContent = c.NTA.label;
+    document.getElementById('dockHint').textContent = isAdvice
+      ? 'Read the letter, choose the advice you would give, then reveal your choice \u2014 and hold your phone up so the room can see.'
+      : 'Read the case, cast your vote, then reveal your choice \u2014 and hold your phone up so the room can see.';
+  }
   let voteCounts = { YTA: 0, NTA: 0 };
 
   function updateTallyDisplay() {
@@ -1073,12 +1195,12 @@ I get that weddings are expensive, but I don't see why my education should be th
     });
   });
 
-  function showPickedBanner(html) {
+  function showPickedBanner(html, ms) {
     const banner = document.getElementById('pickedBanner');
     banner.innerHTML = html;
     banner.classList.add('visible');
     clearTimeout(banner._hideTimer);
-    banner._hideTimer = setTimeout(() => banner.classList.remove('visible'), 6000);
+    banner._hideTimer = setTimeout(() => banner.classList.remove('visible'), ms || 6000);
   }
 
   async function pickSomeone() {
@@ -1090,6 +1212,19 @@ I get that weddings are expensive, but I don't see why my education should be th
     const chosen = names[Math.floor(Math.random() * names.length)];
     if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
     showPickedBanner(`<b>${chosen}</b>, please explain your position to us.`);
+  }
+
+  async function pickReader() {
+    const names = await getAttendeeNames();
+    if (!names.length) {
+      showPickedBanner("No names found yet — make sure everyone has joined the event first.");
+      return;
+    }
+    const chosen = names[Math.floor(Math.random() * names.length)];
+    const story = currentStoryIndex !== null ? DOCKET_STORIES[currentStoryIndex] : null;
+    const what = story && story.type === 'advice' ? 'letter' : 'story';
+    if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+    showPickedBanner(`<b>${chosen}</b>, this ${what} is for you to read. 📖`, 9000);
   }
 
   // --- CASE RANDOMIZER ---
@@ -1567,10 +1702,11 @@ let myCurrentVote = null; // tracks this user's vote regardless of Firebase stat
     // Each person gets exactly one vote per story, synced live for everyone.
     currentStoryIndex = index;
     attachVotesListener(index);
+    applyStoryMode(story);
     const storyEnv = document.getElementById('storyEnvelope');
     document.getElementById('storyEnvelopeImg').className = `env-img env-${ENVELOPE_KINDS[index % ENVELOPE_KINDS.length]}`;
     storyEnv.style.setProperty('--rot', `${ENVELOPE_ROT[index % ENVELOPE_ROT.length]}deg`);
-    document.getElementById('storyCaseNumber').textContent = `Case No. ${String(index + 1).padStart(3, '0')} of ${String(DOCKET_STORIES.length).padStart(3, '0')}`;
+    document.getElementById('storyCaseNumber').textContent = `${story.type === 'advice' ? 'Letter' : 'Case'} No. ${String(index + 1).padStart(3, '0')} of ${String(DOCKET_STORIES.length).padStart(3, '0')}`;
     document.getElementById('storySubject').textContent = story.subject;
     document.getElementById('storySender').textContent = `${story.name} <${story.sender}>`;
     document.getElementById('storyDate').textContent = story.date;
@@ -1707,13 +1843,15 @@ let myCurrentVote = null; // tracks this user's vote regardless of Firebase stat
     const eyebrow = card.querySelector('.verdict-eyebrow');
     card.classList.remove('red', 'green');
 
-    eyebrow.textContent = 'You voted';
+    const story = DOCKET_STORIES[currentStoryIndex];
+    const c = choicesFor(story);
+    eyebrow.textContent = story && story.type === 'advice' ? 'Your advice' : 'You voted';
 
     if (myCurrentVote === 'YTA') {
-      text.textContent = 'ASSHOLE';
+      text.textContent = c.YTA.reveal;
       card.classList.add('red');
     } else {
-      text.innerHTML = 'NOT THE<br>ASSHOLE';
+      text.textContent = c.NTA.reveal;
       card.classList.add('green');
     }
 
@@ -1768,10 +1906,10 @@ let myCurrentVote = null; // tracks this user's vote regardless of Firebase stat
     }
     tag.classList.remove('verdict-tag-red', 'verdict-tag-green');
     if (verdict === 'YTA') {
-      tag.textContent = 'Asshole';
+      tag.textContent = choicesFor(DOCKET_STORIES[index]).YTA.tag || choicesFor(DOCKET_STORIES[index]).YTA.label;
       tag.classList.add('verdict-tag-red');
     } else if (verdict === 'NTA') {
-      tag.textContent = 'Not TA';
+      tag.textContent = choicesFor(DOCKET_STORIES[index]).NTA.tag || choicesFor(DOCKET_STORIES[index]).NTA.label;
       tag.classList.add('verdict-tag-green');
     } else {
       tag.textContent = 'Tie';
