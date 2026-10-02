@@ -5078,7 +5078,7 @@ body[data-phase="closer"] .sky {
     <!-- RED FLAG RALLY -->
     <div class="dashboard-section" style="width: 100%; max-width: 560px; margin: 0 auto 24px; padding: 16px;">
       <div class="eyebrow" style="text-align: center; margin-bottom: 8px; color: var(--gold);">Red Flag Rally</div>
-      <p style="font-family: 'Jost', sans-serif; font-size: 12.5px; line-height: 1.55; color: var(--dim); text-align: center; margin: 0 auto 14px; padding: 0 6px;">This game was inspired by how low some people's standards are. And <span class="unlike-link" role="button" tabindex="0" onclick="openUnlikePic()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openUnlikePic();}">unlike some people 📸</span> (such as a certain Alex), Sasha obviously does <strong>NOT</strong> ride red flags. As any person with self-respect, he prefers to jump over them and ride green flags instead.</p>
+      <p style="font-family: 'Jost', sans-serif; font-size: 12.5px; line-height: 1.55; color: var(--dim); text-align: center; margin: 0 auto 14px; padding: 0 6px;">This game was inspired by how low some people's standards are. And <span class="unlike-link" role="button" tabindex="0" onclick="openUnlikePic()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openUnlikePic();}">unlike some people 📸</span>, Sasha obviously does <strong>NOT</strong> ride red flags. Like any person with self-respect, he prefers to jump over them and ride green flags instead. (that's not entirely true, unfortunately)</p>
       <div class="game-section" id="gameSection" style="margin-top: 0;">
         <div class="lounge-ground" aria-hidden="true" id="loungeGround">
           <div class="game-custom-bg" id="gameCustomBg"></div>
@@ -8356,16 +8356,16 @@ function scrollToArchive() {
 var unlikePicOpenedAt = 0;
 function openUnlikePic(){ unlikePicOpenedAt = Date.now(); document.getElementById('unlikePicOverlay').classList.add('show'); }
 var RELATIONSHIP_ADVICE = [
-  'You have to ask for what you need. People cannot read your mind, and expecting them to sets everyone up for failure. Clear communication is an act of kindness.',
-  'Stop being the only one making an effort. If you constantly initiate and they never do, take a step back and see who reaches for you. Relationships require effort from both sides.',
-  '"No" is a complete sentence. You don\u2019t owe anyone an apology or a lengthy explanation for protecting your time, energy, and peace. Setting a boundary is not an act of aggression.',
-  'People grow at different speeds. It\u2019s okay to outgrow a friendship or relationship without villainizing the other person. Not everyone is meant to stay forever.',
-  'A real apology doesn\u2019t come with the word "but." Take accountability for the impact, not just the intent. "I\u2019m sorry I hurt you" is worth a thousand excuses.',
-  'Jealousy is a normal human emotion, but it\u2019s your responsibility to manage it. Don\u2019t let your own insecurities punish someone you care about for succeeding. Be honest, but don\u2019t make it their fault.',
-  'You don\u2019t have to share every hobby, thought, or moment. Healthy relationships allow space for you both to exist as independent individuals. Closeness is not the same as enmeshment.',
-  'People show love in wildly different ways. If you constantly assume their way is the "wrong" way, you\u2019ll miss the ways they are showing up for you. Learn their language.',
-  'Trust is built in tiny moments over years, but it can be shattered in a single second. Protect the trust you have, because rebuilding it is a thousand times harder than building it from scratch.',
-  'An ending doesn\u2019t mean a failure. Sometimes a relationship is exactly what you needed for that specific chapter of your life, and it\u2019s okay if the chapter closes. Letting go is an act of love, too.'
+  'Have you ever aggressively sighed at your partner from across the room and then gotten mad when they asked "what\'s wrong?" instead of magically knowing?' + '\n\n' + 'You might need to hear this: Bestie, they don\'t even know where their own keys are. They are not Professor X. Use your big adult words.',
+  'Have you ever planned the date, picked the restaurant, texted first, and essentially acted as the exhausted cruise director for your entire romance?' + '\n\n' + 'You might need to hear this: Your back must be screaming from carrying this entire relationship. Drop the rope for five minutes and see if they even notice you\'re gone.',
+  'Have you ever drafted a 14-page thesis backed by fake medical records just to get out of a Tuesday night drinks plan?' + '\n\n' + 'You might need to hear this: "No" is a complete sentence. You do not need to enter the witness protection program just to stay home in your pajamas and eat cheese.',
+  'Have you ever realized you have absolutely nothing in common with someone anymore, but you stick around because "we\'ve known each other since 2014"?' + '\n\n' + 'You might need to hear this: Some people are just guest stars in Season 3 of your life. Stop trying to write them into Season 10. Let them be a nostalgic rerun.',
+  'Have you ever received a text that says "I\'m sorry you got mad, but..." and actually accepted it as an apology?' + '\n\n' + 'You might need to hear this: Anything said after the word "but" is just a PR spin for why they think they are actually right. Tell them to take their "but" and leave.',
+  'Have you ever watched your partner succeed at something and suddenly felt the urge to start your own supervillain origin story?' + '\n\n' + 'You might need to hear this: Jealousy is a totally normal human glitch, but making your insecurities their problem is a massive red flag. Go to therapy, not the dark side.',
+  'Have you ever forced yourself to sit through a three-hour YouTube essay about crypto just because your new partner is into it?' + '\n\n' + 'You might need to hear this: You do not have to merge into a single, terrifying, two-headed organism. Go to the other room and watch your trashy reality TV in peace.',
+  'Have you ever gotten mad that they didn\'t write you a Shakespearean sonnet, completely ignoring that they defrosted your windshield and brought you nuggets?' + '\n\n' + 'You might need to hear this: Stop grading their love on your ridiculous fictional rubric. If they speak "acts of service," stop yelling at them in "words of affirmation."',
+  'Have you ever told a "tiny, harmless white lie" to avoid a minor argument, only to watch it snowball into a full-blown hostage negotiation?' + '\n\n' + 'You might need to hear this: Trust is a Jenga tower. It takes years of tiny, boring moments to carefully build, and exactly one sneaky, stupid decision to bring the whole thing crashing down.',
+  'Have you ever treated a perfectly normal, mutual breakup like a failed Kickstarter campaign?' + '\n\n' + 'You might need to hear this: Not every relationship is meant to be a lifelong cinematic universe. Sometimes it was just a really good limited series. Let the credits roll.'
 ];
 var adviceDeck = [];
 function nextAdvice(){
@@ -8388,7 +8388,7 @@ function closeUnlikePic(showAdvice){
       title: 'Relationship advice',
       body: nextAdvice(),
       vibrateMs: 40,
-      holdMs: 12000,
+      holdMs: 20000,
       fullText: true
     });
   }
